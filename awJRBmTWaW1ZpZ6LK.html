@@ -1,0 +1,645 @@
+<html><head><base href="main.html">
+<title>How Much You Make to Poop!</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f0f0;
+    }
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+        color: #4a4a4a;
+        text-align: center;
+    }
+    input {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    button {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+        padding: 10px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    #timer {
+        font-size: 48px;
+        text-align: center;
+        margin: 20px 0;
+    }
+    #poopEmoji {
+        font-size: 48px;
+        text-align: center;
+        margin: 20px 0;
+    }
+    .wiggle {
+        animation: wiggle 0.5s infinite;
+    }
+    @keyframes wiggle {
+        0% { transform: rotate(0deg); }
+        25% { transform: rotate(5deg); }
+        75% { transform: rotate(-5deg); }
+        100% { transform: rotate(0deg); }
+    }
+    #log {
+        margin-top: 20px;
+        border: 1px solid #ddd;
+        padding: 10px;
+        height: 300px;
+        overflow-y: auto;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+    }
+    .log-entry {
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 10px;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+    .log-entry:hover {
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .log-entry .delete-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: #ff4444;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s;
+    }
+    .log-entry .delete-btn:hover {
+        background-color: #cc0000;
+    }
+    .log-entry .share-btn {
+        position: absolute;
+        top: 5px;
+        right: 35px;
+        background-color: #3b5998;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s;
+    }
+    .log-entry .share-btn:hover {
+        background-color: #2d4373;
+    }
+    .log-entry .date {
+        font-weight: bold;
+        color: #4a4a4a;
+        margin-bottom: 5px;
+    }
+    .log-entry .details {
+        color: #666;
+        font-size: 14px;
+    }
+    .log-entry .rating {
+        margin-top: 5px;
+        color: #ffd700;
+    }
+    .log-entry .comment {
+        margin-top: 5px;
+        font-style: italic;
+        color: #888;
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 10px;
+    }
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    #statsChart {
+        width: 100%;
+        height: 300px;
+    }
+    #congratsMessage {
+        text-align: center;
+        font-size: 18px;
+        color: #4CAF50;
+        margin-bottom: 15px;
+    }
+    .share-buttons {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+    .share-buttons button {
+        width: 30%;
+    }
+    .poop-rating {
+        display: flex;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+    .poop-rating button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: opacity 0.3s;
+        padding: 0 5px;
+    }
+    .poop-rating button:hover,
+    .poop-rating button.active {
+        opacity: 1;
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>How Much You Make to Poop!</h1>
+        <input type="number" id="salary" placeholder="Enter your annual salary">
+        <input type="number" id="hoursPerWeek" placeholder="Enter your weekly work hours">
+        <div id="result"></div>
+        <div id="poopEmoji">💩</div>
+        <div id="timer">00:00:00</div>
+        <button id="startStopButton">Start Poop</button>
+        <button id="statsButton">Show Stats</button>
+        <h2>Your Poop Log(s)</h2>
+        <div id="log">
+            <div id="logEntries"></div>
+        </div>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <div id="congratsMessage"></div>
+            <h2>Rate Your Poop</h2>
+            <div class="poop-rating">
+                <button class="poop" data-rating="1">💩</button>
+                <button class="poop" data-rating="2">💩</button>
+                <button class="poop" data-rating="3">💩</button>
+                <button class="poop" data-rating="4">💩</button>
+                <button class="poop" data-rating="5">💩</button>
+            </div>
+            <input type="text" id="poopComment" placeholder="Add a comment (optional)">
+            <button id="submitRating">Submit Rating</button>
+        </div>
+    </div>
+
+    <div id="shareRatingModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Share Your Poop Rating</h2>
+            <p id="shareRatingMessage"></p>
+            <div class="share-buttons">
+                <button id="shareRatingTwitter">Share on Twitter</button>
+                <button id="shareRatingFacebook">Share on Facebook</button>
+                <button id="shareRatingSMS">Share via SMS</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="statsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Your Poop Statistics</h2>
+            <canvas id="statsChart"></canvas>
+            <div id="statsText"></div>
+            <div class="social-share">
+                <button id="shareStatsTwitter">Share on Twitter</button>
+                <button id="shareStatsFacebook">Share on Facebook</button>
+                <button id="shareStatsSMS">Share via SMS</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Share Your Poop</h2>
+            <button id="shareEntryTwitter">Share on Twitter</button>
+            <button id="shareEntryFacebook">Share on Facebook</button>
+            <button id="shareEntrySMS">Share via SMS</button>
+        </div>
+    </div>
+
+    <script>
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        let poopRating = 0;
+        let currentShareIndex = -1;
+        let lastSessionEarnings = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const resultDiv = document.getElementById('result');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logDiv = document.getElementById('log');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const statsButton = document.getElementById('statsButton');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const logoutButton = document.getElementById('logoutButton');
+
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal.querySelectorAll('.poop');
+        const submitRatingButton = document.getElementById('submitRating');
+        const closeButtons = document.querySelectorAll('.close');
+
+        const statsModal = document.getElementById('statsModal');
+        const shareModal = document.getElementById('shareModal');
+        const shareRatingModal = document.getElementById('shareRatingModal');
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Poop';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                lastSessionEarnings = earnings;
+                logPoopSession(seconds, earnings);
+                showRatingModal(earnings);
+                resetTimer(); // Reset timer after stopping
+            } else {
+                resetTimer(); // Reset timer before starting
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Done Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <button class="delete-btn" data-index="${index}">×</button>
+                    <button class="share-btn" data-index="${index}">📤</button>
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">
+                        Duration: ${formatTime(session.duration)}<br>
+                        Earnings: $${session.earnings.toFixed(2)}
+                    </div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    if (confirm('Are you sure you want to delete this log entry?')) {
+                        deleteLogEntry(index);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.share-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    showShareModal(index);
+                });
+            });
+        }
+
+        function deleteLogEntry(index) {
+            currentUser.data.poopSessions.splice(index, 1);
+            updateLog();
+            saveUserData();
+        }
+
+        function saveUserData() {
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts'));
+            accounts[currentUser.email].data = currentUser.data;
+            localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
+        }
+
+        function showStats() {
+            const sessions = currentUser.data.poopSessions;
+            if (sessions.length === 0) {
+                alert('No poop sessions recorded yet!');
+                return;
+            }
+
+            const totalDuration = sessions.reduce((sum, session) => sum + session.duration, 0);
+            const averageTime = totalDuration / sessions.length;
+            const averageEarnings = currentUser.data.totalEarnings / sessions.length;
+
+            const msPerDay = 24 * 60 * 60 * 1000;
+            const firstDay = new Date(sessions[0].date).setHours(0, 0, 0, 0);
+            const lastDay = new Date(sessions[sessions.length - 1].date).setHours(23, 59, 59, 999);
+            const daysDifference = (lastDay - firstDay) / msPerDay;
+            const avgPoopsPerDay = sessions.length / (daysDifference + 1);
+
+            const statsText = `
+                Average poop time: ${formatTime(Math.round(averageTime))}
+                Average earnings per poop: $${averageEarnings.toFixed(2)}
+                Average poops per day: ${avgPoopsPerDay.toFixed(2)}
+            `;
+
+            document.getElementById('statsText').textContent = statsText;
+
+            const ctx = document.getElementById('statsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Avg Time (min)', 'Avg Earnings ($)', 'Avg Poops/Day'],
+                    datasets: [{
+                        label: 'Poop Statistics',
+                        data: [averageTime / 60, averageEarnings, avgPoopsPerDay],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            statsModal.style.display = 'block';
+        }
+
+        function showRatingModal(earnings) {
+            const congratsMessage = document.getElementById('congratsMessage');
+            congratsMessage.textContent = `Congratulations! You made $${earnings.toFixed(2)} during this poop session!`;
+            ratingModal.style.display = 'block';
+            poopRating = 0;
+            poopButtons.forEach(button => {
+                button.classList.remove('active');
+                button.style.opacity = '0.5';
+            });
+            document.getElementById('poopComment').value = '';
+        }
+
+        function submitRating() {
+            const comment = document.getElementById('poopComment').value;
+            const lastSession = currentUser.data.poopSessions[currentUser.data.poopSessions.length - 1];
+            lastSession.rating = poopRating;
+            lastSession.comment = comment;
+            saveUserData();
+            ratingModal.style.display = 'none';
+            updateLog();
+            showShareRatingModal();
+        }
+
+        function showShareRatingModal() {
+            const shareRatingMessage = document.getElementById('shareRatingMessage');
+            shareRatingMessage.textContent = `I just had a ${poopRating}-💩 poop and earned $${lastSessionEarnings.toFixed(2)}!`;
+            shareRatingModal.style.display = 'block';
+        }
+
+        function showShareModal(index) {
+            currentShareIndex = index;
+            shareModal.style.display = 'block';
+        }
+
+        function shareEntry(platform) {
+            const session = currentUser.data.poopSessions[currentShareIndex];
+            const message = `I just had a ${session.rating}-💩 poop! Duration: ${formatTime(session.duration)}, Earnings: $${session.earnings.toFixed(2)}`;
+            shareContent(platform, message);
+        }
+
+        function shareRating(platform) {
+            const message = `I just had a ${poopRating}-💩 poop and earned $${lastSessionEarnings.toFixed(2)}!`;
+            shareContent(platform, message);
+        }
+
+        function shareStats(platform) {
+            const sessions = currentUser.data.poopSessions;
+            const totalDuration = sessions.reduce((sum, session) => sum + session.duration, 0);
+            const averageTime = totalDuration / sessions.length;
+            const averageEarnings = currentUser.data.totalEarnings / sessions.length;
+            const avgPoopsPerDay = sessions.length / ((new Date() - new Date(sessions[0].date)) / (24 * 60 * 60 * 1000));
+
+            const message = `My Poop Stats:\nAvg Time: ${formatTime(Math.round(averageTime))}\nAvg Earnings: $${averageEarnings.toFixed(2)}\nAvg Poops/Day: ${avgPoopsPerDay.toFixed(2)}`;
+            shareContent(platform, message);
+        }
+
+        function shareContent(platform, message) {
+            const encodedMessage = encodeURIComponent(message);
+
+            switch (platform) {
+                case 'twitter':
+                    window.open(`https://twitter.com/intent/tweet?text=${encodedMessage}`, '_blank');
+                    break;
+                case 'facebook':
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodedMessage}`, '_blank');
+                    break;
+                case 'sms':
+                    window.open(`sms:?&body=${encodedMessage}`, '_blank');
+                    break;
+            }
+
+            shareModal.style.display = 'none';
+            shareRatingModal.style.display = 'none';
+            statsModal.style.display = 'none';
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        function updateHourlyRate() {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                resultDiv.textContent = 'Please enter valid numbers.';
+                return;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            resultDiv.textContent = `Your hourly rate is $${hourlyRate.toFixed(2)}. Start the timer to see how much you earn while pooping!`;
+            
+            currentUser.data.salary = salary;
+            currentUser.data.hoursPerWeek = hoursPerWeek;
+            saveUserData();
+        }
+
+        startStopButton.addEventListener('click', startStopTimer);
+        statsButton.addEventListener('click', showStats);
+
+        poopButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                poopRating = parseInt(this.getAttribute('data-rating'));
+                poopButtons.forEach((btn, index) => {
+                    if (index < poopRating) {
+                        btn.classList.add('active');
+                        btn.style.opacity = '1';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.style.opacity = '0.5';
+                    }
+                });
+            });
+        });
+
+        submitRatingButton.addEventListener('click', submitRating);
+
+        document.getElementById('shareEntryTwitter').addEventListener('click', () => shareEntry('twitter'));
+        document.getElementById('shareEntryFacebook').addEventListener('click', () => shareEntry('facebook'));
+        document.getElementById('shareEntrySMS').addEventListener('click', () => shareEntry('sms'));
+
+        document.getElementById('shareRatingTwitter').addEventListener('click', () => shareRating('twitter'));
+        document.getElementById('shareRatingFacebook').addEventListener('click', () => shareRating('facebook'));
+        document.getElementById('shareRatingSMS').addEventListener('click', () => shareRating('sms'));
+
+        document.getElementById('shareStatsTwitter').addEventListener('click', () => shareStats('twitter'));
+        document.getElementById('shareStatsFacebook').addEventListener('click', () => shareStats('facebook'));
+        document.getElementById('shareStatsSMS').addEventListener('click', () => shareStats('sms'));
+
+        logoutButton.addEventListener('click', logout);
+
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.closest('.modal').style.display = 'none';
+            });
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        });
+
+        // Initialize user data
+        if (currentUser) {
+            salaryInput.value = currentUser.data.salary || '';
+            hoursPerWeekInput.value = currentUser.data.hoursPerWeek || '';
+            updateLog();
+            updateHourlyRate();
+        } else {
+            window.location.href = 'index.html';
+        }
+
+        // Add event listeners to update hourly rate when inputs change
+        salaryInput.addEventListener('input', updateHourlyRate);
+        hoursPerWeekInput.addEventListener('input', updateHourlyRate);
+    </script>
+</body></html>
