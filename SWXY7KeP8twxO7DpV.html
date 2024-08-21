@@ -1,0 +1,195 @@
+<html><head><base href="index.html">
+<title>Poop Tracker Login/Register</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    .container {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+    }
+    h1 {
+        text-align: center;
+        color: #4a4a4a;
+    }
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+    input {
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+    button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 0.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    .toggle-form {
+        text-align: center;
+        margin-top: 1rem;
+        color: #4a4a4a;
+        cursor: pointer;
+    }
+    #registerForm {
+        display: none;
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 400px;
+        border-radius: 10px;
+        text-align: center;
+    }
+    #gotItButton {
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Poop Tracker</h1>
+        <form id="loginForm">
+            <input type="email" id="loginEmail" placeholder="Email" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <form id="registerForm">
+            <input type="email" id="registerEmail" placeholder="Email" required>
+            <input type="password" id="registerPassword" placeholder="Password" required>
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+            <button type="submit">Register</button>
+        </form>
+        <p class="toggle-form" id="toggleForm">Don't have an account? Register here</p>
+    </div>
+
+    <div id="welcomeModal" class="modal">
+        <div class="modal-content">
+            <p>Welcome to Poop Tracker! Please remember to only track your poops while you are working/on the clock.</p>
+            <button id="gotItButton">Got it!</button>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const toggleForm = document.getElementById('toggleForm');
+        const welcomeModal = document.getElementById('welcomeModal');
+        const gotItButton = document.getElementById('gotItButton');
+
+        function showRegisterForm() {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'flex';
+            toggleForm.textContent = 'Already have an account? Login here';
+            toggleForm.removeEventListener('click', showRegisterForm);
+            toggleForm.addEventListener('click', showLoginForm);
+        }
+
+        function showLoginForm() {
+            registerForm.style.display = 'none';
+            loginForm.style.display = 'flex';
+            toggleForm.textContent = "Don't have an account? Register here";
+            toggleForm.removeEventListener('click', showLoginForm);
+            toggleForm.addEventListener('click', showRegisterForm);
+        }
+
+        toggleForm.addEventListener('click', showRegisterForm);
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            login(email, password);
+        });
+
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            if (password !== confirmPassword) {
+                alert("Passwords don't match!");
+                return;
+            }
+            register(email, password);
+        });
+
+        function login(email, password) {
+            const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
+            if (accounts[email] && accounts[email].password === password) {
+                localStorage.setItem('currentUser', JSON.stringify({
+                    email: email,
+                    data: accounts[email].data
+                }));
+                window.location.href = 'main.html';
+            } else {
+                alert('Invalid email or password');
+            }
+        }
+
+        function register(email, password) {
+            const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
+            if (accounts[email]) {
+                alert('An account with this email already exists');
+                return;
+            }
+            accounts[email] = {
+                password: password,
+                data: {
+                    poopSessions: [],
+                    totalEarnings: 0,
+                    salary: 0,
+                    hoursPerWeek: 0
+                }
+            };
+            localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
+            localStorage.setItem('currentUser', JSON.stringify({
+                email: email,
+                data: accounts[email].data
+            }));
+            welcomeModal.style.display = 'block';
+        }
+
+        gotItButton.addEventListener('click', function() {
+            welcomeModal.style.display = 'none';
+            window.location.href = 'main.html';
+        });
+    </script>
+</body></html>
