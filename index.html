@@ -298,7 +298,7 @@
                     }
                 };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                window.location.href = 'https://main.html';
+                window.location.href = 'https://www.poopprofit.com/main.html';
             } else {
                 errorMessage.textContent = 'Invalid email or password.';
             }
@@ -344,7 +344,7 @@
             };
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-            window.location.href = 'https://main.html';
+            window.location.href = 'https://www.poopprofit.com/main.html';
         }
 
         function showModal() {
@@ -356,7 +356,7 @@
         }
 
         function tryWithoutAccount() {
-            window.location.href = 'https://main.html';
+            window.location.href = 'https://www.poopprofit.com/main.html';
         }
 
         switchToRegister.addEventListener('click', (e) => {
@@ -385,7 +385,7 @@
         // Check if user is already logged in
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
         if (currentUser) {
-            window.location.href = 'https://main.html';
+            window.location.href = 'https://www.poopprofit.com/main.html';
         }
     </script>
 </body>
