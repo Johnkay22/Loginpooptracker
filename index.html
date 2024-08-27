@@ -1,5 +1,3 @@
-
-```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -278,4 +276,31 @@
             loginForm.style.display = 'block';
             switchToLogin.style.display = 'none';
             switchToRegister.style.display = 'block';
-           
+            errorMessage.textContent = '';
+        }
+
+        // Function to show the modal
+        function showModal() {
+            modal.style.display = 'block';
+        }
+
+        // Function to hide the modal
+        function hideModal() {
+            modal.style.display = 'none';
+        }
+
+        // Event listener for the "Try Without an Account" button
+        tryWithoutAccountButton.addEventListener('click', showModal);
+
+        // Event listener for the "Continue" button in the modal
+        confirmButton.addEventListener('click', function() {
+            hideModal();
+            // Add any additional logic to handle continuing without an account
+            alert('Proceeding without an account');
+        });
+
+        // Event listener for the "Cancel" button in the modal
+        cancelButton.addEventListener('click', hideModal);
+    </script>
+</body>
+</html>
