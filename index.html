@@ -1,154 +1,152 @@
-<html><head><base href="https://index.html">
-<title>Poop Profit Calculator - Login</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-    :root {
-        --primary-color: #3498db;
-        --secondary-color: #2ecc71;
-        --background-color: #1a1a2e;
-        --text-color: #e0e0e0;
-        --card-background: #16213e;
-        --accent-color: #f39c12;
-    }
-
-    body {
-        font-family: 'Roboto', sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: var(--background-color);
-        color: var(--text-color);
-        line-height: 1.6;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .container {
-        max-width: 400px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-
-    h1 {
-        color: var(--primary-color);
-        text-align: center;
-        font-weight: 300;
-        margin-bottom: 30px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
-
-    .card {
-        background-color: var(--card-background);
-        border-radius: 10px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        padding: 30px;
-        margin-bottom: 30px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-    }
-
-    input {
-        width: 100%;
-        padding: 15px;
-        margin: 10px 0;
-        border: none;
-        border-bottom: 2px solid var(--primary-color);
-        background-color: transparent;
-        color: var(--text-color);
-        font-size: 16px;
-        transition: border-color 0.3s ease;
-    }
-
-    input:focus {
-        outline: none;
-        border-bottom-color: var(--secondary-color);
-    }
-
-    button {
-        width: 100%;
-        padding: 15px;
-        margin: 15px 0;
-        border: none;
-        border-radius: 50px;
-        background-color: var(--primary-color);
-        color: white;
-        font-size: 16px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    button:hover {
-        background-color: var(--secondary-color);
-        transform: scale(1.05);
-    }
-
-    #errorMessage {
-        color: #e74c3c;
-        text-align: center;
-        margin-top: 10px;
-    }
-
-    .switch-form, .test-mode {
-        text-align: center;
-        margin-top: 20px;
-        color: var(--text-color);
-    }
-
-    .switch-form a, .test-mode a {
-        color: var(--primary-color);
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.3s ease;
-    }
-
-    .switch-form a:hover, .test-mode a:hover {
-        color: var(--secondary-color);
-    }
-
-    /* Glowing effect */
-    .glow {
-        box-shadow: 0 0 10px var(--primary-color),
-                    0 0 20px var(--primary-color),
-                    0 0 30px var(--primary-color);
-    }
-
-    /* Neon text effect */
-    .neon-text {
-        text-shadow: 0 0 5px var(--primary-color),
-                     0 0 10px var(--primary-color),
-                     0 0 15px var(--primary-color),
-                     0 0 20px var(--primary-color);
-    }
-
-    /* Test mode button */
-    #testModeButton {
-        background-color: var(--accent-color);
-    }
-
-    #testModeButton:hover {
-        background-color: #e67e22;
-    }
-
-    /* Responsive design */
-    @media (max-width: 768px) {
-        .container {
-            padding: 15px;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Poop Profit Calculator - Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
         }
-    }
-</style>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-bottom-color: var(--secondary-color);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.05);
+        }
+
+        #errorMessage {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .switch-form, .test-mode {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-color);
+        }
+
+        .switch-form a, .test-mode a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .switch-form a:hover, .test-mode a:hover {
+            color: var(--secondary-color);
+        }
+
+        .glow {
+            box-shadow: 0 0 10px var(--primary-color),
+                        0 0 20px var(--primary-color),
+                        0 0 30px var(--primary-color);
+        }
+
+        .neon-text {
+            text-shadow: 0 0 5px var(--primary-color),
+                         0 0 10px var(--primary-color),
+                         0 0 15px var(--primary-color),
+                         0 0 20px var(--primary-color);
+        }
+
+        #testModeButton {
+            background-color: var(--accent-color);
+        }
+
+        #testModeButton:hover {
+            background-color: #e67e22;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -225,7 +223,7 @@
                     }
                 };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                window.location.href = 'https://main.html';
+                window.location.href = '/main.html';
             } else {
                 errorMessage.textContent = 'Invalid email or password.';
             }
@@ -271,7 +269,7 @@
             };
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-            window.location.href = 'https://main.html';
+            window.location.href = '/main.html';
         }
 
         function enterTestMode() {
@@ -279,35 +277,4 @@
                 email: 'test@example.com',
                 data: {
                     poopSessions: [],
-                    totalEarnings: 0,
-                    salary: 0,
-                    hoursPerWeek: 0
-                },
-                isTestMode: true
-            };
-            localStorage.setItem('currentUser', JSON.stringify(testUser));
-            window.location.href = 'https://main.html';
-        }
-
-        switchToRegister.addEventListener('click', (e) => {
-            e.preventDefault();
-            showRegisterForm();
-        });
-
-        switchToLogin.addEventListener('click', (e) => {
-            e.preventDefault();
-            showLoginForm();
-        });
-
-        loginButton.addEventListener('click', login);
-        registerButton.addEventListener('click', register);
-        testModeButton.addEventListener('click', enterTestMode);
-
-        // Check if user is already logged in
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        if (currentUser && !currentUser.isTestMode) {
-            window.location.href = 'https://main.html';
-        }
-    </script>
-</body>
-</html>
+                    totalE
