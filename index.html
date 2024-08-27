@@ -223,8 +223,7 @@
                     }
                 };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                window.location.href = '/main.html';
-            } else {
+                window.location.href = '/main.html';'https://www.poopprofit.com/main.html';
                 errorMessage.textContent = 'Invalid email or password.';
             }
         }
@@ -269,7 +268,7 @@
             };
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-            window.location.href = '/main.html';
+            window.location.href = 'https://www.poopprofit.com/main.html';
         }
 
         function enterTestMode() {
