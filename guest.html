@@ -687,7 +687,7 @@
 
         function showShareRatingModal() {
             const shareRatingMessage = document.getElementById('shareRatingMessage');
-            shareRatingMessage.textContent = `I just had a ${poopRating}-💩 poop and earned $${lastSessionEarnings.toFixed(2)}!`;
+            shareRatingMessage.textContent = `I just had a ${poopRating}-💩 poop and earned $${lastSessionEarnings.toFixed(2)}! Find out how much you get paid to poop at www.poopprofit.com! `;
             shareRatingModal.style.display = 'block';
         }
 
@@ -698,12 +698,12 @@
 
         function shareEntry(platform) {
             const session = poopSessions[currentShareIndex];
-            const message = `I just had a ${session.rating}-💩 poop! Duration: ${formatTime(session.duration)}, Earnings: $${session.earnings.toFixed(2)}`;
+            const message = `I just had a ${session.rating}-💩 poop! Duration: ${formatTime(session.duration)}, Earnings: $${session.earnings.toFixed(2)} Find out how much you get paid to poop at www.poopprofit.com!`;
             shareContent(platform, message);
         }
 
         function shareRating(platform) {
-            const message = `I just had a ${poopRating}-💩 poop and earned $${lastSessionEarnings.toFixed(2)}!`;
+            const message = `I just had a ${poopRating}-💩 poop and earned $${lastSessionEarnings.toFixed(2)}! Find out how much you get paid to poop at www.poopprofit.com!`;
             shareContent(platform, message);
         }
 
@@ -717,7 +717,7 @@
             const daysDifference = Math.max(1, (lastDay - firstDay) / (24 * 60 * 60 * 1000));
             const avgSessionsPerDay = poopSessions.length / daysDifference;
 
-            const message = `My Poop Stats:\nTotal Poops: ${poopSessions.length}\nTotal Time: ${formatTime(totalDuration)}\nTotal Earnings: $${totalEarnings.toFixed(2)}\nAvg Time: ${formatTime(Math.round(averageTime))}\nAvg Earnings: $${averageEarnings.toFixed(2)}\nAvg Poops/Day: ${avgSessionsPerDay.toFixed(2)}`;
+            const message = `My Poop Stats:\nTotal Poops: ${poopSessions.length}\nTotal Time: ${formatTime(totalDuration)}\nTotal Earnings: $${totalEarnings.toFixed(2)}\nAvg Time: ${formatTime(Math.round(averageTime))}\nAvg Earnings: $${averageEarnings.toFixed(2)}\nAvg Poops/Day: ${avgSessionsPerDay.toFixed(2)} Find out how much you get paid to poop at www.poopprofit.com!`;
             shareContent(platform, message);
         }
 
