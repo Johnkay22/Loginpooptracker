@@ -1,0 +1,363 @@
+<html><head><base href="https://index.html">
+<title>Poop Profit Calculator - Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    :root {
+        --primary-color: #3498db;
+        --secondary-color: #2ecc71;
+        --background-color: #1a1a2e;
+        --text-color: #e0e0e0;
+        --card-background: #16213e;
+        --accent-color: #f39c12;
+    }
+
+    body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    h1 {
+        color: var(--primary-color);
+        text-align: center;
+        font-weight: 300;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .card {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        margin-bottom: 30px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    input {
+        width: 100%;
+        padding: 15px;
+        margin: 10px 0;
+        border: none;
+        border-bottom: 2px solid var(--primary-color);
+        background-color: transparent;
+        color: var(--text-color);
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+        outline: none;
+        border-bottom-color: var(--secondary-color);
+    }
+
+    button {
+        width: 100%;
+        padding: 15px;
+        margin: 15px 0;
+        border: none;
+        border-radius: 50px;
+        background-color: var(--primary-color);
+        color: white;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    button:hover {
+        background-color: var(--secondary-color);
+        transform: scale(1.05);
+    }
+
+    #errorMessage {
+        color: #e74c3c;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .switch-form {
+        text-align: center;
+        margin-top: 20px;
+        color: var(--text-color);
+    }
+
+    .switch-form a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .switch-form a:hover {
+        color: var(--secondary-color);
+    }
+
+    /* Glowing effect */
+    .glow {
+        box-shadow: 0 0 10px var(--primary-color),
+                    0 0 20px var(--primary-color),
+                    0 0 30px var(--primary-color);
+    }
+
+    /* Neon text effect */
+    .neon-text {
+        text-shadow: 0 0 5px var(--primary-color),
+                     0 0 10px var(--primary-color),
+                     0 0 15px var(--primary-color),
+                     0 0 20px var(--primary-color);
+    }
+
+    /* Try without account button */
+    #tryWithoutAccount {
+        background-color: var(--accent-color);
+        margin-top: 20px;
+    }
+
+    #tryWithoutAccount:hover {
+        background-color: #e67e22;
+    }
+
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: var(--card-background);
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 400px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #fff;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .container {
+            padding: 15px;
+        }
+    }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card glow">
+            <div id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Email">
+                <input type="password" id="loginPassword" placeholder="Password">
+                <button id="loginButton">Login</button>
+            </div>
+            <div id="registerForm" style="display: none;">
+                <input type="email" id="registerEmail" placeholder="Email">
+                <input type="password" id="registerPassword" placeholder="Password">
+                <input type="password" id="confirmPassword" placeholder="Confirm Password">
+                <button id="registerButton">Register</button>
+            </div>
+            <div id="errorMessage"></div>
+        </div>
+        <div class="switch-form">
+            <span id="switchToRegister">Don't have an account? <a href="#">Register</a></span>
+            <span id="switchToLogin" style="display: none;">Already have an account? <a href="#">Login</a></span>
+        </div>
+        <button id="tryWithoutAccount">Try Without Account</button>
+    </div>
+
+    <!-- Modal -->
+    <div id="warningModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Your Poop Logs Will Not Be Saved Without an Account</p>
+            <button id="continueWithoutAccount">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const loginButton = document.getElementById('loginButton');
+        const registerButton = document.getElementById('registerButton');
+        const errorMessage = document.getElementById('errorMessage');
+        const tryWithoutAccountButton = document.getElementById('tryWithoutAccount');
+        const modal = document.getElementById('warningModal');
+        const closeModal = document.getElementsByClassName('close')[0];
+        const continueWithoutAccountButton = document.getElementById('continueWithoutAccount');
+
+        function showRegisterForm() {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+            switchToRegister.style.display = 'none';
+            switchToLogin.style.display = 'block';
+            errorMessage.textContent = '';
+        }
+
+        function showLoginForm() {
+            registerForm.style.display = 'none';
+            loginForm.style.display = 'block';
+            switchToLogin.style.display = 'none';
+            switchToRegister.style.display = 'block';
+            errorMessage.textContent = '';
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                errorMessage.textContent = 'Please enter both email and password.';
+                return;
+            }
+
+            const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
+            
+            if (accounts[email] && accounts[email].password === password) {
+                const currentUser = {
+                    email: email,
+                    data: accounts[email].data || {
+                        poopSessions: [],
+                        totalEarnings: 0,
+                        salary: 0,
+                        hoursPerWeek: 0
+                    }
+                };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                window.location.href = 'https://main.html';
+            } else {
+                errorMessage.textContent = 'Invalid email or password.';
+            }
+        }
+
+        function register() {
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!email || !password || !confirmPassword) {
+                errorMessage.textContent = 'Please fill in all fields.';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match.';
+                return;
+            }
+
+            const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
+
+            if (accounts[email]) {
+                errorMessage.textContent = 'An account with this email already exists.';
+                return;
+            }
+
+            accounts[email] = {
+                password: password,
+                data: {
+                    poopSessions: [],
+                    totalEarnings: 0,
+                    salary: 0,
+                    hoursPerWeek: 0
+                }
+            };
+
+            localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
+
+            const currentUser = {
+                email: email,
+                data: accounts[email].data
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            window.location.href = 'https://main.html';
+        }
+
+        switchToRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            showRegisterForm();
+        });
+
+        switchToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            showLoginForm();
+        });
+
+        loginButton.addEventListener('click', login);
+        registerButton.addEventListener('click', register);
+
+        tryWithoutAccountButton.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        closeModal.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        continueWithoutAccountButton.onclick = function() {
+            window.location.href = 'https://www.poopprofit.com/main.html';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Check if user is already logged in
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (currentUser) {
+            window.location.href = 'https://main.html';
+        }
+    </script>
+</body>
+</html>
