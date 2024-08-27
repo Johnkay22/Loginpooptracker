@@ -220,144 +220,69 @@
             <p>Your Poop Logs Will Not Be Saved Without an Account</p>
             <button id="continueWithoutAccount">Continue</button>
         </div>
-    </div>
+    </div> 
+    
+<script>
+    document.getElementById('switchToRegister').addEventListener('click', function() {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('registerForm').style.display = 'block';
+        document.getElementById('switchToRegister').style.display = 'none';
+        document.getElementById('switchToLogin').style.display = 'block';
+    });
 
-    <script>
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-        const switchToRegister = document.getElementById('switchToRegister');
-        const switchToLogin = document.getElementById('switchToLogin');
-        const loginButton = document.getElementById('loginButton');
-        const registerButton = document.getElementById('registerButton');
-        const errorMessage = document.getElementById('errorMessage');
-        const tryWithoutAccountButton = document.getElementById('tryWithoutAccount');
-        const modal = document.getElementById('warningModal');
-        const closeModal = document.getElementsByClassName('close')[0];
-        const continueWithoutAccountButton = document.getElementById('continueWithoutAccount');
+    document.getElementById('switchToLogin').addEventListener('click', function() {
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('switchToRegister').style.display = 'block';
+        document.getElementById('switchToLogin').style.display = 'none';
+    });
 
-        function showRegisterForm() {
-            loginForm.style.display = 'none';
-            registerForm.style.display = 'block';
-            switchToRegister.style.display = 'none';
-            switchToLogin.style.display = 'block';
-            errorMessage.textContent = '';
-        }
+    document.getElementById('tryWithoutAccount').addEventListener('click', function() {
+        var modal = document.getElementById('warningModal');
+        var span = document.getElementsByClassName('close')[0];
+        modal.style.display = 'block';
 
-        function showLoginForm() {
-            registerForm.style.display = 'none';
-            loginForm.style.display = 'block';
-            switchToLogin.style.display = 'none';
-            switchToRegister.style.display = 'block';
-            errorMessage.textContent = '';
-        }
-
-        function login() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-
-            if (!email || !password) {
-                errorMessage.textContent = 'Please enter both email and password.';
-                return;
-            }
-
-            const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
-            
-            if (accounts[email] && accounts[email].password === password) {
-                const currentUser = {
-                    email: email,
-                    data: accounts[email].data || {
-                        poopSessions: [],
-                        totalEarnings: 0,
-                        salary: 0,
-                        hoursPerWeek: 0
-                    }
-                };
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                window.location.href = 'https://main.html';
-            } else {
-                errorMessage.textContent = 'Invalid email or password.';
-            }
-        }
-
-        function register() {
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            if (!email || !password || !confirmPassword) {
-                errorMessage.textContent = 'Please fill in all fields.';
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                errorMessage.textContent = 'Passwords do not match.';
-                return;
-            }
-
-            const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
-
-            if (accounts[email]) {
-                errorMessage.textContent = 'An account with this email already exists.';
-                return;
-            }
-
-            accounts[email] = {
-                password: password,
-                data: {
-                    poopSessions: [],
-                    totalEarnings: 0,
-                    salary: 0,
-                    hoursPerWeek: 0
-                }
-            };
-
-            localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
-
-            const currentUser = {
-                email: email,
-                data: accounts[email].data
-            };
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-            window.location.href = 'https://main.html';
-        }
-
-        switchToRegister.addEventListener('click', (e) => {
-            e.preventDefault();
-            showRegisterForm();
-        });
-
-        switchToLogin.addEventListener('click', (e) => {
-            e.preventDefault();
-            showLoginForm();
-        });
-
-        loginButton.addEventListener('click', login);
-        registerButton.addEventListener('click', register);
-
-        tryWithoutAccountButton.onclick = function() {
-            modal.style.display = "block";
-        }
-
-        closeModal.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        continueWithoutAccountButton.onclick = function() {
-            window.location.href = 'https://www.poopprofit.com/main.html';
+        span.onclick = function() {
+            modal.style.display = 'none';
         }
 
         window.onclick = function(event) {
             if (event.target == modal) {
-                modal.style.display = "none";
+                modal.style.display = 'none';
             }
         }
 
-        // Check if user is already logged in
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        if (currentUser) {
-            window.location.href = 'https://main.html';
+        document.getElementById('continueWithoutAccount').addEventListener('click', function() {
+            window.location.href = 'calculator.html'; // Redirect to the calculator page
+        });
+    });
+
+    // Login functionality
+    document.getElementById('loginButton').addEventListener('click', function() {
+        var email = document.getElementById('loginEmail').value;
+        var password = document.getElementById('loginPassword').value;
+
+        // Perform your login logic here
+        if (email === 'test@example.com' && password === 'password') {
+            window.location.href = 'calculator.html'; // Redirect to the calculator page
+        } else {
+            document.getElementById('errorMessage').innerText = 'Invalid login credentials.';
         }
-    </script>
+    });
+
+    // Registration functionality
+    document.getElementById('registerButton').addEventListener('click', function() {
+        var email = document.getElementById('registerEmail').value;
+        var password = document.getElementById('registerPassword').value;
+        var confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (password === confirmPassword) {
+            // Perform your registration logic here
+            document.getElementById('errorMessage').innerText = 'Account registered successfully!';
+        } else {
+            document.getElementById('errorMessage').innerText = 'Passwords do not match.';
+        }
+    });
+</script>
 </body>
 </html>
