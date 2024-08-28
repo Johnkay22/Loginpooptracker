@@ -14,219 +14,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
-            --background-color: #1a1a2e;
-            --text-color: #e0e0e0;
-            --card-background: #16213e;
-            --accent-color: #f39c12;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        h1 {
-            color: var(--primary-color);
-            text-align: center;
-            font-weight: 300;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .emoji {
-            font-size: 48px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .card {
-            background-color: var(--card-background);
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            padding: 30px;
-            margin-bottom: 30px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        input {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border: none;
-            border-bottom: 2px solid var(--primary-color);
-            background-color: transparent;
-            color: var(--text-color);
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        input:focus {
-            outline: none;
-            border-bottom-color: var(--secondary-color);
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            margin: 15px 0;
-            border: none;
-            border-radius: 50px;
-            background-color: var(--primary-color);
-            color: white;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        button:hover {
-            background-color: var(--secondary-color);
-            transform: scale(1.05);
-        }
-
-        #errorMessage {
-            color: #e74c3c;
-            text-align: center;
-            margin-top: 10px;
-        }
-
-        .switch-form {
-            text-align: center;
-            margin-top: 20px;
-            color: var(--text-color);
-        }
-
-        .switch-form a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .switch-form a:hover {
-            color: var(--secondary-color);
-        }
-
-        /* Glowing effect */
-        .glow {
-            box-shadow: 0 0 10px var(--primary-color),
-                        0 0 20px var(--primary-color),
-                        0 0 30px var(--primary-color);
-        }
-
-        /* Neon text effect */
-        .neon-text {
-            text-shadow: 0 0 5px var(--primary-color),
-                         0 0 10px var(--primary-color),
-                         0 0 15px var(--primary-color),
-                         0 0 20px var(--primary-color);
-        }
-
-        /* Try without account button */
-        #tryWithoutAccount {
-            background-color: var(--accent-color);
-            margin-top: 20px;
-        }
-
-        #tryWithoutAccount:hover {
-            background-color: #e67e22;
-        }
-
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background-color: var(--card-background);
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid var(--primary-color);
-            border-radius: 10px;
-            width: 80%;
-            max-width: 400px;
-            box-shadow: 0 0 20px var(--primary-color);
-            text-align: center;
-        }
-
-        .modal-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .modal-button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-        }
-
-        .modal-button.confirm {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-
-        .modal-button.cancel {
-            background-color: #e74c3c;
-            color: white;
-        }
-
-        .modal-button:hover {
-            opacity: 0.8;
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-        }
+        /* Add your existing CSS styles here */
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -242,8 +38,8 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
-        const db = getFirestore(app);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
         function login() {
             const email = document.getElementById('loginEmail').value;
@@ -291,9 +87,33 @@
                 });
         }
 
+        function signInWithGoogle() {
+            const provider = new GoogleAuthProvider();
+
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user;
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    window.location.href = 'https://www.poopprofit.com/main.html';
+                })
+                .catch((error) => {
+                    document.getElementById('errorMessage').textContent = error.message;
+                });
+        }
+
         function tryWithoutAccount() {
             localStorage.setItem('currentUser', JSON.stringify({ uid: 'guest' }));
             window.location.href = 'https://www.poopprofit.com/main.html';
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
         }
     </script>
 </head>
@@ -309,8 +129,8 @@
                 <input type="email" id="loginEmail" placeholder="Email">
                 <input type="password" id="loginPassword" placeholder="Password">
                 <button onclick="login()">Login</button>
-                <div class="switch-form">Don't have an account? <a href="#" onclick="showRegister()">Register</a></div>
                 <button id="googleSignIn" onclick="signInWithGoogle()">Sign In with Google</button>
+                <div class="switch-form">Don't have an account? <a href="#" onclick="showRegister()">Register</a></div>
                 <button id="tryWithoutAccount" onclick="tryWithoutAccount()">Try Without Account</button>
             </div>
 
@@ -324,17 +144,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        function showRegister() {
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('registerForm').style.display = 'block';
-        }
-
-        function showLogin() {
-            document.getElementById('registerForm').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'block';
-        }
-    </script>
 </body>
 </html>
