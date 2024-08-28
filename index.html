@@ -225,8 +225,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -242,8 +242,8 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
-        const auth = getAuth(app);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
         function login() {
             const email = document.getElementById('loginEmail').value;
@@ -291,33 +291,9 @@
                 });
         }
 
-        function signInWithGoogle() {
-            const provider = new GoogleAuthProvider();
-
-            signInWithPopup(auth, provider)
-                .then((result) => {
-                    const user = result.user;
-                    localStorage.setItem('currentUser', JSON.stringify(user));
-                    window.location.href = 'https://www.poopprofit.com/main.html';
-                })
-                .catch((error) => {
-                    document.getElementById('errorMessage').textContent = error.message;
-                });
-        }
-
         function tryWithoutAccount() {
             localStorage.setItem('currentUser', JSON.stringify({ uid: 'guest' }));
             window.location.href = 'https://www.poopprofit.com/main.html';
-        }
-
-        function showRegister() {
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('registerForm').style.display = 'block';
-        }
-
-        function showLogin() {
-            document.getElementById('registerForm').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'block';
         }
     </script>
 </head>
@@ -333,7 +309,6 @@
                 <input type="email" id="loginEmail" placeholder="Email">
                 <input type="password" id="loginPassword" placeholder="Password">
                 <button onclick="login()">Login</button>
-                <button id="googleSignIn" onclick="signInWithGoogle()">Sign In with Google</button>
                 <div class="switch-form">Don't have an account? <a href="#" onclick="showRegister()">Register</a></div>
                 <button id="tryWithoutAccount" onclick="tryWithoutAccount()">Try Without Account</button>
             </div>
@@ -348,5 +323,17 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
