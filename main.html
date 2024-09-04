@@ -708,7 +708,7 @@
 
         function shareEntry(platform) {
             const session = currentUser.data.poopSessions[currentShareIndex];
-            const message = `I just had a ${session.rating}-💩 poop! Duration: ${formatTime(session.duration)}, Earnings: $${session.earnings.toFixed(2)}Find out how much you get paid to poop at www.poopprofit.com!`;
+            const message = `I just had a ${session.rating}-💩 poop! Duration: ${formatTime(session.duration)}, Earnings: $${session.earnings.toFixed(2)} Find out how much you get paid to poop at www.poopprofit.com!`;
             shareContent(platform, message);
         }
 
@@ -765,7 +765,7 @@
                 return;
             }
             const hourlyRate = salary / (hoursPerWeek * 52);
-            resultDiv.textContent = `Your hourly rate is $${hourlyRate.toFixed(2)}. Start the timer to track your pooping earnings!`;
+            resultDiv.textContent = `Your hourly rate is $${hourlyRate.toFixed(2)}. Start the timer to track how much you make to poop!`;
             
             currentUser.data.salary = salary;
             currentUser.data.hoursPerWeek = hoursPerWeek;
