@@ -728,7 +728,7 @@
             const daysDifference = Math.max(1, (lastDay - firstDay) / (24 * 60 * 60 * 1000));
             const avgSessionsPerDay = sessions.length / daysDifference;
 
-            const message = `My Poop Stats:\nTotal Poops: ${sessions.length}\nTotal Time: ${formatTime(totalDuration)}\nTotal Earnings: $${totalEarnings.toFixed(2)}\nAvg Time: ${formatTime(Math.round(averageTime))}\nAvg Earnings: $${averageEarnings.toFixed(2)}\nAvg Poops/Day: ${avgSessionsPerDay.toFixed(2)}Find out how much you get paid to poop at www.poopprofit.com!`;
+            const message = `My Poop Stats:\nTotal Poops: ${sessions.length}\nTotal Time: ${formatTime(totalDuration)}\nTotal Earnings: $${totalEarnings.toFixed(2)}\nAvg Time: ${formatTime(Math.round(averageTime))}\nAvg Earnings: $${averageEarnings.toFixed(2)}\nAvg Poops/Day: ${avgSessionsPerDay.toFixed(2)} Find out how much you get paid to poop at www.poopprofit.com!`;
             shareContent(platform, message);
         }
 
