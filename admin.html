@@ -1,5 +1,26 @@
 <html><head><base href="admin.html">
 <title>Poop Tracker Admin Panel</title>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin</title>
+  <script>
+    // This is the password prompt
+    var password = prompt("Enter the admin password:");
+
+    // Simple password protection
+    if (password !== "zxasqw12") {
+      // Redirects to a different page if the password is incorrect
+      window.location.href = "https://www.poopprofit.com";
+    }
+  </script>
+</head>
+<body>
+  <h1>Admin Area</h1>
+  <p>Only accessible with the correct password.</p>
+</body>
+</html>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
