@@ -417,5 +417,86 @@
             window.location.href = 'https://www.poopprofit.com/main.html';
         }
     </script>
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
+    authDomain: "poopprofitproject.firebaseapp.com",
+    projectId: "poopprofitproject",
+    storageBucket: "poopprofitproject.appspot.com",
+    messagingSenderId: "818996284466",
+    appId: "1:818996284466:web:de6d6bab3987cca417c02b",
+    measurementId: "G-JBXJ1T6LYM"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+// ... (Firebase SDK initialization)
+
+// Registration form submission
+const registrationForm = document.getElementById('registrationForm');
+registrationForm.addEventListener('submit', (event) => {
+  event.preventDefault(); // Prevent default form submission
+
+  const email = document.getElementById('registerEmail').value;
+  const password = document.getElementById('registerPassword').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+
+  // Password validation
+  if (password !== confirmPassword) {
+    // Display an error message
+    document.getElementById('errorMessage').textContent = 'Passwords do not match.';
+    return; // Stop further processing
+  }
+
+  // Create user if passwords match
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Registration successful
+      const user = userCredential.user;
+      console.log('User registered:', user);
+      // Redirect to the dashboard or other appropriate page
+      // (You'll need to implement this redirection logic)
+    })
+    .catch((error) => {
+      // Handle registration errors
+      console.error('Registration error:', error);
+      // Display error message to the user
+      document.getElementById('errorMessage').textContent = error.message;
+    });
+});
+
+
+// Sign-in form submission
+const signInForm = document.getElementById('signInForm');
+signInForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Sign-in successful
+      const user = userCredential.user;
+      console.log('User signed in:', user);
+      // Redirect to the dashboard or other appropriate page
+    })
+    .catch((error) => {
+      // Handle sign-in errors
+      console.error('Sign-in error:', error);
+      // Display error message to the user
+    });
+});
+
 </body>
 </html>
