@@ -181,11 +181,24 @@
         /* Try without account button */
         #tryWithoutAccount {
             background-color: var(--accent-color);
-            margin-top: 20px;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none; /* Remove default link underline */
+            width: 100%; /* Make it full width */
         }
 
         #tryWithoutAccount:hover {
             background-color: #e67e22;
+            transform: scale(1.05);
         }
 
         /* Modal styles */
@@ -273,8 +286,8 @@
             <div id="errorMessage"></div>
         </div>
         <div class="switch-form">
-            <span id="switchToRegister">Don't have an account? <a href="#">Register</a></span>
-            <span id="switchToLogin" style="display: none;">Already have an account? <a href="#">Login</a></span>
+            <span id="switchToRegister">Don't have an account? <a href="#" id="registerLink">Register</a></span> 
+            <span id="switchToLogin" style="display: none;">Already have an account? <a href="#" id="loginLink">Login</a></span>
         </div>
         <a href="https://www.poopprofit.com/guest.html" id="tryWithoutAccount">Try Without an Account</a> 
     </div>
@@ -318,11 +331,12 @@
         const loginButton = document.getElementById('loginButton');
         const registerButton = document.getElementById('registerButton');
         const errorMessage = document.getElementById('errorMessage');
-        const tryWithoutAccountButton = document.getElementById('tryWithoutAccount');
+        const tryWithoutAccountButton = document.getElementById('tryWithoutAccount'); 
         const modal = document.getElementById('confirmModal');
         const confirmButton = document.getElementById('confirmButton');
         const cancelButton = document.getElementById('cancelButton');
-        const signOutButton = document.getElementById('signOutButton'); // Add a sign out button to your HTML
+        const registerLink = document.getElementById('registerLink');
+        const loginLink = document.getElementById('loginLink');
 
         // Functions to Show/Hide Forms
         function showRegisterForm() {
@@ -412,6 +426,17 @@
         });
 
         switchToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            showLoginForm();
+        });
+
+        // Add click event listeners to the links
+        registerLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showRegisterForm();
+        });
+
+        loginLink.addEventListener('click', (e) => {
             e.preventDefault();
             showLoginForm();
         });
