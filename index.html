@@ -312,93 +312,69 @@
             switchToRegister.style.display = 'block';
             errorMessage.textContent = '';
         }
-      // Import Firebase libraries
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
-// Your Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
-  authDomain: "poopprofitproject.firebaseapp.com",
-  projectId: "poopprofitproject",
-  storageBucket: "poopprofitproject.appspot.com",
-  messagingSenderId: "818996284466",
-  appId: "1:818996284466:web:de6d6bab3987cca417c02b",
-  measurementId: "G-JBXJ1T6LYM"
-};
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const auth = getAuth();
+            if (!email || !password) {
+                errorMessage.textContent = 'Please enter both email and password.';
+                return;
+            }
 
-// ... (rest of your existing HTML and CSS) ...
+            const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
+            
+            if (accounts[email] && accounts[email].password === password) {
+                const currentUser = {
+                    email: email,
+                    data: accounts[email].data || {
+                        poopSessions: [],
+                        totalEarnings: 0,
+                        salary: 0,
+                        hoursPerWeek: 0
+                    }
+                };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                window.location.href = 'https://www.poopprofit.com/main.html';
+            } else {
+                errorMessage.textContent = 'Invalid email or password.';
+            }
+        }
 
-<script>
-  // ... (your existing JavaScript code for form elements) ...
+        function register() {
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
 
-  // Handle user registration
-  const registerButton = document.getElementById('registerButton');
-  registerButton.addEventListener('click', () => {
-    const email = document.getElementById('registerEmail').value;
-    const password = document.getElementById('registerPassword').value;
+            if (!email || !password || !confirmPassword) {
+                errorMessage.textContent = 'Please fill in all fields.';
+                return;
+            }
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // User successfully created
-        const user = userCredential.user;
-        console.log("User registered:", user);
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match.';
+                return;
+            }
 
-        // Redirect to the main page or handle success
-        window.location.href = 'https://www.poopprofit.com/main.html';
-      })
-      .catch((error) => {
-        // Handle registration errors
-        console.error("Registration error:", error);
-        errorMessage.textContent = error.message;
-      });
-  });
+            const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
 
-  // Handle user login
-  const loginButton = document.getElementById('loginButton');
-  loginButton.addEventListener('click', () => {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
+            if (accounts[email]) {
+                errorMessage.textContent = 'An account with this email already exists.';
+                return;
+            }
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // User successfully logged in
-        const user = userCredential.user;
-        console.log("User logged in:", user);
+            accounts[email] = {
+                password: password,
+                data: {
+                    poopSessions: [],
+                    totalEarnings: 0,
+                    salary: 0,
+                    hoursPerWeek: 0
+                }
+            };
 
-        // Redirect to the main page or handle success
-        window.location.href = 'https://www.poopprofit.com/main.html';
-      })
-      .catch((error) => {
-        // Handle login errors
-        console.error("Login error:", error);
-        errorMessage.textContent = error.message;
-      });
-  });
+            localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
 
-  // Handle user authentication state
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // User is signed in
-      console.log("User is signed in:", user);
-      // Redirect to the main page or handle success
-      window.location.href = 'https://www.poopprofit.com/main.html';
-    } else {
-      // User is signed out
-      console.log("User is signed out");
-      // Show the login/registration form
-      // ...
-    }
-  });
-
-  // ... (your existing JavaScript code for form switching, modal, etc.) ...
-</script>
             const currentUser = {
                 email: email,
                 data: accounts[email].data
@@ -449,28 +425,7 @@ const auth = getAuth();
             window.location.href = 'https://www.poopprofit.com/main.html';
         }
     </script>
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
-    authDomain: "poopprofitproject.firebaseapp.com",
-    projectId: "poopprofitproject",
-    storageBucket: "poopprofitproject.appspot.com",
-    messagingSenderId: "818996284466",
-    appId: "1:818996284466:web:de6d6bab3987cca417c02b",
-    measurementId: "G-JBXJ1T6LYM"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
-</body>
+  <script> type="module"> // Import the functions you need from the SDKs you need import { initializeApp } from " https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js  "; import { getAnalytics } from " https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js  "; // TODO: Add SDKs for Firebase products that you want to use // https://firebase.google.com/docs/web/setup 
+// Your web app's Firebase configuration // For Firebase JS SDK v7.20.0 and later, measurementId is optional const firebaseConfig = { apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o", authDomain: "poopprofitproject.firebaseapp.com", projectId: "poopprofitproject", storageBucket: "poopprofitproject.appspot.com", messagingSenderId: "818996284466", appId: "1:818996284466:web:de6d6bab3987cca417c02b", measurementId: "G-JBXJ1T6LYM" };
+// Initialize Firebase const app = initializeApp(firebaseConfig); const analytics = getAnalytics(app); </script></body>
 </html>
