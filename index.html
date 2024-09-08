@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
         gtag('config', 'G-R1E17DCKNC');
     </script>
     <title>Poop Profit Calculator!</title>
@@ -171,7 +181,7 @@
         #tryWithoutAccount {
             background-color: var(--accent-color);
             padding: 15px;
-            margin: 15px 0;
+            margin: 20px 0;
             border: none;
             border-radius: 50px;
             color: white;
@@ -250,6 +260,12 @@
             .container {
                 padding: 15px;
             }
+        }
+
+        /* Center the Try Without Account button */
+        #tryWithoutAccount {
+            margin-top: auto; /* Push it to the bottom */
+            display: block; /* Ensure it takes up the full width */
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
