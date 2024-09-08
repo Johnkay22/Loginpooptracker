@@ -260,13 +260,15 @@
             <div id="loginForm">
                 <input type="email" id="loginEmail" placeholder="Email">
                 <input type="password" id="loginPassword" placeholder="Password">
-                <button id="loginButton">Login</button>
+                <button id="loginButton" type="submit">Login</button>
+                <input type="hidden" id="redirect" value="https://www.poopprofit.com/main.html">
             </div>
             <div id="registerForm" style="display: none;">
                 <input type="email" id="registerEmail" placeholder="Email">
                 <input type="password" id="registerPassword" placeholder="Password">
                 <input type="password" id="confirmPassword" placeholder="Confirm Password">
-                <button id="registerButton">Register</button>
+                <button id="registerButton" type="submit">Register</button>
+                <input type="hidden" id="redirect" value="https://www.poopprofit.com/main.html">
             </div>
             <div id="errorMessage"></div>
         </div>
@@ -274,7 +276,7 @@
             <span id="switchToRegister">Don't have an account? <a href="#">Register</a></span>
             <span id="switchToLogin" style="display: none;">Already have an account? <a href="#">Login</a></span>
         </div>
-        <button id="tryWithoutAccount">Try Without an Account</button>
+        <a href="https://www.poopprofit.com/guest.html" id="tryWithoutAccount">Try Without an Account</a> 
     </div>
 
     <!-- Modal -->
@@ -339,22 +341,26 @@
             errorMessage.textContent = '';
         }
 
-        // Firebase Authentication Logic
-        loginButton.addEventListener('click', async () => {
+        // Firebase Authentication Logic 
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent form submission
+
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                // Successful login - Redirect to main page
-                window.location.href = 'https://www.poopprofit.com/main.html';
+                // Successful login - Redirect to main page (using HTML link)
+                window.location.href = document.getElementById("redirect").value; // Get the redirect URL from the hidden input
             } catch (error) {
                 console.error("Error during sign-in:", error);
                 errorMessage.textContent = 'Invalid email or password.';
             }
         });
 
-        registerButton.addEventListener('click', async () => {
+        registerForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent form submission
+
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
@@ -366,8 +372,8 @@
 
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
-                // Successful registration - Redirect to main page
-                window.location.href = 'https://www.poopprofit.com/main.html';
+                // Successful registration - Redirect to main page (using HTML link)
+                window.location.href = document.getElementById("redirect").value; // Get the redirect URL from the hidden input
             } catch (error) {
                 console.error("Error during signup:", error);
                 // Handle errors (e.g., display error messages)
