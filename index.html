@@ -293,15 +293,15 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js"; 
 
-        // Your Firebase Configuration
+        // Your Firebase Configuration (replace placeholders)
         const firebaseConfig = {
-            apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
-            authDomain: "poopprofitproject.firebaseapp.com",
-            projectId: "poopprofitproject",
-            storageBucket: "poopprofitproject.appspot.com",
-            messagingSenderId: "818996284466",
-            appId: "1:818996284466:web:de6d6bab3987cca417c02b",
-            measurementId: "G-JBXJ1T6LYM"
+            apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o", // Replace with your actual API Key
+            authDomain: "poopprofitproject.firebaseapp.com", // Replace with your actual Auth Domain
+            projectId: "poopprofitproject", // Replace with your actual Project ID
+            storageBucket: "poopprofitproject.appspot.com", // Replace with your actual Storage Bucket
+            messagingSenderId: "818996284466", // Replace with your actual Messaging Sender ID
+            appId: "1:818996284466:web:de6d6bab3987cca417c02b", // Replace with your actual App ID
+            measurementId: "G-JBXJ1T6LYM" // Replace with your actual Measurement ID
         };
 
         // Initialize Firebase
@@ -320,6 +320,7 @@
         const modal = document.getElementById('confirmModal');
         const confirmButton = document.getElementById('confirmButton');
         const cancelButton = document.getElementById('cancelButton');
+        const signOutButton = document.getElementById('signOutButton'); // Add a sign out button to your HTML
 
         // Functions to Show/Hide Forms
         function showRegisterForm() {
