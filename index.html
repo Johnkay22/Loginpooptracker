@@ -3,7 +3,7 @@
 <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
-    <script defer>
+    <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
@@ -343,6 +343,7 @@
         const cancelButton = document.getElementById('cancelButton');
         const registerLink = document.getElementById('registerLink');
         const loginLink = document.getElementById('loginLink');
+        const signOutButton = document.getElementById('signOutButton'); // Add a sign out button to your HTML
 
         // Functions to Show/Hide Forms
         function showRegisterForm() {
@@ -369,6 +370,11 @@
 
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                errorMessage.textContent = 'Please enter both email and password.';
+                return;
+            }
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
