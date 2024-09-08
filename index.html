@@ -279,23 +279,21 @@
             <div id="loginForm">
                 <input type="email" id="loginEmail" placeholder="Email">
                 <input type="password" id="loginPassword" placeholder="Password">
-                <button id="loginButton" type="submit">Login</button>
-                <input type="hidden" id="redirect" value="https://www.poopprofit.com/main.html">
+                <button id="loginButton">Login</button>
             </div>
             <div id="registerForm" style="display: none;">
                 <input type="email" id="registerEmail" placeholder="Email">
                 <input type="password" id="registerPassword" placeholder="Password">
                 <input type="password" id="confirmPassword" placeholder="Confirm Password">
-                <button id="registerButton" type="submit">Register</button>
-                <input type="hidden" id="redirect" value="https://www.poopprofit.com/main.html">
+                <button id="registerButton">Register</button>
             </div>
             <div id="errorMessage"></div>
         </div>
         <div class="switch-form">
             <span id="switchToRegister">Don't have an account? <a href="#" id="registerLink">Register</a></span> 
-            <span id="switchToLogin" style="display: none;">Already have an account? <a href="#" id="loginLink">Login</a></span>
+            <span style="display: none;">Already have an account? <a href="#" id="loginLink">Login</a></span>
         </div>
-        <a href="https://www.poopprofit.com/guest.html" id="tryWithoutAccount">Try Without an Account</a> 
+        <button id="tryWithoutAccount">Try Without an Account</button>
     </div>
 
     <!-- Modal -->
@@ -309,27 +307,7 @@
         </div>
     </div>
 
-    <script type="module">
-        // Import Firebase SDKs
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js"; 
-
-        // Your Firebase Configuration (replace placeholders)
-        const firebaseConfig = {
-            apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o", // Replace with your actual API Key
-            authDomain: "poopprofitproject.firebaseapp.com", // Replace with your actual Auth Domain
-            projectId: "poopprofitproject", // Replace with your actual Project ID
-            storageBucket: "poopprofitproject.appspot.com", // Replace with your actual Storage Bucket
-            messagingSenderId: "818996284466", // Replace with your actual Messaging Sender ID
-            appId: "1:818996284466:web:de6d6bab3987cca417c02b", // Replace with your actual App ID
-            measurementId: "G-JBXJ1T6LYM" // Replace with your actual Measurement ID
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth();
-
-        // Get HTML Elements
+    <script>
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
         const switchToRegister = document.getElementById('switchToRegister');
@@ -337,22 +315,17 @@
         const loginButton = document.getElementById('loginButton');
         const registerButton = document.getElementById('registerButton');
         const errorMessage = document.getElementById('errorMessage');
-        const tryWithoutAccountButton = document.getElementById('tryWithoutAccount'); 
+        const tryWithoutAccountButton = document.getElementById('tryWithoutAccount');
         const modal = document.getElementById('confirmModal');
         const confirmButton = document.getElementById('confirmButton');
         const cancelButton = document.getElementById('cancelButton');
-        const registerLink = document.getElementById('registerLink');
-        const loginLink = document.getElementById('loginLink');
-        const signOutButton = document.getElementById('signOutButton'); // Add a sign out button to your HTML
 
-        // Functions to Show/Hide Forms
         function showRegisterForm() {
             loginForm.style.display = 'none';
             registerForm.style.display = 'block';
             switchToRegister.style.display = 'none';
             switchToLogin.style.display = 'block';
             errorMessage.textContent = '';
-            console.log("showRegisterForm triggered");
         }
 
         function showLoginForm() {
@@ -361,13 +334,9 @@
             switchToLogin.style.display = 'none';
             switchToRegister.style.display = 'block';
             errorMessage.textContent = '';
-            console.log("showLoginForm triggered");
         }
 
-        // Firebase Authentication Logic 
-        loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevent form submission
-
+        function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
@@ -376,90 +345,68 @@
                 return;
             }
 
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                // Successful login - Redirect to main page (using HTML link)
-                window.location.href = document.getElementById("redirect").value; // Get the redirect URL from the hidden input
-            } catch (error) {
-                console.error("Error during sign-in:", error);
+            const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
+            
+            if (accounts[email] && accounts[email].password === password) {
+                const currentUser = {
+                    email: email,
+                    data: accounts[email].data || {
+                        poopSessions: [],
+                        totalEarnings: 0,
+                        salary: 0,
+                        hoursPerWeek: 0
+                    }
+                };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                window.location.href = 'https://www.poopprofit.com/main.html';
+            } else {
                 errorMessage.textContent = 'Invalid email or password.';
             }
-        });
+        }
 
-        registerForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevent form submission
-
+        function register() {
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!email || !password || !confirmPassword) {
+                errorMessage.textContent = 'Please fill in all fields.';
+                return;
+            }
 
             if (password !== confirmPassword) {
                 errorMessage.textContent = 'Passwords do not match.';
                 return;
             }
 
-            try {
-                await createUserWithEmailAndPassword(auth, email, password);
-                // Successful registration - Redirect to main page (using HTML link)
-                window.location.href = document.getElementById("redirect").value; // Get the redirect URL from the hidden input
-            } catch (error) {
-                console.error("Error during signup:", error);
-                // Handle errors (e.g., display error messages)
+            const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
+
+            if (accounts[email]) {
+                errorMessage.textContent = 'An account with this email already exists.';
+                return;
             }
-        });
 
-        // Sign Out Button
-        signOutButton.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                console.log("User signed out");
-                // Redirect to login page or welcome page
-            } catch (error) {
-                console.error("Error during sign out:", error);
-                // Handle errors
-            }
-        });
+            accounts[email] = {
+                password: password,
+                data: {
+                    poopSessions: [],
+                    totalEarnings: 0,
+                    salary: 0,
+                    hoursPerWeek: 0
+                }
+            };
 
-        // User Session Management (onAuthStateChanged)
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                // User is signed in
-                console.log("User is signed in:", user.uid);
-                // Redirect to user profile or other authenticated content
-                window.location.href = "https://www.poopprofit.com/main.html"; // Redirect to main page
-            } else {
-                // User is signed out
-                console.log("User is signed out");
-                // Redirect to login or registration page
-                window.location.href = "https://www.poopprofit.com/"; // Redirect to index.html
-            }
-        });
+            localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
 
-        // Show/Hide Forms
-        switchToRegister.addEventListener('click', (e) => {
-            e.preventDefault();
-            showRegisterForm();
-        });
+            const currentUser = {
+                email: email,
+                data: accounts[email].data
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-        switchToLogin.addEventListener('click', (e) => {
-            e.preventDefault();
-            showLoginForm();
-        });
+            window.location.href = 'https://www.poopprofit.com/main.html';
+        }
 
-        // Add click event listeners to the links
-        registerLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            showRegisterForm();
-            console.log("registerLink clicked");
-        });
-
-        loginLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            showLoginForm();
-            console.log("loginLink clicked");
-        });
-
-        // Modal Functionality
         function showModal() {
             modal.style.display = 'block';
         }
@@ -472,6 +419,18 @@
             window.location.href = 'https://www.poopprofit.com/guest.html';
         }
 
+        switchToRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            showRegisterForm();
+        });
+
+        switchToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            showLoginForm();
+        });
+
+        loginButton.addEventListener('click', login);
+        registerButton.addEventListener('click', register);
         tryWithoutAccountButton.addEventListener('click', showModal);
         confirmButton.addEventListener('click', tryWithoutAccount);
         cancelButton.addEventListener('click', hideModal);
@@ -481,6 +440,12 @@
             if (event.target == modal) {
                 hideModal();
             }
+        }
+
+        // Check if user is already logged in
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (currentUser) {
+            window.location.href = 'https://www.poopprofit.com/main.html';
         }
     </script>
 </body>
