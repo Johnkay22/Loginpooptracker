@@ -346,6 +346,7 @@
             switchToRegister.style.display = 'none';
             switchToLogin.style.display = 'block';
             errorMessage.textContent = '';
+            console.log("showRegisterForm triggered");
         }
 
         function showLoginForm() {
@@ -354,6 +355,7 @@
             switchToLogin.style.display = 'none';
             switchToRegister.style.display = 'block';
             errorMessage.textContent = '';
+            console.log("showLoginForm triggered");
         }
 
         // Firebase Authentication Logic 
@@ -435,11 +437,13 @@
         registerLink.addEventListener('click', (e) => {
             e.preventDefault();
             showRegisterForm();
+            console.log("registerLink clicked");
         });
 
         loginLink.addEventListener('click', (e) => {
             e.preventDefault();
             showLoginForm();
+            console.log("loginLink clicked");
         });
 
         // Modal Functionality
