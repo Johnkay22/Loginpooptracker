@@ -59,11 +59,13 @@
         letter-spacing: 2px;
     }
 
-    .emoji {
-        font-size: 96px;
-        text-align: center;
-        margin-bottom: 20px;
-    }
+  .emoji img {
+    width: 96px;  /* Adjust the size to match your design */
+    height: 96px;
+    display: block;
+    margin: 0 auto;  /* Center the image horizontally */
+    margin-bottom: 20px;  /* Same margin as before */
+}
 
     .card {
         background-color: var(--card-background);
@@ -243,7 +245,9 @@
     <div class="container">
         <h1 class="neon-text">Poop Profit Calculator</h1>
       <h2 class="small-heading">Track how much you make to poop at work!</h2>
-        <div class="emoji">💩</div>
+        <div class="emoji">
+    <img src="https://github.com/Johnkay22/Loginpooptracker/blob/22aeaaa705371ceab7ba356fcd6e608ef80f0f0f/POOPPROFITMASCOT.png?raw=true" alt="Poop Profit Mascot">
+</div>
         <div class="card glow">
             <div id="loginForm">
                 <input type="email" id="loginEmail" placeholder="Email">
