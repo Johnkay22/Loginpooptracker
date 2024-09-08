@@ -163,7 +163,17 @@
                      0 0 15px var(--primary-color),
                      0 0 20px var(--primary-color);
     }
-
+   .small-heading {
+        font-family: 'Roboto', sans-serif; /* Match the font family */
+        font-weight: 400; /* Match the font weight */
+        color: var(--primary-color); /* Match the color */
+        font-size: 80%; /* Make the font size half of h1 */
+        text-align: center; /* Match the text alignment */
+        text-transform: uppercase; /* Match the text transformation */
+        letter-spacing: 2px; /* Match the letter spacing */
+        margin-bottom: 10px; /* Match the margin bottom */
+    }
+  
     /* Try without account button */
     #tryWithoutAccount {
         background-color: var(--accent-color);
@@ -240,6 +250,7 @@
 <body>
     <div class="container">
         <h1 class="neon-text">Poop Profit Calculator</h1>
+      <h2 class="small-heading">Track how much you make to poop at work!</h2>
         <div class="emoji">💩</div>
         <div class="card glow">
             <div id="loginForm">
