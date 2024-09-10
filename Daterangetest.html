@@ -603,41 +603,45 @@
             return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }
 
-        function updateLog() {
-            logEntriesDiv.innerHTML = '';
-            currentUser.data.poopSessions.forEach((session, index) => {
-                const logEntry = document.createElement('div');
-                logEntry.className = 'log-entry';
-                logEntry.innerHTML = `
-                    <button class="delete-btn" data-index="${index}">×</button>
-                    <button class="share-btn" data-index="${index}">📤</button>
-                    <div class="date">${new Date(session.date).toLocaleString()}</div>
-                    <div class="details">
-                        Duration: ${formatTime(session.duration)}<br>
-                        Earnings: $${session.earnings.toFixed(2)}
-                    </div>
-                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
-                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
-                `;
-                logEntriesDiv.appendChild(logEntry);
-            });
+function updateLog() {
+    logEntriesDiv.innerHTML = '';
 
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const index = this.getAttribute('data-index');
-                    if (confirm('Are you sure you want to delete this log entry?')) {
-                        deleteLogEntry(index);
-                    }
-                });
-            });
+    currentUser.data.poopSessions.forEach((session, index) => {
+        const logEntry = document.createElement('div');
+        logEntry.className = 'log-entry';
+        logEntry.innerHTML = `
+            <button class="delete-btn" data-index="${index}">×</button>
+            <button class="share-btn" data-index="${index}">📤</button>
+            <div class="date">${new Date(session.date).toLocaleString()}</div>
+            <div class="details">
+                Duration: ${formatTime(session.duration)}<br>
+                Earnings: $${session.earnings.toFixed(2)}
+            </div>
+            ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+            ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+        `;
 
-            document.querySelectorAll('.share-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const index = this.getAttribute('data-index');
-                    showShareModal(index);
-                });
-            });
-        }
+        logEntriesDiv.appendChild(logEntry);
+    });
+
+    // Event listener for the delete buttons
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const index = this.getAttribute('data-index');
+            if (confirm('Are you sure you want to delete this log entry?')) {
+                deleteLogEntry(index);
+            }
+        });
+    });
+
+    // Event listener for the share buttons
+    document.querySelectorAll('.share-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const index = this.getAttribute('data-index');
+            showShareModal(index);  // Show the modal with the selected log entry
+        });
+    });
+}
 
         function deleteLogEntry(index) {
             currentUser.data.poopSessions.splice(index, 1);
