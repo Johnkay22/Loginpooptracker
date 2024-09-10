@@ -822,19 +822,21 @@
         }
 
         poopButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                poopRating = parseInt(this.getAttribute('data-rating'));
-                poopButtons.forEach((btn, index) => {
-                    if (index < poopRating) {
-                        btn.classList.add('active');
-                        btn.style.opacity = '1';
-                    } else {
-                        btn.classList.remove('active');
-                        btn.style.opacity = '0.5';
-                    }
-                });
-            });
+    button.addEventListener('click', function() {
+        poopRating = parseInt(this.getAttribute('data-rating'));
+
+        // Loop through all poop buttons and apply the active class to the selected rating and all lower ones
+        poopButtons.forEach((btn, index) => {
+            if (index < poopRating) {
+                btn.classList.add('active');
+                btn.style.opacity = '1';
+            } else {
+                btn.classList.remove('active');
+                btn.style.opacity = '0.5';
+            }
         });
+    });
+});
 
         submitRatingButton.addEventListener('click', submitRating);
 
