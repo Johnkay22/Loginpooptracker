@@ -751,11 +751,20 @@
         initializeUserData();
 
         function saveUserData() {
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            let accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
-            accounts[currentUser.email] = currentUser;
-            localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
-        }
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));  // Save current user to localStorage
+
+    const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
+    
+    // Update the account data for the current user
+    if (accounts[currentUser.email]) {
+        accounts[currentUser.email].data = currentUser.data;  // Only update the data field
+    }
+
+    console.log('Updated Accounts:', accounts);  // Log the updated accounts
+    console.log('Updated Current User:', currentUser);  // Log the current user
+
+    localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));  // Save updated accounts back to localStorage
+}
 
         let timer;
         let seconds = 0;
@@ -846,25 +855,30 @@
         }
 
         function logPoopSession(duration, earnings) {
-            const now = new Date();
-            const session = {
-                date: now,
-                duration: duration,
-                earnings: earnings,
-                rating: 0,
-                comment: ''
-            };
-            if (!currentUser.data.poopSessions) {
-                currentUser.data.poopSessions = [];
-            }
-            currentUser.data.poopSessions.push(session);
-            if (!currentUser.data.totalEarnings) {
-                currentUser.data.totalEarnings = 0;
-            }
-            currentUser.data.totalEarnings += earnings;
-            updateLog();
-            saveUserData();
-        }
+    const now = new Date();
+    const session = {
+        date: now,
+        duration: duration,
+        earnings: earnings,
+        rating: 0,
+        comment: ''
+    };
+
+    // Add the session to the currentUser's data
+    if (!currentUser.data.poopSessions) {
+        currentUser.data.poopSessions = [];
+    }
+    currentUser.data.poopSessions.push(session);
+    currentUser.data.totalEarnings += earnings;
+
+    console.log('Poop session added:', session);  // Log the added poop session
+    console.log('Current User after session:', currentUser);  // Log the current user
+
+    // Save the updated data
+    updateLog();
+    saveUserData();  // Save the user data to localStorage
+}
+
 
         function formatTime(totalSeconds) {
             const hours = Math.floor(totalSeconds / 3600);
