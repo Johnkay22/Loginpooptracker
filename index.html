@@ -432,5 +432,34 @@
             window.location.href = 'https://www.poopprofit.com/main.html';
         }
     </script>
+  <script>
+    window.onload = function() {
+        // Check if the URL contains #registerForm
+        if (window.location.hash === '#registerForm') {
+            // Hide the login form and show the register form
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('switchToLogin').style.display = 'inline';
+            document.getElementById('switchToRegister').style.display = 'none';
+        }
+
+        // Switch to the register form when the user clicks "Register"
+        document.getElementById('switchToRegister').addEventListener('click', function() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('switchToLogin').style.display = 'inline';
+            document.getElementById('switchToRegister').style.display = 'none';
+        });
+
+        // Switch back to the login form when the user clicks "Login"
+        document.getElementById('switchToLogin').addEventListener('click', function() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('switchToLogin').style.display = 'none';
+            document.getElementById('switchToRegister').style.display = 'inline';
+        });
+    };
+</script>
+
 </body>
 </html>
