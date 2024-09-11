@@ -751,19 +751,19 @@
         initializeUserData();
 
         function saveUserData() {
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));  // Save current user to localStorage
-
     const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
     
-    // Update the account data for the current user
+    // Ensure the password is not overwritten or removed
     if (accounts[currentUser.email]) {
-        accounts[currentUser.email].data = currentUser.data;  // Only update the data field
+        const savedPassword = accounts[currentUser.email].password;  // Preserve the password
+        accounts[currentUser.email].data = currentUser.data;  // Update only the data field
+        accounts[currentUser.email].password = savedPassword;  // Restore the password
     }
 
-    console.log('Updated Accounts:', accounts);  // Log the updated accounts
-    console.log('Updated Current User:', currentUser);  // Log the current user
+    console.log('Updated Accounts after session:', accounts);  // Log the updated accounts
 
-    localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));  // Save updated accounts back to localStorage
+    localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));  // Save current user data
 }
 
         let timer;
