@@ -283,7 +283,7 @@
     <!-- Modal -->
     <div id="confirmModal" class="modal">
         <div class="modal-content">
-            <p>Your Poop Logs will not be saved without an account.</p>
+            <p>Your Poop Logs will not be saved without an account and some features are not available.</p>
             <div class="modal-buttons">
                 <button class="modal-button confirm" id="confirmButton">Continue</button>
                 <button class="modal-button cancel" id="cancelButton">Cancel</button>
@@ -344,7 +344,7 @@
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 window.location.href = 'https://www.poopprofit.com/main.html';
             } else {
-                errorMessage.textContent = 'Invalid email or password.';
+                errorMessage.textContent = 'Invalid email or password. Case sensitive.';
             }
         }
 
