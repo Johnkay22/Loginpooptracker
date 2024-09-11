@@ -349,47 +349,58 @@
         }
 
         function register() {
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+    const email = document.getElementById('registerEmail').value.trim();  // Trim spaces
+    const password = document.getElementById('registerPassword').value.trim();  // Trim spaces
+    const confirmPassword = document.getElementById('confirmPassword').value.trim();  // Trim spaces
 
-            if (!email || !password || !confirmPassword) {
-                errorMessage.textContent = 'Please fill in all fields.';
-                return;
-            }
+    // Check if all fields are filled
+    if (!email || !password || !confirmPassword) {
+        errorMessage.textContent = 'Please fill in all fields.';
+        return;
+    }
 
-            if (password !== confirmPassword) {
-                errorMessage.textContent = 'Passwords do not match.';
-                return;
-            }
+    // Check if passwords match
+    if (password !== confirmPassword) {
+        errorMessage.textContent = 'Passwords do not match.';
+        return;
+    }
 
-            const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
+    // Get accounts from localStorage
+    const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
 
-            if (accounts[email]) {
-                errorMessage.textContent = 'An account with this email already exists.';
-                return;
-            }
+    // Check if the account already exists
+    if (accounts[email]) {
+        errorMessage.textContent = 'An account with this email already exists.';
+        return;
+    }
 
-            accounts[email] = {
-                password: password,
-                data: {
-                    poopSessions: [],
-                    totalEarnings: 0,
-                    salary: 0,
-                    hoursPerWeek: 0
-                }
-            };
-
-            localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
-
-            const currentUser = {
-                email: email,
-                data: accounts[email].data
-            };
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-            window.location.href = 'https://www.poopprofit.com/main.html';
+    // Create new account
+    accounts[email] = {
+        password: password,
+        data: {
+            poopSessions: [],
+            totalEarnings: 0,
+            salary: 0,
+            hoursPerWeek: 0
         }
+    };
+
+    console.log("Accounts after registration:", accounts);  // Log accounts after registration
+
+    // Save updated accounts to localStorage
+    localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
+
+    // Set currentUser in localStorage
+    const currentUser = {
+        email: email,
+        data: accounts[email].data
+    };
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+    // Redirect to the main page
+    window.location.href = 'https://www.poopprofit.com/main.html';
+}
+
 
         function showModal() {
             modal.style.display = 'block';
