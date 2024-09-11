@@ -376,6 +376,8 @@
             <div id="poopEmoji">💩</div>
             <div id="timer" class="neon-text">00:00:00</div>
             <button id="startStopButton">Start Pooping</button>
+          <button id="boredButton" style="display: none;">Bored?</button>
+
         </div>
         <div class="card glow">
             <h2>Poop Log</h2>
@@ -426,6 +428,21 @@
     <input type="date" id="startDate">
     <input type="date" id="endDate">
     <button id="applyDateRange">Apply</button>
+</div>
+<!-- Fact or Fiction Game Modal -->
+<div id="factGameModal" class="modal">
+    <div class="modal-content">
+        <span class="close">×</span>
+        <h2>Bathroom Fact or Fiction</h2>
+        <p id="factStatement">Ready to play?</p>
+        <button id="startGameButton">Play</button>
+        <button id="trueButton" style="display: none;">True</button>
+        <button id="falseButton" style="display: none;">False</button>
+        <div id="scoreCard" style="display: none;">
+            <p>Correct: <span id="correctScore">0</span></p>
+            <p>Incorrect: <span id="incorrectScore">0</span></p>
+        </div>
+    </div>
 </div>
 
             <canvas id="statsChart"></canvas>
@@ -879,5 +896,96 @@
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }
 </script>
+  <script>
+    let facts = [
+        { statement: "The average person spends about 3 years of their life on the toilet.", isTrue: true },
+        { statement: "Flushing the toilet with the lid up can spread germs up to 6 feet away.", isTrue: true },
+        { statement: "The first toilet paper was invented in China in the 6th century AD.", isTrue: true },
+        { statement: "The world's largest toilet is located in South Korea.", isTrue: false },
+        { statement: "Ancient Romans used vinegar as toilet paper.", isTrue: false },
+        { statement: "The flush toilet was invented by Thomas Crapper.", isTrue: false },
+        { statement: "In space, astronauts' urine is recycled into drinking water.", isTrue: true },
+        { statement: "The average person uses the bathroom 6-8 times per day.", isTrue: true },
+        { statement: "The most expensive toilet in the world costs over $10 million.", isTrue: false },
+        { statement: "Some people have a phobia of using public restrooms, called paruresis.", isTrue: true }
+    ];
+
+    let currentFactIndex = 0;
+    let score = { correct: 0, incorrect: 0 };
+
+    const boredButton = document.getElementById('boredButton');
+    const factGameModal = document.getElementById('factGameModal');
+    const factStatement = document.getElementById('factStatement');
+    const startGameButton = document.getElementById('startGameButton');
+    const trueButton = document.getElementById('trueButton');
+    const falseButton = document.getElementById('falseButton');
+    const scoreCard = document.getElementById('scoreCard');
+    const correctScore = document.getElementById('correctScore');
+    const incorrectScore = document.getElementById('incorrectScore');
+
+    // Show Bored Button when the timer starts
+    document.getElementById('startStopButton').addEventListener('click', function() {
+        if (!isRunning) {
+            boredButton.style.display = 'block';
+        } else {
+            boredButton.style.display = 'none';
+        }
+    });
+
+    // Bored button logic to open the fact game modal
+    boredButton.addEventListener('click', function() {
+        factGameModal.style.display = 'block';
+    });
+
+    // Start the fact game
+    startGameButton.addEventListener('click', startFactGame);
+    trueButton.addEventListener('click', () => checkAnswer(true));
+    falseButton.addEventListener('click', () => checkAnswer(false));
+
+    function startFactGame() {
+        currentFactIndex = 0;
+        score = { correct: 0, incorrect: 0 };
+        showNextFact();
+        startGameButton.style.display = 'none';
+        trueButton.style.display = 'inline-block';
+        falseButton.style.display = 'inline-block';
+        scoreCard.style.display = 'none';
+    }
+
+    function showNextFact() {
+        if (currentFactIndex < facts.length) {
+            factStatement.textContent = facts[currentFactIndex].statement;
+        } else {
+            showScore();
+        }
+    }
+
+    function checkAnswer(userAnswer) {
+        if (userAnswer === facts[currentFactIndex].isTrue) {
+            score.correct++;
+        } else {
+            score.incorrect++;
+        }
+        currentFactIndex++;
+        showNextFact();
+    }
+
+    function showScore() {
+        factStatement.textContent = "Game Over!";
+        trueButton.style.display = 'none';
+        falseButton.style.display = 'none';
+        correctScore.textContent = score.correct;
+        incorrectScore.textContent = score.incorrect;
+        scoreCard.style.display = 'block';
+        startGameButton.style.display = 'block';
+        startGameButton.textContent = 'Play Again';
+    }
+
+    // Close modal functionality (close button in the modal)
+    document.querySelector('.close').addEventListener('click', function() {
+        factGameModal.style.display = 'none';
+    });
+</script>
+
 </body>
 </html>
