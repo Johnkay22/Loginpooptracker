@@ -896,26 +896,55 @@
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }
 </script>
-  <script>
+<script>
+    // Variables for timer and game
     let timer, seconds = 0, isRunning = false;
 
-    // Start/Stop Timer and Show Bored Button
+    // Fact or Fiction game facts
+    let facts = [
+        { statement: "The average person spends about 3 years of their life on the toilet.", isTrue: true },
+        { statement: "Flushing the toilet with the lid up can spread germs up to 6 feet away.", isTrue: true },
+        { statement: "The first toilet paper was invented in China in the 6th century AD.", isTrue: true },
+        { statement: "The world's largest toilet is located in South Korea.", isTrue: false },
+        { statement: "Ancient Romans used vinegar as toilet paper.", isTrue: false },
+        { statement: "The flush toilet was invented by Thomas Crapper.", isTrue: false },
+        { statement: "In space, astronauts' urine is recycled into drinking water.", isTrue: true },
+        { statement: "The average person uses the bathroom 6-8 times per day.", isTrue: true },
+        { statement: "The most expensive toilet in the world costs over $10 million.", isTrue: false },
+        { statement: "Some people have a phobia of using public restrooms, called paruresis.", isTrue: true }
+    ];
+
+    let currentFactIndex = 0;
+    let score = { correct: 0, incorrect: 0 };
+
+    // Bored button
+    const boredButton = document.getElementById('boredButton');
+    const factGameModal = document.getElementById('factGameModal');
+    const factStatement = document.getElementById('factStatement');
+    const startGameButton = document.getElementById('startGameButton');
+    const trueButton = document.getElementById('trueButton');
+    const falseButton = document.getElementById('falseButton');
+    const scoreCard = document.getElementById('scoreCard');
+    const correctScore = document.getElementById('correctScore');
+    const incorrectScore = document.getElementById('incorrectScore');
+
+    // Event listener for Start/Stop Pooping button
     document.getElementById('startStopButton').addEventListener('click', function() {
         if (!isRunning) {
+            // Start the timer and show the Bored button
             timer = setInterval(() => { seconds++; updateTimerDisplay(); }, 1000);
             this.textContent = "Stop Pooping";
-            // Show the Bored button as soon as "Start Pooping" is pressed
-            document.getElementById('boredButton').style.display = 'block';
+            boredButton.style.display = 'block'; // Show the "Bored?" button when the timer starts
         } else {
+            // Stop the timer and hide the Bored button
             clearInterval(timer);
             this.textContent = "Start Pooping";
-            // Hide the Bored button when the timer is stopped
-            document.getElementById('boredButton').style.display = 'none';
+            boredButton.style.display = 'none'; // Hide the "Bored?" button when the timer stops
         }
         isRunning = !isRunning;
     });
 
-    // Timer Display Function
+    // Update the timer display
     function updateTimerDisplay() {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
@@ -923,59 +952,42 @@
         document.getElementById('timer').textContent = `${hours}:${minutes}:${secs}`;
     }
 
-    // Bored Button Logic: Show Fact Game
-    document.getElementById('boredButton').addEventListener('click', function() {
-        document.getElementById('factGameModal').style.display = 'block';
+    // Event listener for the Bored button (to start the Fact game)
+    boredButton.addEventListener('click', function() {
+        factGameModal.style.display = 'block'; // Show the Fact or Fiction game modal
     });
 
-    // Fact Game Logic
-    let facts = [
-    { statement: "The average person spends about 3 years of their life on the toilet.", isTrue: true },
-    { statement: "Flushing the toilet with the lid up can spread germs up to 6 feet away.", isTrue: true },
-    { statement: "The first toilet paper was invented in China in the 6th century AD.", isTrue: true },
-    { statement: "The world's largest toilet is located in South Korea.", isTrue: false },
-    { statement: "Ancient Romans used vinegar as toilet paper.", isTrue: false },
-    { statement: "The flush toilet was invented by Thomas Crapper.", isTrue: false },
-    { statement: "In space, astronauts' urine is recycled into drinking water.", isTrue: true },
-    { statement: "The average person uses the bathroom 6-8 times per day.", isTrue: true },
-    { statement: "The most expensive toilet in the world costs over $10 million.", isTrue: false },
-    { statement: "Some people have a phobia of using public restrooms, called paruresis.", isTrue: true }
-];
+    // Event listener for closing the game modal
+    document.querySelector('.close').addEventListener('click', function() {
+        factGameModal.style.display = 'none'; // Close the Fact or Fiction game modal
+    });
 
-
-    let currentFactIndex = 0;
-    let score = { correct: 0, incorrect: 0 };
-
-    const startGameButton = document.getElementById('startGameButton');
-    const trueButton = document.getElementById('trueButton');
-    const falseButton = document.getElementById('falseButton');
-    const factStatement = document.getElementById('factStatement');
-    const correctScore = document.getElementById('correctScore');
-    const incorrectScore = document.getElementById('incorrectScore');
-    const scoreCard = document.getElementById('scoreCard');
-
+    // Start the Fact or Fiction game
     startGameButton.addEventListener('click', startFactGame);
     trueButton.addEventListener('click', () => checkAnswer(true));
     falseButton.addEventListener('click', () => checkAnswer(false));
 
+    // Initialize and start the fact game
     function startFactGame() {
         currentFactIndex = 0;
         score = { correct: 0, incorrect: 0 };
         showNextFact();
-        startGameButton.style.display = 'none';
-        trueButton.style.display = 'inline-block';
+        startGameButton.style.display = 'none'; // Hide start game button
+        trueButton.style.display = 'inline-block'; // Show true/false buttons
         falseButton.style.display = 'inline-block';
-        scoreCard.style.display = 'none';
+        scoreCard.style.display = 'none'; // Hide score card at start
     }
 
+    // Show the next fact in the game
     function showNextFact() {
         if (currentFactIndex < facts.length) {
-            factStatement.textContent = facts[currentFactIndex].statement;
+            factStatement.textContent = facts[currentFactIndex].statement; // Show the fact
         } else {
-            showScore();
+            showScore(); // Show score when all facts are answered
         }
     }
 
+    // Check the user's answer
     function checkAnswer(userAnswer) {
         if (userAnswer === facts[currentFactIndex].isTrue) {
             score.correct++;
@@ -983,25 +995,20 @@
             score.incorrect++;
         }
         currentFactIndex++;
-        showNextFact();
+        showNextFact(); // Move to the next fact
     }
 
+    // Show the user's score after the game ends
     function showScore() {
         factStatement.textContent = "Game Over!";
-        trueButton.style.display = 'none';
+        trueButton.style.display = 'none'; // Hide true/false buttons
         falseButton.style.display = 'none';
-        correctScore.textContent = score.correct;
-        incorrectScore.textContent = score.incorrect;
-        scoreCard.style.display = 'block';
-        startGameButton.style.display = 'block';
+        correctScore.textContent = score.correct; // Update correct score
+        incorrectScore.textContent = score.incorrect; // Update incorrect score
+        scoreCard.style.display = 'block'; // Show the score card
+        startGameButton.style.display = 'block'; // Show the "Play Again" button
         startGameButton.textContent = 'Play Again';
     }
-
-    // Close modal functionality (close button in the modal)
-    document.querySelector('.close').addEventListener('click', function() {
-        document.getElementById('factGameModal').style.display = 'none';
-    });
 </script>
-
 </body>
 </html>
