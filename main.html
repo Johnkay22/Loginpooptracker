@@ -1056,8 +1056,7 @@
                 }
             });
         }
-
-        applyDateRangeBtn.addEventListener('click', () => {
+applyDateRangeBtn.addEventListener('click', () => {
     const startDate = new Date(startDateInput.value);
     const endDate = new Date(endDateInput.value);
     
@@ -1071,7 +1070,6 @@
 
     updateStats(startDate, endDate);
 });
-        });
 
         initializeDateInputs();
 
