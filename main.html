@@ -616,6 +616,7 @@
         <div class="modal-content">
             <span class="close">×</span>
             <h2>Your Poop Statistics</h2>
+          <p style="text-align: center; margin-bottom: 10px;">Sort statistics by a custom date range:</p>
             <div id="date-range">
                 <input type="date" id="startDate">
                 <input type="date" id="endDate">
@@ -1057,15 +1058,19 @@
         }
 
         applyDateRangeBtn.addEventListener('click', () => {
-            const startDate = new Date(startDateInput.value);
-            const endDate = new Date(endDateInput.value);
-            
-            if (startDate > endDate) {
-                alert('Start date must be before or equal to the end date.');
-                return;
-            }
-            
-            updateStats(startDate, endDate);
+    const startDate = new Date(startDateInput.value);
+    const endDate = new Date(endDateInput.value);
+    
+    if (startDate > endDate) {
+        alert('Start date must be before or equal to the end date.');
+        return;
+    }
+    
+    // Set the time to the end of the day for the end date to include the full day
+    endDate.setHours(23, 59, 59, 999);
+
+    updateStats(startDate, endDate);
+});
         });
 
         initializeDateInputs();
