@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-		<!--	created with www.mysitemapgenerator.com	-->
-		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url>
-	<loc>https://www.poopprofit.com/</loc>
-	<lastmod>2024-09-08T12:50:11+01:00</lastmod>
-	<priority>1.0</priority>
-</url>
-<url>
-	<loc>https://www.poopprofit.com/main.html</loc>
-	<lastmod>2024-09-08T12:50:11+01:00</lastmod>
-	<priority>1.0</priority>
-</url>
-<url>
-	<loc>https://www.poopprofit.com/guest.html</loc>
-	<lastmod>2024-09-08T12:50:11+01:00</lastmod>
-	<priority>1.0</priority>
-</url>
-<url>
-	<loc>https://www.poopprofit.com/index.html</loc>
-	<lastmod>2024-09-08T12:50:12+01:00</lastmod>
-	<priority>1.0</priority>
-</url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.poopprofit.com/</loc>
+    <lastmod>2024-10-02</lastmod>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.poopprofit.com/signup.html</loc>
+    <lastmod>2024-10-02</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.poopprofit.com/main.html</loc>
+    <lastmod>2024-10-02</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.poopprofit.com/guest.html</loc>
+    <lastmod>2024-10-02</lastmod>
+    <priority>0.7</priority>
+  </url>
 </urlset>
