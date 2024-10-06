@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
+    
 <head>
     <!-- Meta Tags -->
     <meta charset="UTF-8">
@@ -26,21 +26,26 @@
 
     <!-- Firebase Initialization -->
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
-            authDomain: "poopprofitproject.firebaseapp.com",
-            projectId: "poopprofitproject",
-            storageBucket: "poopprofitproject.appspot.com",
-            messagingSenderId: "818996284466",
-            appId: "1:818996284466:web:de6d6bab3987cca417c02b",
-            measurementId: "G-JBXJ1T6LYM"
-        };
+        document.addEventListener("DOMContentLoaded", function () {
+            // Firebase configuration
+            const firebaseConfig = {
+                 apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
+                authDomain: "poopprofitproject.firebaseapp.com",
+                projectId: "poopprofitproject",
+                storageBucket: "poopprofitproject.appspot.com",
+                messagingSenderId: "818996284466",
+                appId: "1:818996284466:web:de6d6bab3987cca417c02b",
+                measurementId: "G-JBXJ1T6LYM"
+            };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        window.auth = firebase.auth();
-        window.db = firebase.firestore();
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            window.auth = firebase.auth();
+            window.db = firebase.firestore();
+
+            // Add event listeners after Firebase is successfully initialized
+            initAuthListeners();
+        });
     </script>
 
     <!-- Original CSS Styling -->
@@ -201,6 +206,7 @@
 </head>
 
 <body>
+    <!-- Your HTML Content here -->
     <div class="container">
         <h1 class="neon-text">Poop Profit Calculator</h1>
         <h2 class="small-heading">Track how much you make to poop at work!</h2>
@@ -230,115 +236,7 @@
 
     <!-- JavaScript for Registration, Login, and Google Sign-In -->
     <script>
-        window.onload = function () {
-            // Event Listeners for Registration, Login, and Google Sign-In
-            document.getElementById('loginButton').addEventListener('click', login);
-            document.getElementById('registerButton').addEventListener('click', register);
-            document.getElementById('googleSignInButton').addEventListener('click', googleSignIn);
-
-            const switchToRegister = document.getElementById('switchToRegister');
-            const switchToLogin = document.getElementById('switchToLogin');
-
-            switchToRegister.addEventListener('click', (e) => {
-                e.preventDefault();
-                showRegisterForm();
-            });
-
-            switchToLogin.addEventListener('click', (e) => {
-                e.preventDefault();
-                showLoginForm();
-            });
-
-            function showRegisterForm() {
-                document.getElementById('loginForm').style.display = 'none';
-                document.getElementById('registerForm').style.display = 'block';
-                switchToRegister.style.display = 'none';
-                switchToLogin.style.display = 'block';
-                document.getElementById('errorMessage').textContent = '';
-            }
-
-            function showLoginForm() {
-                document.getElementById('registerForm').style.display = 'none';
-                document.getElementById('loginForm').style.display = 'block';
-                switchToLogin.style.display = 'none';
-                switchToRegister.style.display = 'block';
-                document.getElementById('errorMessage').textContent = '';
-            }
-        };
-
-        async function register() {
-            const email = document.getElementById('registerEmail').value.trim();
-            const password = document.getElementById('registerPassword').value.trim();
-            const confirmPassword = document.getElementById('confirmPassword').value.trim();
-            const errorMessage = document.getElementById('errorMessage');
-
-            if (!email || !password || password !== confirmPassword) {
-                errorMessage.textContent = 'Please fill in all fields and ensure passwords match.';
-                return;
-            }
-
-            try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-
-                // Save initial user data to Firestore
-                await db.collection('users').doc(user.uid).set({
-                    email: user.email,
-                    poopSessions: [],
-                    totalEarnings: 0,
-                    salary: 0,
-                    hoursPerWeek: 0
-                });
-
-                // Redirect to main page after successful registration
-                window.location.href = 'https://www.poopprofit.com/main.html';
-            } catch (error) {
-                errorMessage.textContent = error.message;
-            }
-        }
-
-        async function login() {
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-            const errorMessage = document.getElementById('errorMessage');
-
-            if (!email || !password) {
-                errorMessage.textContent = 'Please enter both email and password.';
-                return;
-            }
-
-            try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                window.location.href = 'https://www.poopprofit.com/main.html';
-            } catch (error) {
-                errorMessage.textContent = error.message;
-            }
-        }
-
-        async function googleSignIn() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            const errorMessage = document.getElementById('errorMessage');
-
-            try {
-                const result = await auth.signInWithPopup(provider);
-                const user = result.user;
-                const userDoc = await db.collection('users').doc(user.uid).get();
-
-                if (!userDoc.exists) {
-                    await db.collection('users').doc(user.uid).set({
-                        email: user.email,
-                        poopSessions: [],
-                        totalEarnings: 0,
-                        salary: 0,
-                        hoursPerWeek: 0
-                    });
-                }
-
-                window.location.href = 'https://www.poopprofit.com/main.html';
-            } catch (error) {
-                errorMessage.textContent = 'Google Sign-In failed. Please try again.';
-            }
-        }
+        // Your JavaScript code here
     </script>
 </body>
 
