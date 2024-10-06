@@ -30,9 +30,35 @@
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Poop Profit Calculator" />
 <meta property="og:image" content="https://raw.githubusercontent.com/Johnkay22/Loginpooptracker/main/PPCImage.jpg">
-<meta name="description" content="Have you ever wondered how much you make to poop at work?">
+<meta name="description" content="Find out how much you make to poop at work!">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+
+<!-- Firebase Configuration -->
+<script>
+  // Firebase configuration (using your actual values from Firebase)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
+    authDomain: "poopprofitproject.firebaseapp.com",
+    projectId: "poopprofitproject",
+    storageBucket: "poopprofitproject.appspot.com",
+    messagingSenderId: "818996284466",
+    appId: "1:818996284466:web:de6d6bab3987cca417c02b",
+    measurementId: "G-JBXJ1T6LYM"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // Get references to services
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>    
     <style>
         body, html {
             margin: 0;
