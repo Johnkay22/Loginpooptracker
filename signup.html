@@ -506,22 +506,23 @@
 // Handle Google Sign-In Redirect Result
 window.onload = async function () {
     try {
-        // Get the result of the redirect sign-in
         const result = await window.auth.getRedirectResult();
-        if (result.user) {
-            console.log("Google Sign-In successful", result.user);
+        
+        if (result && result.user) {
+            console.log("Google Sign-In successful:", result.user);
             // Redirect to the main page after successful sign-in
             window.location.href = 'https://www.poopprofit.com/main.html';
         } else {
             console.log("No user returned from Google Sign-In redirect");
+            console.log("Result details:", result);
         }
     } catch (error) {
         console.error("Error handling Google Sign-In redirect result:", error);
-        // Optional: Display an error message to the user
         const errorMessage = document.getElementById('errorMessage');
         errorMessage.textContent = 'Google Sign-In failed during redirect. Please try again.';
     }
 };
+
 
     </script>
 </body>
