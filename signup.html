@@ -2,43 +2,10 @@
 <html lang="en">
 
 <head>
-    <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up or Login - Poop Profit | Start Tracking Your Earnings Today</title>
-    <meta name="description" content="Sign up or log in to Poop Profit and start tracking how much you earn while you poop at work! It’s easy, fun, and free!" />
-    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop on the job, poop earnings, sign up to poop profit, create account, login poop profit, register"/>
-    <link rel="icon" href="https://www.poopprofit.com/favicon.png" type="image/png">
+    <title>Sign Up or Login - Poop Profit</title>
 
-    <!-- Google Tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-        gtag('config', 'G-R1E17DCKNC');
-    </script>
-
-    <!-- Base URL -->
-    <base href="https://www.poopprofit.com/signup.html">
-
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Poop Profit Calculator!" />
-    <meta name="twitter:description" content="Have you ever wondered how much you make to poop at work?" />
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/Johnkay22/Loginpooptracker/main/PPCImage.jpg" />
-    <meta name="twitter:site" content="@YourTwitterHandle" />
-
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Poop Profit Calculator!" />
-    <meta property="og:description" content="Have you ever wondered how much you make to poop at work?" />
-    <meta property="og:url" content="https://www.poopprofit.com" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Poop Profit Calculator" />
-    <meta property="og:image" content="https://raw.githubusercontent.com/Johnkay22/Loginpooptracker/main/PPCImage.jpg">
-    
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
@@ -59,13 +26,10 @@
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-
-        // Make `auth` and `db` globally accessible
         window.auth = firebase.auth();
         window.db = firebase.firestore();
     </script>
 
-    <!-- CSS Styling (Original Style) -->
     <style>
     :root {
         --primary-color: #3498db;
@@ -290,23 +254,13 @@
     }
 </style>
 
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <div class="container">
-        <h1 class="neon-text">Poop Profit Calculator</h1>
-        <h2 class="small-heading">Track how much you make to poop at work!</h2>
-        <div class="emoji">
-            <img src="https://github.com/Johnkay22/Loginpooptracker/blob/main/POOPPROFITMASCOT1.png?raw=true" alt="Poop Image">
-        </div>
+        <h1>Poop Profit Calculator</h1>
         <div class="card glow">
-            <div id="loginForm">
-                <input type="email" id="loginEmail" placeholder="Email">
-                <input type="password" id="loginPassword" placeholder="Password">
-                <button id="loginButton">Login</button>
-            </div>
-            <div id="registerForm" style="display: none;">
+            <div id="registerForm">
                 <input type="email" id="registerEmail" placeholder="Email">
                 <input type="password" id="registerPassword" placeholder="Password">
                 <input type="password" id="confirmPassword" placeholder="Confirm Password">
@@ -314,90 +268,29 @@
             </div>
             <div id="errorMessage"></div>
         </div>
-        <div class="switch-form">
-            <span id="switchToRegister">Don't have an account? <a href="#">Register</a></span>
-            <span id="switchToLogin" style="display: none;">Already have an account? <a href="#">Login</a></span>
-        </div>
-        <button id="googleSignInButton" class="button">Sign in with Google</button>
     </div>
 
-    <!-- JavaScript Code for Registration, Login, and Google Sign-In -->
+    <!-- JavaScript for Authentication -->
     <script>
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-        const switchToRegister = document.getElementById('switchToRegister');
-        const switchToLogin = document.getElementById('switchToLogin');
-        const loginButton = document.getElementById('loginButton');
-        const registerButton = document.getElementById('registerButton');
-        const errorMessage = document.getElementById('errorMessage');
+        window.onload = function() {
+            document.getElementById('registerButton').addEventListener('click', register);
 
-        function showRegisterForm() {
-            loginForm.style.display = 'none';
-            registerForm.style.display = 'block';
-            switchToRegister.style.display = 'none';
-            switchToLogin.style.display = 'block';
-            errorMessage.textContent = '';
-        }
+            async function register() {
+                const email = document.getElementById('registerEmail').value.trim();
+                const password = document.getElementById('registerPassword').value.trim();
+                const confirmPassword = document.getElementById('confirmPassword').value.trim();
+                const errorMessage = document.getElementById('errorMessage');
 
-        function showLoginForm() {
-            registerForm.style.display = 'none';
-            loginForm.style.display = 'block';
-            switchToLogin.style.display = 'none';
-            switchToRegister.style.display = 'block';
-            errorMessage.textContent = '';
-        }
+                if (!email || !password || password !== confirmPassword) {
+                    errorMessage.textContent = 'Please fill in all fields and ensure passwords match.';
+                    return;
+                }
 
-        async function login() {
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
+                try {
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
 
-            if (!email || !password) {
-                errorMessage.textContent = 'Please enter both email and password.';
-                return;
-            }
-
-            try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                window.location.href = 'https://www.poopprofit.com/main.html';
-            } catch (error) {
-                errorMessage.textContent = error.message;
-            }
-        }
-
-        async function register() {
-            const email = document.getElementById('registerEmail').value.trim();
-            const password = document.getElementById('registerPassword').value.trim();
-            const confirmPassword = document.getElementById('confirmPassword').value.trim();
-
-            if (!email || !password || password !== confirmPassword) {
-                errorMessage.textContent = 'Please fill in all fields and ensure passwords match.';
-                return;
-            }
-
-            try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                await db.collection('users').doc(userCredential.user.uid).set({
-                    email: userCredential.user.email,
-                    poopSessions: [],
-                    totalEarnings: 0,
-                    salary: 0,
-                    hoursPerWeek: 0
-                });
-                window.location.href = 'https://www.poopprofit.com/main.html';
-            } catch (error) {
-                errorMessage.textContent = error.message;
-            }
-        }
-
-        async function googleSignIn() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-
-            try {
-                const result = await auth.signInWithPopup(provider);
-                const user = result.user;
-                const userDoc = await db.collection('users').doc(user.uid).get();
-
-                if (!userDoc.exists) {
+                    // Save initial user data to Firestore
                     await db.collection('users').doc(user.uid).set({
                         email: user.email,
                         poopSessions: [],
@@ -405,29 +298,15 @@
                         salary: 0,
                         hoursPerWeek: 0
                     });
+
+                    // Redirect to main page after successful registration
+                    window.location.href = 'https://www.poopprofit.com/main.html';
+                } catch (error) {
+                    errorMessage.textContent = error.message;
                 }
-
-                window.location.href = 'https://www.poopprofit.com/main.html';
-            } catch (error) {
-                console.error(error);
-                errorMessage.textContent = 'Google Sign-In failed. Please try again.';
             }
-        }
-
-        switchToRegister.addEventListener('click', (e) => {
-            e.preventDefault();
-            showRegisterForm();
-        });
-
-        switchToLogin.addEventListener('click', (e) => {
-            e.preventDefault();
-            showLoginForm();
-        });
-
-        loginButton.addEventListener('click', login);
-        registerButton.addEventListener('click', register);
-        document.getElementById('googleSignInButton').addEventListener('click', googleSignIn);
+        };
     </script>
-
 </body>
+
 </html>
