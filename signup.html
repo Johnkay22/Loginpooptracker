@@ -7,9 +7,9 @@
 
   gtag('config', 'G-R1E17DCKNC');
 </script><base href="https://www.poopprofit.com/signup.html">
-<title>Poop Profit - Login/Sign-Up!</title>
-<meta name="description" content="Have you ever wondered how much you make to poop at work?" />
-<meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop on the job, poop earnings"/>
+<title>Sign Up or Login - Poop Profit | Start Tracking Your Earnings Today</title>
+<meta name="description" content="Sign up or log in to Poop Profit and start tracking how much you earn while you poop at work! It’s easy, fun, and free!" />
+<meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop on the job, poop earnings, sign up to poop profit, create account, login poop profit, register"/>
 <link rel="icon" href="https://www.poopprofit.com/favicon.png" type="image/png">
   <!-- Twitter Card Meta Tags -->
 <meta name="twitter:card" content="summary_large_image" />
@@ -27,6 +27,32 @@
 <meta name="description" content="Have you ever wondered how much you make to poop at work?">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="canonical" href="https://www.poopprofit.com/signup.html">
+   <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+
+    <!-- Firebase Configuration (Add This Snippet) -->
+    <script>
+      // Firebase configuration (use the same as from `index.html`)
+      const firebaseConfig = {
+        apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
+        authDomain: "poopprofitproject.firebaseapp.com",
+        projectId: "poopprofitproject",
+        storageBucket: "poopprofitproject.appspot.com",
+        messagingSenderId: "818996284466",
+        appId: "1:818996284466:web:de6d6bab3987cca417c02b",
+        measurementId: "G-JBXJ1T6LYM"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Get references to services
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+    </script>  
 <style>
     :root {
         --primary-color: #3498db;
