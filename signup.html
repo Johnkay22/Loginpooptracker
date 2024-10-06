@@ -30,34 +30,34 @@
 
     <!-- Firebase Initialization -->
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Firebase configuration
-        const firebaseConfig = {
- apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
+document.addEventListener("DOMContentLoaded", function () {
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
   authDomain: "poopprofitproject.firebaseapp.com",
   projectId: "poopprofitproject",
   storageBucket: "poopprofitproject.appspot.com",
   messagingSenderId: "818996284466",
   appId: "1:818996284466:web:de6d6bab3987cca417c02b",
   measurementId: "G-JBXJ1T6LYM"
-        };
+    };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        console.log("Firebase Initialized:", firebase.apps.length > 0);
+    // Initialize Firebase and assign to the global window object
+    window.firebase = firebase.initializeApp(firebaseConfig);
+    console.log("Firebase Initialized:", window.firebase.apps.length > 0);
 
-        // After Firebase initialization, check if auth is available
-        if (firebase.apps.length > 0) {
-            window.auth = firebase.auth();
-            window.db = firebase.firestore();
-            console.log("Firebase Auth and Firestore initialized.");
+    if (window.firebase.apps.length > 0) {
+        // Assign Firebase services globally after initializing Firebase
+        window.auth = firebase.auth();
+        window.db = firebase.firestore();
+        console.log("Firebase Auth and Firestore initialized.");
 
-            // Call initAuthListeners only after Firebase has been properly set up
-            initAuthListeners();
-        } else {
-            console.error("Firebase failed to initialize properly.");
-        }
-    });
+        // Corrected function call: Add event listeners
+        addEventListeners();
+    } else {
+        console.error("Firebase failed to initialize properly.");
+    }
+});
 </script>
 
     <!-- Original CSS Styling -->
