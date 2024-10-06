@@ -112,29 +112,19 @@
 
     // Google Sign-In function
     async function googleSignIn() {
-        const provider = new window.firebase.auth.GoogleAuthProvider();
-        const errorMessage = document.getElementById('errorMessage');
+    console.log("Google Sign-In function called"); // Log to confirm function call
+    const provider = new window.firebase.auth.GoogleAuthProvider();
+    const errorMessage = document.getElementById('errorMessage');
 
-        try {
-            const result = await window.auth.signInWithPopup(provider);
-            const user = result.user;
-            const userDoc = await window.db.collection('users').doc(user.uid).get();
-
-            if (!userDoc.exists) {
-                await window.db.collection('users').doc(user.uid).set({
-                    email: user.email,
-                    poopSessions: [],
-                    totalEarnings: 0,
-                    salary: 0,
-                    hoursPerWeek: 0
-                });
-            }
-
-            window.location.href = 'https://www.poopprofit.com/main.html';
-        } catch (error) {
-            errorMessage.textContent = 'Google Sign-In failed. Please try again.';
-        }
+    try {
+        // Use signInWithRedirect instead of signInWithPopup
+        await window.auth.signInWithRedirect(provider);
+        console.log("Redirecting to Google Sign-In..."); // Log to confirm the redirect has started
+    } catch (error) {
+        errorMessage.textContent = 'Google Sign-In failed. Please try again.';
+        console.error("Error during Google Sign-In:", error); // Log the error for debugging
     }
+}
 
     // Function to add all event listeners after Firebase initialization
     function addEventListeners() {
