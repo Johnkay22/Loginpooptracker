@@ -26,24 +26,35 @@
 
     <!-- Firebase Initialization -->
     <script>
-        // Initialize Firebase after the page has loaded
-        document.addEventListener("DOMContentLoaded", function() {
-            const firebaseConfig = {
-  apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
+    document.addEventListener("DOMContentLoaded", function () {
+        // Firebase configuration
+        const firebaseConfig = {
+ apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
   authDomain: "poopprofitproject.firebaseapp.com",
   projectId: "poopprofitproject",
   storageBucket: "poopprofitproject.appspot.com",
   messagingSenderId: "818996284466",
   appId: "1:818996284466:web:de6d6bab3987cca417c02b",
   measurementId: "G-JBXJ1T6LYM"
-};
+        };
 
-            // Initialize Firebase
-            firebase.initializeApp(firebaseConfig);
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        console.log("Firebase Initialized:", firebase.apps.length > 0);
+
+        // After Firebase initialization, check if auth is available
+        if (firebase.apps.length > 0) {
             window.auth = firebase.auth();
             window.db = firebase.firestore();
-        });
-    </script>
+            console.log("Firebase Auth and Firestore initialized.");
+
+            // Call initAuthListeners only after Firebase has been properly set up
+            initAuthListeners();
+        } else {
+            console.error("Firebase failed to initialize properly.");
+        }
+    });
+</script>
 
     <!-- Original CSS Styling -->
     <style>
@@ -413,6 +424,23 @@
                 document.getElementById('errorMessage').textContent = '';
             });
         });
+        function addEventListeners() {
+    console.log("Adding event listeners...");
+
+    const registerButton = document.getElementById('registerButton');
+    const loginButton = document.getElementById('loginButton');
+    const googleSignInButton = document.getElementById('googleSignInButton');
+
+    if (registerButton && loginButton && googleSignInButton) {
+        registerButton.addEventListener('click', register);
+        loginButton.addEventListener('click', login);
+        googleSignInButton.addEventListener('click', googleSignIn);
+        console.log("Event listeners added successfully.");
+    } else {
+        console.error("Buttons not found for adding event listeners.");
+    }
+}
+
     </script>
 </body>
 
