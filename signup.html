@@ -303,7 +303,7 @@
             <span id="switchToRegister">Don't have an account? <a href="#">Register</a></span>
             <span id="switchToLogin" style="display: none;">Already have an account? <a href="#">Login</a></span>
         </div>
-        <button id="tryWithoutAccount">Try Without an Account</button>
+<button id="googleSignInButton" class="button">Sign in with Google</button>
     </div>
 
     <!-- Modal -->
@@ -346,85 +346,63 @@
             errorMessage.textContent = '';
         }
 
-        function login() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+async function login() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    const errorMessage = document.getElementById('errorMessage');
 
-            if (!email || !password) {
-                errorMessage.textContent = 'Please enter both email and password.';
-                return;
-            }
-
-            const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
-            
-            if (accounts[email] && accounts[email].password === password) {
-                const currentUser = {
-                    email: email,
-                    data: accounts[email].data || {
-                        poopSessions: [],
-                        totalEarnings: 0,
-                        salary: 0,
-                        hoursPerWeek: 0
-                    }
-                };
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                window.location.href = 'https://www.poopprofit.com/main.html';
-            } else {
-                errorMessage.textContent = 'Invalid email or password. Case sensitive.';
-            }
-        }
-
-        function register() {
-    const email = document.getElementById('registerEmail').value.trim();  // Trim spaces
-    const password = document.getElementById('registerPassword').value.trim();  // Trim spaces
-    const confirmPassword = document.getElementById('confirmPassword').value.trim();  // Trim spaces
-
-    // Check if all fields are filled
-    if (!email || !password || !confirmPassword) {
-        errorMessage.textContent = 'Please fill in all fields.';
+    // Validate inputs
+    if (!email || !password) {
+        errorMessage.textContent = 'Please enter both email and password.';
         return;
     }
 
-    // Check if passwords match
-    if (password !== confirmPassword) {
-        errorMessage.textContent = 'Passwords do not match.';
+    try {
+        // Sign in user using Firebase Authentication
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // Redirect to the main page upon successful login
+        window.location.href = 'https://www.poopprofit.com/main.html';
+    } catch (error) {
+        // Handle errors (e.g., incorrect credentials)
+        errorMessage.textContent = error.message;
+    }
+}
+
+
+async function register() {
+    const email = document.getElementById('registerEmail').value.trim();
+    const password = document.getElementById('registerPassword').value.trim();
+    const confirmPassword = document.getElementById('confirmPassword').value.trim();
+    const errorMessage = document.getElementById('errorMessage');
+
+    // Validate inputs
+    if (!email || !password || password !== confirmPassword) {
+        errorMessage.textContent = 'Please fill in all fields and ensure passwords match.';
         return;
     }
 
-    // Get accounts from localStorage
-    const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
+    try {
+        // Create user with email and password in Firebase Authentication
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
 
-    // Check if the account already exists
-    if (accounts[email]) {
-        errorMessage.textContent = 'An account with this email already exists.';
-        return;
-    }
-
-    // Create new account
-    accounts[email] = {
-        password: password,
-        data: {
+        // Save user data to Firestore
+        await db.collection('users').doc(user.uid).set({
+            email: user.email,
             poopSessions: [],
             totalEarnings: 0,
             salary: 0,
             hoursPerWeek: 0
-        }
-    };
+        });
 
-    console.log("Accounts after registration:", accounts);  // Log accounts after registration
-
-    // Save updated accounts to localStorage
-    localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
-
-    // Set currentUser in localStorage
-    const currentUser = {
-        email: email,
-        data: accounts[email].data
-    };
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-    // Redirect to the main page
-    window.location.href = 'https://www.poopprofit.com/main.html';
+        // Redirect to the main page upon success
+        window.location.href = 'https://www.poopprofit.com/main.html';
+    } catch (error) {
+        // Handle errors (e.g., email already in use)
+        errorMessage.textContent = error.message;
+    }
 }
 
 
@@ -497,6 +475,40 @@
         });
     };
 </script>
+<script>
+    // Google Sign-In Function
+    async function googleSignIn() {
+        const provider = new firebase.auth.GoogleAuthProvider();
 
+        try {
+            // Sign in user with Google
+            const result = await auth.signInWithPopup(provider);
+            const user = result.user;
+
+            // Check if user data already exists in Firestore
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (!userDoc.exists) {
+                // If user is new, save initial data to Firestore
+                await db.collection('users').doc(user.uid).set({
+                    email: user.email,
+                    poopSessions: [],
+                    totalEarnings: 0,
+                    salary: 0,
+                    hoursPerWeek: 0
+                });
+            }
+
+            // Redirect to the main page after Google sign-in
+            window.location.href = 'https://www.poopprofit.com/main.html';
+        } catch (error) {
+            console.error(error);
+            document.getElementById('errorMessage').textContent = 'Google Sign-In failed. Please try again.';
+        }
+    }
+
+    // Set up an event listener for the Google Sign-In button
+    document.getElementById('googleSignInButton').addEventListener('click', googleSignIn);
+</script>
+  
 </body>
 </html>
