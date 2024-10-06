@@ -43,21 +43,22 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     // Initialize Firebase and assign to the global window object
-    window.firebase = firebase.initializeApp(firebaseConfig);
-    console.log("Firebase Initialized:", window.firebase.apps.length > 0);
+    try {
+        window.firebaseApp = firebase.initializeApp(firebaseConfig);
+        console.log("Firebase Initialized:", !!window.firebaseApp);
 
-    if (window.firebase.apps.length > 0) {
         // Assign Firebase services globally after initializing Firebase
         window.auth = firebase.auth();
         window.db = firebase.firestore();
         console.log("Firebase Auth and Firestore initialized.");
 
-        // Corrected function call: Add event listeners
+        // Add event listeners only after Firebase is initialized
         addEventListeners();
-    } else {
-        console.error("Firebase failed to initialize properly.");
+    } catch (error) {
+        console.error("Firebase failed to initialize properly:", error);
     }
 });
+
 </script>
 
     <!-- Original CSS Styling -->
