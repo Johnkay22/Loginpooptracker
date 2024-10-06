@@ -19,10 +19,14 @@
         gtag('config', 'G-R1E17DCKNC');
     </script>
 
-    <!-- Firebase SDKs (Loading Firebase App, Auth, and Firestore) -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+<!-- Firebase App (the core Firebase SDK) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+
+<!-- Firebase Auth (for authentication) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+
+<!-- Firebase Firestore (for database) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script> 
 
     <!-- Firebase Initialization -->
     <script>
@@ -377,30 +381,31 @@
             }
 
             // Google Sign-In Function
-            async function googleSignIn() {
-                const provider = new firebase.auth.GoogleAuthProvider();
-                const errorMessage = document.getElementById('errorMessage');
+   async function googleSignIn() {
+    const provider = new window.firebase.auth.GoogleAuthProvider();
+    const errorMessage = document.getElementById('errorMessage');
 
-                try {
-                    const result = await auth.signInWithPopup(provider);
-                    const user = result.user;
-                    const userDoc = await db.collection('users').doc(user.uid).get();
+    try {
+        const result = await window.auth.signInWithPopup(provider);
+        const user = result.user;
+        const userDoc = await window.db.collection('users').doc(user.uid).get();
 
-                    if (!userDoc.exists) {
-                        await db.collection('users').doc(user.uid).set({
-                            email: user.email,
-                            poopSessions: [],
-                            totalEarnings: 0,
-                            salary: 0,
-                            hoursPerWeek: 0
-                        });
-                    }
+        if (!userDoc.exists) {
+            await window.db.collection('users').doc(user.uid).set({
+                email: user.email,
+                poopSessions: [],
+                totalEarnings: 0,
+                salary: 0,
+                hoursPerWeek: 0
+            });
+        }
 
-                    window.location.href = 'https://www.poopprofit.com/main.html';
-                } catch (error) {
-                    errorMessage.textContent = 'Google Sign-In failed. Please try again.';
+        window.location.href = 'https://www.poopprofit.com/main.html';
+    } catch (error) {
+        errorMessage.textContent = 'Google Sign-In failed. Please try again.';
+    }
+
                 }
-            }
 
             // Switch between Login and Register Forms
             const switchToRegister = document.getElementById('switchToRegister');
