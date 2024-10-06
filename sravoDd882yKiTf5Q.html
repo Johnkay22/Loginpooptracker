@@ -1,0 +1,177 @@
+<html><head><base href="https://"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coming Soon - Track Your Work Poop Earnings!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+  body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    height: 100%;
+    overflow: hidden;
+    background-color: #f0f0f0;
+  }
+
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-image: url('/a/b7a9e867-016b-415e-8b4f-6477ef9d6cdc');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(3px);
+  }
+
+  .content {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 80%;
+    width: auto;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  h1 {
+    color: #4a4a4a;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+  }
+
+  p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+
+  .cta-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #764ba2;
+    margin-top: 1rem;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  .coins {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .coin {
+    position: absolute;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23FFD700" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/></svg>') no-repeat;
+    width: 24px;
+    height: 24px;
+    animation: coinFall linear infinite;
+  }
+
+  @keyframes coinFall {
+    0% { transform: translateY(-100vh) rotate(0deg); }
+    100% { transform: translateY(100vh) rotate(720deg); }
+  }
+
+  .toilet-paper {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="%23FFFFFF" d="M400 0H112C50.144 0 0 50.144 0 112v288c0 61.856 50.144 112 112 112h288c61.856 0 112-50.144 112-112V112C512 50.144 461.856 0 400 0zm-44 384H156c-13.255 0-24-10.745-24-24V152c0-13.255 10.745-24 24-24h200c13.255 0 24 10.745 24 24v208c0 13.255-10.745 24-24 24z"/></svg>') no-repeat;
+    opacity: 0.7;
+    animation: spin 10s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 600px) {
+    .content {
+      padding: 1rem;
+      max-width: 90%;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+    }
+
+    p {
+      font-size: 0.8rem;
+    }
+
+    .cta-text {
+      font-size: 0.9rem;
+    }
+
+    .toilet-paper {
+      width: 40px;
+      height: 40px;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="overlay"></div>
+    <div class="coins" id="coinContainer"></div>
+    <div class="toilet-paper" style="top: 10%; left: 5%;"></div>
+    <div class="toilet-paper" style="bottom: 15%; right: 10%;"></div>
+    <div class="content">
+      <h1>Flush with Anticipation!</h1>
+      <p>Our cutting-edge platform for tracking your work poop earnings is under construction.</p>
+      <p class="cta-text">Check back on your next poop break!</p>
+    </div>
+  </div>
+
+  <script>
+    function createCoins() {
+      const container = document.getElementById('coinContainer');
+      const coinCount = window.innerWidth < 600 ? 10 : 20; // Reduce coin count for mobile
+      for (let i = 0; i < coinCount; i++) {
+        let coin = document.createElement('div');
+        coin.classList.add('coin');
+        coin.style.left = `${Math.random() * 100}%`;
+        coin.style.animationDuration = `${Math.random() * 3 + 2}s`;
+        coin.style.animationDelay = `${Math.random() * 2}s`;
+        container.appendChild(coin);
+      }
+    }
+
+    createCoins();
+
+    // Optimize for mobile devices
+    function handleResize() {
+      const container = document.getElementById('coinContainer');
+      container.innerHTML = ''; // Clear existing coins
+      createCoins(); // Recreate coins based on new screen size
+    }
+
+    window.addEventListener('resize', handleResize);
+  </script>
+</body>
+</html>
