@@ -50,8 +50,8 @@
       firebase.initializeApp(firebaseConfig);
 
       // Get references to services
-      const auth = firebase.auth();
-      const db = firebase.firestore();
+      window.auth = firebase.auth();
+      window.db = firebase.firestore();
     </script>  
 <style>
     :root {
