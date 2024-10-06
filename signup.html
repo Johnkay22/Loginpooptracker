@@ -30,34 +30,131 @@
 
     <!-- Firebase Initialization -->
     <script>
-document.addEventListener("DOMContentLoaded", function () {
-    // Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
   authDomain: "poopprofitproject.firebaseapp.com",
   projectId: "poopprofitproject",
   storageBucket: "poopprofitproject.appspot.com",
   messagingSenderId: "818996284466",
   appId: "1:818996284466:web:de6d6bab3987cca417c02b",
   measurementId: "G-JBXJ1T6LYM"
-    };
+        };
 
-    // Initialize Firebase and assign to the global window object
-    try {
-        window.firebaseApp = firebase.initializeApp(firebaseConfig);
-        console.log("Firebase Initialized:", !!window.firebaseApp);
+        // Initialize Firebase and assign to the global window object
+        try {
+            window.firebaseApp = firebase.initializeApp(firebaseConfig);
+            console.log("Firebase Initialized:", !!window.firebaseApp);
 
-        // Assign Firebase services globally after initializing Firebase
-        window.auth = firebase.auth();
-        window.db = firebase.firestore();
-        console.log("Firebase Auth and Firestore initialized.");
+            // Assign Firebase services globally after initializing Firebase
+            window.auth = firebase.auth();
+            window.db = firebase.firestore();
+            console.log("Firebase Auth and Firestore initialized.");
 
-        // Add event listeners only after Firebase is initialized
-        addEventListeners();
-    } catch (error) {
-        console.error("Firebase failed to initialize properly:", error);
+            // Add event listeners only after Firebase is initialized
+            addEventListeners();
+        } catch (error) {
+            console.error("Firebase failed to initialize properly:", error);
+        }
+    });
+
+    // Register function
+    async function register() {
+        const email = document.getElementById('registerEmail').value.trim();
+        const password = document.getElementById('registerPassword').value.trim();
+        const confirmPassword = document.getElementById('confirmPassword').value.trim();
+        const errorMessage = document.getElementById('errorMessage');
+
+        if (!email || !password || password !== confirmPassword) {
+            errorMessage.textContent = 'Please fill in all fields and ensure passwords match.';
+            return;
+        }
+
+        try {
+            const userCredential = await window.auth.createUserWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+
+            // Save initial user data to Firestore
+            await window.db.collection('users').doc(user.uid).set({
+                email: user.email,
+                poopSessions: [],
+                totalEarnings: 0,
+                salary: 0,
+                hoursPerWeek: 0
+            });
+
+            // Redirect to main page after successful registration
+            window.location.href = 'https://www.poopprofit.com/main.html';
+        } catch (error) {
+            errorMessage.textContent = error.message;
+        }
     }
-});
+
+    // Login function
+    async function login() {
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
+        const errorMessage = document.getElementById('errorMessage');
+
+        if (!email || !password) {
+            errorMessage.textContent = 'Please enter both email and password.';
+            return;
+        }
+
+        try {
+            const userCredential = await window.auth.signInWithEmailAndPassword(email, password);
+            window.location.href = 'https://www.poopprofit.com/main.html';
+        } catch (error) {
+            errorMessage.textContent = error.message;
+        }
+    }
+
+    // Google Sign-In function
+    async function googleSignIn() {
+        const provider = new window.firebase.auth.GoogleAuthProvider();
+        const errorMessage = document.getElementById('errorMessage');
+
+        try {
+            const result = await window.auth.signInWithPopup(provider);
+            const user = result.user;
+            const userDoc = await window.db.collection('users').doc(user.uid).get();
+
+            if (!userDoc.exists) {
+                await window.db.collection('users').doc(user.uid).set({
+                    email: user.email,
+                    poopSessions: [],
+                    totalEarnings: 0,
+                    salary: 0,
+                    hoursPerWeek: 0
+                });
+            }
+
+            window.location.href = 'https://www.poopprofit.com/main.html';
+        } catch (error) {
+            errorMessage.textContent = 'Google Sign-In failed. Please try again.';
+        }
+    }
+
+    // Function to add all event listeners after Firebase initialization
+    function addEventListeners() {
+        console.log("Adding event listeners...");
+
+        const registerButton = document.getElementById('registerButton');
+        const loginButton = document.getElementById('loginButton');
+        const googleSignInButton = document.getElementById('googleSignInButton');
+
+        if (registerButton && loginButton && googleSignInButton) {
+            registerButton.addEventListener('click', register);
+            loginButton.addEventListener('click', login);
+            googleSignInButton.addEventListener('click', googleSignIn);
+            console.log("Event listeners added successfully.");
+        } else {
+            console.error("Buttons not found for adding event listeners.");
+        }
+    }
+</script>
 
 </script>
 
