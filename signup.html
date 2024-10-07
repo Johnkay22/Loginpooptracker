@@ -209,15 +209,8 @@
         <button id="googleSignInButton" class="button">Sign in with Google</button>
     </div>
 
-    <!-- JavaScript for Registration, Login, and Google Sign-In -->
-    <script>
-        auth.onAuthStateChanged((user) => {
-    if (user) {
-        // User is authenticated, redirect them to the main page
-        console.log("User is already logged in. Redirecting to main page...");
-        window.location.href = 'https://www.poopprofit.com/main.html';
-    }
-});
+   <!-- JavaScript for Registration, Login, and Google Sign-In -->
+<script>
     document.addEventListener("DOMContentLoaded", function () {
         // Firebase configuration
         const firebaseConfig = {
@@ -235,6 +228,15 @@
         window.auth = firebase.auth();
         window.db = firebase.firestore();
         console.log("Firebase Initialized:", !!firebase);
+
+        // Set up onAuthStateChanged to redirect authenticated users
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is authenticated, redirect them to the main page
+                console.log("User is already logged in. Redirecting to main page...");
+                window.location.href = 'https://www.poopprofit.com/main.html';
+            }
+        });
 
         // Add event listeners after Firebase initialization
         addEventListeners(); 
@@ -349,24 +351,24 @@
     }
 
     // Handle Google Sign-In Redirect Result
-window.onload = async function () {
-    try {
-        const result = await auth.getRedirectResult();
-        if (result && result.user) {
-            console.log("Google Sign-In successful:", result.user);
-            // Redirect to the main page after successful sign-in
-            window.location.href = 'https://www.poopprofit.com/main.html';
-        } else {
-            console.log("No user returned from Google Sign-In redirect");
+    window.onload = async function () {
+        try {
+            const result = await auth.getRedirectResult();
+            if (result && result.user) {
+                console.log("Google Sign-In successful:", result.user);
+                // Redirect to the main page after successful sign-in
+                window.location.href = 'https://www.poopprofit.com/main.html';
+            } else {
+                console.log("No user returned from Google Sign-In redirect");
+            }
+        } catch (error) {
+            console.error("Error handling Google Sign-In redirect result:", error);
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = 'Google Sign-In failed during redirect. Please try again.';
         }
-    } catch (error) {
-        console.error("Error handling Google Sign-In redirect result:", error);
-        const errorMessage = document.getElementById('errorMessage');
-        errorMessage.textContent = 'Google Sign-In failed during redirect. Please try again.';
-    }
-};
-
+    };
 </script>
+
 </body>
 
 </html>
