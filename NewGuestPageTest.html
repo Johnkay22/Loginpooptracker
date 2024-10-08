@@ -837,6 +837,22 @@
             });
         });
 
+      const closeButtons = document.querySelectorAll('.close');
+
+// Close buttons event listener
+closeButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        this.closest('.modal').style.display = 'none';
+    });
+});
+
+// Close modal when clicking outside the modal content
+window.addEventListener('click', function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+});
+
         window.addEventListener('click', function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = 'none';
