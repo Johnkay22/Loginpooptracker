@@ -561,8 +561,8 @@
     <div class="container">
         <h1 class="neon-text">Poop Profit Calculator</h1>
         <div class="card glow">
-            <input type="number" id="salary" placeholder="Annual Salary">
-            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <input type="number" id="salary" placeholder="Annual Salary" oninput="saveUserData()">
+<input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours" oninput="saveUserData()">
             <div id="result"></div>
         </div>
         <div class="card glow">
@@ -727,45 +727,56 @@
     </div>
 
     <script>
-        let currentShareIndex = -1;
-
-        function initializeUserData() {
-            if (!currentUser) {
-                currentUser = {
-                    email: 'guest@example.com',
-                    data: {
-                        poopSessions: [],
-                        totalEarnings: 0
-                    }
-                };
-                saveUserData();
-            } else if (!currentUser.data) {
-                currentUser.data = {
-                    poopSessions: [],
-                    totalEarnings: 0
-                };
-                saveUserData();
-            }
-        }
-
-        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        initializeUserData();
-
-        function saveUserData() {
-    const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
-    
-    // Ensure the password is not overwritten or removed
-    if (accounts[currentUser.email]) {
-        const savedPassword = accounts[currentUser.email].password;  // Preserve the password
-        accounts[currentUser.email].data = currentUser.data;  // Update only the data field
-        accounts[currentUser.email].password = savedPassword;  // Restore the password
+        
+auth.onAuthStateChanged(async (user) => {
+    if (user) {
+        currentUser = user;
+        await loadUserDataFromFirebase(user.uid);
+    } else {
+        window.location.href = 'signup.html';  // Redirect to signup if not authenticated
     }
+});
 
-    console.log('Updated Accounts after session:', accounts);  // Log the updated accounts
+      
+async function saveUserData() {
+    if (!currentUser) return;
+    
+    try {
+        const userData = {
+            poopSessions: currentUser.data.poopSessions || [],
+            totalEarnings: currentUser.data.totalEarnings || 0,
+            salary: parseFloat(document.getElementById('salary').value) || 0,
+            hoursPerWeek: parseFloat(document.getElementById('hoursPerWeek').value) || 0
+        };
 
-    localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));  // Save current user data
+        await db.collection('users').doc(currentUser.uid).set(userData, { merge: true });
+        console.log("Data saved to Firebase");
+    } catch (error) {
+        console.error("Error saving data:", error);
+    }
 }
+
+      async function loadUserDataFromFirebase(userId) {
+    try {
+        const userDoc = await db.collection('users').doc(userId).get();
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            currentUser.data = userData;
+            document.getElementById('salary').value = userData.salary || 0;
+            document.getElementById('hoursPerWeek').value = userData.hoursPerWeek || 0;
+            updateLog();  // This will update the UI with saved poop sessions
+        } else {
+            console.log("No user data found, initializing new user data");
+            currentUser.data = {
+                poopSessions: [],
+                totalEarnings: 0
+            };
+        }
+    } catch (error) {
+        console.error("Error loading user data:", error);
+    }
+}
+
 
         let timer;
         let seconds = 0;
@@ -872,13 +883,12 @@
     currentUser.data.poopSessions.push(session);
     currentUser.data.totalEarnings += earnings;
 
-    console.log('Poop session added:', session);  // Log the added poop session
-    console.log('Current User after session:', currentUser);  // Log the current user
+    console.log('Poop session added:', session);
 
-    // Save the updated data
-    updateLog();
-    saveUserData();  // Save the user data to localStorage
+    // Save the updated data to Firebase
+    saveUserData();
 }
+
 
 
         function formatTime(totalSeconds) {
@@ -1197,10 +1207,14 @@ applyDateRangeBtn.addEventListener('click', () => {
             statsModal.style.display = 'none';
         }
 
-        function logout() {
-            localStorage.removeItem('currentUser');
-            window.location.href = 'https://www.poopprofit.com/signup.html';
-        }
+       function logout() {
+    auth.signOut().then(() => {
+        window.location.href = 'signup.html';  // Redirect to signup after logout
+    }).catch((error) => {
+        console.error("Logout failed:", error);
+    });
+}
+
 
         function updateHourlyRate() {
             const salary = parseFloat(salaryInput.value);
@@ -1398,5 +1412,33 @@ applyDateRangeBtn.addEventListener('click', () => {
             updateLog();
         }
     </script>
+
+<script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
+    authDomain: "poopprofitproject.firebaseapp.com",
+    projectId: "poopprofitproject",
+    storageBucket: "poopprofitproject.appspot.com",
+    messagingSenderId: "818996284466",
+    appId: "1:818996284466:web:de6d6bab3987cca417c02b",
+    measurementId: "G-JBXJ1T6LYM"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // Ensure user is logged in before accessing the main page
+  auth.onAuthStateChanged((user) => {
+    if (!user) {
+        window.location.href = 'signup.html';  // Redirect if not logged in
+    }
+  });
+</script>
+
 </body>
 </html>
