@@ -1,256 +1,568 @@
-<html>
-<head>
-    <base href="https://www.poopprofit.com/index.html">
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+<html><head><base href="https://www.poopprofit.com/index.html">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-        gtag('config', 'G-R1E17DCKNC');
-    </script>
-    <title>How Much You Make to Poop!</title>
-    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
-    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop on the job, poop earnings"/>
-    <link rel="icon" href="https://www.poopprofit.com/favicon.png" type="image/png">
+  gtag('config', 'G-R1E17DCKNC');
+</script>
+<title>How Much You Make to Poop!</title>
+<meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+<meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop on the job, poop earnings"/>
+<link rel="icon" href="https://www.poopprofit.com/favicon.png" type="image/png">
+  <!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Poop Profit Calculator!" />
+<meta name="twitter:description" content="Have you ever wondered how much you make to poop at work?" />
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Johnkay22/Loginpooptracker/main/PPCImage.jpg" />
+<meta name="twitter:site" content="@YourTwitterHandle" />
+<!-- Open Graph Meta Tags -->
+<meta property="og:title" content="Poop Profit Calculator!" />
+<meta property="og:description" content="Have you ever wondered how much you make to poop at work?" />
+<meta property="og:url" content="https://www.poopprofit.com" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Poop Profit Calculator" />
+<meta property="og:image" content="https://raw.githubusercontent.com/Johnkay22/Loginpooptracker/main/PPCImage.jpg">
+<meta name="description" content="Have you ever wondered how much you make to poop at work?">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    :root {
+        --primary-color: #3498db;
+        --secondary-color: #2ecc71;
+        --background-color: #1a1a2e;
+        --text-color: #e0e0e0;
+        --card-background: #16213e;
+        --accent-color: #f39c12;
+    }
 
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Poop Profit Calculator!" />
-    <meta name="twitter:description" content="Have you ever wondered how much you make to poop at work?" />
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/Johnkay22/Loginpooptracker/main/PPCImage.jpg" />
-    <meta name="twitter:site" content="@YourTwitterHandle" />
+    body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
 
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Poop Profit Calculator!" />
-    <meta property="og:description" content="Have you ever wondered how much you make to poop at work?" />
-    <meta property="og:url" content="https://www.poopprofit.com" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Poop Profit Calculator" />
-    <meta property="og:image" content="https://raw.githubusercontent.com/Johnkay22/Loginpooptracker/main/PPCImage.jpg" />
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    h1, h2 {
+        color: var(--primary-color);
+        text-align: center;
+        font-weight: 300;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
 
-    <!-- Firebase setup -->
-    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js"></script>
+    .card {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        margin-bottom: 30px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
-  authDomain: "poopprofitproject.firebaseapp.com",
-  projectId: "poopprofitproject",
-  storageBucket: "poopprofitproject.appspot.com",
-  messagingSenderId: "818996284466",
-  appId: "1:818996284466:web:de6d6bab3987cca417c02b",
-  measurementId: "G-JBXJ1T6LYM"
-        };
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-    </script>
+    input {
+        width: 100%;
+        padding: 15px;
+        margin: 10px 0;
+        border: none;
+        border-bottom: 2px solid var(--primary-color);
+        background-color: transparent;
+        color: var(--text-color);
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
 
-    <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
-            --background-color: #1a1a2e;
-            --text-color: #e0e0e0;
-            --card-background: #16213e;
-            --accent-color: #f39c12;
-        }
+    input:focus {
+        outline: none;
+        border-bottom-color: var(--secondary-color);
+    }
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
+    button {
+        width: 100%;
+        padding: 15px;
+        margin: 15px 0;
+        border: none;
+        border-radius: 50px;
+        background-color: var(--primary-color);
+        color: white;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
 
+    button:hover {
+        background-color: var(--secondary-color);
+        transform: scale(1.05);
+    }
+
+    #timer {
+        font-size: 72px;
+        text-align: center;
+        margin: 30px 0;
+        color: var(--primary-color);
+        font-weight: 300;
+        text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+    }
+
+    #poopEmoji {
+        font-size: 72px;
+        text-align: center;
+        margin: 30px 0;
+    }
+
+    .wiggle {
+        animation: wiggle 0.5s infinite;
+    }
+
+    @keyframes wiggle {
+        0% { transform: rotate(0deg); }
+        25% { transform: rotate(5deg); }
+        75% { transform: rotate(-5deg); }
+        100% { transform: rotate(0deg); }
+    }
+
+    #log {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .log-entry {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-left: 4px solid var(--primary-color);
+        padding: 20px;
+        margin-bottom: 15px;
+        position: relative;
+        transition: all 0.3s ease;
+        border-radius: 5px;
+    }
+
+    .log-entry:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .log-entry .delete-btn, .log-entry .share-btn {
+        position: absolute;
+        top: 10px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: none;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .log-entry .delete-btn {
+        right: 10px;
+        background-color: var(--accent-color);
+    }
+
+    .log-entry .share-btn {
+        right: 50px;
+        background-color: var(--secondary-color);
+    }
+
+    .log-entry .delete-btn:hover, .log-entry .share-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .log-entry .date {
+        font-weight: bold;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+    }
+
+    .log-entry .details {
+        color: var(--text-color);
+        font-size: 14px;
+    }
+
+    .log-entry .rating {
+        margin-top: 10px;
+        color: var(--secondary-color);
+    }
+
+    .log-entry .comment {
+        margin-top: 10px;
+        font-style: italic;
+        color: var(--text-color);
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.7);
+        backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+        background-color: var(--card-background);
+        margin: 10% auto;
+        padding: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        width: 70%;
+        max-width: 500px;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: var(--text-color);
+        text-decoration: none;
+    }
+
+    #statsChart {
+        width: 100%;
+        height: 300px;
+    }
+
+    #statsText {
+        margin-top: 20px;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .stats-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stats-item:last-child {
+        border-bottom: none;
+    }
+
+    .stats-label {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .stats-value {
+        color: var(--text-color);
+    }
+
+    #congratsMessage {
+        text-align: center;
+        font-size: 20px;
+        color: var(--secondary-color);
+        margin-bottom: 20px;
+        font-weight: 500;
+    }
+
+    .share-buttons {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+
+    .share-buttons button {
+        width: 30%;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .poop-rating {
+        display: flex;
+        justify-content: center;
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .poop-rating button {
+        background: none;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: opacity 0.3s, transform 0.2s;
+        padding: 0 8px;
+    }
+
+    .poop-rating button:hover,
+    .poop-rating button.active {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+
+    .poop-rating button.active {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+
+    /* Glowing effect */
+    .glow {
+        box-shadow: 0 0 10px var(--primary-color),
+                    0 0 20px var(--primary-color),
+                    0 0 30px var(--primary-color);
+    }
+
+    /* Neon text effect */
+    .neon-text {
+        text-shadow: 0 0 5px var(--primary-color),
+                     0 0 10px var(--primary-color),
+                     0 0 15px var(--primary-color),
+                     0 0 20px var(--primary-color);
+    }
+
+    /* Date range selector */
+    #date-range {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    #date-range input[type="date"] {
+        width: 40%;
+        padding: 10px;
+        border: 1px solid var(--primary-color);
+        border-radius: 5px;
+        background-color: var(--card-background);
+        color: var(--text-color);
+    }
+
+    #date-range button {
+        width: 15%;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    /* New button styles */
+    #boredButton, #startGameButton, #trueButton, #falseButton, #stillBoredButton {
+        margin-top: 10px;
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    #factStatement {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    #scoreCard {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
         .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        h1, h2 {
-            color: var(--primary-color);
-            text-align: center;
-            font-weight: 300;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .card {
-            background-color: var(--card-background);
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            padding: 30px;
-            margin-bottom: 30px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        input {
-            width: 100%;
             padding: 15px;
-            margin: 10px 0;
-            border: none;
-            border-bottom: 2px solid var(--primary-color);
-            background-color: transparent;
-            color: var(--text-color);
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        input:focus {
-            outline: none;
-            border-bottom-color: var(--secondary-color);
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            margin: 15px 0;
-            border: none;
-            border-radius: 50px;
-            background-color: var(--primary-color);
-            color: white;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        button:hover {
-            background-color: var(--secondary-color);
-            transform: scale(1.05);
         }
 
         #timer {
-            font-size: 72px;
-            text-align: center;
-            margin: 30px 0;
-            color: var(--primary-color);
-            font-weight: 300;
-            text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+            font-size: 60px;
         }
 
-        #poopEmoji {
-            font-size: 72px;
-            text-align: center;
-            margin: 30px 0;
-        }
-
-        .wiggle {
-            animation: wiggle 0.5s infinite;
-        }
-
-        @keyframes wiggle {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(5deg); }
-            75% { transform: rotate(-5deg); }
-            100% { transform: rotate(0deg); }
-        }
-
-        #log {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .log-entry {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-left: 4px solid var(--primary-color);
+        .modal-content {
+            width: 90%;
             padding: 20px;
-            margin-bottom: 15px;
-            position: relative;
-            transition: all 0.3s ease;
-            border-radius: 5px;
         }
 
-        .log-entry:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+        #date-range {
+            flex-direction: column;
         }
 
-        .log-entry .delete-btn, .log-entry .share-btn {
-            position: absolute;
-            top: 10px;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        .log-entry .delete-btn {
-            right: 10px;
-            background-color: var(--accent-color);
-        }
-
-        .log-entry .share-btn {
-            right: 50px;
-            background-color: var(--secondary-color);
-        }
-
-        .log-entry .delete-btn:hover, .log-entry .share-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .log-entry .date {
-            font-weight: bold;
-            color: var(--primary-color);
+        #date-range input[type="date"] {
+            width: 100%;
             margin-bottom: 10px;
         }
 
-        .log-entry .details {
-            color: var(--text-color);
-            font-size: 14px;
+        #date-range button {
+            width: 100%;
         }
+    }
 
-        .log-entry .rating {
-            margin-top: 10px;
-            color: var(--secondary-color);
-        }
+    #raceTrack {
+        width: 100%;
+        height: 400px;
+        background-color: var(--card-background);
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+    }
 
-        .log-entry .comment {
-            margin-top: 10px;
-            font-style: italic;
-            color: var(--text-color);
-        }
-    </style>
+    .lane {
+        height: 20%;
+        border-bottom: 1px solid var(--text-color);
+        position: relative;
+    }
+
+    .lane-number {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        font-weight: bold;
+        color: var(--text-color);
+    }
+
+    .turd-option, .turd {
+        width: 40px;
+        height: 40px;
+        font-size: 24px;
+    }
+
+    .turd-option {
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .turd-option:hover {
+        transform: scale(1.2);
+    }
+
+    .turd {
+        position: absolute;
+        left: 30px;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: left 0.1s linear;
+    }
+
+    .toilet {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 24px;
+    }
+
+    #finishLine {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 5px;
+        background-color: var(--accent-color);
+    }
+
+    #turdSelection {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 20px;
+    }
+
+    .selection-prompt {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: var(--accent-color);
+    }
+
+    .turd-number {
+        font-size: 16px;
+        margin-top: 5px;
+    }
+
+    .selected {
+        border: 2px solid var(--accent-color);
+        border-radius: 50%;
+        padding: 5px;
+    }
+
+    .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: var(--card-background);
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        text-align: center;
+        display: none;
+        width: 80%;
+        max-width: 400px;
+    }
+
+    .popup h2 {
+        margin-top: 0;
+        color: var(--primary-color);
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .popup-content {
+        font-size: 24px;
+        margin-bottom: 30px;
+        line-height: 1.4;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 999;
+        display: none;
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
     <div class="container">
         <h1 class="neon-text">Poop Profit Calculator</h1>
         <div class="card glow">
-            <input type="number" id="salary" placeholder="Annual Salary" oninput="saveUserData()">
-            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours" oninput="saveUserData()">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
             <div id="result"></div>
         </div>
         <div class="card glow">
@@ -270,53 +582,238 @@
         <button id="logoutButton">Logout</button>
     </div>
 
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <div id="congratsMessage"></div>
+            <h2>Rate Your Poop</h2>
+            <div class="poop-rating">
+                <button class="poop" data-rating="1">💩</button>
+                <button class="poop" data-rating="2">💩</button>
+                <button class="poop" data-rating="3">💩</button>
+                <button class="poop" data-rating="4">💩</button>
+                <button class="poop" data-rating="5">💩</button>
+            </div>
+            <input type="text" id="poopComment" placeholder="Add a comment (optional)">
+            <button id="submitRating">Submit Rating</button>
+        </div>
+    </div>
+
+    <div id="shareRatingModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Share Your Poop Rating</h2>
+            <p id="shareRatingMessage"></p>
+            <div class="share-buttons">
+                <button id="shareRatingTwitter">Share on Twitter</button>
+                <button id="shareRatingFacebook">Share on Facebook</button>
+                <button id="shareRatingSMS">Share via SMS</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="statsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Your Poop Statistics</h2>
+          <p style="text-align: center; margin-bottom: 10px;">Sort statistics by a custom date range:</p>
+            <div id="date-range">
+                <input type="date" id="startDate">
+                <input type="date" id="endDate">
+                <button id="applyDateRange">Apply</button>
+            </div>
+            <canvas id="statsChart"></canvas>
+            <div id="statsText"></div>
+            <div class="share-buttons">
+                <button id="shareStatsTwitter">Share on Twitter</button>
+                <button id="shareStatsFacebook">Share on Facebook</button>
+                <button id="shareStatsSMS">Share via SMS</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Share Your Poop</h2>
+            <button id="shareEntryTwitter">Share on Twitter</button>
+            <button id="shareEntryFacebook">Share on Facebook</button>
+            <button id="shareEntrySMS">Share via SMS</button>
+        </div>
+    </div>
+
+    <div id="factGameModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Bathroom Fact or Fiction</h2>
+            <p id="factStatement"></p>
+            <button id="trueButton">True</button>
+            <button id="falseButton">False</button>
+            <button id="startGameButton">Play</button>
+            <div id="scoreCard" style="display: none;">
+                <h3>Your Score</h3>
+                <p>Correct: <span id="correctScore">0</span></p>
+                <p>Incorrect: <span id="incorrectScore">0</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="turdRaceModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h1>Turd Race</h1>
+            <div class="card">
+                <div class="selection-prompt">Pick Your Poop!</div>
+                <div id="turdSelection">
+                    <div class="turd-option" data-turd="1">
+                        💩
+                        <span class="turd-number">#1</span>
+                    </div>
+                    <div class="turd-option" data-turd="2">
+                        💩
+                        <span class="turd-number">#2</span>
+                    </div>
+                    <div class="turd-option" data-turd="3">
+                        💩
+                        <span class="turd-number">#3</span>
+                    </div>
+                    <div class="turd-option" data-turd="4">
+                        💩
+                        <span class="turd-number">#4</span>
+                    </div>
+                    <div class="turd-option" data-turd="5">
+                        💩
+                        <span class="turd-number">#5</span>
+                    </div>
+                </div>
+                <button id="startRace">Start Race</button>
+                <div id="raceTrack">
+                    <div class="lane">
+                        <span class="lane-number">1</span>
+                        <div class="turd" id="turd1">💩</div>
+                        <span class="toilet">🚽</span>
+                    </div>
+                    <div class="lane">
+                        <span class="lane-number">2</span>
+                        <div class="turd" id="turd2">💩</div>
+                        <span class="toilet">🚽</span>
+                    </div>
+                    <div class="lane">
+                        <span class="lane-number">3</span>
+                        <div class="turd" id="turd3">💩</div>
+                        <span class="toilet">🚽</span>
+                    </div>
+                    <div class="lane">
+                        <span class="lane-number">4</span>
+                        <div class="turd" id="turd4">💩</div>
+                        <span class="toilet">🚽</span>
+                    </div>
+                    <div class="lane">
+                        <span class="lane-number">5</span>
+                        <div class="turd" id="turd5">💩</div>
+                        <span class="toilet">🚽</span>
+                    </div>
+                    <div id="finishLine"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="resultPopup">
+        <h2>Race Result</h2>
+        <div class="popup-content" id="popupContent"></div>
+        <button id="closePopup">Close</button>
+    </div>
+
     <script>
+        let currentShareIndex = -1;
+
+        function initializeUserData() {
+            if (!currentUser) {
+                currentUser = {
+                    email: 'guest@example.com',
+                    data: {
+                        poopSessions: [],
+                        totalEarnings: 0
+                    }
+                };
+                saveUserData();
+            } else if (!currentUser.data) {
+                currentUser.data = {
+                    poopSessions: [],
+                    totalEarnings: 0
+                };
+                saveUserData();
+            }
+        }
+
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        initializeUserData();
+
+        function saveUserData() {
+    const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
+    
+    // Ensure the password is not overwritten or removed
+    if (accounts[currentUser.email]) {
+        const savedPassword = accounts[currentUser.email].password;  // Preserve the password
+        accounts[currentUser.email].data = currentUser.data;  // Update only the data field
+        accounts[currentUser.email].password = savedPassword;  // Restore the password
+    }
+
+    console.log('Updated Accounts after session:', accounts);  // Log the updated accounts
+
+    localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));  // Save current user data
+}
+
         let timer;
         let seconds = 0;
         let isRunning = false;
         let poopRating = 0;
         let lastSessionEarnings = 0;
-        let currentUser = null;
+        let statsChart = null;
 
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                currentUser = user;
-                await loadUserDataFromFirebase(user.uid);
-            } else {
-                window.location.href = 'signup.html';
-            }
-        });
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const resultDiv = document.getElementById('result');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const statsButton = document.getElementById('statsButton');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const logoutButton = document.getElementById('logoutButton');
+        
+        let boredButton = document.getElementById('boredButton');
+        let stillBoredButton = document.getElementById('stillBoredButton');
+        let factGameModal = document.getElementById('factGameModal');
+        let factStatement = document.getElementById('factStatement');
+        let trueButton = document.getElementById('trueButton');
+        let falseButton = document.getElementById('falseButton');
+        let startGameButton = document.getElementById('startGameButton');
+        let scoreCard = document.getElementById('scoreCard');
+        let correctScore = document.getElementById('correctScore');
+        let incorrectScore = document.getElementById('incorrectScore');
 
-        async function saveUserData() {
-            if (!currentUser) return;
-            try {
-                const userData = {
-                    poopSessions: currentUser.data.poopSessions || [],
-                    totalEarnings: currentUser.data.totalEarnings || 0,
-                    salary: parseFloat(document.getElementById('salary').value) || 0,
-                    hoursPerWeek: parseFloat(document.getElementById('hoursPerWeek').value) || 0
-                };
-                await db.collection('users').doc(currentUser.uid).set(userData, { merge: true });
-            } catch (error) {
-                console.error("Error saving data:", error);
-            }
-        }
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal.querySelectorAll('.poop');
+        const submitRatingButton = document.getElementById('submitRating');
+        const closeButtons = document.querySelectorAll('.close');
 
-        async function loadUserDataFromFirebase(userId) {
-            try {
-                const userDoc = await db.collection('users').doc(userId).get();
-                if (userDoc.exists) {
-                    const userData = userDoc.data();
-                    currentUser.data = userData;
-                    document.getElementById('salary').value = userData.salary || 0;
-                    document.getElementById('hoursPerWeek').value = userData.hoursPerWeek || 0;
-                    updateLog();
-                } else {
-                    currentUser.data = { poopSessions: [], totalEarnings: 0 };
-                }
-            } catch (error) {
-                console.error("Error loading user data:", error);
-            }
+        const statsModal = document.getElementById('statsModal');
+        const shareModal = document.getElementById('shareModal');
+        const shareRatingModal = document.getElementById('shareRatingModal');
+
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const applyDateRangeBtn = document.getElementById('applyDateRange');
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
         }
 
         function startStopTimer() {
@@ -327,14 +824,17 @@
                 const earnings = calculateEarnings(seconds);
                 lastSessionEarnings = earnings;
                 logPoopSession(seconds, earnings);
+                showRatingModal(earnings);
                 resetTimer();
                 boredButton.style.display = 'none';
+                stillBoredButton.style.display = 'none';
             } else {
                 resetTimer();
                 timer = setInterval(updateTimer, 1000);
                 startStopButton.textContent = 'Stop Pooping';
                 poopEmoji.classList.add('wiggle');
                 boredButton.style.display = 'block';
+                stillBoredButton.style.display = 'none';
             }
             isRunning = !isRunning;
         }
@@ -346,42 +846,40 @@
         }
 
         function calculateEarnings(seconds) {
-            const salary = parseFloat(document.getElementById('salary').value);
-            const hoursPerWeek = parseFloat(document.getElementById('hoursPerWeek').value);
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
             const hourlyRate = salary / (hoursPerWeek * 52);
             return (hourlyRate / 3600) * seconds;
         }
 
         function logPoopSession(duration, earnings) {
-            const now = new Date();
-            const session = { date: now, duration: duration, earnings: earnings, rating: 0, comment: '' };
-            if (!currentUser.data.poopSessions) currentUser.data.poopSessions = [];
-            currentUser.data.poopSessions.push(session);
-            currentUser.data.totalEarnings += earnings;
-            saveUserData();
-        }
+    const now = new Date();
+    const session = {
+        date: now,
+        duration: duration,
+        earnings: earnings,
+        rating: 0,
+        comment: ''
+    };
 
-        function updateLog() {
-            logEntriesDiv.innerHTML = '';
-            currentUser.data.poopSessions.forEach((session, index) => {
-                const logEntry = document.createElement('div');
-                logEntry.className = 'log-entry';
-                logEntry.innerHTML = `
-                    <div class="date">${new Date(session.date).toLocaleString()}</div>
-                    <div class="details">Duration: ${formatTime(session.duration)}<br>
-                    Earnings: $${session.earnings.toFixed(2)}</div>
-                `;
-                logEntriesDiv.appendChild(logEntry);
-            });
-        }
+    // Add the session to the currentUser's data
+    if (!currentUser.data.poopSessions) {
+        currentUser.data.poopSessions = [];
+    }
+    currentUser.data.poopSessions.push(session);
+    currentUser.data.totalEarnings += earnings;
 
-        function updateTimer() {
-            seconds++;
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const secs = seconds % 60;
-            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-        }
+    console.log('Poop session added:', session);  // Log the added poop session
+    console.log('Current User after session:', currentUser);  // Log the current user
+
+    // Save the updated data
+    updateLog();
+    saveUserData();  // Save the user data to localStorage
+}
+
 
         function formatTime(totalSeconds) {
             const hours = Math.floor(totalSeconds / 3600);
@@ -390,8 +888,515 @@
             return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }
 
-        document.getElementById('startStopButton').addEventListener('click', startStopTimer);
-    </script>
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <button class="delete-btn" data-index="${index}">×</button>
+                    <button class="share-btn" data-index="${index}">📤</button>
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">
+                        Duration: ${formatTime(session.duration)}<br>
+                        Earnings: $${session.earnings.toFixed(2)}
+                    </div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
 
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    if (confirm('Are you sure you want to delete this log entry?')) {
+                        deleteLogEntry(index);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.share-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    showShareModal(index);
+                });
+            });
+        }
+
+        function showShareModal(index) {
+            currentShareIndex = index;
+            shareModal.style.display = 'block';
+        }
+
+        function deleteLogEntry(index) {
+            currentUser.data.poopSessions.splice(index, 1);
+            updateLog();
+            saveUserData();
+        }
+
+        function showStats() {
+            statsModal.style.display = 'block';
+            updateStats();
+        }
+
+        function updateStats(startDate = null, endDate = null) {
+            let filteredSessions = currentUser.data.poopSessions;
+            
+            if (startDate && endDate) {
+                filteredSessions = filteredSessions.filter(session => {
+                    const sessionDate = new Date(session.date);
+                    return sessionDate >= startDate && sessionDate <= endDate;
+                });
+            }
+
+            if (filteredSessions.length === 0) {
+                alert('No poop sessions recorded in the selected date range!');
+                return;
+            }
+
+            const totalDuration = filteredSessions.reduce((sum, session) => sum + session.duration, 0);
+            const averageTime = totalDuration / filteredSessions.length;
+            const totalEarnings = filteredSessions.reduce((sum, session) => sum + session.earnings, 0);
+            const averageEarnings = totalEarnings / filteredSessions.length;
+
+            const msPerDay = 24 * 60 * 60 * 1000;
+            const firstDay = new Date(filteredSessions[0].date).setHours(0, 0, 0, 0);
+            const lastDay = new Date(filteredSessions[filteredSessions.length - 1].date).setHours(23, 59, 59, 999);
+            const daysDifference = Math.max(1, (lastDay - firstDay) / msPerDay);
+            const avgSessionsPerDay = filteredSessions.length / daysDifference;
+
+            const statsText = `
+                <div class="stats-item">
+                    <span class="stats-label">Total poops:</span>
+                    <span class="stats-value">${filteredSessions.length}</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Total poop time:</span>
+                    <span class="stats-value">${formatTime(totalDuration)}</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Total earnings:</span>
+                    <span class="stats-value">$${totalEarnings.toFixed(2)}</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Average poop time:</span>
+                    <span class="stats-value">${formatTime(Math.round(averageTime))}</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Average earnings per poop:</span>
+                    <span class="stats-value">$${averageEarnings.toFixed(2)}</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Average poops per day:</span>
+                    <span class="stats-value">${avgSessionsPerDay.toFixed(2)}</span>
+                </div>
+            `;
+
+            document.getElementById('statsText').innerHTML = statsText;
+
+            // Update chart
+            updateStatsChart(averageTime / 60, averageEarnings, avgSessionsPerDay);
+        }
+
+        function updateStatsChart(avgTime, avgEarnings, avgPoopsPerDay) {
+            const ctx = document.getElementById('statsChart').getContext('2d');
+            
+            if (statsChart) {
+                statsChart.destroy();
+            }
+
+            statsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Avg Time (min)', 'Avg Earnings ($)', 'Avg Poops/Day'],
+                    datasets: [{
+                        label: 'Poop Statistics',
+                        data: [avgTime, avgEarnings, avgPoopsPerDay],
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.6)',
+                            'rgba(46, 204, 113, 0.6)',
+                            'rgba(243, 156, 18, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(243, 156, 18, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+applyDateRangeBtn.addEventListener('click', () => {
+    const startDate = new Date(startDateInput.value);
+    const endDate = new Date(endDateInput.value);
+    
+    if (startDate > endDate) {
+        alert('Start date must be before or equal to the end date.');
+        return;
+    }
+    
+    // Set the time to the end of the day for the end date to include the full day
+    endDate.setHours(23, 59, 59, 999);
+
+    updateStats(startDate, endDate);
+});
+
+        initializeDateInputs();
+
+        function initializeDateInputs() {
+            if (currentUser.data.poopSessions.length > 0) {
+                const firstSession = new Date(currentUser.data.poopSessions[0].date);
+                const lastSession = new Date(currentUser.data.poopSessions[currentUser.data.poopSessions.length - 1].date);
+                
+                startDateInput.value = firstSession.toISOString().split('T')[0];
+                endDateInput.value = lastSession.toISOString().split('T')[0];
+            }
+        }
+
+        function showRatingModal(earnings) {
+            const congratsMessage = document.getElementById('congratsMessage');
+            congratsMessage.textContent = `Congratulations! You just earned $${earnings.toFixed(2)} while pooping!`;
+            ratingModal.style.display = 'block';
+            poopRating = 0;
+            poopButtons.forEach(button => {
+                button.classList.remove('active');
+                button.style.opacity = '0.5';
+            });
+            document.getElementById('poopComment').value = '';
+        }
+
+        function showStillBoredButton() {
+            stillBoredButton.style.display = 'block';
+        }
+
+        function showShareRatingModal() {
+            const shareRatingModal = document.getElementById('shareRatingModal');
+            const shareRatingMessage = document.getElementById('shareRatingMessage');
+            shareRatingMessage.textContent = `You rated your poop ${poopRating} out of 5 💩 and earned $${lastSessionEarnings.toFixed(2)}!`;
+            shareRatingModal.style.display = 'block';
+        }
+
+        function submitRating() {
+            const comment = document.getElementById('poopComment').value;
+            const lastSessionIndex = currentUser.data.poopSessions.length - 1;
+            currentUser.data.poopSessions[lastSessionIndex].rating = poopRating;
+            currentUser.data.poopSessions[lastSessionIndex].comment = comment;
+            saveUserData();
+            ratingModal.style.display = 'none';
+            updateLog();
+            showShareRatingModal();
+        }
+
+        poopButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                poopRating = parseInt(this.getAttribute('data-rating'));
+                poopButtons.forEach((btn, index) => {
+                    if (index < poopRating) {
+                        btn.classList.add('active');
+                        btn.style.opacity = '1';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.style.opacity = '0.5';
+                    }
+                });
+            });
+        });
+
+        submitRatingButton.addEventListener('click', submitRating);
+
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.closest('.modal').style.display = 'none';
+            });
+        });
+
+        document.getElementById('shareRatingTwitter').addEventListener('click', () => shareRating('twitter'));
+        document.getElementById('shareRatingFacebook').addEventListener('click', () => shareRating('facebook'));
+        document.getElementById('shareRatingSMS').addEventListener('click', () => shareRating('sms'));
+
+        document.getElementById('shareStatsTwitter').addEventListener('click', () => shareStats('twitter'));
+        document.getElementById('shareStatsFacebook').addEventListener('click', () => shareStats('facebook'));
+        document.getElementById('shareStatsSMS').addEventListener('click', () => shareStats('sms'));
+
+        document.getElementById('shareEntryTwitter').addEventListener('click', () => shareEntry('twitter'));
+        document.getElementById('shareEntryFacebook').addEventListener('click', () => shareEntry('facebook'));
+        document.getElementById('shareEntrySMS').addEventListener('click', () => shareEntry('sms'));
+
+        function shareEntry(platform) {
+            const session = currentUser.data.poopSessions[currentShareIndex];
+            const message = `I just had a ${session.rating}-💩 poop! Duration: ${formatTime(session.duration)}, Earnings: $${session.earnings.toFixed(2)} Find out how much you get paid to poop at www.poopprofit.com!`;
+            shareContent(platform, message);
+        }
+
+        function shareRating(platform) {
+            const message = `I just had a ${poopRating}-💩 poop and earned $${lastSessionEarnings.toFixed(2)}! Find out how much you get paid to poop at www.poopprofit.com!`;
+            shareContent(platform, message);
+        }
+
+        function shareStats(platform) {
+            const sessions = currentUser.data.poopSessions;
+            const totalDuration = sessions.reduce((sum, session) => sum + session.duration, 0);
+            const averageTime = totalDuration / sessions.length;
+            const totalEarnings = sessions.reduce((sum, session) => sum + session.earnings, 0);
+            const averageEarnings = totalEarnings / sessions.length;
+            const firstDay = new Date(sessions[0].date).setHours(0, 0, 0, 0);
+            const lastDay = new Date(sessions[sessions.length - 1].date).setHours(23, 59, 59, 999);
+            const daysDifference = Math.max(1, (lastDay - firstDay) / (24 * 60 * 60 * 1000));
+            const avgSessionsPerDay = sessions.length / daysDifference;
+
+            const message = `My Poop Stats:\nTotal Poops: ${sessions.length}\nTotal Time: ${formatTime(totalDuration)}\nTotal Earnings: $${totalEarnings.toFixed(2)}\nAvg Time: ${formatTime(Math.round(averageTime))}\nAvg Earnings: $${averageEarnings.toFixed(2)}\nAvg Poops/Day: ${avgSessionsPerDay.toFixed(2)} Find out how much you get paid to poop at www.poopprofit.com!`;
+            shareContent(platform, message);
+        }
+
+        function shareContent(platform, message) {
+            const encodedMessage = encodeURIComponent(message);
+            switch (platform) {
+                case 'twitter':
+                    window.open(`https://twitter.com/intent/tweet?text=${encodedMessage}`, '_blank');
+                    break;
+                case 'facebook':
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodedMessage}`, '_blank');
+                    break;
+                case 'sms':
+                    window.open(`sms:?&body=${encodedMessage}`, '_blank');
+                    break;
+            }
+
+            shareModal.style.display = 'none';
+            shareRatingModal.style.display = 'none';
+            statsModal.style.display = 'none';
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'https://www.poopprofit.com/signup.html';
+        }
+
+        function updateHourlyRate() {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                resultDiv.textContent = 'Please enter valid numbers.';
+                return;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            resultDiv.textContent = `Your hourly rate is: $${hourlyRate.toFixed(2)}`;
+        }
+
+        salaryInput.addEventListener('input', updateHourlyRate);
+        hoursPerWeekInput.addEventListener('input', updateHourlyRate);
+        startStopButton.addEventListener('click', startStopTimer);
+        statsButton.addEventListener('click', showStats);
+        logoutButton.addEventListener('click', logout);
+
+        // Fact Game Logic
+        let facts = [
+            { statement: "The average person spends about 3 years of their life on the toilet.", isTrue: true },
+            { statement: "Flushing the toilet with the lid up can spread germs up to 6 feet away.", isTrue: true },
+            { statement: "The first toilet paper was invented in China in the 6th century AD.", isTrue: true },
+            { statement: "The world's largest toilet is located in South Korea.", isTrue: false },
+            { statement: "Ancient Romans used vinegar as toilet paper.", isTrue: false },
+            { statement: "The flush toilet was invented by Thomas Crapper.", isTrue: false },
+            { statement: "In space, astronauts' urine is recycled into drinking water.", isTrue: true },
+            { statement: "The average person uses the bathroom 6-8 times per day.", isTrue: true },
+            { statement: "The most expensive toilet in the world costs over $10 million.", isTrue: false },
+            { statement: "Some people have a phobia of using public restrooms, called paruresis.", isTrue: true }
+        ];
+
+        let currentFactIndex = 0;
+        let score = { correct: 0, incorrect: 0 };
+
+        boredButton.addEventListener('click', showFactGame);
+        stillBoredButton.addEventListener('click', showTurdRaceModal);
+        startGameButton.addEventListener('click', startFactGame);
+        trueButton.addEventListener('click', () => checkAnswer(true));
+        falseButton.addEventListener('click', () => checkAnswer(false));
+
+        function showFactGame() {
+            factGameModal.style.display = 'block';
+            startGameButton.style.display = 'block';
+            trueButton.style.display = 'none';
+            falseButton.style.display = 'none';
+            factStatement.textContent = "Ready to play Bathroom Fact or Fiction?";
+            scoreCard.style.display = 'none';
+        }
+
+        function startFactGame() {
+            currentFactIndex = 0;
+            score = { correct: 0, incorrect: 0 };
+            showNextFact();
+            startGameButton.style.display = 'none';
+            trueButton.style.display = 'inline-block';
+            falseButton.style.display = 'inline-block';
+        }
+
+        function showNextFact() {
+            if (currentFactIndex < facts.length) {
+                factStatement.textContent = facts[currentFactIndex].statement;
+            } else {
+                showScore();
+            }
+        }
+
+        function checkAnswer(userAnswer) {
+            if (userAnswer === facts[currentFactIndex].isTrue) {
+                score.correct++;
+            } else {
+                score.incorrect++;
+            }
+            currentFactIndex++;
+            showNextFact();
+        }
+
+        function showScore() {
+            factStatement.textContent = "Game Over!";
+            trueButton.style.display = 'none';
+            falseButton.style.display = 'none';
+            scoreCard.style.display = 'block';
+            correctScore.textContent = score.correct;
+            incorrectScore.textContent = score.incorrect;
+            startGameButton.style.display = 'block';
+            startGameButton.textContent = 'Play Again';
+            showStillBoredButton();
+        }
+
+        function showTurdRaceModal() {
+            turdRaceModal.style.display = 'block';
+        }
+
+        let turdOptions = document.querySelectorAll('.turd-option');
+        let startRaceButton = document.getElementById('startRace');
+        let raceTrack = document.getElementById('raceTrack');
+        let overlay = document.getElementById('overlay');
+        let resultPopup = document.getElementById('resultPopup');
+        let popupContent = document.getElementById('popupContent');
+        let closePopupButton = document.getElementById('closePopup');
+
+        let selectedTurd = null;
+        let raceInProgress = false;
+
+        turdOptions.forEach(option => {
+            option.addEventListener('click', selectTurd);
+        });
+
+        startRaceButton.addEventListener('click', startRace);
+        closePopupButton.addEventListener('click', closePopup);
+
+        function selectTurd() {
+            if (!raceInProgress) {
+                turdOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedTurd = this.getAttribute('data-turd');
+            }
+        }
+
+        function startRace() {
+            if (raceInProgress || !selectedTurd) return;
+
+            raceInProgress = true;
+            startRaceButton.disabled = true;
+
+            const turds = document.querySelectorAll('.turd');
+            turds.forEach(turd => {
+                turd.style.left = '30px';
+            });
+
+            const raceDuration = 15000; // 15 seconds in milliseconds
+            const startTime = Date.now();
+            const maxPosition = raceTrack.offsetWidth - 50;
+            const speeds = Array(5).fill().map(() => Math.random() * 0.5 + 0.75); // Random base speeds
+
+            function animate() {
+                const elapsedTime = Date.now() - startTime;
+                const progress = Math.min(elapsedTime / raceDuration, 1);
+
+                let winner = null;
+                turds.forEach((turd, index) => {
+                    const speedVariation = 0.8 + Math.random() * 0.4;
+                    const previousPosition = parseFloat(turd.style.left) || 30;
+                    const newPosition = Math.max(
+                        previousPosition,
+                        30 + (maxPosition - 30) * progress * speeds[index] * speedVariation
+                    );
+
+                    turd.style.left = `${Math.min(newPosition, maxPosition)}px`;
+
+                    if (newPosition >= maxPosition && !winner) {
+                        winner = turd.id;
+                    }
+                });
+
+                if (winner || progress === 1) {
+                    endRace(winner || 'turd' + Math.floor(Math.random() * 5 + 1));
+                } else {
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function endRace(winner) {
+            const winningNumber = winner.replace('turd', '');
+            if (winningNumber === selectedTurd) {
+                popupContent.textContent = `Congratulations! You Win! Turd #${winningNumber} won the race!`;
+                popupContent.style.color = 'var(--secondary-color)';
+            } else {
+                popupContent.textContent = `Better Luck Next Poop. Turd #${winningNumber} won the race!`;
+                popupContent.style.color = 'var(--accent-color)';
+            }
+            setTimeout(() => {
+                showPopup();
+            }, 1000);
+            raceInProgress = false;
+            startRaceButton.disabled = false;
+        }
+
+        function showPopup() {
+            overlay.style.display = 'block';
+            resultPopup.style.display = 'block';
+        }
+
+        function closePopup() {
+            overlay.style.display = 'none';
+            resultPopup.style.display = 'none';
+        }
+
+        updateHourlyRate();
+        
+        if (currentUser) {
+            updateLog();
+        }
+    </script>
 </body>
 </html>
