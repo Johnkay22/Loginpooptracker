@@ -7,12 +7,6 @@
   gtag('js', new Date());
 
   gtag('config', 'G-R1E17DCKNC');
-  
-  <!-- Firebase App (non-modular CDN) -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-
 </script>
 <title>How Much You Make to Poop!</title>
 <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
@@ -733,182 +727,123 @@
     </div>
 
     <script>
-        <script>
-    let currentShareIndex = -1;
-    let currentUser = null;
-    let currentUserData = { poopSessions: [], totalEarnings: 0, salary: '', hoursPerWeek: '' }; // Structure for user data
+        let currentShareIndex = -1;
 
-    // Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
-  authDomain: "poopprofitproject.firebaseapp.com",
-  projectId: "poopprofitproject",
-  storageBucket: "poopprofitproject.appspot.com",
-  messagingSenderId: "818996284466",
-  appId: "1:818996284466:web:de6d6bab3987cca417c02b",
-  measurementId: "G-JBXJ1T6LYM"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    // Firebase Authentication State Listener
-    auth.onAuthStateChanged(function(user) {
-        if (user) {
-            currentUser = user; // User is logged in
-            console.log('User is logged in:', user.email);
-            initializeUserData(); // Load user data from Firebase
-        } else {
-            console.log('No user is authenticated');
+        function initializeUserData() {
+            if (!currentUser) {
+                currentUser = {
+                    email: 'guest@example.com',
+                    data: {
+                        poopSessions: [],
+                        totalEarnings: 0
+                    }
+                };
+                saveUserData();
+            } else if (!currentUser.data) {
+                currentUser.data = {
+                    poopSessions: [],
+                    totalEarnings: 0
+                };
+                saveUserData();
+            }
         }
-    });
 
-    // Function to initialize user data (Load from Firebase)
-    function initializeUserData() {
-        if (auth.currentUser) {
-            db.collection("users").doc(auth.currentUser.uid).get().then((doc) => {
-                if (doc.exists) {
-                    currentUserData = doc.data();
-                    console.log('User data loaded from Firebase:', currentUserData);
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        initializeUserData();
 
-                    // Populate the UI with user's data
-                    document.getElementById('salary').value = currentUserData.salary || '';
-                    document.getElementById('hoursPerWeek').value = currentUserData.hoursPerWeek || '';
-                    updateLog();
-                } else {
-                    console.log('No user data found, initializing new data.');
-                    saveUserData();
-                }
-            }).catch((error) => {
-                console.error('Error loading data from Firebase:', error);
-            });
-        }
+        function saveUserData() {
+    const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
+    
+    // Ensure the password is not overwritten or removed
+    if (accounts[currentUser.email]) {
+        const savedPassword = accounts[currentUser.email].password;  // Preserve the password
+        accounts[currentUser.email].data = currentUser.data;  // Update only the data field
+        accounts[currentUser.email].password = savedPassword;  // Restore the password
     }
 
-    // Function to save user data to Firebase
-    function saveUserData() {
-        if (auth.currentUser) {
-            const salary = document.getElementById('salary').value;
-            const hoursPerWeek = document.getElementById('hoursPerWeek').value;
+    console.log('Updated Accounts after session:', accounts);  // Log the updated accounts
 
-            currentUserData.salary = salary;
-            currentUserData.hoursPerWeek = hoursPerWeek;
+    localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));  // Save current user data
+}
 
-            db.collection("users").doc(auth.currentUser.uid).set(currentUserData)
-            .then(() => {
-                console.log('User data saved to Firebase!');
-            }).catch((error) => {
-                console.error('Error saving data to Firebase:', error);
-            });
-        }
-    }
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+        let lastSessionEarnings = 0;
+        let statsChart = null;
 
-    // Function to log a poop session
-    function logPoopSession(duration, earnings) {
-        const now = new Date();
-        const session = {
-            date: now,
-            duration: duration,
-            earnings: earnings,
-            rating: 0,
-            comment: ''
-        };
-
-        if (!currentUserData.poopSessions) {
-            currentUserData.poopSessions = [];
-        }
-        currentUserData.poopSessions.push(session);
-        currentUserData.totalEarnings += earnings;
-
-        console.log('Poop session added:', session);
-        updateLog();
-        saveUserData();
-    }
-
-    // Function to update the poop log in the UI
-    function updateLog() {
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const resultDiv = document.getElementById('result');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
         const logEntriesDiv = document.getElementById('logEntries');
-        logEntriesDiv.innerHTML = ''; // Clear existing log entries
+        const statsButton = document.getElementById('statsButton');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const logoutButton = document.getElementById('logoutButton');
+        
+        let boredButton = document.getElementById('boredButton');
+        let stillBoredButton = document.getElementById('stillBoredButton');
+        let factGameModal = document.getElementById('factGameModal');
+        let factStatement = document.getElementById('factStatement');
+        let trueButton = document.getElementById('trueButton');
+        let falseButton = document.getElementById('falseButton');
+        let startGameButton = document.getElementById('startGameButton');
+        let scoreCard = document.getElementById('scoreCard');
+        let correctScore = document.getElementById('correctScore');
+        let incorrectScore = document.getElementById('incorrectScore');
 
-        currentUserData.poopSessions.forEach((session, index) => {
-            const logEntry = document.createElement('div');
-            logEntry.className = 'log-entry';
-            logEntry.innerHTML = `
-                <div class="date">${new Date(session.date).toLocaleString()}</div>
-                <div class="details">
-                    Duration: ${formatTime(session.duration)}<br>
-                    Earnings: $${session.earnings.toFixed(2)}
-                </div>
-            `;
-            logEntriesDiv.appendChild(logEntry);
-        });
-    }
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal.querySelectorAll('.poop');
+        const submitRatingButton = document.getElementById('submitRating');
+        const closeButtons = document.querySelectorAll('.close');
 
-    // Utility function to format time
-    function formatTime(totalSeconds) {
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    }
+        const statsModal = document.getElementById('statsModal');
+        const shareModal = document.getElementById('shareModal');
+        const shareRatingModal = document.getElementById('shareRatingModal');
 
-    // Function to calculate earnings based on salary and hours worked
-    function calculateEarnings(seconds) {
-        const salary = parseFloat(document.getElementById('salary').value);
-        const hoursPerWeek = parseFloat(document.getElementById('hoursPerWeek').value);
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const applyDateRangeBtn = document.getElementById('applyDateRange');
 
-        if (isNaN(salary) || isNaN(hoursPerWeek)) {
-            return 0;
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
         }
 
-        const hourlyRate = salary / (hoursPerWeek * 52); // Calculate hourly rate
-        return (hourlyRate / 3600) * seconds; // Calculate earnings based on duration
-    }
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                lastSessionEarnings = earnings;
+                logPoopSession(seconds, earnings);
+                showRatingModal(earnings);
+                resetTimer();
+                boredButton.style.display = 'none';
+                stillBoredButton.style.display = 'none';
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+                boredButton.style.display = 'block';
+                stillBoredButton.style.display = 'none';
+            }
+            isRunning = !isRunning;
+        }
 
-    // Timer functions
-    let timer;
-    let seconds = 0;
-    let isRunning = false;
-    let lastSessionEarnings = 0;
-
-    function updateTimer() {
-        seconds++;
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const secs = seconds % 60;
-        document.getElementById('timer').textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    }
-
-    function startStopTimer() {
-        if (isRunning) {
+        function resetTimer() {
             clearInterval(timer);
-            const earnings = calculateEarnings(seconds);
-            lastSessionEarnings = earnings;
-            logPoopSession(seconds, earnings);
-            resetTimer();
-        } else {
-            resetTimer();
-            timer = setInterval(updateTimer, 1000);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
         }
-        isRunning = !isRunning;
-    }
-
-    function resetTimer() {
-        clearInterval(timer);
-        seconds = 0;
-        document.getElementById('timer').textContent = '00:00:00';
-    }
-
-    // Event listeners
-    document.getElementById('startStopButton').addEventListener('click', startStopTimer);
-
-    // Initialize salary and hours per week input listeners
-    document.getElementById('salary').addEventListener('input', saveUserData);
-    document.getElementById('hoursPerWeek').addEventListener('input', saveUserData);
-</script>
-
 
         function calculateEarnings(seconds) {
             const salary = parseFloat(salaryInput.value);
