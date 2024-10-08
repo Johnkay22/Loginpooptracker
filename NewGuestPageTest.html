@@ -491,7 +491,11 @@
         const poopButtons = ratingModal.querySelectorAll('.poop');
         const submitRatingButton = document.getElementById('submitRating');
         const closeButtons = document.querySelectorAll('.close');
-
+closeButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        this.closest('.modal').style.display = 'none';
+    });
+});
         const statsModal = document.getElementById('statsModal');
         const shareModal = document.getElementById('shareModal');
         const shareRatingModal = document.getElementById('shareRatingModal');
@@ -966,6 +970,12 @@
     startGameButton.addEventListener('click', startFactGame);
     trueButton.addEventListener('click', () => checkAnswer(true));
     falseButton.addEventListener('click', () => checkAnswer(false));
+
+  window.addEventListener('click', function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+});
 
     // Initialize and start the fact game
     function startFactGame() {
