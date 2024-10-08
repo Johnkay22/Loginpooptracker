@@ -1,6 +1,29 @@
 <html><head><base href="https://www.poopprofit.com/index.html">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
+  <!-- Firebase App and Firestore -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+
+<script>
+  // Firebase configuration (you need to replace this with your own Firebase configuration object)
+  const firebaseConfig = {
+     apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
+  authDomain: "poopprofitproject.firebaseapp.com",
+  projectId: "poopprofitproject",
+  storageBucket: "poopprofitproject.appspot.com",
+  messagingSenderId: "818996284466",
+  appId: "1:818996284466:web:de6d6bab3987cca417c02b",
+  measurementId: "G-JBXJ1T6LYM"
+  };
+
+  // Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>
+
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -730,41 +753,85 @@
         let currentShareIndex = -1;
 
         function initializeUserData() {
-            if (!currentUser) {
-                currentUser = {
-                    email: 'guest@example.com',
-                    data: {
-                        poopSessions: [],
-                        totalEarnings: 0
-                    }
-                };
-                saveUserData();
-            } else if (!currentUser.data) {
-                currentUser.data = {
-                    poopSessions: [],
-                    totalEarnings: 0
-                };
-                saveUserData();
-            }
+  if (!currentUser) {
+    currentUser = {
+      email: 'guest@example.com',
+      data: {
+        poopSessions: [],
+        totalEarnings: 0,
+        salary: '',         // Initialize with empty salary
+        hoursPerWeek: ''    // Initialize with empty hoursPerWeek
+      }
+    };
+    saveUserData();
+  } else if (!currentUser.data) {
+    currentUser.data = {
+      poopSessions: [],
+      totalEarnings: 0,
+      salary: '',
+      hoursPerWeek: ''
+    };
+    saveUserData();
+  }
+
+  // Load user data from Firebase if authenticated
+  if (auth.currentUser) {
+    db.collection("users").doc(auth.currentUser.uid).get()
+      .then((doc) => {
+        if (doc.exists) {
+          const userData = doc.data();
+          currentUser.data = userData.data;  // Replace local data with Firebase data
+          document.getElementById('salary').value = currentUser.data.salary || '';  // Set saved salary in input field
+          document.getElementById('hoursPerWeek').value = currentUser.data.hoursPerWeek || '';  // Set saved hours in input field
+          updateLog();  // Update the UI with loaded data
+          console.log('User data (including salary and hours) loaded from Firebase');
+        } else {
+          console.log('No user data found in Firebase');
         }
+      }).catch((error) => {
+        console.error('Error loading data from Firebase:', error);
+      });
+  } else {
+    console.error('No authenticated user!');
+  }
+}
 
         let currentUser = JSON.parse(localStorage.getItem('currentUser'));
         initializeUserData();
 
         function saveUserData() {
-    const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
-    
-    // Ensure the password is not overwritten or removed
-    if (accounts[currentUser.email]) {
-        const savedPassword = accounts[currentUser.email].password;  // Preserve the password
-        accounts[currentUser.email].data = currentUser.data;  // Update only the data field
-        accounts[currentUser.email].password = savedPassword;  // Restore the password
-    }
+  const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
 
-    console.log('Updated Accounts after session:', accounts);  // Log the updated accounts
+  // Ensure the password is not overwritten or removed
+  if (accounts[currentUser.email]) {
+    const savedPassword = accounts[currentUser.email].password;  // Preserve the password
+    accounts[currentUser.email].data = currentUser.data;  // Update only the data field
+    accounts[currentUser.email].password = savedPassword;  // Restore the password
+  }
 
-    localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));  // Save current user data
+  // Save the salary and hours worked to currentUser data
+  const salary = document.getElementById('salary').value;   // Grabbing the input field values
+  const hoursPerWeek = document.getElementById('hoursPerWeek').value;
+  currentUser.data.salary = salary;
+  currentUser.data.hoursPerWeek = hoursPerWeek;
+
+  // Save to local storage
+  localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
+  localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+  // Save to Firebase Firestore
+  if (auth.currentUser) {
+    db.collection("users").doc(auth.currentUser.uid).set({
+      email: currentUser.email,
+      data: currentUser.data
+    }).then(() => {
+      console.log('User data (including salary and hours) saved to Firebase!');
+    }).catch((error) => {
+      console.error('Error saving data to Firebase:', error);
+    });
+  } else {
+    console.error('No authenticated user!');
+  }
 }
 
         let timer;
@@ -1198,9 +1265,14 @@ applyDateRangeBtn.addEventListener('click', () => {
         }
 
         function logout() {
-            localStorage.removeItem('currentUser');
-            window.location.href = 'https://www.poopprofit.com/signup.html';
-        }
+  auth.signOut().then(() => {
+    // Clear local storage and redirect to the signup page
+    localStorage.removeItem('currentUser');
+    window.location.href = 'https://www.poopprofit.com/signup.html';
+  }).catch((error) => {
+    console.error('Error signing out from Firebase:', error);
+  });
+}
 
         function updateHourlyRate() {
             const salary = parseFloat(salaryInput.value);
