@@ -30,6 +30,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+  <!-- Initialize Firebase -->
+  <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
+  authDomain: "poopprofitproject.firebaseapp.com",
+  projectId: "poopprofitproject",
+  storageBucket: "poopprofitproject.appspot.com",
+  messagingSenderId: "818996284466",
+  appId: "1:818996284466:web:de6d6bab3987cca417c02b",
+  measurementId: "G-JBXJ1T6LYM"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+  </script>
+
+  <script>
+  firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+  
 <style>
     :root {
         --primary-color: #3498db;
@@ -727,44 +758,91 @@
     </div>
 
     <script>
-        let currentShareIndex = -1;
-
-        function initializeUserData() {
-            if (!currentUser) {
+let currentUser;
+auth.onAuthStateChanged(function(user) {
+    if (user) {
+        const userRef = db.collection('users').doc(user.uid);
+        userRef.get().then((doc) => {
+            if (!doc.exists) {
+                // Initialize user document if it doesn't exist
                 currentUser = {
-                    email: 'guest@example.com',
+                    email: user.email,
                     data: {
                         poopSessions: [],
                         totalEarnings: 0
                     }
                 };
-                saveUserData();
-            } else if (!currentUser.data) {
-                currentUser.data = {
-                    poopSessions: [],
-                    totalEarnings: 0
-                };
-                saveUserData();
+                userRef.set(currentUser);  // Save initial user data in Firestore
+            } else {
+                currentUser = doc.data();  // Retrieve the user data from Firestore
             }
-        }
-
-        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        initializeUserData();
-
-        function saveUserData() {
-    const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
-    
-    // Ensure the password is not overwritten or removed
-    if (accounts[currentUser.email]) {
-        const savedPassword = accounts[currentUser.email].password;  // Preserve the password
-        accounts[currentUser.email].data = currentUser.data;  // Update only the data field
-        accounts[currentUser.email].password = savedPassword;  // Restore the password
+        });
+    } else {
+        currentUser = {
+            email: 'guest@example.com',
+            data: {
+                poopSessions: [],
+                totalEarnings: 0
+            }
+        };
     }
+});
 
-    console.log('Updated Accounts after session:', accounts);  // Log the updated accounts
+        let currentUser = {};  // Initialize as an empty object
 
-    localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));  // Save current user data
+auth.onAuthStateChanged(function(user) {
+    if (user) {
+        const userRef = db.collection('users').doc(user.uid);
+        userRef.get().then((doc) => {
+            if (!doc.exists) {
+                // Initialize user document if it doesn't exist
+                currentUser = {
+                    email: user.email,
+                    data: {
+                        poopSessions: [],
+                        totalEarnings: 0
+                    }
+                };
+                userRef.set(currentUser).then(() => {
+                    console.log("User data initialized in Firestore.");
+                }).catch((error) => {
+                    console.error("Error initializing user data: ", error);
+                });
+            } else {
+                currentUser = doc.data();  // Retrieve the user data from Firestore
+                console.log("User data loaded from Firestore:", currentUser);
+            }
+            // Call saveUserData if necessary after setting currentUser
+            saveUserData();  // You can call this or leave it for later actions
+        }).catch((error) => {
+            console.error("Error fetching user data from Firestore: ", error);
+        });
+    } else {
+        // For guest users
+        currentUser = {
+            email: 'guest@example.com',
+            data: {
+                poopSessions: [],
+                totalEarnings: 0
+            }
+        };
+        saveUserData();  // Save guest data locally, or skip if guest data doesn't need saving
+    }
+});
+
+function saveUserData() {
+    if (auth.currentUser) {
+        // Save current user data to Firestore
+        db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+        .then(() => {
+            console.log("User data saved to Firestore.");
+        })
+        .catch((error) => {
+            console.error("Error saving user data to Firestore: ", error);
+        });
+    } else {
+        console.log("Guest user data will not be saved to Firestore.");
+    }
 }
 
         let timer;
