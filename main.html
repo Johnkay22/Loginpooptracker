@@ -31,13 +31,13 @@
     <!-- Initialize Firebase -->
     <script>
       const firebaseConfig = {
-        apiKey: "your-api-key-here",
+        apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
         authDomain: "poopprofitproject.firebaseapp.com",
         projectId: "poopprofitproject",
         storageBucket: "poopprofitproject.appspot.com",
-        messagingSenderId: "your-sender-id-here",
-        appId: "your-app-id-here",
-        measurementId: "G-your-measurement-id"
+        messagingSenderId: "818996284466",
+        appId: "1:818996284466:web:de6d6bab3987cca417c02b",
+        measurementId: "G-JBXJ1T6LYM"
       };
 
       // Initialize Firebase
@@ -46,7 +46,7 @@
       const auth = firebase.auth();
     </script>
 
-    <!-- Your Custom Styles (Including Game Modal) -->
+    <!-- Custom Styles -->
     <style>
         body {
             background-color: #111;
@@ -67,6 +67,56 @@
             margin: 20px;
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0F0;
+            color: black;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #0A0;
+        }
+
+        #timer {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        #poopEmoji {
+            font-size: 50px;
+        }
+
+        #logEntries {
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            background-color: #333;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .delete-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            float: right;
         }
 
         /* Modal and game styling */
@@ -91,45 +141,130 @@
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
         }
+
+        .close {
+            color: red;
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        #raceTrack {
+            width: 100%;
+            height: 400px;
+            background-color: #333;
+            position: relative;
+        }
+
+        .lane {
+            height: 20%;
+            border-bottom: 1px solid white;
+            position: relative;
+        }
+
+        .lane-number {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+
+        .turd {
+            position: absolute;
+            left: 30px;
+            font-size: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: left 0.1s linear;
+        }
+
+        .toilet {
+            position: absolute;
+            right: 10px;
+            font-size: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="neon-text">Poop Profit Calculator</h1>
-        <div class="card glow">
-            <input type="number" id="salary" placeholder="Annual Salary">
-            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
-            <div id="result"></div>
-        </div>
-        <div class="card glow">
-            <div id="poopEmoji">💩</div>
-            <div id="timer" class="neon-text">00:00:00</div>
-            <button id="startStopButton">Start Pooping</button>
-            <button id="boredButton" style="display: none;">Bored?</button>
-            <button id="stillBoredButton" style="display: none;">Still bored??</button>
-        </div>
-        <div class="card glow">
-            <h2>Poop Log</h2>
-            <div id="log">
-                <div id="logEntries"></div>
-            </div>
-        </div>
-        <button id="statsButton">Show Statistics</button>
-        <button id="logoutButton">Logout</button>
+
+    <h1 class="neon-text">Poop Profit Calculator</h1>
+
+    <!-- Main Poop Calculator Structure -->
+    <div class="card">
+        <input type="number" id="salary" placeholder="Annual Salary">
+        <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+        <div id="result"></div>
     </div>
+
+    <div class="card">
+        <div id="poopEmoji">💩</div>
+        <div id="timer">00:00:00</div>
+        <button id="startStopButton">Start Pooping</button>
+    </div>
+
+    <div class="card">
+        <h2>Poop Log</h2>
+        <div id="logEntries"></div>
+    </div>
+
+    <button id="statsButton">Show Stats</button>
+    <button id="boredButton">I'm Bored!</button>
+    <button id="logoutButton">Logout</button>
 
     <!-- Fact Game Modal -->
     <div id="factGameModal">
         <div class="modal-content">
-            <h2>Fact or Fiction</h2>
-            <p id="factStatement"></p>
+            <span class="close" id="closeFactGameModal">&times;</span>
+            <h2>Fun Fact!</h2>
+            <div id="factStatement">This is a true fact!</div>
             <button id="trueButton">True</button>
             <button id="falseButton">False</button>
-            <button id="startGameButton">Start Game</button>
-            <div id="scoreCard" style="display: none;">
-                <p>Correct: <span id="correctScore"></span></p>
-                <p>Incorrect: <span id="incorrectScore"></span></p>
+            <div id="scoreCard">Correct: <span id="correctScore">0</span> | Incorrect: <span id="incorrectScore">0</span></div>
+        </div>
+    </div>
+
+    <!-- Turd Race Modal -->
+    <div id="turdRaceModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h1>Turd Race</h1>
+            <div id="raceTrack">
+                <div class="lane">
+                    <span class="lane-number">1</span>
+                    <div class="turd" id="turd1">💩</div>
+                    <span class="toilet">🚽</span>
+                </div>
+                <div class="lane">
+                    <span class="lane-number">2</span>
+                    <div class="turd" id="turd2">💩</div>
+                    <span class="toilet">🚽</span>
+                </div>
+                <div class="lane">
+                    <span class="lane-number">3</span>
+                    <div class="turd" id="turd3">💩</div>
+                    <span class="toilet">🚽</span>
+                </div>
+                <div class="lane">
+                    <span class="lane-number">4</span>
+                    <div class="turd" id="turd4">💩</div>
+                    <span class="toilet">🚽</span>
+                </div>
+                <div class="lane">
+                    <span class="lane-number">5</span>
+                    <div class="turd" id="turd5">💩</div>
+                    <span class="toilet">🚽</span>
+                </div>
+                <div id="finishLine"></div>
             </div>
+            <button id="startRace">Start Race</button>
         </div>
     </div>
 
@@ -152,7 +287,9 @@
 
     <!-- Script for Game Logic and Main Poop Tracker -->
     <script>
-        let currentUser;
+        let currentUser = null;
+
+        // Firebase Auth and Firestore Data Handling
         auth.onAuthStateChanged(function(user) {
             if (user) {
                 const userRef = db.collection('users').doc(user.uid);
@@ -165,48 +302,94 @@
                                 totalEarnings: 0
                             }
                         };
-                        userRef.set(currentUser);
+                        userRef.set(currentUser); // Create new user data in Firestore
                     } else {
                         currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
                     }
                 });
             } else {
-                currentUser = {
-                    email: 'guest@example.com',
-                    data: {
-                        poopSessions: [],
-                        totalEarnings: 0
-                    }
-                };
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
             }
         });
 
-        // Timer and Poop Logging Logic
         let seconds = 0;
         let isRunning = false;
         let poopRating = 0;
         let lastSessionEarnings = 0;
 
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = document.querySelectorAll('.poop');
+        const submitRatingButton = document.getElementById('submitRating');
+        const closeButtons = document.querySelectorAll('.close');
+
+        const boredButton = document.getElementById('boredButton');
+        const stillBoredButton = document.getElementById('stillBoredButton');
+        const factGameModal = document.getElementById('factGameModal');
+        const factStatement = document.getElementById('factStatement');
+        const trueButton = document.getElementById('trueButton');
+        const falseButton = document.getElementById('falseButton');
+        const startGameButton = document.getElementById('startGameButton');
+        const scoreCard = document.getElementById('scoreCard');
+        const correctScore = document.getElementById('correctScore');
+        const incorrectScore = document.getElementById('incorrectScore');
+
+        const turdRaceModal = document.getElementById('turdRaceModal');
+        const startRaceButton = document.getElementById('startRace');
+        let selectedTurd = null;
+        let raceInProgress = false;
+
+        let timerInterval;
+
+        startStopButton.addEventListener('click', startStopTimer);
+        poopButtons.forEach(button => button.addEventListener('click', selectPoopRating));
+        submitRatingButton.addEventListener('click', submitRating);
+        boredButton.addEventListener('click', showFactGame);
+        startGameButton.addEventListener('click', startFactGame);
+        stillBoredButton.addEventListener('click', showTurdRace);
+        startRaceButton.addEventListener('click', startRace);
+
         function startStopTimer() {
             if (isRunning) {
-                clearInterval(timer);
-                startStopButton.textContent = 'Start Pooping';
+                clearInterval(timerInterval);
+                startStopButton.innerText = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
                 const earnings = calculateEarnings(seconds);
+                lastSessionEarnings = earnings;
                 logPoopSession(seconds, earnings);
                 showRatingModal(earnings);
                 resetTimer();
+                boredButton.style.display = 'none';
+                stillBoredButton.style.display = 'none';
             } else {
                 resetTimer();
-                timer = setInterval(updateTimer, 1000);
-                startStopButton.textContent = 'Stop Pooping';
+                timerInterval = setInterval(updateTimer, 1000);
+                startStopButton.innerText = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+                boredButton.style.display = 'block';
             }
             isRunning = !isRunning;
         }
 
         function resetTimer() {
-            clearInterval(timer);
+            clearInterval(timerInterval);
             seconds = 0;
-            timerDiv.textContent = '00:00:00';
+            timerDiv.innerText = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.innerText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
         }
 
         function calculateEarnings(seconds) {
@@ -217,14 +400,6 @@
             }
             const hourlyRate = salary / (hoursPerWeek * 52);
             return (hourlyRate / 3600) * seconds;
-        }
-
-        function updateTimer() {
-            seconds++;
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const secs = seconds % 60;
-            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
         }
 
         function logPoopSession(duration, earnings) {
@@ -244,7 +419,13 @@
 
         function saveUserData() {
             if (auth.currentUser) {
-                db.collection('users').doc(auth.currentUser.uid).set(currentUser);
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
             }
         }
 
@@ -284,7 +465,7 @@
 
         function showRatingModal(earnings) {
             const congratsMessage = document.getElementById('congratsMessage');
-            congratsMessage.textContent = `You earned $${earnings.toFixed(2)} while pooping!`;
+            congratsMessage.textContent = `You earned $${earnings.toFixed(2} while pooping!`;
             ratingModal.style.display = 'block';
             poopRating = 0;
             poopButtons.forEach(button => button.classList.remove('active'));
@@ -310,9 +491,6 @@
             ratingModal.style.display = 'none';
             updateLog();
         }
-
-        poopButtons.forEach(button => button.addEventListener('click', selectPoopRating));
-        submitRatingButton.addEventListener('click', submitRating);
 
         // Fact Game Logic
         let facts = [
@@ -375,11 +553,625 @@
         falseButton.addEventListener('click', () => checkAnswer(false));
 
         // Turd Race Logic
+        let turdOptions = document.querySelectorAll('.turd-option');
         let raceTrack = document.getElementById('raceTrack');
         let selectedTurd = null;
         let raceInProgress = false;
 
+        turdOptions.forEach(option => option.addEventListener('click', selectTurd));
+
+        function selectTurd() {
+            if (!raceInProgress) {
+                turdOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedTurd = this.getAttribute('data-turd');
+            }
+        }
+
+        function startRace() {
+            if (raceInProgress || !selectedTurd) return;
+
+            raceInProgress = true;
+            startRaceButton.disabled = true;
+
+            const turds = document.querySelectorAll('.turd');
+            turds.forEach(turd => {
+                turd.style.left = '30px';
+            });
+
+            const raceDuration = 15000; // 15 seconds in milliseconds
+            const startTime = Date.now();
+            const maxPosition = raceTrack.offsetWidth - 50;
+            const speeds = Array(5).fill().map(() => Math.random() * 0.5 + 0.75);
+
+            function animate() {
+                const elapsedTime = Date.now() - startTime;
+                const progress = Math.min(elapsedTime / raceDuration, 1);
+
+                let winner = null;
+                turds.forEach((turd, index) => {
+                    const previousPosition = parseFloat(turd.style.left) || 30;
+                    const newPosition = Math.min(
+                        previousPosition + (maxPosition - previousPosition) * progress * speeds[index],
+                        maxPosition
+                    );
+
+                    turd.style.left = `${newPosition}px`;
+
+                    if (newPosition >= maxPosition && !winner) {
+                        winner = turd.id;
+                    }
+                });
+
+                if (winner || <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop on the job, poop earnings"/>
+
+    <!-- Social Media Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Poop Profit Calculator!" />
+    <meta name="twitter:description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/Johnkay22/Loginpooptracker/main/PPCImage.jpg" />
+    <meta name="twitter:site" content="@YourTwitterHandle" />
+
+    <meta property="og:title" content="Poop Profit Calculator!" />
+    <meta property="og:description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta property="og:url" content="https://www.poopprofit.com" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Poop Profit Calculator" />
+    <meta property="og:image" content="https://raw.githubusercontent.com/Johnkay22/Loginpooptracker/main/PPCImage.jpg">
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
+        authDomain: "poopprofitproject.firebaseapp.com",
+        projectId: "poopprofitproject",
+        storageBucket: "poopprofitproject.appspot.com",
+        messagingSenderId: "818996284466",
+        appId: "1:818996284466:web:de6d6bab3987cca417c02b",
+        measurementId: "G-JBXJ1T6LYM"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background-color: #111;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+        }
+
+        .neon-text {
+            font-size: 48px;
+            color: #0F0;
+            text-shadow: 0 0 10px #0F0, 0 0 20px #0F0, 0 0 30px #0F0;
+        }
+
+        .card {
+            background-color: #222;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0F0;
+            color: black;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #0A0;
+        }
+
+        #timer {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        #poopEmoji {
+            font-size: 50px;
+        }
+
+        #logEntries {
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            background-color: #333;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .delete-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            float: right;
+        }
+
+        /* Modal and game styling */
+        #factGameModal, #ratingModal, #turdRaceModal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+            text-align: center;
+            color: white;
+        }
+
+        #factGameModal .modal-content, #ratingModal .modal-content, #turdRaceModal .modal-content {
+            margin: 15% auto;
+            padding: 20px;
+            background-color: #222;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .close {
+            color: red;
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        #raceTrack {
+            width: 100%;
+            height: 400px;
+            background-color: #333;
+            position: relative;
+        }
+
+        .lane {
+            height: 20%;
+            border-bottom: 1px solid white;
+            position: relative;
+        }
+
+        .lane-number {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+
+        .turd {
+            position: absolute;
+            left: 30px;
+            font-size: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: left 0.1s linear;
+        }
+
+        .toilet {
+            position: absolute;
+            right: 10px;
+            font-size: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="neon-text">Poop Profit Calculator</h1>
+
+    <!-- Main Poop Calculator Structure -->
+    <div class="card">
+        <input type="number" id="salary" placeholder="Annual Salary">
+        <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+        <div id="result"></div>
+    </div>
+
+    <div class="card">
+        <div id="poopEmoji">💩</div>
+        <div id="timer">00:00:00</div>
+        <button id="startStopButton">Start Pooping</button>
+    </div>
+
+    <div class="card">
+        <h2>Poop Log</h2>
+        <div id="logEntries"></div>
+    </div>
+
+    <button id="statsButton">Show Stats</button>
+    <button id="boredButton">I'm Bored!</button>
+    <button id="logoutButton">Logout</button>
+
+    <!-- Fact Game Modal -->
+    <div id="factGameModal">
+        <div class="modal-content">
+            <span class="close" id="closeFactGameModal">&times;</span>
+            <h2>Fun Fact!</h2>
+            <div id="factStatement">This is a true fact!</div>
+            <button id="trueButton">True</button>
+            <button id="falseButton">False</button>
+            <div id="scoreCard">Correct: <span id="correctScore">0</span> | Incorrect: <span id="incorrectScore">0</span></div>
+        </div>
+    </div>
+
+    <!-- Turd Race Modal -->
+    <div id="turdRaceModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h1>Turd Race</h1>
+            <div id="raceTrack">
+                <div class="lane">
+                    <span class="lane-number">1</span>
+                    <div class="turd" id="turd1">💩</div>
+                    <span class="toilet">🚽</span>
+                </div>
+                <div class="lane">
+                    <span class="lane-number">2</span>
+                    <div class="turd" id="turd2">💩</div>
+                    <span class="toilet">🚽</span>
+                </div>
+                <div class="lane">
+                    <span class="lane-number">3</span>
+                    <div class="turd" id="turd3">💩</div>
+                    <span class="toilet">🚽</span>
+                </div>
+                <div class="lane">
+                    <span class="lane-number">4</span>
+                    <div class="turd" id="turd4">💩</div>
+                    <span class="toilet">🚽</span>
+                </div>
+                <div class="lane">
+                    <span class="lane-number">5</span>
+                    <div class="turd" id="turd5">💩</div>
+                    <span class="toilet">🚽</span>
+                </div>
+                <div id="finishLine"></div>
+            </div>
+            <button id="startRace">Start Race</button>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="ratingModal">
+        <div class="modal-content">
+            <span class="close" id="closeRatingModal">&times;</span>
+            <h2>Rate Your Poop!</h2>
+            <div class="poop-rating">
+                <button class="poop" data-rating="1">💩</button>
+                <button class="poop" data-rating="2">💩</button>
+                <button class="poop" data-rating="3">💩</button>
+                <button class="poop" data-rating="4">💩</button>
+                <button class="poop" data-rating="5">💩</button>
+            </div>
+            <input type="text" id="poopComment" placeholder="Add a comment (optional)">
+            <button id="submitRating">Submit Rating</button>
+        </div>
+    </div>
+
+    <!-- Script for Game Logic and Main Poop Tracker -->
+    <script>
+        let currentUser = null;
+
+        // Firebase Auth and Firestore Data Handling
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
+        });
+
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+        let lastSessionEarnings = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = document.querySelectorAll('.poop');
+        const submitRatingButton = document.getElementById('submitRating');
+        const closeButtons = document.querySelectorAll('.close');
+
+        const boredButton = document.getElementById('boredButton');
+        const stillBoredButton = document.getElementById('stillBoredButton');
+        const factGameModal = document.getElementById('factGameModal');
+        const factStatement = document.getElementById('factStatement');
+        const trueButton = document.getElementById('trueButton');
+        const falseButton = document.getElementById('falseButton');
+        const startGameButton = document.getElementById('startGameButton');
+        const scoreCard = document.getElementById('scoreCard');
+        const correctScore = document.getElementById('correctScore');
+        const incorrectScore = document.getElementById('incorrectScore');
+
+        const turdRaceModal = document.getElementById('turdRaceModal');
+        const startRaceButton = document.getElementById('startRace');
+        let selectedTurd = null;
+        let raceInProgress = false;
+
+        let timerInterval;
+
+        startStopButton.addEventListener('click', startStopTimer);
+        poopButtons.forEach(button => button.addEventListener('click', selectPoopRating));
+        submitRatingButton.addEventListener('click', submitRating);
+        boredButton.addEventListener('click', showFactGame);
+        startGameButton.addEventListener('click', startFactGame);
+        stillBoredButton.addEventListener('click', showTurdRace);
         startRaceButton.addEventListener('click', startRace);
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                startStopButton.innerText = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                lastSessionEarnings = earnings;
+                logPoopSession(seconds, earnings);
+                showRatingModal(earnings);
+                resetTimer();
+                boredButton.style.display = 'none';
+                stillBoredButton.style.display = 'none';
+            } else {
+                resetTimer();
+                timerInterval = setInterval(updateTimer, 1000);
+                startStopButton.innerText = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+                boredButton.style.display = 'block';
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            seconds = 0;
+            timerDiv.innerText = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.innerText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <button class="delete-btn" data-index="${index}">×</button>
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    if (confirm('Are you sure you want to delete this log entry?')) {
+                        currentUser.data.poopSessions.splice(index, 1);
+                        updateLog();
+                        saveUserData();
+                    }
+                });
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function showRatingModal(earnings) {
+            const congratsMessage = document.getElementById('congratsMessage');
+            congratsMessage.textContent = `You earned $${earnings.toFixed(2} while pooping!`;
+            ratingModal.style.display = 'block';
+            poopRating = 0;
+            poopButtons.forEach(button => button.classList.remove('active'));
+        }
+
+        function selectPoopRating() {
+            poopRating = parseInt(this.getAttribute('data-rating'));
+            poopButtons.forEach((btn, index) => {
+                if (index < poopRating) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function submitRating() {
+            const lastSessionIndex = currentUser.data.poopSessions.length - 1;
+            const comment = document.getElementById('poopComment').value;
+            currentUser.data.poopSessions[lastSessionIndex].rating = poopRating;
+            currentUser.data.poopSessions[lastSessionIndex].comment = comment;
+            saveUserData();
+            ratingModal.style.display = 'none';
+            updateLog();
+        }
+
+        // Fact Game Logic
+        let facts = [
+            { statement: "The average person spends 3 years of their life on the toilet.", isTrue: true },
+            { statement: "The world's largest toilet is located in Japan.", isTrue: false },
+            { statement: "The first flushing toilet was invented in 1596.", isTrue: true },
+            { statement: "People in space do not have to go to the bathroom.", isTrue: false },
+            { statement: "Ancient Romans used sponges on sticks instead of toilet paper.", isTrue: true }
+        ];
+
+        let currentFactIndex = 0;
+        let factGameScore = { correct: 0, incorrect: 0 };
+
+        function showFactGame() {
+            factGameModal.style.display = 'block';
+            startGameButton.style.display = 'block';
+            trueButton.style.display = 'none';
+            falseButton.style.display = 'none';
+            factStatement.textContent = "Ready to play Fact or Fiction?";
+            scoreCard.style.display = 'none';
+        }
+
+        function startFactGame() {
+            currentFactIndex = 0;
+            factGameScore = { correct: 0, incorrect: 0 };
+            showNextFact();
+            startGameButton.style.display = 'none';
+            trueButton.style.display = 'inline-block';
+            falseButton.style.display = 'inline-block';
+        }
+
+        function showNextFact() {
+            if (currentFactIndex < facts.length) {
+                factStatement.textContent = facts[currentFactIndex].statement;
+            } else {
+                endFactGame();
+            }
+        }
+
+        function checkAnswer(userAnswer) {
+            if (userAnswer === facts[currentFactIndex].isTrue) {
+                factGameScore.correct++;
+            } else {
+                factGameScore.incorrect++;
+            }
+            currentFactIndex++;
+            showNextFact();
+        }
+
+        function endFactGame() {
+            factStatement.textContent = "Game Over!";
+            trueButton.style.display = 'none';
+            falseButton.style.display = 'none';
+            scoreCard.style.display = 'block';
+            correctScore.textContent = factGameScore.correct;
+            incorrectScore.textContent = factGameScore.incorrect;
+        }
+
+        trueButton.addEventListener('click', () => checkAnswer(true));
+        falseButton.addEventListener('click', () => checkAnswer(false));
+
+        // Turd Race Logic
+        let turdOptions = document.querySelectorAll('.turd-option');
+        let raceTrack = document.getElementById('raceTrack');
+        let selectedTurd = null;
+        let raceInProgress = false;
+
+        turdOptions.forEach(option => option.addEventListener('click', selectTurd));
+
+        function selectTurd() {
+            if (!raceInProgress) {
+                turdOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedTurd = this.getAttribute('data-turd');
+            }
+        }
 
         function startRace() {
             if (raceInProgress || !selectedTurd) return;
@@ -417,6 +1209,24 @@
                 });
 
                 if (winner || progress === 1) {
+                    endRace(winner || 'turd' + Math.floor(Math.random() * 5 + 1));
+                } else {
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function endRace(winner) {
+            const winningTurd = winner.replace('turd', '');
+            alert(`Turd #${winningTurd} wins!`);
+            raceInProgress = false;
+            startRaceButton.disabled = false;
+        }
+    </script>
+</body>
+</html>progress === 1) {
                     endRace(winner || 'turd' + Math.floor(Math.random() * 5 + 1));
                 } else {
                     requestAnimationFrame(animate);
