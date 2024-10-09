@@ -1,30 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <base href="https://www.poopprofit.com/index.html">
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-R1E17DCKNC');
-    </script>
-    <title>How Much You Make to Poop!</title>
-
-    <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="https://www.poopprofit.com/favicon.png" type="image/png">
-    <meta name="description" content="Have you ever wondered how much you make to poop at work?">
+    <title>Poop Profit Calculator</title>
 
-    <!-- Firebase SDK -->
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
 
+    <!-- Initialize Firebase -->
     <script>
-      // Firebase configuration
       const firebaseConfig = {
         apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
   authDomain: "poopprofitproject.firebaseapp.com",
@@ -40,16 +31,17 @@
       const db = firebase.firestore();
       const auth = firebase.auth();
     </script>
-    
+
+    <!-- Custom Styles -->
     <style>
-:root {
-    --primary-color: #3498db;
-    --secondary-color: #2ecc71;
-    --background-color: #1a1a2e;
-    --text-color: #e0e0e0;
-    --card-background: #16213e;
-    --accent-color: #f39c12;
-}
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
 
         body {
             font-family: 'Roboto', sans-serif;
@@ -57,543 +49,305 @@
             padding: 0;
             background-color: var(--background-color);
             color: var(--text-color);
-    line-height: 1.6;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 20px;
-}
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-h1, h2 {
-    color: var(--primary-color);
-    text-align: center;
-    font-weight: 300;
-    margin-bottom: 30px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
 
-.card {
-    background-color: var(--card-background);
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    padding: 30px;
-    margin-bottom: 30px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-}
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
 
-input {
-    width: 100%;
-    padding: 15px;
-    margin: 10px 0;
-    border: none;
-    border-bottom: 2px solid var(--primary-color);
-    background-color: transparent;
-    color: var(--text-color);
-    font-size: 16px;
-    transition: border-color 0.3s ease;
-}
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
 
-input:focus {
-    outline: none;
-    border-bottom-color: var(--secondary-color);
-}
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
 
-button {
-    width: 100%;
-    padding: 15px;
-    margin: 15px 0;
-    border: none;
-    border-radius: 50px;
-    background-color: var(--primary-color);
-    color: white;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
 
-button:hover {
-    background-color: var(--secondary-color);
-    transform: scale(1.05);
-}
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
 
-#timer {
-    font-size: 72px;
-    text-align: center;
-    margin: 30px 0;
-    color: var(--primary-color);
-    font-weight: 300;
-    text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
-}
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
 
-#poopEmoji {
-    font-size: 72px;
-    text-align: center;
-    margin: 30px 0;
-}
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
 
-.wiggle {
-    animation: wiggle 0.5s infinite;
-}
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
 
-@keyframes wiggle {
-    0% { transform: rotate(0deg); }
-    25% { transform: rotate(5deg); }
-    75% { transform: rotate(-5deg); }
-    100% { transform: rotate(0deg); }
-}
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
 
-#log {
-    max-height: 400px;
-    overflow-y: auto;
-}
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
 
-.log-entry {
-    background-color: rgba(255, 255, 255, 0.05);
-    border-left: 4px solid var(--primary-color);
-    padding: 20px;
-    margin-bottom: 15px;
-    position: relative;
-    transition: all 0.3s ease;
-    border-radius: 5px;
-}
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
-.log-entry:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-.log-entry .delete-btn, .log-entry .share-btn {
-    position: absolute;
-    top: 10px;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: none;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
 
-.log-entry .delete-btn {
-    right: 10px;
-    background-color: var(--accent-color);
-}
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
 
-.log-entry .share-btn {
-    right: 50px;
-    background-color: var(--secondary-color);
-}
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
 
-.log-entry .delete-btn:hover, .log-entry .share-btn:hover {
-    transform: scale(1.1);
-}
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
 
-.log-entry .date {
-    font-weight: bold;
-    color: var(--primary-color);
-    margin-bottom: 10px;
-}
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
 
-.log-entry .details {
-    color: var(--text-color);
-    font-size: 14px;
-}
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
 
-.log-entry .rating {
-    margin-top: 10px;
-    color: var(--secondary-color);
-}
-
-.log-entry .comment {
-    margin-top: 10px;
-    font-style: italic;
-    color: var(--text-color);
-}
-
-/* Modal and game styling */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.7);
-    backdrop-filter: blur(5px);
-}
-
-.modal-content {
-    background-color: var(--card-background);
-    margin: 10% auto;
-    padding: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    width: 70%;
-    max-width: 500px;
-    border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.close:hover,
-.close:focus {
-    color: var(--text-color);
-    text-decoration: none;
-}
-
-#statsChart {
-    width: 100%;
-    height: 300px;
-}
-
-#statsText {
-    margin-top: 20px;
-    font-size: 14px;/* Modal and game styling */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.7);
-    backdrop-filter: blur(5px);
-}
-
-.modal-content {
-    background-color: var(--card-background);
-    margin: 10% auto;
-    padding: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    width: 70%;
-    max-width: 500px;
-    border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.close:hover,
-.close:focus {
-    color: var(--text-color);
-    text-decoration: none;
-}
-
-#statsChart {
-    width: 100%;
-    height: 300px;
-}
-
-#statsText {
-    margin-top: 20px;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-.stats-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.stats-item:last-child {
-    border-bottom: none;
-}
-
-.stats-label {
-    font-weight: bold;
-    color: var(--primary-color);
-}
-
-.stats-value {
-    color: var(--text-color);
-}
-
-#congratsMessage {
-    text-align: center;
-    font-size: 20px;
-    color: var(--secondary-color);
-    margin-bottom: 20px;
-    font-weight: 500;
-}
-
-.share-buttons {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-}
-
-.share-buttons button {
-    width: 30%;
-    padding: 10px;
-    font-size: 14px;
-}
-
-.poop-rating {
-    display: flex;
-    justify-content: center;
-    font-size: 28px;
-    margin-bottom: 20px;
-}
-
-.poop-rating button {
-    background: none;
-    border: none;
-    font-size: 28px;
-    cursor: pointer;
-    opacity: 0.5;
-    transition: opacity 0.3s, transform 0.2s;
-    padding: 0 8px;
-}
-
-.poop-rating button:hover,
-.poop-rating button.active {
-    opacity: 1;
-    transform: scale(1.2);
-}
-
-.poop-rating button.active {
-    opacity: 1;
-    transform: scale(1.2);
-}
-
-/* Glowing effect */
-.glow {
-    box-shadow: 0 0 10px var(--primary-color),
-                0 0 20px var(--primary-color),
-                0 0 30px var(--primary-color);
-}
-
-/* Neon text effect */
-.neon-text {
-    text-shadow: 0 0 5px var(--primary-color),
-                 0 0 10px var(--primary-color),
-                 0 0 15px var(--primary-color),
-                 0 0 20px var(--primary-color);
-}
-
-/* Date range selector */
-#date-range {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-#date-range input[type="date"] {
-    width: 40%;
-    padding: 10px;
-    border: 1px solid var(--primary-color);
-    border-radius: 5px;
-    background-color: var(--card-background);
-    color: var(--text-color);
-}
-
-#date-range button {
-    width: 15%;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-#date-range button:hover {
-    background-color: var(--secondary-color);
-    transform: scale(1.05);
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background-color: var(--card-background);
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: var(--primary-color);
-    border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: var(--secondary-color);
-}
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <!-- Main Poop Profit Calculator Structure -->
+        <h1 class="neon-text">Poop Profit Calculator</h1>
         <div class="card">
             <input type="number" id="salary" placeholder="Annual Salary">
             <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
             <div id="result"></div>
         </div>
 
-        <!-- Timer and Log Section -->
         <div class="card">
             <div id="poopEmoji">💩</div>
             <div id="timer">00:00:00</div>
             <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
         </div>
 
-        <!-- Poop Log -->
         <div class="card">
             <h2>Poop Log</h2>
             <div id="logEntries"></div>
         </div>
 
-        <!-- Buttons -->
         <button id="statsButton">Show Stats</button>
-        <button id="boredButton">I'm Bored!</button>
         <button id="logoutButton">Logout</button>
     </div>
 
-    <!-- Rating Modal -->
-    <div id="ratingModal" class="modal">
-        <h2>Rate Your Poop!</h2>
-        <div class="poop-rating">
-            <button class="poop" data-rating="1">💩</button>
-            <button class="poop" data-rating="2">💩</button>
-            <button class="poop" data-rating="3">💩</button>
-            <button class="poop" data-rating="4">💩</button>
-            <button class="poop" data-rating="5">💩</button>
-        </div>
-        <input type="text" id="poopComment" placeholder="Add a comment (optional)">
-        <button id="submitRating">Submit Rating</button>
-    </div>
-
-    <!-- Fact Game Modal -->
-    <div id="factGameModal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Fun Fact!</h2>
-            <div id="factStatement">This is a true fact!</div>
-            <button id="trueButton">True</button>
-            <button id="falseButton">False</button>
-            <div id="scoreCard">Correct: <span id="correctScore">0</span> | Incorrect: <span id="incorrectScore">0</span></div>
-        </div>
-    </div>
-
-    <!-- Turd Race Modal -->
-    <div id="turdRaceModal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h1>Turd Race</h1>
-            <div id="raceTrack">
-                <div class="lane">
-                    <span class="lane-number">1</span>
-                    <div class="turd" id="turd1">💩</div>
-                    <span class="toilet">🚽</span>
-                </div>
-                <div class="lane">
-                    <span class="lane-number">2</span>
-                    <div class="turd" id="turd2">💩</div>
-                    <span class="toilet">🚽</span>
-                </div>
-                <div class="lane">
-                    <span class="lane-number">3</span>
-                    <div class="turd" id="turd3">💩</div>
-                    <span class="toilet">🚽</span>
-                </div>
-                <div class="lane">
-                    <span class="lane-number">4</span>
-                    <div class="turd" id="turd4">💩</div>
-                    <span class="toilet">🚽</span>
-                </div>
-                <div class="lane">
-                    <span class="lane-number">5</span>
-                    <div class="turd" id="turd5">💩</div>
-                    <span class="toilet">🚽</span>
-                </div>
-            </div>
-            <button id="startRace">Start Race</button>
-        </div>
-    </div>
-
-    <!-- Game Logic and Firebase Integration -->
     <script>
         let currentUser = null;
+        let timer;
         let seconds = 0;
         let isRunning = false;
         let poopRating = 0;
-        let lastSessionEarnings = 0;
-        let timer;
 
         const salaryInput = document.getElementById('salary');
         const hoursPerWeekInput = document.getElementById('hoursPerWeek');
         const timerDiv = document.getElementById('timer');
         const startStopButton = document.getElementById('startStopButton');
         const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
 
-        // Firebase Auth and Firestore Data Handling
-        auth.onAuthStateChanged(async function(user) {
+        auth.onAuthStateChanged(function(user) {
             if (user) {
                 const userRef = db.collection('users').doc(user.uid);
-                const doc = await userRef.get();
-                if (!doc.exists) {
-                    currentUser = {
-                        email: user.email,
-                        data: { poopSessions: [], totalEarnings: 0 }
-                    };
-                    await userRef.set(currentUser);  // Save new user data
-                } else {
-                    currentUser = doc.data();
-                    updateLog();  // Load existing sessions
-                }
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
             } else {
-                window.location = "login.html";  // Redirect if not logged in
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
             }
         });
 
-        function saveUserData() {
-            if (auth.currentUser) {
-                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
-                .then(() => console.log("User data saved to Firestore."))
-                .catch(error => console.error("Error saving data: ", error));
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
             }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
         }
 
         function logPoopSession(duration, earnings) {
@@ -617,44 +371,13 @@ button:hover {
                 const logEntry = document.createElement('div');
                 logEntry.className = 'log-entry';
                 logEntry.innerHTML = `
-                    <button class="delete-btn" data-index="${index}">×</button>
                     <div class="date">${new Date(session.date).toLocaleString()}</div>
                     <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
                 `;
                 logEntriesDiv.appendChild(logEntry);
             });
-
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const index = this.getAttribute('data-index');
-                    currentUser.data.poopSessions.splice(index, 1);
-                    updateLog();
-                    saveUserData();
-                });
-            });
-        }
-
-        function startStopTimer() {
-    if (isRunning) {
-        clearInterval(timer);
-        startStopButton.textContent = 'Start Pooping';
-        const earnings = calculateEarnings(seconds);
-        lastSessionEarnings = earnings;
-        logPoopSession(seconds, earnings);
-        resetTimer();
-    } else {
-        resetTimer();
-        timer = setInterval(updateTimer, 1000);
-        startStopButton.textContent = 'Stop Pooping';
-    }
-    isRunning = !isRunning;
-        }
-
-        function calculateEarnings(seconds) {
-            const salary = parseFloat(salaryInput.value);
-            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
-            const hourlyRate = salary / (hoursPerWeek * 52);
-            return (hourlyRate / 3600) * seconds;
         }
 
         function formatTime(totalSeconds) {
@@ -664,154 +387,4368 @@ button:hover {
             return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }
 
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventListener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
+
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
+
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
+        });
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
         function resetTimer() {
             clearInterval(timer);
             seconds = 0;
             timerDiv.textContent = '00:00:00';
         }
 
-        startStopButton.addEventListener('click', startStopTimer);
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
 
-        // Rating Modal Logic
-        const poopButtons = document.querySelectorAll('.poop');
-        const submitRatingButton = document.getElementById('submitRating');
-        const poopCommentInput = document.getElementById('poopComment');
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventL<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
+
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
+
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
         let poopRating = 0;
 
-        poopButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                poopRating = parseInt(this.getAttribute('data-rating'));
-                poopButtons.forEach((btn, index) => {
-                    if (index < poopRating) {
-                        btn.classList.add('active');
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
                     } else {
-                        btn.classList.remove('active');
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
                     }
                 });
-            });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
         });
 
-        submitRatingButton.addEventListener('click', function() {
-            const lastSessionIndex = currentUser.data.poopSessions.length - 1;
-            currentUser.data.poopSessions[lastSessionIndex].rating = poopRating;
-            currentUser.data.poopSessions[lastSessionIndex].comment = poopCommentInput.value;
-            saveUserData();
-            document.getElementById('ratingModal').style.display = 'none';
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
             updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventListener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
         });
 
-        // Logout functionality
-        const logoutButton = document.getElementById('logoutButton');
-        logoutButton.addEventListener('click', function() {
+        logoutButton.addEventListener('click', () => {
             auth.signOut().then(() => {
                 window.location = "login.html";
-            }).catch(error => {
-                console.error("Error during sign-out: ", error);
             });
         });
 
-        // Fact Game Logic
-        let facts = [
-            { statement: "The average person spends 3 years of their life on the toilet.", isTrue: true },
-            { statement: "The world's largest toilet is located in Japan.", isTrue: false },
-            { statement: "The first flushing toilet was invented in 1596.", isTrue: true },
-            { statement: "People in space do not have to go to the bathroom.", isTrue: false },
-            { statement: "Ancient Romans used sponges on sticks instead of toilet paper.", isTrue: true }
-        ];
-
-        let currentFactIndex = 0;
-        let factGameScore = { correct: 0, incorrect: 0 };
-
-        const startGameButton = document.getElementById('startGameButton');
-        const trueButton = document.getElementById('trueButton');
-        const falseButton = document.getElementById('falseButton');
-        const factStatement = document.getElementById('factStatement');
-        const correctScore = document.getElementById('correctScore');
-        const incorrectScore = document.getElementById('incorrectScore');
-
-        startGameButton.addEventListener('click', startFactGame);
-
-        trueButton.addEventListener('click', () => checkAnswer(true));
-        falseButton.addEventListener('click', () => checkAnswer(false));
-
-        function startFactGame() {
-            currentFactIndex = 0;
-            factGameScore = { correct: 0, incorrect: 0 };
-            showNextFact();
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
         }
+    </style>
+</head>
+<body>
 
-        function showNextFact() {
-            if (currentFactIndex < facts.length) {
-                factStatement.textContent = facts[currentFactIndex].statement;
-            } else {
-                endFactGame();
-            }
-        }
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
 
-        function checkAnswer(userAnswer) {
-            if (userAnswer === facts[currentFactIndex].isTrue) {
-                factGameScore.correct++;
-            } else {
-                factGameScore.incorrect++;
-            }
-            currentFactIndex++;
-            showNextFact();
-        }
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
 
-        function endFactGame() {
-            factStatement.textContent = "Game Over!";
-            correctScore.textContent = factGameScore.correct;
-            incorrectScore.textContent = factGameScore.incorrect;
-        }
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
 
-        // Turd Race Logic
-        const startRaceButton = document.getElementById('startRace');
-        let raceInProgress = false;
-        let selectedTurd = null;
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
 
-        startRaceButton.addEventListener('click', startRace);
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
 
-        function startRace() {
-            if (raceInProgress) return;
-            raceInProgress = true;
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
 
-            const turds = document.querySelectorAll('.turd');
-            turds.forEach(turd => turd.style.left = '30px');
-
-            const raceDuration = 15000; // 15 seconds
-            const startTime = Date.now();
-            const maxPosition = document.getElementById('raceTrack').offsetWidth - 50;
-            const speeds = Array.from({ length: turds.length }, () => Math.random() * 0.5 + 0.75);
-
-            function animateRace() {
-                const elapsedTime = Date.now() - startTime;
-                const progress = Math.min(elapsedTime / raceDuration, 1);
-                let winner = null;
-
-                turds.forEach((turd, index) => {
-                    const previousPosition = parseFloat(turd.style.left) || 30;
-                    const newPosition = previousPosition + (maxPosition - previousPosition) * progress * speeds[index];
-                    turd.style.left = `${Math.min(newPosition, maxPosition)}px`;
-
-                    if (newPosition >= maxPosition && !winner) {
-                        winner = turd.id;
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
                     }
                 });
-
-                if (progress < 1) {
-                    requestAnimationFrame(animateRace);
-                } else {
-                    endRace(winner);
-                }
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
             }
+        });
 
-            requestAnimationFrame(animateRace);
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
         }
 
-        function endRace(winner) {
-            alert(`Turd #${winner.replace('turd', '')} wins!`);
-            raceInProgress = false;
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
         }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventListener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>istener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
+
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
+
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
+        });
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventListener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
+
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
+
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
+        });
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventL<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
+
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
+
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
+        });
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventListener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
+
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
+
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
+        });
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventListener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>istener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
+
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
+
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
+        });
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventListener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
+
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
+
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
+        });
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventL<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
+
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
+
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
+        });
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventListener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
+
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
+
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
+        });
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventListener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>istener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
+
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
+
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
+        });
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventListener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
+
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
+
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
+        });
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventL<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Profit Calculator</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+    <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop earnings"/>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --accent-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #timer {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
+
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
+
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
+        });
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventListener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="neon-text">Poop Profit Calculator</h1>
+        <div class="card">
+            <input type="number" id="salary" placeholder="Annual Salary">
+            <input type="number" id="hoursPerWeek" placeholder="Weekly Work Hours">
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div id="poopEmoji">💩</div>
+            <div id="timer">00:00:00</div>
+            <button id="startStopButton">Start Pooping</button>
+            <button id="boredButton" style="display:none;">I'm Bored!</button>
+            <button id="stillBoredButton" style="display:none;">Still Bored!</button>
+        </div>
+
+        <div class="card">
+            <h2>Poop Log</h2>
+            <div id="logEntries"></div>
+        </div>
+
+        <button id="statsButton">Show Stats</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+        let poopRating = 0;
+
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal ? ratingModal.querySelectorAll('.poop') : null;
+        const submitRatingButton = document.getElementById('submitRating');
+        const statsButton = document.getElementById('statsButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (!doc.exists) {
+                        currentUser = {
+                            email: user.email,
+                            data: {
+                                poopSessions: [],
+                                totalEarnings: 0
+                            }
+                        };
+                        userRef.set(currentUser); // Create new user data in Firestore
+                    } else {
+                        currentUser = doc.data();
+                        updateLog(); // Load existing sessions from Firestore
+                    }
+                });
+            } else {
+                currentUser = null;
+                window.location = "login.html"; // Redirect if not logged in
+            }
+        });
+
+        function startStopTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startStopButton.textContent = 'Start Pooping';
+                poopEmoji.classList.remove('wiggle');
+                const earnings = calculateEarnings(seconds);
+                logPoopSession(seconds, earnings);
+                resetTimer();
+            } else {
+                resetTimer();
+                timer = setInterval(updateTimer, 1000);
+                startStopButton.textContent = 'Stop Pooping';
+                poopEmoji.classList.add('wiggle');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            seconds = 0;
+            timerDiv.textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            seconds++;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function calculateEarnings(seconds) {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                return 0;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            return (hourlyRate / 3600) * seconds;
+        }
+
+        function logPoopSession(duration, earnings) {
+            const now = new Date();
+            const session = {
+                date: now,
+                duration: duration,
+                earnings: earnings,
+                rating: 0,
+                comment: ''
+            };
+            currentUser.data.poopSessions.push(session);
+            currentUser.data.totalEarnings += earnings;
+            updateLog();
+            saveUserData();
+        }
+
+        function updateLog() {
+            logEntriesDiv.innerHTML = '';
+            currentUser.data.poopSessions.forEach((session, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <div class="date">${new Date(session.date).toLocaleString()}</div>
+                    <div class="details">Duration: ${formatTime(session.duration)}<br>Earnings: $${session.earnings.toFixed(2)}</div>
+                    ${session.rating ? `<div class="rating">${'💩'.repeat(session.rating)}</div>` : ''}
+                    ${session.comment ? `<div class="comment">${session.comment}</div>` : ''}
+                `;
+                logEntriesDiv.appendChild(logEntry);
+            });
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function saveUserData() {
+            if (auth.currentUser) {
+                db.collection('users').doc(auth.currentUser.uid).set(currentUser)
+                .then(() => {
+                    console.log("User data saved to Firestore.");
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                });
+            }
+        }
+
+        statsButton.addEventListener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>istener('click', () => {
+            console.log("Total earnings:", currentUser.data.totalEarnings);
+            alert(`Total Earnings: $${currentUser.data.totalEarnings.toFixed(2)}`);
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location = "login.html";
+            });
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
+    </script>
+</body>
+</html>
+        });
+
+        startStopButton.addEventListener('click', startStopTimer);
     </script>
 </body>
 </html>
