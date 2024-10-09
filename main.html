@@ -26,12 +26,13 @@
     <script>
       // Firebase configuration
       const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
+  authDomain: "poopprofitproject.firebaseapp.com",
+  projectId: "poopprofitproject",
+  storageBucket: "poopprofitproject.appspot.com",
+  messagingSenderId: "818996284466",
+  appId: "1:818996284466:web:de6d6bab3987cca417c02b",
+  measurementId: "G-JBXJ1T6LYM"
       };
 
       // Initialize Firebase
@@ -41,7 +42,6 @@
     </script>
     
     <style>
-        
 :root {
     --primary-color: #3498db;
     --secondary-color: #2ecc71;
@@ -50,6 +50,7 @@
     --card-background: #16213e;
     --accent-color: #f39c12;
 }
+
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
@@ -229,6 +230,53 @@ button:hover {
 }
 
 /* Modal and game styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: var(--card-background);
+    margin: 10% auto;
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 70%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover,
+.close:focus {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+#statsChart {
+    width: 100%;
+    height: 300px;
+}
+
+#statsText {
+    margin-top: 20px;
+    font-size: 14px;/* Modal and game styling */
 .modal {
     display: none;
     position: fixed;
