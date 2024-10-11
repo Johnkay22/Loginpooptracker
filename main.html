@@ -7,7 +7,35 @@
   gtag('js', new Date());
 
   gtag('config', 'G-R1E17DCKNC');
+  </script>
+  
+  <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+
+<script>
+  // Firebase configuration (replace with your Firebase project config)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
+  authDomain: "poopprofitproject.firebaseapp.com",
+  projectId: "poopprofitproject",
+  storageBucket: "poopprofitproject.appspot.com",
+  messagingSenderId: "818996284466",
+  appId: "1:818996284466:web:de6d6bab3987cca417c02b",
+  measurementId: "G-JBXJ1T6LYM"
+  };
+
+  // Initialize Firebase
+  if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+} else {
+  firebase.app(); // if already initialized, use that one
+}
+const auth = firebase.auth();
+const db = firebase.firestore();
 </script>
+
 <title>How Much You Make to Poop!</title>
 <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
 <meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop on the job, poop earnings"/>
@@ -748,23 +776,76 @@
             }
         }
 
-        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        initializeUserData();
+let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+initializeUserData();
+
+// Check for authenticated user and fetch data from Firestore if logged in
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    // If the user is logged in, fetch their data from Firestore
+    const userDocRef = firebase.firestore().collection('users').doc(user.uid);
+
+    userDocRef.get().then((doc) => {
+      if (doc.exists) {
+        const userData = doc.data();
+
+        // Sync Firestore data with localStorage
+        currentUser = {
+          email: user.email,
+          data: userData.poopSessions || [],
+          salary: userData.salary || '',
+          hoursPerWeek: userData.hoursPerWeek || '',
+          totalEarnings: userData.totalEarnings || 0
+        };
+
+        // Save this data to localStorage
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+        // Now that data is loaded, update the UI
+        updateLog();  // Populate poop session log
+        updateHourlyRate();  // Update salary/hourly rate display
+      } else {
+        console.error("No user data found in Firestore.");
+      }
+    }).catch((error) => {
+      console.error("Error fetching user data from Firestore:", error);
+    });
+  } else {
+    // No user is signed in, redirect to the login/signup page
+    window.location.href = 'signup.html';
+  }
+});
 
         function saveUserData() {
-    const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
-    
-    // Ensure the password is not overwritten or removed
-    if (accounts[currentUser.email]) {
-        const savedPassword = accounts[currentUser.email].password;  // Preserve the password
-        accounts[currentUser.email].data = currentUser.data;  // Update only the data field
-        accounts[currentUser.email].password = savedPassword;  // Restore the password
-    }
+  const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
 
-    console.log('Updated Accounts after session:', accounts);  // Log the updated accounts
+  // Ensure the password is not overwritten or removed
+  if (accounts[currentUser.email]) {
+      const savedPassword = accounts[currentUser.email].password;  // Preserve the password
+      accounts[currentUser.email].data = currentUser.data;  // Update only the data field
+      accounts[currentUser.email].password = savedPassword;  // Restore the password
+  }
 
-    localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));  // Save current user data
+  // Save data to localStorage
+  localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
+  localStorage.setItem('currentUser', JSON.stringify(currentUser));  // Save current user data
+
+  // Save user data to Firestore as well
+  const user = firebase.auth().currentUser;
+  if (user) {
+      firebase.firestore().collection('users').doc(user.uid).set({
+          salary: currentUser.salary,
+          hoursPerWeek: currentUser.hoursPerWeek,
+          poopSessions: currentUser.data.poopSessions,
+          totalEarnings: currentUser.data.totalEarnings
+      }, { merge: true })
+      .then(() => {
+          console.log("User data successfully saved to Firestore.");
+      })
+      .catch((error) => {
+          console.error("Error saving data to Firestore: ", error);
+      });
+  }
 }
 
         let timer;
@@ -1223,9 +1304,14 @@ applyDateRangeBtn.addEventListener('click', () => {
         }
 
         function logout() {
-            localStorage.removeItem('currentUser');
-            window.location.href = 'https://www.poopprofit.com';
-        }
+  firebase.auth().signOut().then(() => {
+    // Clear localStorage after logging out
+    localStorage.removeItem('currentUser');
+    window.location.href = 'signup.html';  // Redirect to the signup page
+  }).catch((error) => {
+    console.error("Error logging out: ", error);
+  });
+}
 
         function updateHourlyRate() {
             const salary = parseFloat(salaryInput.value);
