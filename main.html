@@ -1,198 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <base href="https://www.poopprofit.com/index.html">
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-R1E17DCKNC');
-    </script>
+<html><head><base href="https://www.poopprofit.com/index.html">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-
-    <script>
-        // Firebase configuration (replace with your Firebase project config)
-        const firebaseConfig = {
-            apiKey: "AIzaSyAVZEGrBqPtDWH4acfOmzLk5k323A7EB6o",
-            authDomain: "poopprofitproject.firebaseapp.com",
-            projectId: "poopprofitproject",
-            storageBucket: "poopprofitproject.appspot.com",
-            messagingSenderId: "818996284466",
-            appId: "1:818996284466:web:de6d6bab3987cca417c02b",
-            measurementId: "G-JBXJ1T6LYM"
-        };
-
-        // Initialize Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        } else {
-            firebase.app(); // if already initialized, use that one
-        }
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // Initialize user data from localStorage
-        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        initializeUserData();
-
-        function initializeUserData() {
-            if (!currentUser) {
-                currentUser = {
-                    email: 'guest@example.com',
-                    data: {
-                        poopSessions: [],
-                        totalEarnings: 0
-                    }
-                };
-                saveUserData();
-            } else if (!currentUser.data) {
-                currentUser.data = {
-                    poopSessions: [],
-                    totalEarnings: 0
-                };
-                saveUserData();
-            }
-        }
-
-        // Save user data to localStorage and Firestore
-        function saveUserData() {
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-            // Save to Firestore if user is authenticated
-            const user = firebase.auth().currentUser;
-            if (user) {
-                db.collection('users').doc(user.uid).set({
-                    salary: currentUser.salary,
-                    hoursPerWeek: currentUser.hoursPerWeek,
-                    poopSessions: currentUser.data.poopSessions,
-                    totalEarnings: currentUser.data.totalEarnings
-                }, { merge: true });
-            }
-        }
-
-        // Timer variables
-        let timer;
-        let seconds = 0;
-        let isRunning = false;
-        let poopRating = 0;
-        let lastSessionEarnings = 0;
-
-        const salaryInput = document.getElementById('salary');
-        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
-        const resultDiv = document.getElementById('result');
-        const timerDiv = document.getElementById('timer');
-        const startStopButton = document.getElementById('startStopButton');
-        const logEntriesDiv = document.getElementById('logEntries');
-
-        // Event listeners for salary and hoursPerWeek inputs
-        salaryInput.addEventListener('input', updateHourlyRate);
-        hoursPerWeekInput.addEventListener('input', updateHourlyRate);
-
-        function updateHourlyRate() {
-            const salary = parseFloat(salaryInput.value);
-            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
-            if (isNaN(salary) || isNaN(hoursPerWeek)) {
-                resultDiv.textContent = 'Please enter valid numbers.';
-                return;
-            }
-            const hourlyRate = salary / (hoursPerWeek * 52);
-            resultDiv.textContent = `Your hourly rate is: $${hourlyRate.toFixed(2)}`;
-        }
-
-        function startStopTimer() {
-            if (isRunning) {
-                clearInterval(timer);
-                startStopButton.textContent = 'Start Pooping';
-                const earnings = calculateEarnings(seconds);
-                lastSessionEarnings = earnings;
-                logPoopSession(seconds, earnings);
-                resetTimer();
-            } else {
-                resetTimer();
-                timer = setInterval(updateTimer, 1000);
-                startStopButton.textContent = 'Stop Pooping';
-            }
-            isRunning = !isRunning;
-        }
-
-        function resetTimer() {
-            clearInterval(timer);
-            seconds = 0;
-            timerDiv.textContent = '00:00:00';
-        }
-
-        function updateTimer() {
-            seconds++;
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const secs = seconds % 60;
-            timerDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-        }
-
-        function calculateEarnings(seconds) {
-            const salary = parseFloat(salaryInput.value);
-            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
-            if (isNaN(salary) || isNaN(hoursPerWeek)) {
-                return 0;
-            }
-            const hourlyRate = salary / (hoursPerWeek * 52);
-            return (hourlyRate / 3600) * seconds;
-        }
-
-        function logPoopSession(duration, earnings) {
-            const now = new Date();
-            const session = {
-                date: now,
-                duration: duration,
-                earnings: earnings,
-                rating: 0,
-                comment: ''
-            };
-
-            currentUser.data.poopSessions.push(session);
-            currentUser.data.totalEarnings += earnings;
-
-            // Save data and update UI
-            saveUserData();
-            updateLog();
-        }
-
-        function updateLog() {
-            logEntriesDiv.innerHTML = '';
-            currentUser.data.poopSessions.forEach((session, index) => {
-                const logEntry = document.createElement('div');
-                logEntry.className = 'log-entry';
-                logEntry.innerHTML = `
-                    <button class="delete-btn" data-index="${index}">×</button>
-                    <div class="date">${new Date(session.date).toLocaleString()}</div>
-                    <div class="details">
-                        Duration: ${formatTime(session.duration)}<br>
-                        Earnings: $${session.earnings.toFixed(2)}
-                    </div>
-                `;
-                logEntriesDiv.appendChild(logEntry);
-            });
-        }
-
-        function formatTime(totalSeconds) {
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
-            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }
-    </script>
-    <title>How Much You Make to Poop!</title>
-    <meta name="description" content="Have you ever wondered how much you make to poop at work?" />
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-  
+  gtag('config', 'G-R1E17DCKNC');
+</script>
+<title>How Much You Make to Poop!</title>
+<meta name="description" content="Have you ever wondered how much you make to poop at work?" />
+<meta name="keywords" content="poop tracker, earnings tracker, poop earnings, fun poop tracking, poop profit, profit calculator, work app, paid to poop, on the clock, poop at work, free money, work poop, poop on the job, poop earnings"/>
+<link rel="icon" href="https://www.poopprofit.com/favicon.png" type="image/png">
+  <!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Poop Profit Calculator!" />
+<meta name="twitter:description" content="Have you ever wondered how much you make to poop at work?" />
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Johnkay22/Loginpooptracker/main/PPCImage.jpg" />
+<meta name="twitter:site" content="@YourTwitterHandle" />
+<!-- Open Graph Meta Tags -->
+<meta property="og:title" content="Poop Profit Calculator!" />
+<meta property="og:description" content="Have you ever wondered how much you make to poop at work?" />
+<meta property="og:url" content="https://www.poopprofit.com" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Poop Profit Calculator" />
+<meta property="og:image" content="https://raw.githubusercontent.com/Johnkay22/Loginpooptracker/main/PPCImage.jpg">
+<meta name="description" content="Have you ever wondered how much you make to poop at work?">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
     :root {
         --primary-color: #3498db;
@@ -745,7 +582,66 @@
         <button id="logoutButton">Logout</button>
     </div>
 
-    <!-- Fact Game Modal -->
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <div id="congratsMessage"></div>
+            <h2>Rate Your Poop</h2>
+            <div class="poop-rating">
+                <button class="poop" data-rating="1">💩</button>
+                <button class="poop" data-rating="2">💩</button>
+                <button class="poop" data-rating="3">💩</button>
+                <button class="poop" data-rating="4">💩</button>
+                <button class="poop" data-rating="5">💩</button>
+            </div>
+            <input type="text" id="poopComment" placeholder="Add a comment (optional)">
+            <button id="submitRating">Submit Rating</button>
+        </div>
+    </div>
+
+    <div id="shareRatingModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Share Your Poop Rating</h2>
+            <p id="shareRatingMessage"></p>
+            <div class="share-buttons">
+                <button id="shareRatingTwitter">Share on Twitter</button>
+                <button id="shareRatingFacebook">Share on Facebook</button>
+                <button id="shareRatingSMS">Share via SMS</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="statsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Your Poop Statistics</h2>
+          <p style="text-align: center; margin-bottom: 10px;">Sort statistics by a custom date range:</p>
+            <div id="date-range">
+                <input type="date" id="startDate">
+                <input type="date" id="endDate">
+                <button id="applyDateRange">Apply</button>
+            </div>
+            <canvas id="statsChart"></canvas>
+            <div id="statsText"></div>
+            <div class="share-buttons">
+                <button id="shareStatsTwitter">Share on Twitter</button>
+                <button id="shareStatsFacebook">Share on Facebook</button>
+                <button id="shareStatsSMS">Share via SMS</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Share Your Poop</h2>
+            <button id="shareEntryTwitter">Share on Twitter</button>
+            <button id="shareEntryFacebook">Share on Facebook</button>
+            <button id="shareEntrySMS">Share via SMS</button>
+        </div>
+    </div>
+
     <div id="factGameModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -762,42 +658,6 @@
         </div>
     </div>
 
-    <!-- Stats Modal -->
-    <div id="statsModal" class="modal">
-        <div class="modal-content">
-            <span class="close">×</span>
-            <h2>Your Poop Statistics</h2>
-            <p style="text-align: center; margin-bottom: 10px;">Sort statistics by a custom date range:</p>
-            <div id="date-range">
-                <input type="date" id="startDate">
-                <input type="date" id="endDate">
-                <button id="applyDateRange">Apply</button>
-            </div>
-            <canvas id="statsChart"></canvas>
-            <div id="statsText"></div>
-            <div class="share-buttons">
-                <button id="shareStatsTwitter">Share on Twitter</button>
-                <button id="shareStatsFacebook">Share on Facebook</button>
-                <button id="shareStatsSMS">Share via SMS</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Share Rating Modal -->
-    <div id="shareRatingModal" class="modal">
-        <div class="modal-content">
-            <span class="close">×</span>
-            <h2>Share Your Poop Rating</h2>
-            <p id="shareRatingMessage"></p>
-            <div class="share-buttons">
-                <button id="shareRatingTwitter">Share on Twitter</button>
-                <button id="shareRatingFacebook">Share on Facebook</button>
-                <button id="shareRatingSMS">Share via SMS</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Turd Race Modal -->
     <div id="turdRaceModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -866,101 +726,46 @@
         <button id="closePopup">Close</button>
     </div>
 
-    <!-- JavaScript Functions -->
     <script>
-        // Fact game logic
-        let facts = [
-            { statement: "The average person spends about 3 years of their life on the toilet.", isTrue: true },
-            { statement: "Flushing the toilet with the lid up can spread germs up to 6 feet away.", isTrue: true },
-            { statement: "The first toilet paper was invented in China in the 6th century AD.", isTrue: true },
-            { statement: "The world's largest toilet is located in South Korea.", isTrue: false },
-            { statement: "Ancient Romans used vinegar as toilet paper.", isTrue: false },
-            { statement: "The flush toilet was invented by Thomas Crapper.", isTrue: false },
-            { statement: "In space, astronauts' urine is recycled into drinking water.", isTrue: true },
-            { statement: "The average person uses the bathroom 6-8 times per day.", isTrue: true },
-            { statement: "The most expensive toilet in the world costs over $10 million.", isTrue: false },
-            { statement: "Some people have a phobia of using public restrooms, called paruresis.", isTrue: true }
-        ];
+        let currentShareIndex = -1;
 
-        let currentFactIndex = 0;
-        let score = { correct: 0, incorrect: 0 };
-
-        const factStatement = document.getElementById('factStatement');
-        const trueButton = document.getElementById('trueButton');
-        const falseButton = document.getElementById('falseButton');
-        const startGameButton = document.getElementById('startGameButton');
-        const scoreCard = document.getElementById('scoreCard');
-        const correctScore = document.getElementById('correctScore');
-        const incorrectScore = document.getElementById('incorrectScore');
-
-        const boredButton = document.getElementById('boredButton');
-        const stillBoredButton = document.getElementById('stillBoredButton');
-        const factGameModal = document.getElementById('factGameModal');
-
-        // Fact game logic
-        function showFactGame() {
-            factGameModal.style.display = 'block';
-            startGameButton.style.display = 'block';
-            trueButton.style.display = 'none';
-            falseButton.style.display = 'none';
-            factStatement.textContent = "Ready to play Bathroom Fact or Fiction?";
-            scoreCard.style.display = 'none';
-        }
-
-        function startFactGame() {
-            currentFactIndex = 0;
-            score = { correct: 0, incorrect: 0 };
-            showNextFact();
-            startGameButton.style.display = 'none';
-            trueButton.style.display = 'inline-block';
-            falseButton.style.display = 'inline-block';
-        }
-
-        function showNextFact() {
-            if (currentFactIndex < facts.length) {
-                factStatement.textContent = facts[currentFactIndex].statement;
-            } else {
-                showScore();
+        function initializeUserData() {
+            if (!currentUser) {
+                currentUser = {
+                    email: 'guest@example.com',
+                    data: {
+                        poopSessions: [],
+                        totalEarnings: 0
+                    }
+                };
+                saveUserData();
+            } else if (!currentUser.data) {
+                currentUser.data = {
+                    poopSessions: [],
+                    totalEarnings: 0
+                };
+                saveUserData();
             }
         }
 
-        function checkAnswer(userAnswer) {
-            if (userAnswer === facts[currentFactIndex].isTrue) {
-                score.correct++;
-            } else {
-                score.incorrect++;
-            }
-            currentFactIndex++;
-            showNextFact();
-        }
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        initializeUserData();
 
-        function showScore() {
-            factStatement.textContent = "Game Over!";
-            trueButton.style.display = 'none';
-            falseButton.style.display = 'none';
-            scoreCard.style.display = 'block';
-            correctScore.textContent = score.correct;
-            incorrectScore.textContent = score.incorrect;
-            startGameButton.style.display = 'block';
-            startGameButton.textContent = 'Play Again';
-        }
+        function saveUserData() {
+    const accounts = JSON.parse(localStorage.getItem('poopTimerAccounts')) || {};
+    
+    // Ensure the password is not overwritten or removed
+    if (accounts[currentUser.email]) {
+        const savedPassword = accounts[currentUser.email].password;  // Preserve the password
+        accounts[currentUser.email].data = currentUser.data;  // Update only the data field
+        accounts[currentUser.email].password = savedPassword;  // Restore the password
+    }
 
-        // Attach event listeners
-        boredButton.addEventListener('click', showFactGame);
-        startGameButton.addEventListener('click', startFactGame);
-        trueButton.addEventListener('click', () => checkAnswer(true));
-        falseButton.addEventListener('click', () => checkAnswer(false));
+    console.log('Updated Accounts after session:', accounts);  // Log the updated accounts
 
-        // Salary/Hours input and calculation logic
-        const salaryInput = document.getElementById('salary');
-        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
-        const resultDiv = document.getElementById('result');
-        const timerDiv = document.getElementById('timer');
-               const startStopButton = document.getElementById('startStopButton');
-        const logEntriesDiv = document.getElementById('logEntries');
-        const statsButton = document.getElementById('statsButton');
-        const poopEmoji = document.getElementById('poopEmoji');
-        const logoutButton = document.getElementById('logoutButton');
+    localStorage.setItem('poopTimerAccounts', JSON.stringify(accounts));
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));  // Save current user data
+}
 
         let timer;
         let seconds = 0;
@@ -969,32 +774,40 @@
         let lastSessionEarnings = 0;
         let statsChart = null;
 
-        // Function to save salary and hoursPerWeek to localStorage
-        function saveSalaryAndHours() {
-            const salary = document.getElementById('salary').value;
-            const hoursPerWeek = document.getElementById('hoursPerWeek').value;
+        const salaryInput = document.getElementById('salary');
+        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+        const resultDiv = document.getElementById('result');
+        const timerDiv = document.getElementById('timer');
+        const startStopButton = document.getElementById('startStopButton');
+        const logEntriesDiv = document.getElementById('logEntries');
+        const statsButton = document.getElementById('statsButton');
+        const poopEmoji = document.getElementById('poopEmoji');
+        const logoutButton = document.getElementById('logoutButton');
+        
+        let boredButton = document.getElementById('boredButton');
+        let stillBoredButton = document.getElementById('stillBoredButton');
+        let factGameModal = document.getElementById('factGameModal');
+        let factStatement = document.getElementById('factStatement');
+        let trueButton = document.getElementById('trueButton');
+        let falseButton = document.getElementById('falseButton');
+        let startGameButton = document.getElementById('startGameButton');
+        let scoreCard = document.getElementById('scoreCard');
+        let correctScore = document.getElementById('correctScore');
+        let incorrectScore = document.getElementById('incorrectScore');
 
-            if (currentUser) {
-                currentUser.salary = salary;
-                currentUser.hoursPerWeek = hoursPerWeek;
+        const ratingModal = document.getElementById('ratingModal');
+        const poopButtons = ratingModal.querySelectorAll('.poop');
+        const submitRatingButton = document.getElementById('submitRating');
+        const closeButtons = document.querySelectorAll('.close');
 
-                // Save the data in localStorage
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            }
-        }
+        const statsModal = document.getElementById('statsModal');
+        const shareModal = document.getElementById('shareModal');
+        const shareRatingModal = document.getElementById('shareRatingModal');
 
-        // Update hourly rate and save salary/hours in localStorage when input changes
-        salaryInput.addEventListener('input', () => {
-            updateHourlyRate();
-            saveSalaryAndHours();
-        });
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const applyDateRangeBtn = document.getElementById('applyDateRange');
 
-        hoursPerWeekInput.addEventListener('input', () => {
-            updateHourlyRate();
-            saveSalaryAndHours();
-        });
-
-        // Timer and calculation functions
         function updateTimer() {
             seconds++;
             const hours = Math.floor(seconds / 3600);
@@ -1042,27 +855,37 @@
             return (hourlyRate / 3600) * seconds;
         }
 
-        // Log Poop Session
         function logPoopSession(duration, earnings) {
-            const now = new Date();
-            const session = {
-                date: now,
-                duration: duration,
-                earnings: earnings,
-                rating: 0,
-                comment: ''
-            };
+    const now = new Date();
+    const session = {
+        date: now,
+        duration: duration,
+        earnings: earnings,
+        rating: 0,
+        comment: ''
+    };
 
-            // Add the session to currentUser data
-            if (!currentUser.data.poopSessions) {
-                currentUser.data.poopSessions = [];
-            }
-            currentUser.data.poopSessions.push(session);
-            currentUser.data.totalEarnings += earnings;
+    // Add the session to the currentUser's data
+    if (!currentUser.data.poopSessions) {
+        currentUser.data.poopSessions = [];
+    }
+    currentUser.data.poopSessions.push(session);
+    currentUser.data.totalEarnings += earnings;
 
-            // Save the updated data
-            updateLog();
-            saveUserData();
+    console.log('Poop session added:', session);  // Log the added poop session
+    console.log('Current User after session:', currentUser);  // Log the current user
+
+    // Save the updated data
+    updateLog();
+    saveUserData();  // Save the user data to localStorage
+}
+
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }
 
         function updateLog() {
@@ -1085,7 +908,7 @@
             });
 
             document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function() {
                     const index = this.getAttribute('data-index');
                     if (confirm('Are you sure you want to delete this log entry?')) {
                         deleteLogEntry(index);
@@ -1094,11 +917,16 @@
             });
 
             document.querySelectorAll('.share-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function() {
                     const index = this.getAttribute('data-index');
                     showShareModal(index);
                 });
             });
+        }
+
+        function showShareModal(index) {
+            currentShareIndex = index;
+            shareModal.style.display = 'block';
         }
 
         function deleteLogEntry(index) {
@@ -1107,7 +935,154 @@
             saveUserData();
         }
 
-        // Rating Modal logic
+        function showStats() {
+            statsModal.style.display = 'block';
+            updateStats();
+        }
+
+        function updateStats(startDate = null, endDate = null) {
+            let filteredSessions = currentUser.data.poopSessions;
+            
+            if (startDate && endDate) {
+                filteredSessions = filteredSessions.filter(session => {
+                    const sessionDate = new Date(session.date);
+                    return sessionDate >= startDate && sessionDate <= endDate;
+                });
+            }
+
+            if (filteredSessions.length === 0) {
+                alert('No poop sessions recorded in the selected date range!');
+                return;
+            }
+
+            const totalDuration = filteredSessions.reduce((sum, session) => sum + session.duration, 0);
+            const averageTime = totalDuration / filteredSessions.length;
+            const totalEarnings = filteredSessions.reduce((sum, session) => sum + session.earnings, 0);
+            const averageEarnings = totalEarnings / filteredSessions.length;
+
+            const msPerDay = 24 * 60 * 60 * 1000;
+            const firstDay = new Date(filteredSessions[0].date).setHours(0, 0, 0, 0);
+            const lastDay = new Date(filteredSessions[filteredSessions.length - 1].date).setHours(23, 59, 59, 999);
+            const daysDifference = Math.max(1, (lastDay - firstDay) / msPerDay);
+            const avgSessionsPerDay = filteredSessions.length / daysDifference;
+
+            const statsText = `
+                <div class="stats-item">
+                    <span class="stats-label">Total poops:</span>
+                    <span class="stats-value">${filteredSessions.length}</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Total poop time:</span>
+                    <span class="stats-value">${formatTime(totalDuration)}</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Total earnings:</span>
+                    <span class="stats-value">$${totalEarnings.toFixed(2)}</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Average poop time:</span>
+                    <span class="stats-value">${formatTime(Math.round(averageTime))}</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Average earnings per poop:</span>
+                    <span class="stats-value">$${averageEarnings.toFixed(2)}</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Average poops per day:</span>
+                    <span class="stats-value">${avgSessionsPerDay.toFixed(2)}</span>
+                </div>
+            `;
+
+            document.getElementById('statsText').innerHTML = statsText;
+
+            // Update chart
+            updateStatsChart(averageTime / 60, averageEarnings, avgSessionsPerDay);
+        }
+
+        function updateStatsChart(avgTime, avgEarnings, avgPoopsPerDay) {
+            const ctx = document.getElementById('statsChart').getContext('2d');
+            
+            if (statsChart) {
+                statsChart.destroy();
+            }
+
+            statsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Avg Time (min)', 'Avg Earnings ($)', 'Avg Poops/Day'],
+                    datasets: [{
+                        label: 'Poop Statistics',
+                        data: [avgTime, avgEarnings, avgPoopsPerDay],
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.6)',
+                            'rgba(46, 204, 113, 0.6)',
+                            'rgba(243, 156, 18, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(243, 156, 18, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+applyDateRangeBtn.addEventListener('click', () => {
+    const startDate = new Date(startDateInput.value);
+    const endDate = new Date(endDateInput.value);
+    
+    if (startDate > endDate) {
+        alert('Start date must be before or equal to the end date.');
+        return;
+    }
+    
+    // Set the time to the end of the day for the end date to include the full day
+    endDate.setHours(23, 59, 59, 999);
+
+    updateStats(startDate, endDate);
+});
+
+        initializeDateInputs();
+
+        function initializeDateInputs() {
+            if (currentUser.data.poopSessions.length > 0) {
+                const firstSession = new Date(currentUser.data.poopSessions[0].date);
+                const lastSession = new Date(currentUser.data.poopSessions[currentUser.data.poopSessions.length - 1].date);
+                
+                startDateInput.value = firstSession.toISOString().split('T')[0];
+                endDateInput.value = lastSession.toISOString().split('T')[0];
+            }
+        }
+
         function showRatingModal(earnings) {
             const congratsMessage = document.getElementById('congratsMessage');
             congratsMessage.textContent = `Congratulations! You just earned $${earnings.toFixed(2)} while pooping!`;
@@ -1120,8 +1095,30 @@
             document.getElementById('poopComment').value = '';
         }
 
+        function showStillBoredButton() {
+            stillBoredButton.style.display = 'block';
+        }
+
+        function showShareRatingModal() {
+            const shareRatingModal = document.getElementById('shareRatingModal');
+            const shareRatingMessage = document.getElementById('shareRatingMessage');
+            shareRatingMessage.textContent = `You rated your poop ${poopRating} out of 5 💩 and earned $${lastSessionEarnings.toFixed(2)}!`;
+            shareRatingModal.style.display = 'block';
+        }
+
+        function submitRating() {
+            const comment = document.getElementById('poopComment').value;
+            const lastSessionIndex = currentUser.data.poopSessions.length - 1;
+            currentUser.data.poopSessions[lastSessionIndex].rating = poopRating;
+            currentUser.data.poopSessions[lastSessionIndex].comment = comment;
+            saveUserData();
+            ratingModal.style.display = 'none';
+            updateLog();
+            showShareRatingModal();
+        }
+
         poopButtons.forEach(button => {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function() {
                 poopRating = parseInt(this.getAttribute('data-rating'));
                 poopButtons.forEach((btn, index) => {
                     if (index < poopRating) {
@@ -1137,21 +1134,269 @@
 
         submitRatingButton.addEventListener('click', submitRating);
 
-        function submitRating() {
-            const comment = document.getElementById('poopComment').value;
-            const lastSessionIndex = currentUser.data.poopSessions.length - 1;
-            currentUser.data.poopSessions[lastSessionIndex].rating = poopRating;
-            currentUser.data.poopSessions[lastSessionIndex].comment = comment;
-            saveUserData();
-            ratingModal.style.display = 'none';
-            updateLog();
-            showShareRatingModal();
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.closest('.modal').style.display = 'none';
+            });
+        });
+
+        document.getElementById('shareRatingTwitter').addEventListener('click', () => shareRating('twitter'));
+        document.getElementById('shareRatingFacebook').addEventListener('click', () => shareRating('facebook'));
+        document.getElementById('shareRatingSMS').addEventListener('click', () => shareRating('sms'));
+
+        document.getElementById('shareStatsTwitter').addEventListener('click', () => shareStats('twitter'));
+        document.getElementById('shareStatsFacebook').addEventListener('click', () => shareStats('facebook'));
+        document.getElementById('shareStatsSMS').addEventListener('click', () => shareStats('sms'));
+
+        document.getElementById('shareEntryTwitter').addEventListener('click', () => shareEntry('twitter'));
+        document.getElementById('shareEntryFacebook').addEventListener('click', () => shareEntry('facebook'));
+        document.getElementById('shareEntrySMS').addEventListener('click', () => shareEntry('sms'));
+
+        function shareEntry(platform) {
+            const session = currentUser.data.poopSessions[currentShareIndex];
+            const message = `I just had a ${session.rating}-💩 poop! Duration: ${formatTime(session.duration)}, Earnings: $${session.earnings.toFixed(2)} Find out how much you get paid to poop at www.poopprofit.com!`;
+            shareContent(platform, message);
         }
 
-        // Sharing modals and logics omitted for brevity.
-        // Ensure to include all other modal functions, event listeners, and logic for fact game, race, and sharing if needed.
+        function shareRating(platform) {
+            const message = `I just had a ${poopRating}-💩 poop and earned $${lastSessionEarnings.toFixed(2)}! Find out how much you get paid to poop at www.poopprofit.com!`;
+            shareContent(platform, message);
+        }
+
+        function shareStats(platform) {
+            const sessions = currentUser.data.poopSessions;
+            const totalDuration = sessions.reduce((sum, session) => sum + session.duration, 0);
+            const averageTime = totalDuration / sessions.length;
+            const totalEarnings = sessions.reduce((sum, session) => sum + session.earnings, 0);
+            const averageEarnings = totalEarnings / sessions.length;
+            const firstDay = new Date(sessions[0].date).setHours(0, 0, 0, 0);
+            const lastDay = new Date(sessions[sessions.length - 1].date).setHours(23, 59, 59, 999);
+            const daysDifference = Math.max(1, (lastDay - firstDay) / (24 * 60 * 60 * 1000));
+            const avgSessionsPerDay = sessions.length / daysDifference;
+
+            const message = `My Poop Stats:\nTotal Poops: ${sessions.length}\nTotal Time: ${formatTime(totalDuration)}\nTotal Earnings: $${totalEarnings.toFixed(2)}\nAvg Time: ${formatTime(Math.round(averageTime))}\nAvg Earnings: $${averageEarnings.toFixed(2)}\nAvg Poops/Day: ${avgSessionsPerDay.toFixed(2)} Find out how much you get paid to poop at www.poopprofit.com!`;
+            shareContent(platform, message);
+        }
+
+        function shareContent(platform, message) {
+            const encodedMessage = encodeURIComponent(message);
+            switch (platform) {
+                case 'twitter':
+                    window.open(`https://twitter.com/intent/tweet?text=${encodedMessage}`, '_blank');
+                    break;
+                case 'facebook':
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodedMessage}`, '_blank');
+                    break;
+                case 'sms':
+                    window.open(`sms:?&body=${encodedMessage}`, '_blank');
+                    break;
+            }
+
+            shareModal.style.display = 'none';
+            shareRatingModal.style.display = 'none';
+            statsModal.style.display = 'none';
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'https://www.poopprofit.com/signup.html';
+        }
+
+        function updateHourlyRate() {
+            const salary = parseFloat(salaryInput.value);
+            const hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+            if (isNaN(salary) || isNaN(hoursPerWeek)) {
+                resultDiv.textContent = 'Please enter valid numbers.';
+                return;
+            }
+            const hourlyRate = salary / (hoursPerWeek * 52);
+            resultDiv.textContent = `Your hourly rate is: $${hourlyRate.toFixed(2)}`;
+        }
+
+        salaryInput.addEventListener('input', updateHourlyRate);
+        hoursPerWeekInput.addEventListener('input', updateHourlyRate);
+        startStopButton.addEventListener('click', startStopTimer);
+        statsButton.addEventListener('click', showStats);
+        logoutButton.addEventListener('click', logout);
+
+        // Fact Game Logic
+        let facts = [
+            { statement: "The average person spends about 3 years of their life on the toilet.", isTrue: true },
+            { statement: "Flushing the toilet with the lid up can spread germs up to 6 feet away.", isTrue: true },
+            { statement: "The first toilet paper was invented in China in the 6th century AD.", isTrue: true },
+            { statement: "The world's largest toilet is located in South Korea.", isTrue: false },
+            { statement: "Ancient Romans used vinegar as toilet paper.", isTrue: false },
+            { statement: "The flush toilet was invented by Thomas Crapper.", isTrue: false },
+            { statement: "In space, astronauts' urine is recycled into drinking water.", isTrue: true },
+            { statement: "The average person uses the bathroom 6-8 times per day.", isTrue: true },
+            { statement: "The most expensive toilet in the world costs over $10 million.", isTrue: false },
+            { statement: "Some people have a phobia of using public restrooms, called paruresis.", isTrue: true }
+        ];
+
+        let currentFactIndex = 0;
+        let score = { correct: 0, incorrect: 0 };
+
+        boredButton.addEventListener('click', showFactGame);
+        stillBoredButton.addEventListener('click', showTurdRaceModal);
+        startGameButton.addEventListener('click', startFactGame);
+        trueButton.addEventListener('click', () => checkAnswer(true));
+        falseButton.addEventListener('click', () => checkAnswer(false));
+
+        function showFactGame() {
+            factGameModal.style.display = 'block';
+            startGameButton.style.display = 'block';
+            trueButton.style.display = 'none';
+            falseButton.style.display = 'none';
+            factStatement.textContent = "Ready to play Bathroom Fact or Fiction?";
+            scoreCard.style.display = 'none';
+        }
+
+        function startFactGame() {
+            currentFactIndex = 0;
+            score = { correct: 0, incorrect: 0 };
+            showNextFact();
+            startGameButton.style.display = 'none';
+            trueButton.style.display = 'inline-block';
+            falseButton.style.display = 'inline-block';
+        }
+
+        function showNextFact() {
+            if (currentFactIndex < facts.length) {
+                factStatement.textContent = facts[currentFactIndex].statement;
+            } else {
+                showScore();
+            }
+        }
+
+        function checkAnswer(userAnswer) {
+            if (userAnswer === facts[currentFactIndex].isTrue) {
+                score.correct++;
+            } else {
+                score.incorrect++;
+            }
+            currentFactIndex++;
+            showNextFact();
+        }
+
+        function showScore() {
+            factStatement.textContent = "Game Over!";
+            trueButton.style.display = 'none';
+            falseButton.style.display = 'none';
+            scoreCard.style.display = 'block';
+            correctScore.textContent = score.correct;
+            incorrectScore.textContent = score.incorrect;
+            startGameButton.style.display = 'block';
+            startGameButton.textContent = 'Play Again';
+            showStillBoredButton();
+        }
+
+        function showTurdRaceModal() {
+            turdRaceModal.style.display = 'block';
+        }
+
+        let turdOptions = document.querySelectorAll('.turd-option');
+        let startRaceButton = document.getElementById('startRace');
+        let raceTrack = document.getElementById('raceTrack');
+        let overlay = document.getElementById('overlay');
+        let resultPopup = document.getElementById('resultPopup');
+        let popupContent = document.getElementById('popupContent');
+        let closePopupButton = document.getElementById('closePopup');
+
+        let selectedTurd = null;
+        let raceInProgress = false;
+
+        turdOptions.forEach(option => {
+            option.addEventListener('click', selectTurd);
+        });
+
+        startRaceButton.addEventListener('click', startRace);
+        closePopupButton.addEventListener('click', closePopup);
+
+        function selectTurd() {
+            if (!raceInProgress) {
+                turdOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedTurd = this.getAttribute('data-turd');
+            }
+        }
+
+        function startRace() {
+            if (raceInProgress || !selectedTurd) return;
+
+            raceInProgress = true;
+            startRaceButton.disabled = true;
+
+            const turds = document.querySelectorAll('.turd');
+            turds.forEach(turd => {
+                turd.style.left = '30px';
+            });
+
+            const raceDuration = 15000; // 15 seconds in milliseconds
+            const startTime = Date.now();
+            const maxPosition = raceTrack.offsetWidth - 50;
+            const speeds = Array(5).fill().map(() => Math.random() * 0.5 + 0.75); // Random base speeds
+
+            function animate() {
+                const elapsedTime = Date.now() - startTime;
+                const progress = Math.min(elapsedTime / raceDuration, 1);
+
+                let winner = null;
+                turds.forEach((turd, index) => {
+                    const speedVariation = 0.8 + Math.random() * 0.4;
+                    const previousPosition = parseFloat(turd.style.left) || 30;
+                    const newPosition = Math.max(
+                        previousPosition,
+                        30 + (maxPosition - 30) * progress * speeds[index] * speedVariation
+                    );
+
+                    turd.style.left = `${Math.min(newPosition, maxPosition)}px`;
+
+                    if (newPosition >= maxPosition && !winner) {
+                        winner = turd.id;
+                    }
+                });
+
+                if (winner || progress === 1) {
+                    endRace(winner || 'turd' + Math.floor(Math.random() * 5 + 1));
+                } else {
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function endRace(winner) {
+            const winningNumber = winner.replace('turd', '');
+            if (winningNumber === selectedTurd) {
+                popupContent.textContent = `Congratulations! You Win! Turd #${winningNumber} won the race!`;
+                popupContent.style.color = 'var(--secondary-color)';
+            } else {
+                popupContent.textContent = `Better Luck Next Poop. Turd #${winningNumber} won the race!`;
+                popupContent.style.color = 'var(--accent-color)';
+            }
+            setTimeout(() => {
+                showPopup();
+            }, 1000);
+            raceInProgress = false;
+            startRaceButton.disabled = false;
+        }
+
+        function showPopup() {
+            overlay.style.display = 'block';
+            resultPopup.style.display = 'block';
+        }
+
+        function closePopup() {
+            overlay.style.display = 'none';
+            resultPopup.style.display = 'none';
+        }
+
+        updateHourlyRate();
+        
+        if (currentUser) {
+            updateLog();
+        }
     </script>
 </body>
-
-
-
+</html>
