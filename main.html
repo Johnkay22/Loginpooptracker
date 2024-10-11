@@ -774,15 +774,40 @@
         let lastSessionEarnings = 0;
         let statsChart = null;
 
-        const salaryInput = document.getElementById('salary');
-        const hoursPerWeekInput = document.getElementById('hoursPerWeek');
-        const resultDiv = document.getElementById('result');
-        const timerDiv = document.getElementById('timer');
-        const startStopButton = document.getElementById('startStopButton');
-        const logEntriesDiv = document.getElementById('logEntries');
-        const statsButton = document.getElementById('statsButton');
-        const poopEmoji = document.getElementById('poopEmoji');
-        const logoutButton = document.getElementById('logoutButton');
+const salaryInput = document.getElementById('salary');
+const hoursPerWeekInput = document.getElementById('hoursPerWeek');
+const resultDiv = document.getElementById('result');
+const timerDiv = document.getElementById('timer');
+const startStopButton = document.getElementById('startStopButton');
+const logEntriesDiv = document.getElementById('logEntries');
+const statsButton = document.getElementById('statsButton');
+const poopEmoji = document.getElementById('poopEmoji');
+const logoutButton = document.getElementById('logoutButton');
+
+// Function to save salary and hoursPerWeek to localStorage
+function saveSalaryAndHours() {
+  const salary = document.getElementById('salary').value;
+  const hoursPerWeek = document.getElementById('hoursPerWeek').value;
+
+  if (currentUser) {
+    currentUser.salary = salary;
+    currentUser.hoursPerWeek = hoursPerWeek;
+
+    // Save the data in localStorage
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+  }
+}
+
+// Update hourly rate and save salary/hours in localStorage when input changes
+salaryInput.addEventListener('input', () => {
+  updateHourlyRate();
+  saveSalaryAndHours();
+});
+
+hoursPerWeekInput.addEventListener('input', () => {
+  updateHourlyRate();
+  saveSalaryAndHours();
+});
         
         let boredButton = document.getElementById('boredButton');
         let stillBoredButton = document.getElementById('stillBoredButton');
