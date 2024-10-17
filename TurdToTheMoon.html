@@ -1,0 +1,659 @@
+<html><head><base href="https://www.example.com/"><title>Crash - Turd Token Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #121212;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: auto;
+        min-height: 100vh;
+        margin: 0;
+        padding-top: 100px;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-bottom: 20px;
+        box-sizing: border-box;
+    }
+
+    #logo {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        width: 90px;
+        height: auto;
+        margin-bottom: 0;
+    }
+
+    #balance {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        font-size: 18px;
+        background-color: #2a2a2a;
+        padding: 10px 20px;
+        border-radius: 50px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        z-index: 1000;
+    }
+
+    #multiplier-display-container {
+        width: 90vw;
+        max-width: 600px;
+        height: calc(100vh - 140px);
+        max-height: 800px;
+        margin-top: 20px;
+        position: relative;
+        overflow: hidden;
+        background: url('/a/073f3fac-0790-463b-89b0-a34785b24d6e') no-repeat center center;
+        background-size: cover;
+        border-radius: 15px;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+        padding-left: 0;
+    }
+
+    #multiplier-scale {
+        display: none;
+    }
+
+    #multiplier-group {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: bottom 0.1s ease-in;
+        bottom: 0;
+        width: 100%;
+        padding: 10px 0;
+    }
+
+    #poop-emoji {
+        width: 120px;
+        height: 120px;
+        margin-right: 15px;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    #multiplier-display {
+        font-size: 40px;
+        font-weight: bold;
+        transition: color 0.3s ease;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8), 0 0 10px rgba(0, 0, 0, 0.5);
+        flex-grow: 0;
+        color: #ffffff;
+    }
+
+    #cashout-multiplier {
+        font-size: 24px;
+        text-align: center;
+        margin-bottom: 25px;
+        color: #4CAF50;
+        font-weight: 300;
+    }
+
+    #betting-interface {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 25px;
+        width: 90vw;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    input, button {
+        padding: 15px;
+        font-size: 18px;
+        border-radius: 10px;
+        border: none;
+        outline: none;
+        transition: all 0.3s ease;
+        margin-bottom: 0;
+    }
+
+    input {
+        background-color: #2a2a2a;
+        color: #ffffff;
+        border: 1px solid #3a3a3a;
+    }
+
+    input:focus {
+        border-color: #4CAF50;
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
+    button {
+        cursor: pointer;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    button:hover {
+        background-color: #45a049;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(69, 160, 73, 0.3);
+    }
+
+    #cashout-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 90vw;
+        max-width: 600px;
+    }
+
+    #cashout-button {
+        background-color: #f44336;
+        color: white;
+        width: 100%;
+    }
+
+    #cashout-button:hover {
+        background-color: #da190b;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(218, 25, 11, 0.3);
+    }
+
+    #cashout-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    #payout-container {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        width: 100%;
+        background-color: #2a2a2a;
+        border-radius: 10px;
+        padding: 10px 15px;
+        margin-top: 10px;
+    }
+
+    #payout-label {
+        font-size: 14px;
+        margin-right: 10px;
+        color: #aaaaaa;
+    }
+
+    #potential-win {
+        font-size: 16px;
+        font-weight: bold;
+        color: #4CAF50;
+    }
+
+    #result {
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 25px;
+        padding: 15px;
+        border-radius: 10px;
+        background-color: #2a2a2a;
+        width: 90vw;
+        max-width: 600px;
+    }
+
+    #popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #2a2a2a;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+        width: 300px;
+        text-align: center;
+    }
+
+    #popup h2 {
+        color: #4CAF50;
+        margin-bottom: 20px;
+    }
+
+    #popup button {
+        margin-top: 15px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #3a3a3a;
+        color: #ffffff;
+        transition: background-color 0.3s ease;
+    }
+
+    #popup button:hover {
+        background-color: #4CAF50;
+    }
+
+    #popup button i {
+        margin-right: 10px;
+        font-size: 20px;
+    }
+
+    #popup-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        color: #ffffff;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    #overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 999;
+    }
+
+    #game-log-section {
+        margin-top: 25px;
+        border-top: 1px solid #3a3a3a;
+        padding-top: 20px;
+        width: 90vw;
+        max-width: 600px;
+    }
+
+    #game-log-section h3 {
+        color: #4CAF50;
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+
+    #game-log {
+        max-height: 20vh;
+        overflow-y: auto;
+        font-size: 12px;
+    }
+
+    .log-entry {
+        background-color: #2a2a2a;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .log-entry:last-child {
+        margin-bottom: 0;
+    }
+
+    .log-bet {
+        color: #4CAF50;
+    }
+
+    .log-cashout {
+        color: #2196F3;
+    }
+
+    .log-crash {
+        color: #f44336;
+    }
+
+    .popup {
+        display: none;
+        position: fixed;
+        z-index: 1002;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .popup-content {
+        background-color: #2a2a2a;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #3a3a3a;
+        width: 80%;
+        max-width: 400px;
+        border-radius: 10px;
+        position: relative;
+        color: #ffffff;
+        text-align: center;
+    }
+
+    .close-popup {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close-popup:hover,
+    .close-popup:focus {
+        color: #4CAF50;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+        body {
+            padding-top: 80px;
+        }
+
+        #logo {
+            width: 75px;
+        }
+
+        #multiplier-display-container {
+            height: calc(100vh - 120px);
+            max-height: 600px;
+        }
+    }
+</style>
+</head>
+<body>
+<img id="logo" src="/a/fded6bd7-8d25-4a0e-a7b1-ea14afa8844e" alt="Turd Token Logo" width="90" height="90">
+<div id="balance">
+    <img src="/a/64a768db-bcd9-49c0-8e10-31559275fa26" alt="Turd Token" width="30" height="30">
+    <span id="balance-amount">1000</span> TT
+</div>
+<div id="multiplier-display-container">
+    <div id="multiplier-scale"></div>
+    <div id="multiplier-group">
+        <img id="poop-emoji" src="/a/456e492b-3a13-47a4-9075-a036769deff4" alt="Turd Token" width="120" height="120">
+        <div id="multiplier-display">1.00x</div>
+    </div>
+</div>
+<div id="cashout-multiplier"></div>
+<div id="betting-interface">
+    <input type="number" id="bet-amount" placeholder="Enter bet amount" min="1">
+    <button id="bet-button">Bet</button>
+</div>
+<div id="cashout-container">
+    <button id="cashout-button" disabled>Cash Out</button>
+    <div id="payout-container">
+        <span id="payout-label">Payout:</span>
+        <span id="potential-win">0.00 TT</span>
+    </div>
+</div>
+<div id="result"></div>
+<div id="game-log-section">
+    <h3>Game History</h3>
+    <div id="game-log"></div>
+</div>
+<div id="popup">
+    <button id="popup-close">&times;</button>
+    <h2>Turd Token Options</h2>
+    <button id="redeem-button"><i class="fas fa-exchange-alt"></i> Redeem Turd Tokens</button>
+    <button id="buy-button"><i class="fas fa-shopping-cart"></i> Buy Piles of Turd Tokens</button>
+</div>
+<div id="overlay"></div>
+<div id="error-popup" class="popup">
+    <div class="popup-content">
+        <span class="close-popup">&times;</span>
+        <p id="error-message"></p>
+    </div>
+</div>
+<script>
+let balance = 1000;
+let currentBet = 0;
+let multiplier = 1;
+let gameInterval;
+let isGameRunning = false;
+let cashedOutAt = null;
+let baseIncreaseRate = 0.01;
+let increaseRate = baseIncreaseRate;
+const maxMultiplier = 100;
+let lastHalfPoint = 1;
+let crashPoint;
+let gameLog = [];
+
+const multiplierGroup = document.getElementById('multiplier-group');
+const multiplierDisplay = document.getElementById('multiplier-display');
+const cashoutMultiplierDisplay = document.getElementById('cashout-multiplier');
+const betButton = document.getElementById('bet-button');
+const cashoutButton = document.getElementById('cashout-button');
+const betAmountInput = document.getElementById('bet-amount');
+const resultDisplay = document.getElementById('result');
+const balanceDisplay = document.getElementById('balance-amount');
+const potentialWinDisplay = document.getElementById('potential-win');
+const balanceContainer = document.getElementById('balance');
+const popup = document.getElementById('popup');
+const overlay = document.getElementById('overlay');
+const redeemButton = document.getElementById('redeem-button');
+const buyButton = document.getElementById('buy-button');
+const popupCloseButton = document.getElementById('popup-close');
+const errorPopup = document.getElementById('error-popup');
+const errorMessage = document.getElementById('error-message');
+const closePopup = document.querySelector('.close-popup');
+
+betButton.addEventListener('click', startGame);
+cashoutButton.addEventListener('click', cashOut);
+balanceContainer.addEventListener('click', showPopup);
+overlay.addEventListener('click', hidePopup);
+redeemButton.addEventListener('click', redeemTokens);
+buyButton.addEventListener('click', buyTokens);
+popupCloseButton.addEventListener('click', hidePopup);
+closePopup.addEventListener('click', hideErrorPopup);
+errorPopup.addEventListener('click', function(event) {
+    if (event.target === errorPopup) {
+        hideErrorPopup();
+    }
+});
+
+function showErrorPopup(message) {
+    errorMessage.textContent = message;
+    errorPopup.style.display = 'block';
+}
+
+function hideErrorPopup() {
+    errorPopup.style.display = 'none';
+}
+
+function startGame() {
+    const betAmount = parseInt(betAmountInput.value);
+    if (isNaN(betAmount) || betAmount <= 0 || betAmount > balance) {
+        showErrorPopup('Please enter a valid bet amount');
+        return;
+    }
+
+    balance -= betAmount;
+    currentBet = betAmount;
+    updateBalance();
+
+    betButton.disabled = true;
+    cashoutButton.disabled = false;
+    betAmountInput.disabled = true;
+    resultDisplay.textContent = '';
+    cashoutMultiplierDisplay.textContent = '';
+
+    multiplier = 1;
+    increaseRate = baseIncreaseRate;
+    lastHalfPoint = 1;
+    isGameRunning = true;
+    cashedOutAt = null;
+
+    crashPoint = generateCrashPoint();
+    multiplierDisplay.style.color = '#ffffff';
+    multiplierGroup.style.bottom = '0px';
+    
+    gameLog.unshift({
+        bet: betAmount,
+        cashout: null,
+        crash: null
+    });
+    updateGameLog();
+    
+    gameInterval = setInterval(updateGame, 100);
+}
+
+function generateCrashPoint() {
+    const random = Math.random() * 100;
+    if (random < 50) return 1 + Math.random();
+    if (random < 69) return 2 + Math.random();
+    if (random < 78) return 3 + Math.random();
+    if (random < 82) return 4 + Math.random();
+    if (random < 86.5) return 5 + Math.random() * 5;
+    if (random < 89) return 10 + Math.random() * 5;
+    if (random < 91) return 15 + Math.random() * 5;
+    if (random < 92.5) return 20 + Math.random() * 5;
+    if (random < 93.5) return 25 + Math.random() * 5;
+    if (random < 94.5) return 30 + Math.random() * 10;
+    if (random < 95.3) return 40 + Math.random() * 10;
+    if (random < 96.3) return 50 + Math.random() * 20;
+    if (random < 97.3) return 70 + Math.random() * 20;
+    return 90 + Math.random() * 10;
+}
+
+function shouldCrash() {
+    return multiplier >= crashPoint;
+}
+
+function updateGame() {
+    multiplier += increaseRate;
+    if (multiplier >= maxMultiplier) {
+        multiplier = maxMultiplier;
+        endGame(false);
+        return;
+    }
+    multiplierDisplay.textContent = multiplier.toFixed(2) + 'x';
+
+    const newBottom = ((multiplier - 1) / (maxMultiplier - 1)) * 580; 
+    multiplierGroup.style.bottom = newBottom + 'px';
+
+    if (!cashedOutAt) {
+        updatePotentialWin();
+    }
+
+    if (Math.floor(multiplier * 2) / 2 > lastHalfPoint) {
+        lastHalfPoint = Math.floor(multiplier * 2) / 2;
+        increaseRate *= 1.1;
+    }
+
+    if (shouldCrash()) {
+        endGame(true);
+    }
+}
+
+function updatePotentialWin() {
+    const potentialWin = currentBet * multiplier;
+    potentialWinDisplay.textContent = potentialWin.toFixed(2) + ' TT';
+}
+
+function cashOut() {
+    if (!isGameRunning) return;
+    const winnings = currentBet * multiplier;
+    balance += winnings;
+    cashedOutAt = multiplier;
+    cashoutMultiplierDisplay.textContent = `Cashed out at ${cashedOutAt.toFixed(2)}x`;
+    cashoutButton.disabled = true;
+    updateBalance();
+    potentialWinDisplay.textContent = winnings.toFixed(2) + ' TT';
+
+    gameLog[0].cashout = multiplier;
+    updateGameLog();
+}
+
+function endGame(crashed) {
+    clearInterval(gameInterval);
+    isGameRunning = false;
+
+    betButton.disabled = false;
+    cashoutButton.disabled = true;
+    betAmountInput.disabled = false;
+
+    if (crashed) {
+        multiplierDisplay.style.color = '#f44336';
+        if (cashedOutAt) {
+            resultDisplay.textContent = `Crashed at ${multiplier.toFixed(2)}x`;
+            resultDisplay.style.color = '#f44336';
+        } else {
+            resultDisplay.textContent = `Crashed at ${multiplier.toFixed(2)}x! You lost ${currentBet.toFixed(2)} TT`;
+            resultDisplay.style.color = '#f44336';
+        }
+    } else if (multiplier >= maxMultiplier) {
+        multiplierDisplay.style.color = '#4CAF50';
+        if (cashedOutAt) {
+            resultDisplay.textContent = `Max multiplier reached: ${maxMultiplier}x`;
+        } else {
+            const winnings = currentBet * maxMultiplier;
+            balance += winnings;
+            resultDisplay.textContent = `Max multiplier reached: ${maxMultiplier}x! You won ${winnings.toFixed(2)} TT`;
+        }
+        resultDisplay.style.color = '#4CAF50';
+    } else if (cashedOutAt) {
+        const winnings = currentBet * cashedOutAt;
+        resultDisplay.textContent = `You won ${winnings.toFixed(2)} TT!`;
+        resultDisplay.style.color = '#4CAF50';
+    }
+
+    gameLog[0].crash = multiplier;
+    updateGameLog();
+    updateBalance();
+    currentBet = 0;
+    if (!cashedOutAt) {
+        potentialWinDisplay.textContent = '0.00 TT';
+    }
+}
+
+function updateBalance() {
+    balanceDisplay.textContent = balance.toFixed(2);
+}
+
+function showPopup() {
+    popup.style.display = 'block';
+    overlay.style.display = 'block';
+}
+
+function hidePopup() {
+    popup.style.display = 'none';
+    overlay.style.display = 'none';
+}
+
+function redeemTokens() {
+    alert('Redeeming Turd Tokens functionality not implemented yet.');
+    hidePopup();
+}
+
+function buyTokens() {
+    alert('Buying Piles of Turd Tokens functionality not implemented yet.');
+    hidePopup();
+}
+
+function updateGameLog() {
+    const gameLogElement = document.getElementById('game-log');
+    gameLogElement.innerHTML = gameLog.map((game, index) => `
+        <div class="log-entry">
+            <span class="log-bet">Bet: ${game.bet.toFixed(2)} TT</span>
+            ${game.cashout ? `<span class="log-cashout"> | Cashed out: ${game.cashout.toFixed(2)}x</span>` : ''}
+            ${game.crash ? `<span class="log-crash"> | Crashed at: ${game.crash.toFixed(2)}x</span>` : ''}
+        </div>
+    `).join('');
+}
+
+// Initialize
+updateBalance();
+</script>
+</body>
+</html>
