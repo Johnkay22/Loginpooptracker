@@ -61,6 +61,18 @@
         padding-left: 0;
     }
 
+    #info-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        color: #ffffff;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 10;
+    }
+
     #multiplier-scale {
         display: none;
     }
@@ -273,50 +285,7 @@
         z-index: 999;
     }
 
-    #game-log-section {
-        margin-top: 25px;
-        border-top: 1px solid #3a3a3a;
-        padding-top: 20px;
-        width: 90vw;
-        max-width: 600px;
-    }
-
-    #game-log-section h3 {
-        color: #4CAF50;
-        margin-bottom: 15px;
-        font-size: 16px;
-    }
-
-    #game-log {
-        max-height: 20vh;
-        overflow-y: auto;
-        font-size: 12px;
-    }
-
-    .log-entry {
-        background-color: #2a2a2a;
-        border-radius: 10px;
-        padding: 10px;
-        margin-bottom: 10px;
-    }
-
-    .log-entry:last-child {
-        margin-bottom: 0;
-    }
-
-    .log-bet {
-        color: #4CAF50;
-    }
-
-    .log-cashout {
-        color: #2196F3;
-    }
-
-    .log-crash {
-        color: #f44336;
-    }
-
-    .popup {
+    #game-info-popup {
         display: none;
         position: fixed;
         z-index: 1002;
@@ -339,6 +308,42 @@
         position: relative;
         color: #ffffff;
         text-align: center;
+    }
+
+    .game-info-content {
+        background-image: url('https://github.com/Johnkay22/Loginpooptracker/blob/main/20241017_071034_0000.jpg?raw=true');
+        background-size: cover;
+        background-position: center;
+        color: #ffffff;
+        text-shadow: none;
+        position: relative;
+    }
+
+    .game-info-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 1;
+    }
+
+    .game-info-content h2,
+    .game-info-content p {
+        position: relative;
+        z-index: 2;
+    }
+
+    .game-info-content h2 {
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .game-info-content p {
+        margin-bottom: 10px;
+        font-size: 16px;
     }
 
     .close-popup {
@@ -370,25 +375,142 @@
             max-height: 600px;
         }
     }
+
+    #alert-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .alert-content {
+        background-color: #2a2a2a;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .alert-content p {
+        margin-bottom: 15px;
+        color: #ffffff;
+    }
+
+    .alert-content button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .alert-content button:hover {
+        background-color: #45a049;
+    }
+
+    #game-log-section {
+        width: 90vw;
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #2a2a2a;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #game-log {
+        max-height: 200px;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+
+    #game-log::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #game-log::-webkit-scrollbar-track {
+        background: #1e1e1e;
+        border-radius: 4px;
+    }
+
+    #game-log::-webkit-scrollbar-thumb {
+        background: #4CAF50;
+        border-radius: 4px;
+    }
+
+    .log-entry {
+        margin-bottom: 5px;
+        padding: 5px;
+        border-bottom: 1px solid #3a3a3a;
+    }
+
+    .log-bet {
+        color: #4CAF50;
+    }
+
+    .log-cashout {
+        color: #2196F3;
+    }
+
+    .log-crash {
+        color: #f44336;
+    }
+
+    #bet-modifiers {
+        display: flex;
+        justify-content: space-between;
+        width: 90vw;
+        max-width: 600px;
+        margin: 10px auto;
+    }
+
+    #bet-modifiers button {
+        width: 48%;
+        padding: 10px;
+        font-size: 16px;
+        background-color: #3a3a3a;
+        color: #ffffff;
+    }
+
+    #bet-modifiers button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    #bet-modifiers button:disabled:hover {
+        background-color: #3a3a3a;
+    }
 </style>
 </head>
 <body>
 <img id="logo" src="https://github.com/Johnkay22/Loginpooptracker/blob/main/Untitled%20design_20241017_032927_0000.png?raw=true" alt="Turd Token Logo" width="90" height="90">
 <div id="balance">
     <img src="https://raw.githubusercontent.com/Johnkay22/Loginpooptracker/refs/heads/main/20241017_075343_0000.png" alt="Turd Token" width="30" height="30">
-    <span id="balance-amount">1000</span> TT
+    <span id="balance-amount">1000.00</span> TT
 </div>
 <div id="multiplier-display-container">
+    <button id="info-button" class="fas fa-info-circle"></button>
     <div id="multiplier-scale"></div>
     <div id="multiplier-group">
-        <img id="poop-emoji" src="https://github.com/Johnkay22/Loginpooptracker/blob/main/20241017_042214_0000.png?raw=true" height="120">
+        <img id="poop-emoji" src="https://github.com/Johnkay22/Loginpooptracker/blob/main/20241017_042214_0000.png?raw=true" alt="Turd Token" width="120" height="120">
         <div id="multiplier-display">1.00x</div>
     </div>
 </div>
 <div id="cashout-multiplier"></div>
 <div id="betting-interface">
-    <input type="number" id="bet-amount" placeholder="Enter bet amount" min="1">
+    <input type="number" id="bet-amount" placeholder="Enter bet amount" min="0.01" step="0.01">
     <button id="bet-button">Bet</button>
+</div>
+<div id="bet-modifiers">
+    <button id="half-bet-button">1/2x</button>
+    <button id="double-bet-button">2x</button>
 </div>
 <div id="cashout-container">
     <button id="cashout-button" disabled>Cash Out</button>
@@ -409,14 +531,19 @@
     <button id="buy-button"><i class="fas fa-shopping-cart"></i> Buy Piles of Turd Tokens</button>
 </div>
 <div id="overlay"></div>
-<div id="error-popup" class="popup">
-    <div class="popup-content">
+<div id="game-info-popup" class="popup">
+    <div class="popup-content game-info-content">
         <span class="close-popup">&times;</span>
-        <p id="error-message"></p>
+        <h2>How to Play</h2>
+        <p>1. Enter your bet amount</p>
+        <p>2. Click "Bet" to start the game</p>
+        <p>3. Send Super Turd to the moon & watch the multiplier increase</p>
+        <p>4. Click "Cash Out" before Super Turd crashes otherwise you lose your bet</p>
+        <p>5. If you cash out in time, you win your bet multiplied by the current multiplier!</p>
     </div>
 </div>
 <script>
-let balance = 1000;
+let balance = 1000.00;
 let currentBet = 0;
 let multiplier = 1;
 let gameInterval;
@@ -425,9 +552,12 @@ let cashedOutAt = null;
 let baseIncreaseRate = 0.01;
 let increaseRate = baseIncreaseRate;
 const maxMultiplier = 100;
+const SPEED_THRESHOLD = 15;
 let lastHalfPoint = 1;
 let crashPoint;
 let gameLog = [];
+
+const MAX_LOG_ENTRIES = 50;
 
 const multiplierGroup = document.getElementById('multiplier-group');
 const multiplierDisplay = document.getElementById('multiplier-display');
@@ -444,9 +574,12 @@ const overlay = document.getElementById('overlay');
 const redeemButton = document.getElementById('redeem-button');
 const buyButton = document.getElementById('buy-button');
 const popupCloseButton = document.getElementById('popup-close');
-const errorPopup = document.getElementById('error-popup');
-const errorMessage = document.getElementById('error-message');
 const closePopup = document.querySelector('.close-popup');
+const infoButton = document.getElementById('info-button');
+const gameInfoPopup = document.getElementById('game-info-popup');
+const gameInfoCloseButton = gameInfoPopup.querySelector('.close-popup');
+const halfBetButton = document.getElementById('half-bet-button');
+const doubleBetButton = document.getElementById('double-bet-button');
 
 betButton.addEventListener('click', startGame);
 cashoutButton.addEventListener('click', cashOut);
@@ -455,26 +588,28 @@ overlay.addEventListener('click', hidePopup);
 redeemButton.addEventListener('click', redeemTokens);
 buyButton.addEventListener('click', buyTokens);
 popupCloseButton.addEventListener('click', hidePopup);
-closePopup.addEventListener('click', hideErrorPopup);
-errorPopup.addEventListener('click', function(event) {
-    if (event.target === errorPopup) {
-        hideErrorPopup();
+infoButton.addEventListener('click', showGameInfoPopup);
+gameInfoCloseButton.addEventListener('click', hideGameInfoPopup);
+gameInfoPopup.addEventListener('click', function(event) {
+    if (event.target === gameInfoPopup) {
+        hideGameInfoPopup();
+    }
+});
+halfBetButton.addEventListener('click', () => {
+    if (!isGameRunning) {
+        halfBet();
+    }
+});
+doubleBetButton.addEventListener('click', () => {
+    if (!isGameRunning) {
+        doubleBet();
     }
 });
 
-function showErrorPopup(message) {
-    errorMessage.textContent = message;
-    errorPopup.style.display = 'block';
-}
-
-function hideErrorPopup() {
-    errorPopup.style.display = 'none';
-}
-
 function startGame() {
-    const betAmount = parseInt(betAmountInput.value);
-    if (isNaN(betAmount) || betAmount <= 0 || betAmount > balance) {
-        showErrorPopup('Please enter a valid bet amount');
+    const betAmount = parseFloat(betAmountInput.value);
+    if (isNaN(betAmount) || betAmount < 0.01 || betAmount > balance) {
+        showAlert('Please enter a valid bet amount (minimum 0.01 TT)');
         return;
     }
 
@@ -485,6 +620,8 @@ function startGame() {
     betButton.disabled = true;
     cashoutButton.disabled = false;
     betAmountInput.disabled = true;
+    halfBetButton.disabled = true;
+    doubleBetButton.disabled = true;
     resultDisplay.textContent = '';
     cashoutMultiplierDisplay.textContent = '';
 
@@ -498,6 +635,9 @@ function startGame() {
     multiplierDisplay.style.color = '#ffffff';
     multiplierGroup.style.bottom = '0px';
     
+    if (gameLog.length >= MAX_LOG_ENTRIES) {
+        gameLog.pop();
+    }
     gameLog.unshift({
         bet: betAmount,
         cashout: null,
@@ -539,14 +679,15 @@ function updateGame() {
     }
     multiplierDisplay.textContent = multiplier.toFixed(2) + 'x';
 
-    const newBottom = ((multiplier - 1) / (maxMultiplier - 1)) * 580; 
+    const containerHeight = document.getElementById('multiplier-display-container').clientHeight;
+    const newBottom = Math.min(((multiplier - 1) / (maxMultiplier - 1)) * (containerHeight - 120), containerHeight - 120);
     multiplierGroup.style.bottom = newBottom + 'px';
 
     if (!cashedOutAt) {
         updatePotentialWin();
     }
 
-    if (Math.floor(multiplier * 2) / 2 > lastHalfPoint) {
+    if (multiplier < SPEED_THRESHOLD && Math.floor(multiplier * 2) / 2 > lastHalfPoint) {
         lastHalfPoint = Math.floor(multiplier * 2) / 2;
         increaseRate *= 1.1;
     }
@@ -582,6 +723,8 @@ function endGame(crashed) {
     betButton.disabled = false;
     cashoutButton.disabled = true;
     betAmountInput.disabled = false;
+    halfBetButton.disabled = false;
+    doubleBetButton.disabled = false;
 
     if (crashed) {
         multiplierDisplay.style.color = '#f44336';
@@ -631,6 +774,14 @@ function hidePopup() {
     overlay.style.display = 'none';
 }
 
+function showGameInfoPopup() {
+    gameInfoPopup.style.display = 'block';
+}
+
+function hideGameInfoPopup() {
+    gameInfoPopup.style.display = 'none';
+}
+
 function redeemTokens() {
     alert('Redeeming Turd Tokens functionality not implemented yet.');
     hidePopup();
@@ -641,15 +792,52 @@ function buyTokens() {
     hidePopup();
 }
 
+function showAlert(message) {
+    const alertPopup = document.createElement('div');
+    alertPopup.id = 'alert-popup';
+    alertPopup.innerHTML = `
+        <div class="alert-content">
+            <p>${message}</p>
+            <button onclick="closeAlert()">OK</button>
+        </div>
+    `;
+    document.body.appendChild(alertPopup);
+}
+
+function closeAlert() {
+    const alertPopup = document.getElementById('alert-popup');
+    if (alertPopup) {
+        alertPopup.remove();
+    }
+}
+
 function updateGameLog() {
     const gameLogElement = document.getElementById('game-log');
-    gameLogElement.innerHTML = gameLog.map((game, index) => `
+    gameLogElement.innerHTML = gameLog.slice(0, MAX_LOG_ENTRIES).map((game, index) => `
         <div class="log-entry">
             <span class="log-bet">Bet: ${game.bet.toFixed(2)} TT</span>
             ${game.cashout ? `<span class="log-cashout"> | Cashed out: ${game.cashout.toFixed(2)}x</span>` : ''}
             ${game.crash ? `<span class="log-crash"> | Crashed at: ${game.crash.toFixed(2)}x</span>` : ''}
         </div>
     `).join('');
+
+    gameLogElement.scrollTop = 0;
+}
+
+function halfBet() {
+    let currentBet = parseFloat(betAmountInput.value);
+    if (!isNaN(currentBet)) {
+        let newBet = Math.max(currentBet / 2, 0.01);
+        betAmountInput.value = newBet.toFixed(2);
+    }
+}
+
+function doubleBet() {
+    let currentBet = parseFloat(betAmountInput.value);
+    if (!isNaN(currentBet)) {
+        let newBet = Math.min(currentBet * 2, balance);
+        betAmountInput.value = newBet.toFixed(2);
+    }
 }
 
 // Initialize
