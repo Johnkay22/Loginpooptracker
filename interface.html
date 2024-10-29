@@ -820,6 +820,23 @@
         transform: translateY(-2px);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
+    #logoutButton {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background-color: var(--neon-blue);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#logoutButton:hover {
+    background-color: #2980b9;
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -1642,5 +1659,6 @@ function openRatingModal() {
         <p style="text-align: center; margin-top: 20px; font-style: italic;">COMING SOON</p>
     </div>
 </div>
-
+    <!-- Logout button at the bottom -->
+<button id="logoutButton" onclick="logout()">Log Out</button>
 </body></html>
