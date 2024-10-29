@@ -872,12 +872,13 @@ function formatTime(totalSeconds) {
 }
 
 function updateHourlyWage() {
+function updateHourlyWage() {
     if (wageToggle.checked) {
         hourlyWage = parseFloat(hourlyWageField.value) || 0;
     } else {
         const annualSalary = parseFloat(annualSalaryInput.value) || 0;
         const weeklyHours = parseFloat(weeklyHoursInput.value) || 0;
-        
+
         if (weeklyHours > 0) {
             hourlyWage = (annualSalary / 52) / weeklyHours;
         } else {
