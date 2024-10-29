@@ -820,24 +820,6 @@
         transform: translateY(-2px);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
-    .logout-container {
-    text-align: center; /* Center the button horizontally */
-    margin: 20px 0; /* Add some space above and below the container */
-}
-
-#logoutButton {
-    padding: 10px 20px;
-    background-color: var(--neon-blue);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-#logoutButton:hover {
-    background-color: #2980b9;
-}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -872,13 +854,12 @@ function formatTime(totalSeconds) {
 }
 
 function updateHourlyWage() {
-function updateHourlyWage() {
     if (wageToggle.checked) {
         hourlyWage = parseFloat(hourlyWageField.value) || 0;
     } else {
         const annualSalary = parseFloat(annualSalaryInput.value) || 0;
         const weeklyHours = parseFloat(weeklyHoursInput.value) || 0;
-
+        
         if (weeklyHours > 0) {
             hourlyWage = (annualSalary / 52) / weeklyHours;
         } else {
@@ -1453,10 +1434,6 @@ function openRatingModal() {
     poopLog.insertBefore(logEntry, poopLog.firstChild);
     updateStatistics(seconds, earnings);
 }
-function logout() {
-    localStorage.removeItem('currentUser'); // Assuming 'currentUser' is your session storage key
-    window.location.href = 'https://www.poopprofit.com/loggedout'; // Redirect to the logged out page
-}
 </script>
 </head>
 <body>
@@ -1665,8 +1642,5 @@ function logout() {
         <p style="text-align: center; margin-top: 20px; font-style: italic;">COMING SOON</p>
     </div>
 </div>
-    <!-- Container for the logout button -->
-<div class="logout-container">
-    <button id="logoutButton" onclick="logout()">Log Out</button>
-</div>
+
 </body></html>
