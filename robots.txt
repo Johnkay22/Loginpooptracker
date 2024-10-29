@@ -3,4 +3,3 @@ Allow: /index.html
 Allow: /interface.html
 Allow: /TurdToTheMoon.html
 Allow: /TurdRaceGame.html
-Disallow: /
