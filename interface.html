@@ -1722,22 +1722,28 @@ function openRatingModal() {
         <p style="text-align: center; margin-top: 20px; font-style: italic;">COMING SOON</p>
     </div>
 </div>
+<!-- Popup HTML -->
 <div id="gamesPopup" class="popup" style="display: none;">
     <div class="popup-content">
         <span class="close-btn" onclick="closePopup()">×</span>
         <p>Turd Token Wallet Coming Soon! For now, only demo tokens are available for all games.</p>
     </div>
 </div>
-function showPopup() {
-    document.getElementById("gamesPopup").style.display = "flex";
-}
 
-function closePopup() {
-    document.getElementById("gamesPopup").style.display = "none";
-}
+<!-- JavaScript for Popup -->
+<script>
+    function showPopup() {
+        document.getElementById("gamesPopup").style.display = "flex";
+    }
 
-// Trigger popup when "Games" tab is clicked
-document.querySelector('.tab[data-tab="games"]').addEventListener("click", function() {
-    showPopup();
-});
+    function closePopup() {
+        document.getElementById("gamesPopup").style.display = "none";
+    }
+
+    // Trigger popup when "Games" tab is clicked
+    document.querySelector('.tab[data-tab="games"]').addEventListener("click", function(event) {
+        event.preventDefault(); // Prevents any default behavior
+        showPopup();
+    });
+</script>
 </body></html>
