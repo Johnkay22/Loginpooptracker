@@ -1211,6 +1211,10 @@ document.addEventListener('DOMContentLoaded', () => {
     hourlyWageField = document.getElementById('hourlyWageField');
     hourlyWageDisplay = document.getElementById('hourlyWage');
 
+    annualSalaryInput.addEventListener('input', updateHourlyWage);
+weeklyHoursInput.addEventListener('input', updateHourlyWage);
+hourlyWageField.addEventListener('input', updateHourlyWage);
+    
     const allTimeStatsBtn = document.getElementById('allTimeStats');
     const todayStatsBtn = document.getElementById('todayStats');
     const startDateInput = document.getElementById('startDate');
