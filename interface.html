@@ -1131,19 +1131,71 @@ function filterStatsByDateRange(startDate, endDate) {
             const earningsText = entry.querySelector('.log-earnings').textContent;
             const earnings = parseFloat(earningsText.replace(/[^0-9.-]+/g, ''));
             
+function filterStatsByDateRange(startDate, endDate) {
+    // Define start and end dates, covering the entire day for accurate filtering
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+
+    const filteredStats = {
+        totalSessions: 0,
+        totalPoopTime: 0,
+        totalEarnings: 0,
+        firstSessionDate: null,
+        lastSessionDate: null
+    };
+
+    const logEntries = Array.from(poopLog.children);
+
+    // Loop through each log entry and process only those within the date range
+    logEntries.forEach(entry => {
+        const dateText = entry.querySelector('.log-date').textContent;
+        const entryDate = new Date(dateText);
+        console.log("Entry Date:", entryDate);  // Debug log: Check if date is parsed correctly
+
+        if (entryDate >= start && entryDate <= end) {
+            // Parse and convert duration to seconds
+            const durationText = entry.querySelector('.log-duration').textContent;
+            const durationMatch = durationText.match(/\d+/g);
+            if (durationMatch && durationMatch.length === 3) {
+                const [hours, minutes, seconds] = durationMatch.map(Number);
+                const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+                filteredStats.totalPoopTime += totalSeconds;
+                console.log("Parsed Duration (seconds):", totalSeconds);  // Debug log: Duration in seconds
+            } else {
+                console.warn("Unexpected duration format:", durationText);
+            }
+
+            // Parse earnings, removing non-numeric characters for accurate calculation
+            const earningsText = entry.querySelector('.log-earnings').textContent;
+            const earnings = parseFloat(earningsText.replace(/[^0-9.-]+/g, ''));
+            if (!isNaN(earnings)) {
+                filteredStats.totalEarnings += earnings;
+                console.log("Parsed Earnings:", earnings);  // Debug log: Earnings value
+            } else {
+                console.warn("Unexpected earnings format:", earningsText);
+            }
+
+            // Increment session count and update first and last session dates
             filteredStats.totalSessions++;
-            filteredStats.totalPoopTime += totalSeconds;
-            filteredStats.totalEarnings += earnings;
-            
             if (!filteredStats.firstSessionDate || entryDate < filteredStats.firstSessionDate) {
                 filteredStats.firstSessionDate = entryDate;
             }
             if (!filteredStats.lastSessionDate || entryDate > filteredStats.lastSessionDate) {
                 filteredStats.lastSessionDate = entryDate;
             }
+
+            // Debug logs for current filtered stats
+            console.log("Total Sessions:", filteredStats.totalSessions);
+            console.log("Total Poop Time (seconds):", filteredStats.totalPoopTime);
+            console.log("Total Earnings:", filteredStats.totalEarnings);
+            console.log("First Session Date:", filteredStats.firstSessionDate);
+            console.log("Last Session Date:", filteredStats.lastSessionDate);
         }
     });
 
+    // Pass the filtered statistics to displayStatistics for rendering
     displayStatistics(true, filteredStats);
 }
 
