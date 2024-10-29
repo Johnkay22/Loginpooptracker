@@ -1011,6 +1011,7 @@ function updateTurdTokenDisplay() {
 
 function displayStatistics(filtered = false, filteredStats = null) {
     const statsToUse = filtered ? filteredStats : stats;
+
     const totalTime = statsToUse.totalPoopTime;
     const totalHours = Math.floor(totalTime / 3600);
     const totalMinutes = Math.floor((totalTime % 3600) / 60);
@@ -1022,7 +1023,7 @@ function displayStatistics(filtered = false, filteredStats = null) {
     const avgSecs = Math.floor(avgPoopTime % 60);
 
     const totalDays = statsToUse.firstSessionDate && statsToUse.lastSessionDate
-        ? Math.max(1, Math.ceil((statsToUse.lastSessionDate - statsToUse.firstSessionDate) / (1000 * 60 * 60 * 24)))
+        ? Math.max(1, Math.ceil((new Date(statsToUse.lastSessionDate) - new Date(statsToUse.firstSessionDate)) / (1000 * 60 * 60 * 24)))
         : 1;
     const avgPoopsPerDay = statsToUse.totalSessions > 0 ? (statsToUse.totalSessions / totalDays).toFixed(2) : '0.00';
 
@@ -1032,8 +1033,6 @@ function displayStatistics(filtered = false, filteredStats = null) {
     document.getElementById('avgPoopTime').textContent = `${String(avgHours).padStart(2, '0')}:${String(avgMinutes).padStart(2, '0')}:${String(avgSecs).padStart(2, '0')}`;
     document.getElementById('avgEarnings').textContent = `$${(statsToUse.totalSessions > 0 ? statsToUse.totalEarnings / statsToUse.totalSessions : 0).toFixed(2)}`;
     document.getElementById('avgPoopsPerDay').textContent = avgPoopsPerDay;
-
-    updateStatsChart(statsToUse);
 }
 
 function updateStatsChart(statsData) {
@@ -1229,9 +1228,12 @@ function startTimer() {
 }
 
 function updateStatistics(duration, earnings) {
+function updateStatistics(duration, earnings) {
+    earnings = parseFloat(earnings.toFixed(2));
+    
     stats.totalSessions++;
     stats.totalPoopTime += duration;
-    stats.totalEarnings += parseFloat(earnings);
+    stats.totalEarnings += earnings;
 
     const currentDate = new Date();
     if (!stats.firstSessionDate || currentDate < new Date(stats.firstSessionDate)) {
@@ -1383,13 +1385,13 @@ function shareViaSMS(message) {
     });
 
     function filterStatsByDay(date) {
-        const startOfDay = new Date(date);
-        startOfDay.setHours(0, 0, 0, 0);
-        
-        const endOfDay = new Date(date);
-        endOfDay.setHours(23, 59, 59, 999);
-        
-        filterStatsByDateRange(startOfDay.toISOString().split('T')[0], endOfDay.toISOString().split('T')[0]);
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+    
+    filterStatsByDateRange(startOfDay, endOfDay);
     }
 
     filterButton.addEventListener('click', () => {
