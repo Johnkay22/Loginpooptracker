@@ -830,6 +830,37 @@
         transform: translateY(-2px);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
+ .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background-color: #000;
+    border: 1px solid #00ffff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+    color: #00ffff;
+}
+
+.close-btn {
+    color: #00ffff;
+    float: right;
+    font-size: 1.5em;
+    cursor: pointer;
+    margin-top: -10px;
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -1691,5 +1722,22 @@ function openRatingModal() {
         <p style="text-align: center; margin-top: 20px; font-style: italic;">COMING SOON</p>
     </div>
 </div>
+<div id="gamesPopup" class="popup" style="display: none;">
+    <div class="popup-content">
+        <span class="close-btn" onclick="closePopup()">×</span>
+        <p>Turd Token Wallet Coming Soon! For now, only demo tokens are available for all games.</p>
+    </div>
+</div>
+function showPopup() {
+    document.getElementById("gamesPopup").style.display = "flex";
+}
 
+function closePopup() {
+    document.getElementById("gamesPopup").style.display = "none";
+}
+
+// Trigger popup when "Games" tab is clicked
+document.querySelector('.tab[data-tab="games"]').addEventListener("click", function() {
+    showPopup();
+});
 </body></html>
