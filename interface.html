@@ -1238,15 +1238,46 @@ hourlyWageField.addEventListener('input', updateHourlyWage);
     });
 
     submitRatingButton.addEventListener('click', () => {
-        if (selectedRating > 0) {
-            const latestEntry = poopLog.firstElementChild;
-            if (latestEntry) {
-                const ratingValue = latestEntry.querySelector('.rating-value');
-                ratingValue.textContent = '💩'.repeat(selectedRating);
-            }
-            ratingModal.style.display = 'none';
+    if (selectedRating > 0) {
+        const latestEntry = poopLog.firstElementChild;
+        if (latestEntry) {
+            const ratingValue = latestEntry.querySelector('.rating-value');
+            ratingValue.textContent = '💩'.repeat(selectedRating);
         }
-    });
+        ratingModal.style.display = 'none';
+        
+        // Show the share modal after submitting the rating
+        const earnings = ((hourlyWage / 3600) * seconds).toFixed(2);
+        openShareModal(earnings, selectedRating);
+    }
+});
+
+function openShareModal(earnings, rating) {
+    const ratingText = rating > 0 ? '💩'.repeat(rating) : '';
+    const message = `I just had a ${ratingText}-poop and earned $${earnings}! Find out how much you make to poop at www.poopprofit.com!`;
+
+    const shareModal = document.getElementById('shareModal');
+    shareModal.style.display = 'block';
+
+    // Set up event listeners for the sharing buttons
+    document.getElementById('twitterShareButton').onclick = () => shareOnTwitter(message);
+    document.getElementById('facebookShareButton').onclick = () => shareOnFacebook(message);
+    document.getElementById('smsShareButton').onclick = () => shareViaSMS(message);
+}
+
+function shareOnTwitter(message) {
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
+    window.open(twitterUrl, '_blank');
+}
+
+function shareOnFacebook(message) {
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://www.poopprofit.com')}&quote=${encodeURIComponent(message)}`;
+    window.open(facebookUrl, '_blank');
+}
+
+function shareViaSMS(message) {
+    window.open(`sms:?&body=${encodeURIComponent(message)}`);
+}
 
     checkLoginStatus();
     lastAwardDate = localStorage.getItem('lastAwardDate');
