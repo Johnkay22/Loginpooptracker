@@ -820,11 +820,12 @@
         transform: translateY(-2px);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
-    #logoutButton {
-    position: fixed;
-    left: 50%;
-    bottom: 20px;
-    transform: translateX(-50%);
+    .logout-container {
+    text-align: center; /* Center the button horizontally */
+    margin: 20px 0; /* Add some space above and below the container */
+}
+
+#logoutButton {
     padding: 10px 20px;
     background-color: var(--neon-blue);
     color: white;
@@ -1451,6 +1452,10 @@ function openRatingModal() {
     poopLog.insertBefore(logEntry, poopLog.firstChild);
     updateStatistics(seconds, earnings);
 }
+function logout() {
+    localStorage.removeItem('currentUser'); // Assuming 'currentUser' is your session storage key
+    window.location.href = 'https://www.poopprofit.com/loggedout'; // Redirect to the logged out page
+}
 </script>
 </head>
 <body>
@@ -1659,6 +1664,8 @@ function openRatingModal() {
         <p style="text-align: center; margin-top: 20px; font-style: italic;">COMING SOON</p>
     </div>
 </div>
-    <!-- Logout button at the bottom -->
-<button id="logoutButton" onclick="logout()">Log Out</button>
+    <!-- Container for the logout button -->
+<div class="logout-container">
+    <button id="logoutButton" onclick="logout()">Log Out</button>
+</div>
 </body></html>
