@@ -1246,8 +1246,10 @@ hourlyWageField.addEventListener('input', updateHourlyWage);
         }
         ratingModal.style.display = 'none';
         
-        // Show the share modal after submitting the rating
+        // Recalculate earnings based on the timer duration before opening share modal
         const earnings = ((hourlyWage / 3600) * seconds).toFixed(2);
+        
+        // Show the share modal with accurate earnings
         openShareModal(earnings, selectedRating);
     }
 });
