@@ -1246,13 +1246,15 @@ hourlyWageField.addEventListener('input', updateHourlyWage);
         }
         ratingModal.style.display = 'none';
         
-        // Recalculate earnings based on the timer duration before opening share modal
-        const earnings = ((hourlyWage / 3600) * seconds).toFixed(2);
-        
+        // Get the earnings from the latest poop log
+        const earningsText = latestEntry.querySelector('.log-earnings').textContent;
+        const earnings = parseFloat(earningsText.replace(/[^0-9.-]+/g, '')).toFixed(2);
+
         // Show the share modal with accurate earnings
         openShareModal(earnings, selectedRating);
     }
 });
+
 
 function openShareModal(earnings, rating) {
     const ratingText = rating > 0 ? '💩'.repeat(rating) : '';
