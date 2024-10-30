@@ -231,6 +231,13 @@
         height: 0;
     }
 
+ .error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
     .slider {
         position: absolute;
         cursor: pointer;
@@ -1008,6 +1015,35 @@ function updateTurdTokenDisplay() {
     }
     localStorage.setItem('turdTokens', turdTokens);
 }
+ function validateInputs() {
+    const errorMessage = document.getElementById('validationError');
+    if (!errorMessage) {
+        const errorDiv = document.createElement('div');
+        errorDiv.id = 'validationError';
+        errorDiv.className = 'error-message';
+        document.querySelector('#hourlyWageDisplay').after(errorDiv);
+    }
+
+    if (wageToggle.checked) {
+        // Hourly wage validation
+        const hourlyValue = parseFloat(hourlyWageField.value);
+        if (!hourlyValue || hourlyValue <= 0) {
+            document.getElementById('validationError').textContent = 'Please insert valid number';
+            return false;
+        }
+    } else {
+        // Salary and hours validation
+        const salaryValue = parseFloat(annualSalaryInput.value);
+        const hoursValue = parseFloat(weeklyHoursInput.value);
+        if (!salaryValue || !hoursValue || salaryValue <= 0 || hoursValue <= 0) {
+            document.getElementById('validationError').textContent = 'Please insert valid numbers';
+            return false;
+        }
+    }
+    
+    document.getElementById('validationError').textContent = '';
+    return true;
+}
 
 function displayStatistics(filtered = false, filteredStats = null) {
     const statsToUse = filtered ? filteredStats : stats;
@@ -1200,32 +1236,19 @@ function updateDateRangeStats() {
 }
 
 function startTimer() {
-    const timerButton = document.getElementById('timerButton');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const earningsDisplay = document.getElementById('earningsDisplay');
-    const poopEmoji = document.querySelector('.poop-emoji');
-    
-    if (!isTimerRunning) {
-        isTimerRunning = true;
-        timerButton.textContent = 'Stop Pooping';
-        poopEmoji.classList.add('wiggle');
-        
-        timerInterval = setInterval(() => {
-            seconds++;
-            timerDisplay.textContent = formatTime(seconds);
-            const earnings = ((hourlyWage / 3600) * seconds).toFixed(2);
-            earningsDisplay.textContent = `Current earnings: $${earnings}`;
-        }, 1000);
-    } else {
-        isTimerRunning = false;
-        clearInterval(timerInterval);
-        timerButton.textContent = 'Start Pooping';
-        poopEmoji.classList.remove('wiggle');
-        openRatingModal();
-        seconds = 0;
-        timerDisplay.textContent = '00:00:00';
-        earningsDisplay.textContent = '';
+    if (!validateInputs()) {
+        return;
     }
+
+    isTimerRunning = true;
+    timerButton.textContent = 'Stop Pooping';
+    document.querySelector('.poop-emoji').classList.add('wiggle');
+    
+    timerInterval = setInterval(() => {
+        seconds++;
+        updateTimer();
+        updateEarnings();
+    }, 1000);
 }
 
 function updateStatistics(duration, earnings) {
