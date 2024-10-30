@@ -231,13 +231,6 @@
         height: 0;
     }
 
- .error-message {
-    color: red;
-    font-size: 14px;
-    margin-top: 5px;
-    font-weight: bold;
-}
-
     .slider {
         position: absolute;
         cursor: pointer;
@@ -1015,56 +1008,8 @@ function updateTurdTokenDisplay() {
     }
     localStorage.setItem('turdTokens', turdTokens);
 }
- function validateInputs() {
-    const errorMessage = document.getElementById('validationError');
-    if (!errorMessage) {
-        const errorDiv = document.createElement('div');
-        errorDiv.id = 'validationError';
-        errorDiv.className = 'error-message';
-        document.querySelector('input[type="number"]').parentNode.appendChild(errorDiv);
-    }
 
-    if (document.getElementById('wageToggle').checked) {
-        // Hourly wage validation
-        const hourlyValue = parseFloat(document.getElementById('hourlyWage').value);
-        if (!hourlyValue || hourlyValue <= 0) {
-            document.getElementById('validationError').textContent = 'Please insert valid number';
-            return false;
-        }
-    } else {
-        // Salary and hours validation
-        const salaryValue = parseFloat(document.getElementById('annualSalary').value);
-        const hoursValue = parseFloat(document.getElementById('weeklyHours').value);
-        if (!salaryValue || !hoursValue || salaryValue <= 0 || hoursValue <= 0) {
-            document.getElementById('validationError').textContent = 'Please insert valid numbers';
-            return false;
-        }
-    }
-    
-    document.getElementById('validationError').textContent = '';
-    return true;
-}
-
-    if (wageToggle.checked) {
-        // Hourly wage validation
-        const hourlyValue = parseFloat(hourlyWageField.value);
-        if (!hourlyValue || hourlyValue <= 0) {
-            document.getElementById('validationError').textContent = 'Please insert valid number';
-            return false;
-        }
-    } else {
-        // Salary and hours validation
-        const salaryValue = parseFloat(annualSalaryInput.value);
-        const hoursValue = parseFloat(weeklyHoursInput.value);
-        if (!salaryValue || !hoursValue || salaryValue <= 0 || hoursValue <= 0) {
-            document.getElementById('validationError').textContent = 'Please insert valid numbers';
-            return false;
-        }
-    }
-    
-    document.getElementById('validationError').textContent = '';
-    return true;
-}
+ 
 
 function displayStatistics(filtered = false, filteredStats = null) {
     const statsToUse = filtered ? filteredStats : stats;
@@ -1256,21 +1201,68 @@ function updateDateRangeStats() {
     }
 }
 
+ function validateInputs() {
+    let isValid = true;
+    if (wageToggle.checked) {
+        // Check hourly wage input
+        if (!hourlyWageField.value) {
+            document.getElementById('hourlyWageError').textContent = 'Please enter your hourly wage';
+            document.getElementById('hourlyWageError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('hourlyWageError').style.display = 'none';
+        }
+    } else {
+        // Check annual salary input
+        if (!annualSalaryInput.value) {
+            document.getElementById('salaryError').textContent = 'Please enter your annual salary';
+            document.getElementById('salaryError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('salaryError').style.display = 'none';
+        }
+        // Check weekly hours input
+        if (!weeklyHoursInput.value) {
+            document.getElementById('hoursError').textContent = 'Please enter your weekly work hours';
+            document.getElementById('hoursError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('hoursError').style.display = 'none';
+        }
+    }
+    return isValid;
+}
+
 function startTimer() {
     if (!validateInputs()) {
-        return;
+        return; // Stop the function if inputs are not valid
     }
+    // Continue with existing timer logic if inputs are valid
+    const timerButton = document.getElementById('timerButton');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const earningsDisplay = document.getElementById('earningsDisplay');
+    const poopEmoji = document.querySelector('.poop-emoji');
 
     if (!isTimerRunning) {
         isTimerRunning = true;
         timerButton.textContent = 'Stop Pooping';
-        document.querySelector('.poop-emoji').classList.add('wiggle');
-        
+        poopEmoji.classList.add('wiggle');
+
         timerInterval = setInterval(() => {
             seconds++;
-            updateTimer();
-            updateEarnings();
+            timerDisplay.textContent = formatTime(seconds);
+            const earnings = ((hourlyWage / 3600) * seconds).toFixed(2);
+            earningsDisplay.textContent = `Current earnings: $${earnings}`;
         }, 1000);
+    } else {
+        isTimerRunning = false;
+        clearInterval(timerInterval);
+        timerButton.textContent = 'Start Pooping';
+        poopEmoji.classList.remove('wiggle');
+        openRatingModal();
+        seconds = 0;
+        timerDisplay.textContent = '00:00:00';
+        earningsDisplay.textContent = '';
     }
 }
 
