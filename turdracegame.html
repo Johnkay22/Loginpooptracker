@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><base href="https://"><title>Turd Race - The Ultimate Poop Racing Game!</title>
+<!DOCTYPE html><html><head><base href="https://"><title>Turd Race - The Poop Race Betting Game!</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   :root {
@@ -28,7 +28,7 @@
 
   @media (min-width: 769px) {
     body {
-      background-image: url('/a/097e84a3-63e6-4098-8f65-9c60c70491e8');
+      background-image: url('/turdracebgdesktop.jpeg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -352,7 +352,7 @@
   @media (max-width: 768px) {
     body {
       padding: 10px;
-      background-image: url('/a/43ecf661-6d10-4352-a6dc-9e1e09e22194');
+      background-image: url('/turdracebgmobile.jpeg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -462,7 +462,7 @@
 </head>
 <body>
 <div id="balance-display">
-  <img src="/a/5389a1b9-b81f-4c01-bbbe-4f057be92e50" alt="Turd Token" class="token-icon">
+  <img src="/Turdtoken.png" alt="Turd Token" class="token-icon">
   <span id="token-balance-display">10.00</span>
 </div>
 <header></header>
@@ -471,37 +471,37 @@
   <div id="betting-interface">
     <div class="bet-box" id="racer1">
       <span class="bet-box-number">1</span>
-      <img src="/a/17223302-c8c3-4498-82e1-0ac731163c4e" alt="Racer 1" class="racer-image">
+      <img src="/greenrunner.png" alt="Racer 1" class="racer-image">
       <p>Odds: <span class="odds">5-1</span></p>
       <input type="number" class="bet-amount" min="0.01" step="0.01" placeholder="enter wager">
     </div>
     <div class="bet-box" id="racer2">
       <span class="bet-box-number">2</span>
-      <img src="/a/be85dfec-1e01-4f5c-b4b6-2c1c98c565e3" alt="Racer 2" class="racer-image">
+      <img src="/blackrunner.png" alt="Racer 2" class="racer-image">
       <p>Odds: <span class="odds">3-1</span></p>
       <input type="number" class="bet-amount" min="0.01" step="0.01" placeholder="enter wager">
     </div>
     <div class="bet-box" id="racer3">
       <span class="bet-box-number">3</span>
-      <img src="/a/049c4d93-bc37-4412-be12-e8261bf8567e" alt="Racer 3" class="racer-image">
+      <img src="/purplerunner.png" alt="Racer 3" class="racer-image">
       <p>Odds: <span class="odds">10-1</span></p>
       <input type="number" class="bet-amount" min="0.01" step="0.01" placeholder="enter wager">
     </div>
     <div class="bet-box" id="racer4">
       <span class="bet-box-number">4</span>
-      <img src="/a/8f645764-6359-41e8-a757-21cd700c1e06" alt="Racer 4" class="racer-image">
+      <img src="/redrunner.png" alt="Racer 4" class="racer-image">
       <p>Odds: <span class="odds">38-1</span></p>
       <input type="number" class="bet-amount" min="0.01" step="0.01" placeholder="enter wager">
     </div>
     <div class="bet-box" id="racer5">
       <span class="bet-box-number">5</span>
-      <img src="/a/dc0307bb-f0dd-49f8-8d06-e2be32a2b650" alt="Racer 5" class="racer-image">
+      <img src="/bluerunner.png" alt="Racer 5" class="racer-image">
       <p>Odds: <span class="odds">2-1</span></p>
       <input type="number" class="bet-amount" min="0.01" step="0.01" placeholder="enter wager">
     </div>
     <div class="bet-box" id="racer6">
       <span class="bet-box-number">6</span>
-      <img src="/a/656b29a3-53fd-4b46-adcb-1a96b271b1d0" alt="Racer 6" class="racer-image">
+      <img src="/orangerunner.png" alt="Racer 6" class="racer-image">
       <p>Odds: <span class="odds">4-1</span></p>
       <input type="number" class="bet-amount" min="0.01" step="0.01" placeholder="enter wager">
     </div>
@@ -519,12 +519,12 @@
 
 <script>
 const racerImages = [
-  '/a/17223302-c8c3-4498-82e1-0ac731163c4e',
-  '/a/be85dfec-1e01-4f5c-b4b6-2c1c98c565e3',
-  '/a/049c4d93-bc37-4412-be12-e8261bf8567e',
-  '/a/8f645764-6359-41e8-a757-21cd700c1e06',
-  '/a/dc0307bb-f0dd-49f8-8d06-e2be32a2b650',
-  '/a/656b29a3-53fd-4b46-adcb-1a96b271b1d0'
+  '/greenrunner.png',
+  '/blackrunner.png',
+  '/purplerunner.png',
+  '/redrunner.png',
+  '/bluerunner.png',
+  '/orangerunner.png'
 ];
 
 const room = new WebsimSocket();
@@ -607,8 +607,8 @@ async function startRace() {
     netTotal = -totalBet;
     updateBalance(-totalBet);
     losses++;
-    showPopup("You Lost", `Racer ${actualWinner + 1} won the race.<br><br>` +
-      `Sorry, you didn't win this time.<br><br>` +
+    showPopup("Sorry, You Lost", `Racer ${actualWinner + 1} won the race.<br><br>` +
+      `Better luck next poop...<br><br>` +
       `<span style="color: red;">Net total for this race: ${netTotal.toFixed(2)} Turd Tokens</span>`);
   }
   
