@@ -1021,8 +1021,29 @@ function updateTurdTokenDisplay() {
         const errorDiv = document.createElement('div');
         errorDiv.id = 'validationError';
         errorDiv.className = 'error-message';
-        document.querySelector('#hourlyWageDisplay').after(errorDiv);
+        document.querySelector('input[type="number"]').parentNode.appendChild(errorDiv);
     }
+
+    if (document.getElementById('wageToggle').checked) {
+        // Hourly wage validation
+        const hourlyValue = parseFloat(document.getElementById('hourlyWage').value);
+        if (!hourlyValue || hourlyValue <= 0) {
+            document.getElementById('validationError').textContent = 'Please insert valid number';
+            return false;
+        }
+    } else {
+        // Salary and hours validation
+        const salaryValue = parseFloat(document.getElementById('annualSalary').value);
+        const hoursValue = parseFloat(document.getElementById('weeklyHours').value);
+        if (!salaryValue || !hoursValue || salaryValue <= 0 || hoursValue <= 0) {
+            document.getElementById('validationError').textContent = 'Please insert valid numbers';
+            return false;
+        }
+    }
+    
+    document.getElementById('validationError').textContent = '';
+    return true;
+}
 
     if (wageToggle.checked) {
         // Hourly wage validation
@@ -1240,15 +1261,17 @@ function startTimer() {
         return;
     }
 
-    isTimerRunning = true;
-    timerButton.textContent = 'Stop Pooping';
-    document.querySelector('.poop-emoji').classList.add('wiggle');
-    
-    timerInterval = setInterval(() => {
-        seconds++;
-        updateTimer();
-        updateEarnings();
-    }, 1000);
+    if (!isTimerRunning) {
+        isTimerRunning = true;
+        timerButton.textContent = 'Stop Pooping';
+        document.querySelector('.poop-emoji').classList.add('wiggle');
+        
+        timerInterval = setInterval(() => {
+            seconds++;
+            updateTimer();
+            updateEarnings();
+        }, 1000);
+    }
 }
 
 function updateStatistics(duration, earnings) {
