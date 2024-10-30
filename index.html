@@ -327,7 +327,7 @@ input::placeholder {
             
             registerSuccess.textContent = 'Registration successful! Redirecting...';
             registerSuccess.style.opacity = '1';
-            
+            localStorage.setItem('currentUser', JSON.stringify({ email: email }));
             setTimeout(() => {
                 window.location.href = 'https://www.poopprofit.com/interface';
             }, 1500);
@@ -353,7 +353,7 @@ input::placeholder {
 
             loginSuccess.textContent = 'Login successful! Redirecting...';
             loginSuccess.style.opacity = '1';
-
+localStorage.setItem('currentUser', JSON.stringify({ email: email }));
             setTimeout(() => {
                 window.location.href = 'https://www.poopprofit.com/interface';
             }, 1500);
