@@ -1237,7 +1237,6 @@ function startTimer() {
     if (!validateInputs()) {
         return; // Stop the function if inputs are not valid
     }
-    // Continue with existing timer logic if inputs are valid
     const timerButton = document.getElementById('timerButton');
     const timerDisplay = document.getElementById('timerDisplay');
     const earningsDisplay = document.getElementById('earningsDisplay');
@@ -1247,6 +1246,13 @@ function startTimer() {
         isTimerRunning = true;
         timerButton.textContent = 'Stop Pooping';
         poopEmoji.classList.add('wiggle');
+
+        // Check if it's the first session of the day to award a Turd Token
+        if (isFirstSessionOfDay()) {
+            turdTokens++; // Increment Turd Tokens
+            updateTurdTokenDisplay(); // Update the display of Turd Tokens
+            showTokenAwardNotification(); // Show a notification about the new Turd Token
+        }
 
         timerInterval = setInterval(() => {
             seconds++;
@@ -1259,12 +1265,13 @@ function startTimer() {
         clearInterval(timerInterval);
         timerButton.textContent = 'Start Pooping';
         poopEmoji.classList.remove('wiggle');
-        openRatingModal();
+        openRatingModal(); // Assume this handles ending the session and rating
         seconds = 0;
         timerDisplay.textContent = '00:00:00';
         earningsDisplay.textContent = '';
     }
 }
+
 
 function updateStatistics(duration, earnings) {
     stats.totalSessions++;
