@@ -471,37 +471,37 @@
   <div id="betting-interface">
     <div class="bet-box" id="racer1">
       <span class="bet-box-number">1</span>
-      <img src="https://www.poopprofit.com/redrunner.png" alt="Racer 1" class="racer-image">
+      <img src="https://www.poopprofit.com/greenrunner.png" alt="Racer 1" class="racer-image">
       <p>Odds: <span class="odds">5-1</span></p>
       <input type="number" class="bet-amount" min="0.01" step="0.01" placeholder="enter wager">
     </div>
     <div class="bet-box" id="racer2">
       <span class="bet-box-number">2</span>
-      <img src="/a/be85dfec-1e01-4f5c-b4b6-2c1c98c565e3" alt="Racer 2" class="racer-image">
+      <img src="https://www.poopprofit.com/blackrunner.png" alt="Racer 2" class="racer-image">
       <p>Odds: <span class="odds">3-1</span></p>
       <input type="number" class="bet-amount" min="0.01" step="0.01" placeholder="enter wager">
     </div>
     <div class="bet-box" id="racer3">
       <span class="bet-box-number">3</span>
-      <img src="/a/049c4d93-bc37-4412-be12-e8261bf8567e" alt="Racer 3" class="racer-image">
+      <img src="https://www.poopprofit.com/purplerunner.png" alt="Racer 3" class="racer-image">
       <p>Odds: <span class="odds">10-1</span></p>
       <input type="number" class="bet-amount" min="0.01" step="0.01" placeholder="enter wager">
     </div>
     <div class="bet-box" id="racer4">
       <span class="bet-box-number">4</span>
-      <img src="/a/8f645764-6359-41e8-a757-21cd700c1e06" alt="Racer 4" class="racer-image">
+      <img src="https://www.poopprofit.com/redrunner.png" alt="Racer 4" class="racer-image">
       <p>Odds: <span class="odds">38-1</span></p>
       <input type="number" class="bet-amount" min="0.01" step="0.01" placeholder="enter wager">
     </div>
     <div class="bet-box" id="racer5">
       <span class="bet-box-number">5</span>
-      <img src="/a/dc0307bb-f0dd-49f8-8d06-e2be32a2b650" alt="Racer 5" class="racer-image">
+      <img src="https://www.poopprofit.com/bluerunner.png" alt="Racer 5" class="racer-image">
       <p>Odds: <span class="odds">2-1</span></p>
       <input type="number" class="bet-amount" min="0.01" step="0.01" placeholder="enter wager">
     </div>
     <div class="bet-box" id="racer6">
       <span class="bet-box-number">6</span>
-      <img src="/a/656b29a3-53fd-4b46-adcb-1a96b271b1d0" alt="Racer 6" class="racer-image">
+      <img src="https://www.poopprofit.com/orangerunner.png" alt="Racer 6" class="racer-image">
       <p>Odds: <span class="odds">4-1</span></p>
       <input type="number" class="bet-amount" min="0.01" step="0.01" placeholder="enter wager">
     </div>
@@ -519,12 +519,12 @@
 
 <script>
 const racerImages = [
+  'https://www.poopprofit.com/greenrunner.png',
+  'https://www.poopprofit.com/blackrunner.png',
+  'https://www.poopprofit.com/purplerunner.png',
   'https://www.poopprofit.com/redrunner.png',
-  '/a/be85dfec-1e01-4f5c-b4b6-2c1c98c565e3',
-  '/a/049c4d93-bc37-4412-be12-e8261bf8567e',
-  '/a/8f645764-6359-41e8-a757-21cd700c1e06',
-  '/a/dc0307bb-f0dd-49f8-8d06-e2be32a2b650',
-  '/a/656b29a3-53fd-4b46-adcb-1a96b271b1d0'
+  'https://www.poopprofit.com/bluerunner.png',
+  'https://www.poopprofit.com/orangerunner.png'
 ];
 
 let balance = 10.00;
@@ -686,3 +686,149 @@ function animateRace(racers, winner) {
           racer.style.left = `${progress * 92}%`; 
           if (progress >= 1 && !raceEnded) {
             raceEnded = true;
+            actualWinner = index;
+          }
+        }
+      });
+
+      if (!raceEnded && currentStep < steps) {
+        requestAnimationFrame(() => setTimeout(step, stepDuration));
+      } else {
+        resolve(actualWinner);
+      }
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+function resetRacers(racers) {
+  racers.forEach(racer => {
+    racer.style.left = '0';
+  });
+}
+
+function createRacers() {
+  const raceTrack = document.getElementById('race-track');
+  raceTrack.innerHTML = '<div id="finish-line"></div>';
+  const racers = [];
+  const finishLine = document.getElementById('finish-line');
+  
+  const isDesktop = window.innerWidth >= 769;
+  const spacing = isDesktop ? 16.66 : 16.66;
+  const topOffset = isDesktop ? 4 : 3;
+
+  for (let i = 0; i < 6; i++) {
+    const laneNumber = document.createElement('div');
+    laneNumber.className = 'lane-number';
+    laneNumber.textContent = i + 1;
+    laneNumber.style.top = `${i * spacing + topOffset + 4}%`;
+    raceTrack.appendChild(laneNumber);
+
+    const racer = document.createElement('div');
+    racer.className = 'racer';
+    const racerImage = document.createElement('img');
+    racerImage.src = racerImages[i];
+    racerImage.alt = `Racer ${i + 1}`;
+    racerImage.className = 'racer-image';
+    racer.appendChild(racerImage);
+    racer.style.top = `${i * spacing + topOffset}%`;
+    racer.style.left = '0';
+    raceTrack.appendChild(racer);
+    racers.push(racer);
+
+    const toilet = document.createElement('div');
+    toilet.className = 'finish-toilet';
+    toilet.textContent = '🚽';
+    toilet.style.height = `${spacing}%`;
+    toilet.style.display = 'flex';
+    toilet.style.alignItems = 'center';
+    toilet.style.justifyContent = 'center';
+    finishLine.appendChild(toilet);
+  }
+  return racers;
+}
+
+function generateNewOdds() {
+  odds = [
+    2 + Math.floor(Math.random() * 8),
+    2 + Math.floor(Math.random() * 8),
+    5 + Math.floor(Math.random() * 15),
+    10 + Math.floor(Math.random() * 30),
+    2 + Math.floor(Math.random() * 3),
+    3 + Math.floor(Math.random() * 7)
+  ];
+  realOdds = odds.map(odd => odd * 0.8);
+  document.querySelectorAll('.odds').forEach((span, index) => {
+    span.textContent = `${odds[index]}-1`;
+  });
+}
+
+function showPopup(title, message, showGoButton = false) {
+  const popup = document.getElementById('popup');
+  const overlay = document.getElementById('overlay');
+  const popupTitle = document.getElementById('popup-title');
+  const popupMessage = document.getElementById('popup-message');
+  const closeButton = popup.querySelector('button');
+
+  if (!popup || !overlay || !popupTitle || !popupMessage || !closeButton) {
+    console.error('One or more popup elements are missing');
+    return;
+  }
+
+  popupTitle.textContent = title;
+  popupMessage.innerHTML = message;
+  
+  closeButton.textContent = showGoButton ? "Go!" : "Close";
+  closeButton.onclick = showGoButton ? startRace : closePopup;
+  
+  popup.style.display = 'flex';
+  overlay.style.display = 'block';
+}
+
+function closePopup() {
+  const popup = document.getElementById('popup');
+  const overlay = document.getElementById('overlay');
+  
+  if (popup) popup.style.display = 'none';
+  if (overlay) overlay.style.display = 'none';
+}
+
+function addTouchEffects() {
+  const betBoxes = document.querySelectorAll('.bet-box');
+  betBoxes.forEach(box => {
+    box.addEventListener('touchstart', () => {
+      box.style.transform = 'translateZ(20px) scale(1.02)';
+    });
+    box.addEventListener('touchend', () => {
+      box.style.transform = 'translateZ(10px) scale(1)';
+    });
+  });
+}
+
+function addHoverEffects() {
+  const betBoxes = document.querySelectorAll('.bet-box');
+  betBoxes.forEach(box => {
+    box.addEventListener('mouseover', () => {
+      box.style.transform = 'translateZ(40px) scale(1.05)';
+    });
+    box.addEventListener('mouseout', () => {
+      box.style.transform = 'translateZ(10px) scale(1)';
+    });
+  });
+}
+
+function addInteractionEffects() {
+  if ('ontouchstart' in window) {
+    addTouchEffects();
+  } else {
+    addHoverEffects();
+  }
+}
+
+document.getElementById('confirm-bets').addEventListener('click', confirmBets);
+addInteractionEffects();
+
+generateNewOdds();
+createRacers();
+</script>
+</body></html>
