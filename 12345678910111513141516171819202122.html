@@ -1273,7 +1273,7 @@ function updateDateRangeStats() {
 }
 
 function startTimer() {
-    if (!validateInputs()) return; // Stop the function if inputs are not valid
+    if (!validateInputs()) return; // Stop if inputs are invalid
 
     const timerButton = document.getElementById('timerButton');
     const timerDisplay = document.getElementById('timerDisplay');
@@ -1285,12 +1285,12 @@ function startTimer() {
         timerButton.textContent = 'Stop Pooping';
         poopEmoji.classList.add('wiggle');
 
-        // Save the start time in localStorage
+        // Save start time and button state in localStorage
         const startTime = Date.now();
         localStorage.setItem('timerStart', startTime);
         localStorage.setItem('isTimerRunning', true);
 
-        // Award a Turd Token if it’s the first session of the day
+        // Award Turd Token if it’s the first session of the day
         if (isFirstSessionOfDay()) {
             turdTokens++;
             updateTurdTokenDisplay();
@@ -1300,7 +1300,7 @@ function startTimer() {
         // Begin updating the timer display
         updateTimer();
     } else {
-        // Stop the timer without resetting the display yet
+        // Stop the timer without resetting display yet
         isTimerRunning = false;
         clearInterval(timerInterval);
         localStorage.removeItem('timerStart');
@@ -1309,12 +1309,11 @@ function startTimer() {
         timerButton.textContent = 'Start Pooping';
         poopEmoji.classList.remove('wiggle');
 
-        // Save log or end session, then reset the display after `openRatingModal` completes
-        openRatingModal(resetTimerDisplay); // Pass the reset function as a callback
+        // Pass resetTimerDisplay as a callback to openRatingModal
+        openRatingModal(resetTimerDisplay);
     }
 }
 
-// Reset function to clear the display after log save
 function resetTimerDisplay() {
     const timerDisplay = document.getElementById('timerDisplay');
     const earningsDisplay = document.getElementById('earningsDisplay');
@@ -1322,6 +1321,7 @@ function resetTimerDisplay() {
     timerDisplay.textContent = '00:00:00';
     earningsDisplay.textContent = '';
 }
+
 function updateTimer() {
     const startTime = parseInt(localStorage.getItem('timerStart'), 10);
     if (!startTime || !JSON.parse(localStorage.getItem('isTimerRunning'))) return;
@@ -1330,10 +1330,8 @@ function updateTimer() {
     const earningsDisplay = document.getElementById('earningsDisplay');
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
 
-    // Update timer display with formatted time
+    // Update timer and earnings display
     timerDisplay.textContent = formatTime(elapsed);
-
-    // Calculate and update earnings display
     const earnings = ((hourlyWage / 3600) * elapsed).toFixed(2);
     earningsDisplay.textContent = `Current earnings: $${earnings}`;
 
@@ -1341,13 +1339,14 @@ function updateTimer() {
     requestAnimationFrame(updateTimer);
 }
 
-// Call `updateTimer` on page load if timer was running before
+// Automatically resume timer if running when page loads
 document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('isTimerRunning')) {
+        isTimerRunning = true;
+        document.getElementById('timerButton').textContent = 'Stop Pooping';
         updateTimer();
     }
 });
-
 
 function updateStatistics(duration, earnings) {
     stats.totalSessions++;
@@ -1646,8 +1645,6 @@ function openRatingModal(callback) {
 
     // Call the callback to reset the display after logging and statistics update
     if (callback) callback();
-}
-
 }
 
 </script>
