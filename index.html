@@ -425,7 +425,6 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     registerSuccess.style.opacity = '1';
     setTimeout(() => window.location.href = '/interface.html', 1500);
 });
-// Login form submission in index.html
 document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const email = this.email.value;
@@ -438,25 +437,26 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 
     const users = JSON.parse(localStorage.getItem('users') || '{}');
 
-    // Check if the user exists and password matches
+    // Validate login credentials
     if (!users[email] || users[email].password !== password) {
         loginError.textContent = 'Invalid email or password';
         loginError.style.opacity = '1';
         return;
     }
 
-    // Set currentUser with the full data structure, including poopLogs
+    // Set `currentUser` to full data object including `poopLogs`
     localStorage.setItem('currentUser', JSON.stringify({
-        password: users[email].password,
-        data: users[email].data // Ensure full data is loaded, including poopLogs
+        email: email,
+        data: users[email].data
     }));
-    
-    console.log("currentUser set after login:", JSON.parse(localStorage.getItem('currentUser')));
 
+    console.log("currentUser set after login:", JSON.parse(localStorage.getItem('currentUser')));
+    
     loginSuccess.textContent = 'Login successful! Redirecting...';
     loginSuccess.style.opacity = '1';
     setTimeout(() => window.location.href = '/interface.html', 1500);
 });
+
 
     </script>
 </body>
