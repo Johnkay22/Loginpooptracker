@@ -377,7 +377,8 @@ input::placeholder {
             }, 1000);
         };
 
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+       // Register form submission 
+document.getElementById('registerForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const email = this.email.value;
     const password = this.password.value;
@@ -388,24 +389,23 @@ input::placeholder {
     registerError.style.opacity = '0';
     registerSuccess.style.opacity = '0';
 
-    // Validate passwords match
+    // Check if passwords match
     if (password !== confirmPassword) {
         registerError.textContent = 'Passwords do not match';
         registerError.style.opacity = '1';
         return;
     }
 
-    // Get existing users from localStorage
     const users = JSON.parse(localStorage.getItem('users') || '{}');
     
-    // Check if user already exists
+    // Check if email is already registered
     if (users[email]) {
         registerError.textContent = 'Email already registered';
         registerError.style.opacity = '1';
         return;
     }
 
-    // Initialize user data structure
+    // Set up initial data structure
     users[email] = {
         password: password,
         data: {
@@ -420,20 +420,18 @@ input::placeholder {
             poopLogs: []
         }
     };
-    
-    // Save updated users to localStorage
-    localStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem('currentUser', JSON.stringify({ email: email, data: users[email].data }));
 
-    // Registration success message and redirect
+    // Save to localStorage
+    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem('currentUser', JSON.stringify(users[email])); // Save full data
+
     registerSuccess.textContent = 'Registration successful! Redirecting...';
     registerSuccess.style.opacity = '1';
-    setTimeout(() => {
-        window.location.href = 'https://www.poopprofit.com/interface';
-    }, 1500);
+    setTimeout(() => window.location.href = '/MAINPAGE.html', 1500);
 });
 
-       document.getElementById('loginForm').addEventListener('submit', function(e) {
+// Login form 
+document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const email = this.email.value;
     const password = this.password.value;
@@ -443,10 +441,9 @@ input::placeholder {
     loginError.style.opacity = '0';
     loginSuccess.style.opacity = '0';
 
-    // Retrieve users from localStorage
     const users = JSON.parse(localStorage.getItem('users') || '{}');
 
-    // Validate login credentials
+    // Check credentials
     if (!users[email] || users[email].password !== password) {
         loginError.textContent = 'Invalid email or password';
         loginError.style.opacity = '1';
@@ -454,14 +451,11 @@ input::placeholder {
     }
 
     // Set currentUser with full data
-    localStorage.setItem('currentUser', JSON.stringify({ email: email, data: users[email].data }));
+    localStorage.setItem('currentUser', JSON.stringify(users[email]));
 
-    // Show success message and redirect to interface
     loginSuccess.textContent = 'Login successful! Redirecting...';
     loginSuccess.style.opacity = '1';
-    setTimeout(() => {
-        window.location.href = 'https://www.poopprofit.com/interface';
-    }, 1500);
+    setTimeout(() => window.location.href = '/MAINPAGE.html', 1500);
 });
     </script>
 </body>
