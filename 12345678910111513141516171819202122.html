@@ -1641,8 +1641,13 @@ function openRatingModal(callback) {
     // Update session statistics
     updateStatistics(seconds, earnings);
 
+    // Save session data
+    saveUserData();
+
     // Call the callback to reset the display after logging and statistics update
     if (callback) callback();
+}
+
 }
 
 </script>
