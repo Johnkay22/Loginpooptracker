@@ -975,7 +975,7 @@ function standardizeUsersFormat() {
 // Call to initialize format on page load
 standardizeUsersFormat();
 
-ffunction saveUserData() {
+function saveUserData() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const users = JSON.parse(localStorage.getItem('users') || '{}');
 
