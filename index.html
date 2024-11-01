@@ -378,66 +378,89 @@ input::placeholder {
         };
 
         document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = this.email.value;
-            const password = this.password.value;
-            const confirmPassword = this.confirmPassword.value;
-            const registerError = document.getElementById('registerError');
-            const registerSuccess = document.getElementById('registerSuccess');
+    e.preventDefault();
+    const email = this.email.value;
+    const password = this.password.value;
+    const confirmPassword = this.confirmPassword.value;
+    const registerError = document.getElementById('registerError');
+    const registerSuccess = document.getElementById('registerSuccess');
 
-            registerError.style.opacity = '0';
-            registerSuccess.style.opacity = '0';
+    // Reset error and success messages
+    registerError.style.opacity = '0';
+    registerSuccess.style.opacity = '0';
 
-            if (password !== confirmPassword) {
-                registerError.textContent = 'Passwords do not match';
-                registerError.style.opacity = '1';
-                return;
-            }
+    // Validate password match
+    if (password !== confirmPassword) {
+        registerError.textContent = 'Passwords do not match';
+        registerError.style.opacity = '1';
+        return;
+    }
 
-            const users = JSON.parse(localStorage.getItem('users') || '{}');
-            
-            if (users[email]) {
-                registerError.textContent = 'Email already registered';
-                registerError.style.opacity = '1';
-                return;
-            }
+    // Fetch current users from localStorage
+    const users = JSON.parse(localStorage.getItem('users') || '{}');
+    
+    // Check if the email is already registered
+    if (users[email]) {
+        registerError.textContent = 'Email already registered';
+        registerError.style.opacity = '1';
+        return;
+    }
 
-            users[email] = password;
-            localStorage.setItem('users', JSON.stringify(users));
-            
-            registerSuccess.textContent = 'Registration successful! Redirecting...';
-            registerSuccess.style.opacity = '1';
-            localStorage.setItem('currentUser', JSON.stringify({ email: email }));
-            setTimeout(() => {
-                window.location.href = 'https://www.poopprofit.com/interface';
-            }, 1500);
-        });
+    // Initialize user data structure
+    users[email] = {
+        password: password,
+        data: {
+            hourlyWage: 0,
+            stats: { totalSessions: 0, totalPoopTime: 0, totalEarnings: 0 },
+            turdTokens: 0,
+            logs: []
+        }
+    };
+    
+    // Save updated users list to localStorage
+    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem('currentUser', JSON.stringify({ email: email }));
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = this.email.value;
-            const password = this.password.value;
-            const loginError = document.getElementById('loginError');
-            const loginSuccess = document.getElementById('loginSuccess');
+    // Show success message and redirect to the interface page
+    registerSuccess.textContent = 'Registration successful! Redirecting...';
+    registerSuccess.style.opacity = '1';
+    setTimeout(() => {
+        window.location.href = 'https://www.poopprofit.com/interface';
+    }, 1500);
+});
 
-            loginError.style.opacity = '0';
-            loginSuccess.style.opacity = '0';
 
-            const users = JSON.parse(localStorage.getItem('users') || '{}');
+       document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = this.email.value;
+    const password = this.password.value;
+    const loginError = document.getElementById('loginError');
+    const loginSuccess = document.getElementById('loginSuccess');
 
-            if (!users[email] || users[email] !== password) {
-                loginError.textContent = 'Invalid email or password';
-                loginError.style.opacity = '1';
-                return;
-            }
+    // Reset error and success messages
+    loginError.style.opacity = '0';
+    loginSuccess.style.opacity = '0';
 
-            loginSuccess.textContent = 'Login successful! Redirecting...';
-            loginSuccess.style.opacity = '1';
-localStorage.setItem('currentUser', JSON.stringify({ email: email }));
-            setTimeout(() => {
-                window.location.href = 'https://www.poopprofit.com/interface';
-            }, 1500);
-        });
+    // Fetch users from localStorage
+    const users = JSON.parse(localStorage.getItem('users') || '{}');
+
+    // Validate user credentials
+    if (!users[email] || users[email].password !== password) {
+        loginError.textContent = 'Invalid email or password';
+        loginError.style.opacity = '1';
+        return;
+    }
+
+    // Save currentUser data to localStorage for retrieval in interface
+    localStorage.setItem('currentUser', JSON.stringify({ email: email, data: users[email].data }));
+
+    // Show success message and redirect
+    loginSuccess.textContent = 'Login successful! Redirecting...';
+    loginSuccess.style.opacity = '1';
+    setTimeout(() => {
+        window.location.href = 'https://www.poopprofit.com/interface';
+    }, 1500);
+});
     </script>
 </body>
 </html>
