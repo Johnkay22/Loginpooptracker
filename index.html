@@ -425,7 +425,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     registerSuccess.style.opacity = '1';
     setTimeout(() => window.location.href = '/interface.html', 1500);
 });
-// Login form submission
+// Login form submission in index.html
 document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const email = this.email.value;
@@ -438,13 +438,19 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 
     const users = JSON.parse(localStorage.getItem('users') || '{}');
 
+    // Check if user exists and password matches
     if (!users[email] || users[email].password !== password) {
         loginError.textContent = 'Invalid email or password';
         loginError.style.opacity = '1';
         return;
     }
 
-    localStorage.setItem('currentUser', JSON.stringify(users[email]));
+    // Set currentUser with full data, including poopLogs
+    localStorage.setItem('currentUser', JSON.stringify({
+        password: users[email].password,
+        data: users[email].data
+    }));
+    
     console.log("currentUser set after login:", JSON.parse(localStorage.getItem('currentUser')));
 
     loginSuccess.textContent = 'Login successful! Redirecting...';
