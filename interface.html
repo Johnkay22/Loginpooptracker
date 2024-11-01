@@ -911,37 +911,24 @@ function updateHourlyWage() {
     saveUserData();
 }
 
-function saveUserData() {
-    const userData = {
-        hourlyWage: hourlyWage,
-        annualSalary: annualSalaryInput.value,
-        weeklyHours: weeklyHoursInput.value,
-        hourlyWageInput: hourlyWageField.value,
-        wageToggle: wageToggle.checked,
-        stats: stats,
-        turdTokens: turdTokens,
-        lastAwardDate: lastAwardDate,
-        poopLogs: Array.from(poopLog.children).map(entry => entry.outerHTML)
-    };
-    localStorage.setItem('currentUser', JSON.stringify(userData));
-}
-
 function loadUserData() {
-    const savedData = JSON.parse(localStorage.getItem('currentUser'));
-    if (savedData) {
-        hourlyWage = savedData.hourlyWage || 0;
-        annualSalaryInput.value = savedData.annualSalary || '';
-        weeklyHoursInput.value = savedData.weeklyHours || '';
-        hourlyWageField.value = savedData.hourlyWageInput || '';
-        wageToggle.checked = savedData.wageToggle || false;
+    const savedUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (savedUser && savedUser.data) {
+        const userData = savedUser.data;
 
-        stats = savedData.stats || { totalSessions: 0, totalPoopTime: 0, totalEarnings: 0 };
-        turdTokens = savedData.turdTokens || 0;
-        lastAwardDate = savedData.lastAwardDate || null;
+        hourlyWage = userData.hourlyWage || 0;
+        annualSalaryInput.value = userData.annualSalary || '';
+        weeklyHoursInput.value = userData.weeklyHours || '';
+        hourlyWageField.value = userData.hourlyWageInput || '';
+        wageToggle.checked = userData.wageToggle || false;
 
-        if (savedData.poopLogs && savedData.poopLogs.length > 0) {
+        stats = userData.stats || { totalSessions: 0, totalPoopTime: 0, totalEarnings: 0 };
+        turdTokens = userData.turdTokens || 0;
+        lastAwardDate = userData.lastAwardDate || null;
+
+        if (userData.poopLogs && userData.poopLogs.length > 0) {
             poopLogPlaceholder.style.display = 'none';
-            poopLog.innerHTML = savedData.poopLogs.join('');
+            poopLog.innerHTML = userData.poopLogs.join('');
         }
 
         displayStatistics();
@@ -949,6 +936,25 @@ function loadUserData() {
         updateHourlyWage();
     }
 }
+
+function saveUserData() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser) {
+        currentUser.data = {
+            hourlyWage: hourlyWage,
+            annualSalary: annualSalaryInput.value,
+            weeklyHours: weeklyHoursInput.value,
+            hourlyWageInput: hourlyWageField.value,
+            wageToggle: wageToggle.checked,
+            stats: stats,
+            turdTokens: turdTokens,
+            lastAwardDate: lastAwardDate,
+            poopLogs: Array.from(poopLog.children).map(entry => entry.outerHTML)
+        };
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    }
+}
+
 
 function checkLoginStatus() {
     if (!localStorage.getItem('currentUser')) {
