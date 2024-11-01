@@ -927,48 +927,26 @@ function saveUserData() {
 }
 
 function loadUserData() {
-    const savedData = localStorage.getItem('currentUser');
+    const savedData = JSON.parse(localStorage.getItem('currentUser'));
     if (savedData) {
-        const userData = JSON.parse(savedData);
-        
-        hourlyWage = userData.hourlyWage || 0;
-        annualSalaryInput.value = userData.annualSalary || '';
-        weeklyHoursInput.value = userData.weeklyHours || '';
-        hourlyWageField.value = userData.hourlyWageInput || '';
-        wageToggle.checked = userData.wageToggle || false;
-        
-        if (wageToggle.checked) {
-            document.getElementById('salaryHoursInputs').style.display = 'none';
-            document.getElementById('hourlyWageInput').style.display = 'block';
-            document.getElementById('toggleLabel').textContent = 'Hourly Wage';
-        }
+        hourlyWage = savedData.hourlyWage || 0;
+        annualSalaryInput.value = savedData.annualSalary || '';
+        weeklyHoursInput.value = savedData.weeklyHours || '';
+        hourlyWageField.value = savedData.hourlyWageInput || '';
+        wageToggle.checked = savedData.wageToggle || false;
 
-        stats = userData.stats || {
-            totalSessions: 0,
-            totalPoopTime: 0,
-            totalEarnings: 0,
-            firstSessionDate: null,
-            lastSessionDate: null
-        };
+        stats = savedData.stats || { totalSessions: 0, totalPoopTime: 0, totalEarnings: 0 };
+        turdTokens = savedData.turdTokens || 0;
+        lastAwardDate = savedData.lastAwardDate || null;
 
-        turdTokens = userData.turdTokens || 0;
-        lastAwardDate = userData.lastAwardDate;
-        
-        if (userData.poopLogs && userData.poopLogs.length > 0) {
+        if (savedData.poopLogs && savedData.poopLogs.length > 0) {
             poopLogPlaceholder.style.display = 'none';
-            poopLog.innerHTML = userData.poopLogs.join('');
-            poopLog.querySelectorAll('.delete-button').forEach(button => {
-                const logEntry = button.parentElement;
-                const durationText = logEntry.querySelector('.log-duration').textContent;
-                const duration = parseInt(durationText.match(/\d+/g).reduce((acc, val) => acc * 60 + parseInt(val), 0));
-                const earnings = parseFloat(logEntry.querySelector('.log-earnings').textContent.replace(/[^0-9.-]+/g, ''));
-                
-                button.onclick = () => confirmDelete(logEntry, duration, earnings);
-            });
+            poopLog.innerHTML = savedData.poopLogs.join('');
         }
 
         displayStatistics();
         updateTurdTokenDisplay();
+        updateHourlyWage();
     }
 }
 
