@@ -927,31 +927,34 @@ function saveUserData() {
 }
 
 function loadUserData() {
-    const currentUser = localStorage.getItem('currentUser');
-    if (!currentUser) {
-        window.location.href = 'index.html'; // Ensure this is the correct redirect path
+    const currentUserData = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUserData) {
+        console.error('No user logged in, redirecting...');
+        window.location.href = 'index.html'; // Redirect if no user data found
         return;
     }
 
-    const users = JSON.parse(localStorage.getItem('users') || '{}');
-    const userData = users[currentUser];
-
-    if (!userData) {
+    const users = JSON.parse(localStorage.getItem('users'));
+    if (!users || !(currentUserData.email in users)) {
         console.error('User data not found');
         return;
     }
 
-    // Implement functions to display the retrieved data
+    const userData = users[currentUserData.email];
     displayUserData(userData);
 }
 
 function displayUserData(userData) {
-    // Populate data on the page such as stats, turd tokens, etc.
-    // Example:
     document.getElementById('totalSessions').textContent = userData.stats.totalSessions;
+    document.getElementById('totalPoopTime').textContent = userData.stats.totalPoopTime; // Adjust formatting as necessary
     document.getElementById('totalEarnings').textContent = `$${userData.stats.totalEarnings.toFixed(2)}`;
-    // Add more as needed
-}
+
+    if (userData.stats.firstSessionDate) {
+        document.getElementById('firstSessionDate').textContent = new Date(userData.stats.firstSessionDate).toLocaleDateString();
+    }
+    if (userData.stats.lastSessionDate) {
+        document.getElementById('lastSessionDate').textContent = new Date(userData.stats.lastSessionDate).toLocaleDateString();
+    }
 
 
 function checkLoginStatus() {
