@@ -927,35 +927,50 @@ function saveUserData() {
 }
 
 function loadUserData() {
-    const currentUserData = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUserData) {
-        console.error('No user logged in, redirecting...');
-        window.location.href = 'index.html'; // Redirect if no user data found
-        return;
-    }
+    const savedData = localStorage.getItem('currentUser');
+    if (savedData) {
+        const userData = JSON.parse(savedData);
+        
+        hourlyWage = userData.hourlyWage || 0;
+        annualSalaryInput.value = userData.annualSalary || '';
+        weeklyHoursInput.value = userData.weeklyHours || '';
+        hourlyWageField.value = userData.hourlyWageInput || '';
+        wageToggle.checked = userData.wageToggle || false;
+        
+        if (wageToggle.checked) {
+            document.getElementById('salaryHoursInputs').style.display = 'none';
+            document.getElementById('hourlyWageInput').style.display = 'block';
+            document.getElementById('toggleLabel').textContent = 'Hourly Wage';
+        }
 
-    const users = JSON.parse(localStorage.getItem('users'));
-    if (!users || !(currentUserData.email in users)) {
-        console.error('User data not found');
-        return;
-    }
+        stats = userData.stats || {
+            totalSessions: 0,
+            totalPoopTime: 0,
+            totalEarnings: 0,
+            firstSessionDate: null,
+            lastSessionDate: null
+        };
 
-    const userData = users[currentUserData.email];
-    displayUserData(userData);
+        turdTokens = userData.turdTokens || 0;
+        lastAwardDate = userData.lastAwardDate;
+        
+        if (userData.poopLogs && userData.poopLogs.length > 0) {
+            poopLogPlaceholder.style.display = 'none';
+            poopLog.innerHTML = userData.poopLogs.join('');
+            poopLog.querySelectorAll('.delete-button').forEach(button => {
+                const logEntry = button.parentElement;
+                const durationText = logEntry.querySelector('.log-duration').textContent;
+                const duration = parseInt(durationText.match(/\d+/g).reduce((acc, val) => acc * 60 + parseInt(val), 0));
+                const earnings = parseFloat(logEntry.querySelector('.log-earnings').textContent.replace(/[^0-9.-]+/g, ''));
+                
+                button.onclick = () => confirmDelete(logEntry, duration, earnings);
+            });
+        }
+
+        displayStatistics();
+        updateTurdTokenDisplay();
+    }
 }
-
-function displayUserData(userData) {
-    document.getElementById('totalSessions').textContent = userData.stats.totalSessions;
-    document.getElementById('totalPoopTime').textContent = userData.stats.totalPoopTime; // Adjust formatting as necessary
-    document.getElementById('totalEarnings').textContent = `$${userData.stats.totalEarnings.toFixed(2)}`;
-
-    if (userData.stats.firstSessionDate) {
-        document.getElementById('firstSessionDate').textContent = new Date(userData.stats.firstSessionDate).toLocaleDateString();
-    }
-    if (userData.stats.lastSessionDate) {
-        document.getElementById('lastSessionDate').textContent = new Date(userData.stats.lastSessionDate).toLocaleDateString();
-    }
-
 
 function checkLoginStatus() {
     if (!localStorage.getItem('currentUser')) {
