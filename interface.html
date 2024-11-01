@@ -975,12 +975,12 @@ function standardizeUsersFormat() {
 // Call to initialize format on page load
 standardizeUsersFormat();
 
-function saveUserData() {
+ffunction saveUserData() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const users = JSON.parse(localStorage.getItem('users') || '{}');
 
     if (currentUser) {
-        // Update currentUser's data with all relevant fields, including poopLogs
+        // Ensure `currentUser.data` is updated with all fields including `poopLogs`
         currentUser.data = {
             hourlyWage: hourlyWage,
             annualSalary: annualSalaryInput.value,
@@ -993,12 +993,13 @@ function saveUserData() {
             poopLogs: Array.from(poopLog.children).map(entry => entry.outerHTML)
         };
 
-        // Synchronize currentUser's data with the users object
+        // Sync `currentUser` with `users` to retain consistency
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         if (currentUser.email && users[currentUser.email]) {
-            users[currentUser.email].data = currentUser.data; // Save unique data per account
+            users[currentUser.email].data = currentUser.data;
             localStorage.setItem('users', JSON.stringify(users));
         }
+        console.log("Saved currentUser and updated users:", currentUser, users);
     }
 }
 
