@@ -920,20 +920,35 @@ function loadUserData() {
     if (userData) {
         console.log("Loaded user data:", userData);
 
-        // Load user data, assuming it may or may not be within a nested `data` object
+        // Log each field update
         hourlyWage = userData.hourlyWage || 0;
+        console.log("Hourly Wage Set:", hourlyWage);
+
         annualSalaryInput.value = userData.annualSalary || '';
+        console.log("Annual Salary Set:", annualSalaryInput.value);
+
         weeklyHoursInput.value = userData.weeklyHours || '';
+        console.log("Weekly Hours Set:", weeklyHoursInput.value);
+
         hourlyWageField.value = userData.hourlyWageInput || '';
+        console.log("Hourly Wage Input Set:", hourlyWageField.value);
+
         wageToggle.checked = userData.wageToggle || false;
+        console.log("Wage Toggle Set:", wageToggle.checked);
 
         stats = userData.stats || { totalSessions: 0, totalPoopTime: 0, totalEarnings: 0 };
+        console.log("Stats Set:", stats);
+
         turdTokens = userData.turdTokens || 0;
+        console.log("Turd Tokens Set:", turdTokens);
+
         lastAwardDate = userData.lastAwardDate || null;
+        console.log("Last Award Date Set:", lastAwardDate);
 
         if (userData.poopLogs && userData.poopLogs.length > 0) {
             poopLogPlaceholder.style.display = 'none';
             poopLog.innerHTML = userData.poopLogs.join('');
+            console.log("Poop Logs Set:", poopLog.innerHTML);
         }
 
         // Display and update UI elements
@@ -944,7 +959,6 @@ function loadUserData() {
         console.log("No user data found in localStorage.");
     }
 }
-
 
 function saveUserData() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
