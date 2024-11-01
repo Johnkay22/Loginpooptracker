@@ -438,14 +438,14 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 
     const users = JSON.parse(localStorage.getItem('users') || '{}');
 
-    // Check if user exists and password matches
+    // Check if the user exists and password matches
     if (!users[email] || users[email].password !== password) {
         loginError.textContent = 'Invalid email or password';
         loginError.style.opacity = '1';
         return;
     }
 
-    // Set currentUser with complete data, including poopLogs
+    // Set currentUser with the full data structure, including poopLogs
     localStorage.setItem('currentUser', JSON.stringify({
         password: users[email].password,
         data: users[email].data // Ensure full data is loaded, including poopLogs
