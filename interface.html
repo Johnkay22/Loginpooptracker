@@ -1273,9 +1273,8 @@ function updateDateRangeStats() {
 }
 
 function startTimer() {
-    if (!validateInputs()) {
-        return; // Stop the function if inputs are not valid
-    }
+    if (!validateInputs()) return; // Stop the function if inputs are not valid
+
     const timerButton = document.getElementById('timerButton');
     const timerDisplay = document.getElementById('timerDisplay');
     const earningsDisplay = document.getElementById('earningsDisplay');
@@ -1286,30 +1285,65 @@ function startTimer() {
         timerButton.textContent = 'Stop Pooping';
         poopEmoji.classList.add('wiggle');
 
-        // Check if it's the first session of the day to award a Turd Token
+        // Save the start time in localStorage
+        const startTime = Date.now();
+        localStorage.setItem('timerStart', startTime);
+        localStorage.setItem('isTimerRunning', true);
+
+        // Award a Turd Token if it’s the first session of the day
         if (isFirstSessionOfDay()) {
-            turdTokens++; // Increment Turd Tokens
-            updateTurdTokenDisplay(); // Update the display of Turd Tokens
-            showTokenAwardNotification(); // Show a notification about the new Turd Token
+            turdTokens++;
+            updateTurdTokenDisplay();
+            showTokenAwardNotification();
         }
 
-        timerInterval = setInterval(() => {
-            seconds++;
-            timerDisplay.textContent = formatTime(seconds);
-            const earnings = ((hourlyWage / 3600) * seconds).toFixed(2);
-            earningsDisplay.textContent = `Current earnings: $${earnings}`;
-        }, 1000);
+        // Begin updating the timer display
+        updateTimer();
     } else {
+        // Stop the timer
         isTimerRunning = false;
         clearInterval(timerInterval);
+        localStorage.removeItem('timerStart');
+        localStorage.removeItem('isTimerRunning');
+        
         timerButton.textContent = 'Start Pooping';
         poopEmoji.classList.remove('wiggle');
-        openRatingModal(); // Assume this handles ending the session and rating
+        
+        // Assume `openRatingModal` handles session end actions
+        openRatingModal();
+        
+        // Reset the timer and earnings display
         seconds = 0;
         timerDisplay.textContent = '00:00:00';
         earningsDisplay.textContent = '';
     }
 }
+
+// Continuously update timer display based on saved start time
+function updateTimer() {
+    const startTime = parseInt(localStorage.getItem('timerStart'), 10);
+    if (!startTime || !JSON.parse(localStorage.getItem('isTimerRunning'))) return;
+
+    const timerDisplay = document.getElementById('timerDisplay');
+    const earningsDisplay = document.getElementById('earningsDisplay');
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+
+    // Update display
+    timerDisplay.textContent = formatTime(elapsed);
+    const earnings = ((hourlyWage / 3600) * elapsed).toFixed(2);
+    earningsDisplay.textContent = `Current earnings: $${earnings}`;
+
+    // Keep updating in real-time
+    requestAnimationFrame(updateTimer);
+}
+
+// Start `updateTimer` if the timer was running before leaving the page
+document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('isTimerRunning')) {
+        updateTimer();
+    }
+});
+
 
 
 function updateStatistics(duration, earnings) {
