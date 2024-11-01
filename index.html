@@ -445,10 +445,10 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         return;
     }
 
-    // Set currentUser with full data, including poopLogs
+    // Set currentUser with complete data, including poopLogs
     localStorage.setItem('currentUser', JSON.stringify({
         password: users[email].password,
-        data: users[email].data
+        data: users[email].data // Ensure full data is loaded, including poopLogs
     }));
     
     console.log("currentUser set after login:", JSON.parse(localStorage.getItem('currentUser')));
