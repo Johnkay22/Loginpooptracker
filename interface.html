@@ -964,6 +964,7 @@ function loadUserData() {
 function saveUserData() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (currentUser) {
+        // Update the data structure, including poopLogs
         currentUser.data = {
             hourlyWage: hourlyWage,
             annualSalary: annualSalaryInput.value,
@@ -973,11 +974,15 @@ function saveUserData() {
             stats: stats,
             turdTokens: turdTokens,
             lastAwardDate: lastAwardDate,
-            poopLogs: Array.from(poopLog.children).map(entry => entry.outerHTML)
+            poopLogs: Array.from(poopLog.children).map(entry => entry.outerHTML) // Save all log entries
         };
+
+        // Save updated user data to localStorage
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        console.log("currentUser after save:", JSON.parse(localStorage.getItem('currentUser')));
     }
 }
+
 
 
 function checkLoginStatus() {
