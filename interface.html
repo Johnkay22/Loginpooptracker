@@ -945,6 +945,7 @@ function loadUserData() {
         lastAwardDate = userData.lastAwardDate || null;
         console.log("Last Award Date Set:", lastAwardDate);
 
+        // Set poop logs and verify
         if (userData.poopLogs && userData.poopLogs.length > 0) {
             poopLogPlaceholder.style.display = 'none';
             poopLog.innerHTML = userData.poopLogs.join('');
