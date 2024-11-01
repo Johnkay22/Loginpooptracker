@@ -912,12 +912,14 @@ function updateHourlyWage() {
 }
 
 function loadUserData() {
+    console.log("loadUserData is running...");
+    
     const savedUser = JSON.parse(localStorage.getItem('currentUser'));
-
-    // Check if savedUser exists and contains the `data` object
     const userData = savedUser?.data || savedUser;
 
     if (userData) {
+        console.log("Loaded user data:", userData);
+
         // Load user data, assuming it may or may not be within a nested `data` object
         hourlyWage = userData.hourlyWage || 0;
         annualSalaryInput.value = userData.annualSalary || '';
@@ -938,8 +940,11 @@ function loadUserData() {
         displayStatistics();
         updateTurdTokenDisplay();
         updateHourlyWage();
+    } else {
+        console.log("No user data found in localStorage.");
     }
 }
+
 
 function saveUserData() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
