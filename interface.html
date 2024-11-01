@@ -1300,24 +1300,26 @@ function startTimer() {
         // Begin updating the timer display
         updateTimer();
     } else {
-        // Stop the timer
+        // Stop the timer without resetting the display yet
         isTimerRunning = false;
         clearInterval(timerInterval);
         localStorage.removeItem('timerStart');
         localStorage.removeItem('isTimerRunning');
-        
+
         timerButton.textContent = 'Start Pooping';
         poopEmoji.classList.remove('wiggle');
-        
-        // Assume `openRatingModal` handles session end actions
-        openRatingModal();
-        
-        // Reset the timer and earnings display
-        seconds = 0;
-        timerDisplay.textContent = '00:00:00';
-        earningsDisplay.textContent = '';
+
+        // Save log or end session, then reset the display
+        openRatingModal(); // This function should handle saving the session log
+        setTimeout(() => {
+            // Reset the display after saving the log
+            seconds = 0;
+            timerDisplay.textContent = '00:00:00';
+            earningsDisplay.textContent = '';
+        }, 100); // Small delay to ensure `openRatingModal` processing completes
     }
 }
+
 
 // Continuously update timer display based on saved start time
 function updateTimer() {
