@@ -980,7 +980,12 @@ function saveUserData() {
     const users = JSON.parse(localStorage.getItem('users') || '{}');
 
     if (currentUser) {
-        // Ensure `currentUser.data` is updated with all fields including `poopLogs`
+        // Ensure currentUser has an email property
+        if (!currentUser.email) {
+            currentUser.email = Object.keys(users).find(email => users[email].data === currentUser.data);
+        }
+
+        // Update data fields in currentUser, including poopLogs
         currentUser.data = {
             hourlyWage: hourlyWage,
             annualSalary: annualSalaryInput.value,
@@ -993,15 +998,18 @@ function saveUserData() {
             poopLogs: Array.from(poopLog.children).map(entry => entry.outerHTML)
         };
 
-        // Sync `currentUser` with `users` to retain consistency
+        // Sync currentUser and users to ensure data persistence
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+        // Update users[currentUser.email] with the updated data
         if (currentUser.email && users[currentUser.email]) {
             users[currentUser.email].data = currentUser.data;
             localStorage.setItem('users', JSON.stringify(users));
         }
-        console.log("Saved currentUser and updated users:", currentUser, users);
+        console.log("Updated currentUser and users with poopLogs:", currentUser, users);
     }
 }
+
 
 function checkLoginStatus() {
     if (!localStorage.getItem('currentUser')) {
