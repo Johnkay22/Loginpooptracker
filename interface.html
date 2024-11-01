@@ -913,9 +913,12 @@ function updateHourlyWage() {
 
 function loadUserData() {
     const savedUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (savedUser && savedUser.data) {
-        const userData = savedUser.data;
 
+    // Check if savedUser exists and contains the `data` object
+    const userData = savedUser?.data || savedUser;
+
+    if (userData) {
+        // Load user data, assuming it may or may not be within a nested `data` object
         hourlyWage = userData.hourlyWage || 0;
         annualSalaryInput.value = userData.annualSalary || '';
         weeklyHoursInput.value = userData.weeklyHours || '';
@@ -931,6 +934,7 @@ function loadUserData() {
             poopLog.innerHTML = userData.poopLogs.join('');
         }
 
+        // Display and update UI elements
         displayStatistics();
         updateTurdTokenDisplay();
         updateHourlyWage();
