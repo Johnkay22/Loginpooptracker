@@ -961,10 +961,26 @@ function loadUserData() {
     }
 }
 
+// Standardize `users` to ensure consistent format for each account
+function standardizeUsersFormat() {
+    const users = JSON.parse(localStorage.getItem('users') || '{}');
+    Object.keys(users).forEach(email => {
+        if (typeof users[email] === 'string') {
+            users[email] = { password: users[email], data: {} };
+        }
+    });
+    localStorage.setItem('users', JSON.stringify(users));
+}
+
+// Call to initialize format on page load
+standardizeUsersFormat();
+
 function saveUserData() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const users = JSON.parse(localStorage.getItem('users') || '{}');
+
     if (currentUser) {
-        // Update the data structure, including poopLogs
+        // Update currentUser's data with all relevant fields, including poopLogs
         currentUser.data = {
             hourlyWage: hourlyWage,
             annualSalary: annualSalaryInput.value,
@@ -974,16 +990,17 @@ function saveUserData() {
             stats: stats,
             turdTokens: turdTokens,
             lastAwardDate: lastAwardDate,
-            poopLogs: Array.from(poopLog.children).map(entry => entry.outerHTML) // Save all log entries
+            poopLogs: Array.from(poopLog.children).map(entry => entry.outerHTML)
         };
 
-        // Save updated user data to localStorage
+        // Synchronize currentUser's data with the users object
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        console.log("currentUser after save:", JSON.parse(localStorage.getItem('currentUser')));
+        if (currentUser.email && users[currentUser.email]) {
+            users[currentUser.email].data = currentUser.data; // Save unique data per account
+            localStorage.setItem('users', JSON.stringify(users));
+        }
     }
 }
-
-
 
 function checkLoginStatus() {
     if (!localStorage.getItem('currentUser')) {
