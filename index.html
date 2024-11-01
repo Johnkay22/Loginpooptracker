@@ -377,7 +377,7 @@ input::placeholder {
             }, 1000);
         };
 
-       // Register form submission 
+       // Register form submission
 document.getElementById('registerForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const email = this.email.value;
@@ -389,7 +389,6 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     registerError.style.opacity = '0';
     registerSuccess.style.opacity = '0';
 
-    // Check if passwords match
     if (password !== confirmPassword) {
         registerError.textContent = 'Passwords do not match';
         registerError.style.opacity = '1';
@@ -397,15 +396,13 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     }
 
     const users = JSON.parse(localStorage.getItem('users') || '{}');
-    
-    // Check if email is already registered
+
     if (users[email]) {
         registerError.textContent = 'Email already registered';
         registerError.style.opacity = '1';
         return;
     }
 
-    // Set up initial data structure
     users[email] = {
         password: password,
         data: {
@@ -421,6 +418,15 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
         }
     };
 
+    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem('currentUser', JSON.stringify(users[email]));
+    console.log("currentUser set after registration:", JSON.parse(localStorage.getItem('currentUser')));
+
+    registerSuccess.textContent = 'Registration successful! Redirecting...';
+    registerSuccess.style.opacity = '1';
+    setTimeout(() => window.location.href = '/interface.html', 1500);
+});
+
     // Save to localStorage
     localStorage.setItem('users', JSON.stringify(users));
     localStorage.setItem('currentUser', JSON.stringify(users[email])); // Save full data
@@ -430,7 +436,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     setTimeout(() => window.location.href = '/interface.html', 1500);
 });
 
-// Login form 
+// Login form submission
 document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const email = this.email.value;
@@ -443,15 +449,14 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 
     const users = JSON.parse(localStorage.getItem('users') || '{}');
 
-    // Check credentials
     if (!users[email] || users[email].password !== password) {
         loginError.textContent = 'Invalid email or password';
         loginError.style.opacity = '1';
         return;
     }
 
-    // Set currentUser with full data
     localStorage.setItem('currentUser', JSON.stringify(users[email]));
+    console.log("currentUser set after login:", JSON.parse(localStorage.getItem('currentUser')));
 
     loginSuccess.textContent = 'Login successful! Redirecting...';
     loginSuccess.style.opacity = '1';
