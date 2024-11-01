@@ -376,8 +376,7 @@ input::placeholder {
                 fadeIn('intro');
             }, 1000);
         };
-
-       // Register form submission
+// Register form submission
 document.getElementById('registerForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const email = this.email.value;
@@ -426,16 +425,6 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     registerSuccess.style.opacity = '1';
     setTimeout(() => window.location.href = '/interface.html', 1500);
 });
-
-    // Save to localStorage
-    localStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem('currentUser', JSON.stringify(users[email])); // Save full data
-
-    registerSuccess.textContent = 'Registration successful! Redirecting...';
-    registerSuccess.style.opacity = '1';
-    setTimeout(() => window.location.href = '/interface.html', 1500);
-});
-
 // Login form submission
 document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -462,6 +451,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     loginSuccess.style.opacity = '1';
     setTimeout(() => window.location.href = '/interface.html', 1500);
 });
+
     </script>
 </body>
 </html>
