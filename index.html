@@ -378,53 +378,66 @@ input::placeholder {
         };
 
         document.getElementById('registerForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const email = this.email.value;
-    const password = this.password.value;
-    const confirmPassword = this.confirmPassword.value;
-    const registerError = document.getElementById('registerError');
-    const registerSuccess = document.getElementById('registerSuccess');
+            e.preventDefault();
+            const email = this.email.value;
+            const password = this.password.value;
+            const confirmPassword = this.confirmPassword.value;
+            const registerError = document.getElementById('registerError');
+            const registerSuccess = document.getElementById('registerSuccess');
 
-    registerError.style.opacity = '0';
-    registerSuccess.style.opacity = '0';
+            registerError.style.opacity = '0';
+            registerSuccess.style.opacity = '0';
 
-    if (password !== confirmPassword) {
-        registerError.textContent = 'Passwords do not match';
-        registerError.style.opacity = '1';
-        return;
-    }
+            if (password !== confirmPassword) {
+                registerError.textContent = 'Passwords do not match';
+                registerError.style.opacity = '1';
+                return;
+            }
 
-    const users = JSON.parse(localStorage.getItem('users') || '{}');
-    
-    if (users[email]) {
-        registerError.textContent = 'Email already registered';
-        registerError.style.opacity = '1';
-        return;
-    }
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+            
+            if (users[email]) {
+                registerError.textContent = 'Email already registered';
+                registerError.style.opacity = '1';
+                return;
+            }
 
-    // Save the user data with default values for expected properties
-    users[email] = {
-        password: password,
-        stats: { totalSessions: 0, totalPoopTime: 0, totalEarnings: 0 },
-        turdTokens: 0,
-        poopLogs: []
-    };
-    localStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem('currentUser', JSON.stringify({
-        email: email,
-        hourlyWage: 0,
-        annualSalary: "",
-        weeklyHours: "",
-        stats: { totalSessions: 0, totalPoopTime: 0, totalEarnings: 0 },
-        turdTokens: 0,
-        poopLogs: []
-    }));
-    
-    registerSuccess.textContent = 'Registration successful! Redirecting...';
-    registerSuccess.style.opacity = '1';
-    setTimeout(() => {
-        window.location.href = 'https://www.poopprofit.com/interface';
-    }, 1500);
-});
+            users[email] = password;
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            registerSuccess.textContent = 'Registration successful! Redirecting...';
+            registerSuccess.style.opacity = '1';
+            localStorage.setItem('currentUser', JSON.stringify({ email: email }));
+            setTimeout(() => {
+                window.location.href = 'https://www.poopprofit.com/interface';
+            }, 1500);
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.email.value;
+            const password = this.password.value;
+            const loginError = document.getElementById('loginError');
+            const loginSuccess = document.getElementById('loginSuccess');
+
+            loginError.style.opacity = '0';
+            loginSuccess.style.opacity = '0';
+
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+
+            if (!users[email] || users[email] !== password) {
+                loginError.textContent = 'Invalid email or password';
+                loginError.style.opacity = '1';
+                return;
+            }
+
+            loginSuccess.textContent = 'Login successful! Redirecting...';
+            loginSuccess.style.opacity = '1';
+localStorage.setItem('currentUser', JSON.stringify({ email: email }));
+            setTimeout(() => {
+                window.location.href = 'https://www.poopprofit.com/interface';
+            }, 1500);
+        });
+    </script>
 </body>
 </html>
