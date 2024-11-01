@@ -1273,11 +1273,9 @@ function updateDateRangeStats() {
 }
 
 function startTimer() {
-    if (!validateInputs()) return; // Stop if inputs are invalid
+    if (!validateInputs()) return;
 
     const timerButton = document.getElementById('timerButton');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const earningsDisplay = document.getElementById('earningsDisplay');
     const poopEmoji = document.querySelector('.poop-emoji');
 
     if (!isTimerRunning) {
@@ -1285,19 +1283,16 @@ function startTimer() {
         timerButton.textContent = 'Stop Pooping';
         poopEmoji.classList.add('wiggle');
 
-        // Save start time and button state in localStorage
-        const startTime = Date.now();
-        localStorage.setItem('timerStart', startTime);
+        // Save start time and button state
+        localStorage.setItem('timerStart', Date.now());
         localStorage.setItem('isTimerRunning', true);
 
-        // Award Turd Token if it’s the first session of the day
         if (isFirstSessionOfDay()) {
             turdTokens++;
             updateTurdTokenDisplay();
             showTokenAwardNotification();
         }
 
-        // Begin updating the timer display
         updateTimer();
     } else {
         // Stop the timer without resetting display yet
@@ -1309,10 +1304,10 @@ function startTimer() {
         timerButton.textContent = 'Start Pooping';
         poopEmoji.classList.remove('wiggle');
 
-        // Pass resetTimerDisplay as a callback to openRatingModal
-        openRatingModal(resetTimerDisplay);
+        openRatingModal(resetTimerDisplay); // Reset display after log is saved
     }
 }
+
 
 function resetTimerDisplay() {
     const timerDisplay = document.getElementById('timerDisplay');
@@ -1597,55 +1592,45 @@ function openRatingModal(callback) {
     const congratsMessage = document.getElementById('congratsMessage');
     const poopEmojis = document.querySelectorAll('.poopEmoji');
 
-    // Calculate and display earnings message
+    // Use `seconds` to calculate accurate earnings before resetting
     const earnings = ((hourlyWage / 3600) * seconds).toFixed(2);
     congratsMessage.textContent = `Congratulations! You just earned $${earnings}!`;
 
-    // Display the rating modal and reset rating
     ratingModal.style.display = 'block';
     selectedRating = 0;
-    poopEmojis.forEach(emoji => {
-        emoji.style.opacity = '0.5';
-    });
+    poopEmojis.forEach(emoji => (emoji.style.opacity = '0.5'));
 
-    // Award a Turd Token if it’s the first session of the day
     if (isFirstSessionOfDay()) {
         turdTokens++;
         updateTurdTokenDisplay();
         showTokenAwardNotification();
     }
 
-    // Log session details
-    const currentDate = new Date().toLocaleString();
     const logEntry = document.createElement('div');
     logEntry.className = 'log-entry';
     logEntry.innerHTML = `
         <button class="delete-button">×</button>
-        <p class="log-date">${currentDate}</p>
+        <p class="log-date">${new Date().toLocaleString()}</p>
         <p class="log-duration">Duration: ${formatTime(seconds)}</p>
         <p class="log-earnings">Earnings: $${earnings}</p>
         <p class="log-rating">Rating: <span class="rating-value">Not rated</span></p>
     `;
 
-    // Set up delete functionality for the log entry
     const deleteButton = logEntry.querySelector('.delete-button');
     deleteButton.onclick = () => confirmDelete(logEntry, seconds, earnings);
 
-    // Insert the log entry at the top of the poop log
     if (poopLog.children.length === 0) {
         poopLogPlaceholder.style.display = 'none';
     }
     poopLog.insertBefore(logEntry, poopLog.firstChild);
 
-    // Update session statistics
     updateStatistics(seconds, earnings);
-
-    // Save session data
     saveUserData();
 
-    // Call the callback to reset the display after logging and statistics update
+    // Call the callback to reset the display after logging
     if (callback) callback();
 }
+
 
 </script>
 </head>
