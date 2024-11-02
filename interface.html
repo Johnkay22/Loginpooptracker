@@ -1048,10 +1048,7 @@ function updateTurdTokenDisplay() {
     localStorage.setItem('turdTokens', turdTokens);
 }
 
- 
-
-function displayStatistics(filtered = false, filteredStats = null) {
-    const statsToUse = filtered ? filteredStats : stats;
+function displayStatistics(filtered = false, statsToUse = stats) {
     const totalTime = statsToUse.totalPoopTime;
     const totalHours = Math.floor(totalTime / 3600);
     const totalMinutes = Math.floor((totalTime % 3600) / 60);
@@ -1076,6 +1073,7 @@ function displayStatistics(filtered = false, filteredStats = null) {
 
     updateStatsChart(statsToUse);
 }
+
 
 function updateStatsChart(statsData) {
     const ctx = document.getElementById('statsChart').getContext('2d');
