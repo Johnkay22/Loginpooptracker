@@ -1195,10 +1195,16 @@ function confirmDelete(logEntry, duration, earnings) {
     console.log('Earnings:', earnings); // Log the earnings of the entry
 
     const confirmDialog = document.querySelector('.confirm-dialog');
+    if (!confirmDialog) {
+        console.log('Confirm dialog not found!');
+        return;
+    }
     confirmDialog.style.display = 'block';
-
+    console.log('Confirm dialog displayed');
+    
     const confirmButton = confirmDialog.querySelector('.confirm');
     const cancelButton = confirmDialog.querySelector('.cancel');
+    console.log('Buttons located:', confirmButton, cancelButton);
 
     const handleDelete = () => {
         console.log('Confirmed delete'); // Log when the delete is confirmed
@@ -1208,6 +1214,7 @@ function confirmDelete(logEntry, duration, earnings) {
         stats.totalEarnings -= earnings;
 
         logEntry.remove();
+        console.log('Log entry removed from DOM');
 
         if (poopLog.children.length === 0) {
             document.getElementById('poopLogPlaceholder').style.display = 'block';
@@ -1233,6 +1240,7 @@ function confirmDelete(logEntry, duration, earnings) {
     confirmButton.addEventListener('click', handleDelete);
     cancelButton.addEventListener('click', handleCancel);
 }
+
 
 
 function updateDateRangeStats() {
