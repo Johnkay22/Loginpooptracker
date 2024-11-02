@@ -1189,6 +1189,11 @@ function filterStatsByDateRange(startDate, endDate) {
 }
 
 function confirmDelete(logEntry, duration, earnings) {
+    console.log('Delete button clicked'); // Log when the function is called
+    console.log('Log entry:', logEntry); // Log the log entry being deleted
+    console.log('Duration:', duration); // Log the duration of the entry
+    console.log('Earnings:', earnings); // Log the earnings of the entry
+
     const confirmDialog = document.querySelector('.confirm-dialog');
     confirmDialog.style.display = 'block';
 
@@ -1196,6 +1201,8 @@ function confirmDelete(logEntry, duration, earnings) {
     const cancelButton = confirmDialog.querySelector('.cancel');
 
     const handleDelete = () => {
+        console.log('Confirmed delete'); // Log when the delete is confirmed
+
         stats.totalSessions--;
         stats.totalPoopTime -= duration;
         stats.totalEarnings -= earnings;
@@ -1216,6 +1223,7 @@ function confirmDelete(logEntry, duration, earnings) {
     };
 
     const handleCancel = () => {
+        console.log('Delete canceled'); // Log when the delete is canceled
         confirmDialog.style.display = 'none';
 
         confirmButton.removeEventListener('click', handleDelete);
@@ -1225,6 +1233,7 @@ function confirmDelete(logEntry, duration, earnings) {
     confirmButton.addEventListener('click', handleDelete);
     cancelButton.addEventListener('click', handleCancel);
 }
+
 
 function updateDateRangeStats() {
     if (stats.totalSessions === 0) {
@@ -1589,7 +1598,10 @@ function openRatingModal() {
     `;
 
     const deleteButton = logEntry.querySelector('.delete-button');
-    deleteButton.onclick = () => confirmDelete(logEntry, seconds, earnings);
+deleteButton.onclick = () => {
+    console.log('Delete button clicked for log:', logEntry); // Log when the delete button is clicked
+    confirmDelete(logEntry, seconds, earnings);
+};
 
     if (poopLog.children.length === 0) {
         poopLogPlaceholder.style.display = 'none';
