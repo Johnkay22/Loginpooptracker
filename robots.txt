@@ -1,6 +1,2 @@
 User-agent: *
-Allow: /index.html
-Allow: /interface.html
-Allow: /TurdToTheMoon.html
-Allow: /TurdRaceGame.html
-Disallow: /
+Sitemap: https://www.poopprofit.com/sitemap.xml
