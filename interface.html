@@ -969,16 +969,16 @@
     margin-top: 20px;
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 20px;
 }
 
 /* Base style for each share button */
 .share-button {
     background-color: var(--secondary-color); /* Customizable background color */
     border: none;
-    border-radius: 150%; /* Circular button style */
-    width: 150px; /* Button size */
-    height: 150px;
+    border-radius: 75%; /* Circular button style */
+    width: 75px; /* Button size */
+    height: 75px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -989,8 +989,8 @@
 
 /* Style for the custom icons within buttons */
 .share-button img {
-    width: 24px;
-    height: 24px;
+    width: 72px;
+    height: 72px;
 }
 
 /* Hover effects for each specific button */
@@ -1717,11 +1717,11 @@ function shareStatisticsViaSMS() {
 }
 
 function getShareableStats() {
-    return `🚽 My Poop Profit Stats:
-Total Sessions: ${stats.totalSessions}
-Total Earnings: $${stats.totalEarnings.toFixed(2)}
-Average Per Session: $${(stats.totalEarnings / stats.totalSessions || 0).toFixed(2)}
-Track your bathroom breaks at www.poopprofit.com!`;
+    return `My Poop Profit Stats:
+Total Poops at Work: ${stats.totalSessions}
+Total I've Got Paid to Poop: $${stats.totalEarnings.toFixed(2)}
+Average Earnings Per Poop: $${(stats.totalEarnings / stats.totalSessions || 0).toFixed(2)}
+Find out how much YOU get paid to poop at www.poopprofit.com!`;
 }
 
 function clearActiveFilters() {
