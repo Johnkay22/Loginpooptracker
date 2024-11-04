@@ -1143,16 +1143,22 @@ function displayStatistics(filtered = false, filteredStats = null) {
     const avgMinutes = Math.floor((avgPoopTime % 3600) / 60);
     const avgSecs = Math.floor(avgPoopTime % 60);
 
-    const totalDays = statsToUse.firstSessionDate && statsToUse.lastSessionDate
-        ? Math.max(1, Math.ceil((statsToUse.lastSessionDate - statsToUse.firstSessionDate) / (1000 * 60 * 60 * 24)))
-        : 1;
-    const avgPoopsPerDay = statsToUse.totalSessions > 0 ? (statsToUse.totalSessions / totalDays).toFixed(2) : '0.00';
+    // Fix date calculation
+    let totalDays = 1; // Default to 1 to avoid division by zero
+    if (statsToUse.firstSessionDate && statsToUse.lastSessionDate) {
+        const firstDate = new Date(statsToUse.firstSessionDate);
+        const lastDate = new Date(statsToUse.lastSessionDate);
+        const timeDiff = Math.abs(lastDate - firstDate);
+        totalDays = Math.max(1, Math.ceil(timeDiff / (1000 * 60 * 60 * 24)));
+    }
+    
+    const avgPoopsPerDay = (statsToUse.totalSessions / totalDays).toFixed(2);
 
     document.getElementById('totalSessions').textContent = statsToUse.totalSessions;
     document.getElementById('totalTime').textContent = `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}:${String(totalSecs).padStart(2, '0')}`;
-    document.getElementById('totalEarnings').textContent = `$${statsToUse.totalEarnings.toFixed(2)}`;
+    document.getElementById('totalEarnings').textContent = `${statsToUse.totalEarnings.toFixed(2)}`;
     document.getElementById('avgPoopTime').textContent = `${String(avgHours).padStart(2, '0')}:${String(avgMinutes).padStart(2, '0')}:${String(avgSecs).padStart(2, '0')}`;
-    document.getElementById('avgEarnings').textContent = `$${(statsToUse.totalSessions > 0 ? statsToUse.totalEarnings / statsToUse.totalSessions : 0).toFixed(2)}`;
+    document.getElementById('avgEarnings').textContent = `${(statsToUse.totalSessions > 0 ? statsToUse.totalEarnings / statsToUse.totalSessions : 0).toFixed(2)}`;
     document.getElementById('avgPoopsPerDay').textContent = avgPoopsPerDay;
 
     updateStatsChart(statsToUse);
