@@ -942,6 +942,28 @@
     cursor: pointer;
     margin-top: -10px;
 }
+
+    .logout-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background: linear-gradient(145deg, var(--secondary-color), var(--accent-color));
+    color: var(--light-text);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    z-index: 1000;
+}
+
+.logout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    background: linear-gradient(145deg, var(--accent-color), var(--neon-blue));
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -1939,7 +1961,10 @@ deleteButton.onclick = () => {
  // Clear `currentUser` on logout
 function logout() {
     localStorage.removeItem('currentUser');
-    window.location.href = '/index.html'; // Redirect to login page
+    window.location.href = '/loggedout.html'; // Redirect to login page
 }
 </script>
+
+<button class="logout-btn" onclick="logout()">Logout</button>
+    
 </body></html>
