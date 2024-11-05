@@ -1997,11 +1997,10 @@ deleteButton.onclick = () => {
         document.getElementById("gamesPopup").style.display = "none";
     }
 
-    // Trigger popup when "Games" tab is clicked
     document.querySelector('.tab[data-tab="games"]').addEventListener("click", function(event) {
-        event.preventDefault(); // Prevents any default behavior
-        showPopup();
-    });
+    event.preventDefault();
+    showPopup();
+});
  // Clear `currentUser` on logout
 function logout() {
     localStorage.removeItem('currentUser');
