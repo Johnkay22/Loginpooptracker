@@ -2011,5 +2011,33 @@ function logout() {
 </script>
 
 <button class="logout-btn" onclick="logout()">Logout</button>
-    
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const gamesTab = document.getElementById('gamesTab');
+    const shopTab = document.getElementById('shopTab');
+
+    if (gamesTab && shopTab) {
+        gamesTab.classList.add('active');
+        gamesTab.style.display = 'block';
+        shopTab.classList.add('active');
+        shopTab.style.display = 'block';
+    } else {
+        console.error('gamesTab or shopTab not found in the DOM');
+    }
+
+    // Add event listeners to ensure forced display on tab click
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', (event) => {
+            const targetTabId = event.currentTarget.getAttribute('data-target');
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none'; // Hide all tabs initially
+            });
+            const targetTab = document.getElementById(targetTabId);
+            if (targetTab) {
+                targetTab.style.display = 'block'; // Force display of the target tab
+            }
+        });
+    });
+});
+</script>  
 </body></html>
