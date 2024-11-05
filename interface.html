@@ -179,6 +179,59 @@
         flex-direction: column;
     }
 
+    /* Container for share buttons */
+.share-statistics {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Base style for each share button */
+.share-button {
+    background-color: var(--secondary-color); /* Customizable background color */
+    border: none;
+    border-radius: 75%; /* Circular button style */
+    width: 75px; /* Button size */
+    height: 75px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+/* Style for the custom icons within buttons */
+.share-button img {
+    width: 72px;
+    height: 72px;
+}
+
+/* Hover effects for each specific button */
+.share-button.twitter:hover {
+    background-color: #1DA1F2; /* Twitter blue */
+}
+
+.share-button.facebook:hover {
+    background-color: #4267B2; /* Facebook blue */
+}
+
+.share-button.sms:hover {
+    background-color: #25D366; /* SMS green */
+}
+
+/* Optional: Additional hover animation and shadow */
+.share-button:hover {
+    transform: scale(1.1); /* Slightly enlarges button on hover */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.game-image, .shop-image {
+    display: block !important;
+    visibility: visible !important;
+}
+
     .tabs {
         display: flex;
         justify-content: space-evenly;
@@ -963,58 +1016,6 @@
     background: linear-gradient(145deg, var(--accent-color), var(--neon-blue));
 }
 
-    /* Container for share buttons */
-.share-statistics {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-/* Base style for each share button */
-.share-button {
-    background-color: var(--secondary-color); /* Customizable background color */
-    border: none;
-    border-radius: 75%; /* Circular button style */
-    width: 75px; /* Button size */
-    height: 75px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    overflow: hidden;
-}
-
-/* Style for the custom icons within buttons */
-.share-button img {
-    width: 72px;
-    height: 72px;
-}
-
-/* Hover effects for each specific button */
-.share-button.twitter:hover {
-    background-color: #1DA1F2; /* Twitter blue */
-}
-
-.share-button.facebook:hover {
-    background-color: #4267B2; /* Facebook blue */
-}
-
-.share-button.sms:hover {
-    background-color: #25D366; /* SMS green */
-}
-
-/* Optional: Additional hover animation and shadow */
-.share-button:hover {
-    transform: scale(1.1); /* Slightly enlarges button on hover */
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-}
-
-.game-image, .shop-image {
-    display: block !important;
-    visibility: visible !important;
-}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
