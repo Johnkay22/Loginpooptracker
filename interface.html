@@ -1202,25 +1202,34 @@ function checkLoginStatus() {
 function isFirstSessionOfDay() {
     const today = new Date().toDateString();
     const lastAwardDay = lastAwardDate ? new Date(lastAwardDate).toDateString() : null;
-    
+
     if (today !== lastAwardDay) {
         lastAwardDate = new Date().toISOString();
         saveUserData();
+        showTokenAwardNotification(); // Ensure this is called
         return true;
     }
     return false;
 }
 
+
 function showTokenAwardNotification() {
+    const ratingsBox = document.querySelector('.ratings-box'); // Ensure the class matches the correct ratings box in your HTML
+    if (!ratingsBox) {
+        console.warn("Ratings box not found");
+        return;
+    }
+    
     const notification = document.createElement('div');
     notification.className = 'token-award-notification';
     notification.textContent = '🎉 You earned 1 Turd Token for your first poop of the day!';
-    document.body.appendChild(notification);
-    
+    ratingsBox.appendChild(notification);
+
     setTimeout(() => {
         notification.remove();
     }, 3000);
 }
+
 
 function updateTurdTokenDisplay() {
     const tokenDisplay = document.querySelector('.turd-token-balance span');
