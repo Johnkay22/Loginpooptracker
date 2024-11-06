@@ -280,10 +280,13 @@ input::placeholder {
             <h2>Are you ready for the single greatest advancement of bathroom technology in history?</h2>
             <button onclick="showOptions()">Yes</button>
         </div>
-        <div id="options" class="box">
-            <button onclick="showRegistration()">Create an account</button>
-            <button onclick="showLogin()">Sign in</button>
-        </div>
+    <div id="options" class="box">
+    <button onclick="showRegistration()">Create an account</button>
+    <button onclick="showLogin()">Sign in</button>
+         <div class="spacer"></div>
+         <div class="spacer"></div>
+    <button onclick="tryGuestMode()">Try in Guest Mode</button>
+</div>
         <div id="registration" class="box">
             <h2>Create an account</h2>
             <form id="registerForm">
@@ -352,6 +355,12 @@ input::placeholder {
                 document.getElementById('background').style.opacity = 1;
             }, 1000);
         }
+        
+        function tryGuestMode() {
+    // Redirect to a specific URL in the same window (replace 'your-url-here' with the actual URL)
+    window.location.href = 'your-url-here';
+}
+
 
         const lensFlareContainer = document.querySelector('.lens-flare-container');
         function createLensFlare() {
