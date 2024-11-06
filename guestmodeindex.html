@@ -120,6 +120,16 @@ body, html {
         background-position: center; /* Centers the image */
     }
 }
+    
+#guest-mode-container {
+    margin-top: 20px; /* Adjust this value to control the space between the box and the new button */
+    text-align: center; /* Align the button centrally */
+}
+
+#guestModeButton {
+    width: 100%; /* Ensures consistency with the other buttons */
+}
+
 .container {
     position: fixed;
     top: 0;
@@ -280,13 +290,16 @@ input::placeholder {
             <h2>Are you ready for the single greatest advancement of bathroom technology in history?</h2>
             <button onclick="showOptions()">Yes</button>
         </div>
-    <div id="options" class="box">
+<div id="options" class="box">
     <button onclick="showRegistration()">Create an account</button>
     <button onclick="showLogin()">Sign in</button>
-         <div class="spacer"></div>
-         <div class="spacer"></div>
-    <button onclick="tryGuestMode()">Try in Guest Mode</button>
 </div>
+
+<!-- Add the guest mode button below the options box -->
+<div id="guest-mode-container" class="guest-mode-container">
+    <button id="guestModeButton" onclick="tryGuestMode()">Try in Guest Mode</button>
+</div>
+        
         <div id="registration" class="box">
             <h2>Create an account</h2>
             <form id="registerForm">
