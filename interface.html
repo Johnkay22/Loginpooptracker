@@ -1105,6 +1105,19 @@ function loadUserData() {
             poopLogPlaceholder.style.display = 'none';
             poopLog.innerHTML = userData.poopLogs.join('');
             console.log("Poop Logs Set:", poopLog.innerHTML);
+
+            // Assign delete button event handlers to each log entry
+            poopLog.querySelectorAll('.delete-button').forEach(button => {
+                const logEntry = button.parentElement;
+                const durationText = logEntry.querySelector('.log-duration').textContent;
+                
+                // Extract duration from the text (assuming format like "Duration: 1h 30m")
+                const duration = parseInt(durationText.match(/\d+/g).reduce((acc, val) => acc * 60 + parseInt(val), 0));
+                const earnings = parseFloat(logEntry.querySelector('.log-earnings').textContent.replace(/[^0-9.-]+/g, ''));
+
+                // Assign confirmDelete function to the button click event
+                button.onclick = () => confirmDelete(logEntry, duration, earnings);
+            });
         }
 
         // Display and update UI elements
@@ -1115,6 +1128,7 @@ function loadUserData() {
         console.log("No user data found in localStorage.");
     }
 }
+
 
 // Standardize `users` to ensure consistent format for each account
 function standardizeUsersFormat() {
@@ -1162,6 +1176,19 @@ function saveUserData() {
             localStorage.setItem('users', JSON.stringify(users));
         }
         console.log("Updated currentUser and users with poopLogs:", currentUser, users);
+    }
+}
+    
+function confirmDelete(logEntry, duration, earnings) {
+    if (confirm("Are you sure you want to delete this log?")) {
+        // Update stats before removing log
+        stats.totalPoopTime -= duration;
+        stats.totalEarnings -= earnings;
+        stats.totalSessions--;
+
+        logEntry.remove();
+        saveUserData();
+        displayStatistics();
     }
 }
 
@@ -1766,11 +1793,9 @@ function openRatingModal() {
         <p class="log-rating">Rating: <span class="rating-value">Not rated</span></p>
     `;
 
+    // Assign delete button event handler
     const deleteButton = logEntry.querySelector('.delete-button');
-deleteButton.onclick = () => {
-    console.log('Delete button clicked for log:', logEntry); // Log when the delete button is clicked
-    confirmDelete(logEntry, seconds, earnings);
-};
+    deleteButton.onclick = () => confirmDelete(logEntry, seconds, parseFloat(earnings));
 
     if (poopLog.children.length === 0) {
         poopLogPlaceholder.style.display = 'none';
@@ -1779,6 +1804,7 @@ deleteButton.onclick = () => {
     poopLog.insertBefore(logEntry, poopLog.firstChild);
     updateStatistics(seconds, earnings);
 }
+
 </script>
 </head>
 <body>
