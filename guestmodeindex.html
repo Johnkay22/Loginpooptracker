@@ -1,6 +1,93 @@
 <html><head>
+    <!-- Title and SEO Meta Tags -->
+    <title>PoopProfit.com: Find Out How Much You Make to Poop! At Work!</title>
+    <meta name="description" content="Discover how much you get paid to poop at work! Calculate, log, and share your poop break earnings, see your stats, earn Turd Tokens, and enjoy degenerate bathroom games." />
+    <meta name="keywords" content="poop profit, get paid to poop, earnings calculator, work poop, calculate poop earnings, log bathroom breaks, profit calculator, Turd Tokens, bathroom games, degenerate, wager, earnings estimation, statistics, share on social media">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Open Graph Meta Tags for Social Sharing -->
+    <meta property="og:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?" />
+    <meta property="og:description" content="Calculate, log, and share your poop break earnings with PoopProfit.com. Earn Turd Tokens daily and enjoy degenerate bathroom games while you're pooping at work!" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.poopprofit.com" />
+    <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg" /> <!-- Ensure filename has no spaces or special characters -->
+    <meta property="og:site_name" content="PoopProfit.com" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?">
+    <meta name="twitter:description" content="Find out how much you make to poop at work! Calculate, log, and share your stats! Plus, earn Turd Tokens and play degenerate bathroom games!" />
+    <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg"> <!-- Simplify image filename as needed -->
+
+    <!-- Canonical Link -->
+    <link rel="canonical" href="https://www.poopprofit.com" />
+
+    <!-- Google Analytics Tag -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-R1E17DCKNC');
+    </script>
+
     <!-- Base URL for Relative Links -->
     <base href="https://www.poopprofit.com/">
+<!-- JSON-LD Structured Data for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PoopProfit",
+  "operatingSystem": "All",
+  "applicationCategory": "WebApplication",
+  "url": "https://www.poopprofit.com",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Poop Earnings Calculator",
+    "View and Share Statistics",
+    "Turd Token Rewards",
+    "Degenerate Bathroom Games"
+  ],
+  "description": "PoopProfit is a unique web app where you can calculate your earnings from bathroom breaks at work, see your statistics, share your results, earn rewards, and play games.",
+  "softwareVersion": "1.0.0"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "PoopProfit.com",
+  "url": "https://www.poopprofit.com",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.poopprofit.com/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Poop Profit - Calculate Your Earnings on Poop Breaks at Work.",
+  "description": "Calculate how much you make to poop at work, view and share statistics, earn rewards, and play degenerate fun games at PoopProfit.com.",
+  "url": "https://www.poopprofit.com",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://www.poopprofit.com"
+  }
+}
+</script>
+<!-- End of JSON-LD Structured Data -->
 
 <style>
 body, html {
@@ -32,21 +119,7 @@ body, html {
         background-size: cover; /* This prevents stretching */
         background-position: center; /* Centers the image */
     }
-    
-#options {
-    margin-bottom: 50px; /* To add some spacing between the options box and guest mode button */
 }
-
-#guest-mode-container {
-    text-align: center; /* Align the button centrally */
-    margin-top: 24px; /* Adjust this to control the space between the options box and the guest mode button */
-}
-
-
-#guestModeButton {
-    width: 100%; /* Ensures consistency with the other buttons */
-}
-
 .container {
     position: fixed;
     top: 0;
@@ -146,31 +219,7 @@ input::placeholder {
     opacity: 0;
     transition: opacity 0.3s ease;
 }
-.lens-flare-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 5;
-}
-.lens-flare {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(0,255,255,0.9) 0%, rgba(0,255,255,0) 70%);
-    filter: blur(8px);
-    opacity: 0;
-    animation: flare-animation 12s infinite;
-    will-change: transform, opacity;
-}
-@keyframes flare-animation {
-    0% { opacity: 0; transform: scale(0.1) translate(-50%, -50%); }
-    50% { opacity: 0.5; transform: scale(1) translate(-50%, -50%); }
-    100% { opacity: 0; transform: scale(0.1) translate(-50%, -50%); }
-}
+
 .back-arrow {
     color: #00ffff;
     font-size: 2em;
@@ -197,26 +246,127 @@ input::placeholder {
 .contact-link:hover {
     opacity: 1;
 }
+
+    /* Glitch overlay animation */
+.glitch-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.8),
+        rgba(0, 255, 255, 0.8) 2px,
+        transparent 3px,
+        transparent 5px
+    );
+    z-index: 1000;
+    pointer-events: none;
+    animation: staticLineEffect 2s linear forwards;
+}
+
+@keyframes staticLineEffect {
+    0% { top: 100%; opacity: 1; }
+    25% { top: 0%; opacity: 1; }
+    50% { top: 100%; opacity: 1; }
+    75% { top: 0%; opacity: 1; }
+    90% { top: 50%; opacity: 0.5; }
+    100% { top: 100%; opacity: 0; }
+}
+
+/* Static overlay for visual noise */
+.static-overlay, .permanent-static, .digital-background, .digital-scanline, .glitch-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+/* Permanent static effect */
+.permanent-static {
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E");
+    animation: staticNoise 0.2s infinite;
+}
+@keyframes staticNoise {
+    0%, 100% { opacity: 0.1; }
+    50% { opacity: 0.2; }
+}
+
+/* Digital grid background */
+.digital-background {
+    background: linear-gradient(0deg, transparent 95%, rgba(0, 255, 255, 0.1) 100%), linear-gradient(90deg, transparent 95%, rgba(0, 255, 255, 0.1) 100%);
+    background-size: 20px 20px;
+    animation: moveGrid 40s linear infinite;
+}
+@keyframes moveGrid {
+    0% { background-position: 0 0; }
+    100% { background-position: 20px 20px; }
+}
+
+/* Digital scanline effect */
+.digital-scanline {
+    background: linear-gradient(to bottom, transparent 50%, rgba(0, 255, 255, 0.1) 50%);
+    background-size: 100% 4px;
+    animation: moveScanline 20s linear infinite;
+}
+@keyframes moveScanline {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100%; }
+}
+    .guest-button {
+    position: fixed;
+    left: 50%;
+    top: 75%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 255, 255, 0.3);
+    color: #00ffff;
+    padding: 10px 20px;
+    border: 1px solid #00ffff;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.9em;
+    opacity: 0;
+    visibility: hidden;
+    width: auto;
+    max-width: 200px;
+    min-width: 120px;
+    transition: all 0.3s ease;
+}
+.guest-button:hover {
+    background-color: rgba(0, 255, 255, 0.5);
+    box-shadow: 0 0 10px #00ffff;
+}
 </style>
 </head>
 <body>
+    <!-- Visual effects elements -->
+<div class="glitch-overlay"></div>
+<div class="static-overlay"></div>
+<div class="permanent-static"></div>
+<div class="digital-background"></div>
+<div class="digital-scanline"></div>
+<div class="glitch-background"></div>
+
+<!-- Guest Button -->
+<button id="guestButton" class="guest-button" onclick="guestMode()">Guest Mode</button>
     <div id="background"></div>
-    <div class="lens-flare-container"></div>
     <div class="container">
         <div id="intro" class="box">
             <h2>Are you ready for the single greatest advancement of bathroom technology in history?</h2>
             <button onclick="showOptions()">Yes</button>
         </div>
-<div id="options" class="box">
-    <button onclick="showRegistration()">Create an account</button>
-    <button onclick="showLogin()">Sign in</button>
-</div>
-
-<!-- Guest mode button container, appearing with the options -->
-<div id="guest-mode-container" style="visibility: hidden; opacity: 0;">
-    <button id="guestModeButton" onclick="tryGuestMode()">Try in Guest Mode</button>
-</div>
-    
+        <div id="options" class="box">
+            <button onclick="showRegistration()">Create an account</button>
+            <button onclick="showLogin()">Sign in</button>
+        </div>
         <div id="registration" class="box">
             <h2>Create an account</h2>
             <form id="registerForm">
@@ -267,9 +417,9 @@ input::placeholder {
     fadeOut('login');
     setTimeout(() => {
         fadeIn('options');
-        fadeIn('guest-mode-container'); // Ensure the guest mode button also fades in when the options appear
+        fadeIn('guestButton');  // Show guest button
     }, 1000);
-}
+        }
 
         function showRegistration() {
             fadeOut('options');
@@ -286,36 +436,19 @@ input::placeholder {
                 document.getElementById('background').style.opacity = 1;
             }, 1000);
         }
-        
-        function tryGuestMode() {
-    // Redirect to a specific URL in the same window (replace 'your-url-here' with the actual URL)
-    window.location.href = 'your-url-here';
-}
-
-
-        const lensFlareContainer = document.querySelector('.lens-flare-container');
-        function createLensFlare() {
-            const flare = document.createElement('div');
-            flare.className = 'lens-flare';
-            flare.style.left = Math.random() * window.innerWidth + 'px';
-            flare.style.top = Math.random() * window.innerHeight + 'px';
-            flare.style.animationDelay ='0s';
-            lensFlareContainer.appendChild(flare);
-
-            flare.addEventListener('animationend', () => {
-                flare.remove();
-            });
-        }
-
-        createLensFlare();
-        createLensFlare();
-        setInterval(createLensFlare, 3000);
 
         window.onload = function() {
-            setTimeout(() => {
-                fadeIn('intro');
-            }, 1000);
-        };
+    setTimeout(() => {
+        fadeIn('intro');
+        document.querySelector('.permanent-static').style.opacity = '0.15';
+        document.querySelector('.digital-background').style.opacity = '0.5';
+        document.querySelector('.digital-scanline').style.opacity = '1';
+        document.querySelector('.glitch-background').style.opacity = '1';
+    }, 2000);
+};
+        function guestMode() {
+    window.location.href = '/guest-dashboard.html'; // Update with your target URL
+        }
 // Register form submission
 document.getElementById('registerForm').addEventListener('submit', function(e) {
     e.preventDefault();
