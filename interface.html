@@ -1349,7 +1349,7 @@ function filterStatsByDateRange(startDate, endDate) {
     const end = endDate instanceof Date ? endDate : new Date(endDate);
     end.setHours(23, 59, 59, 999); // Set end to the end of the day
 
-    // Log start and end dates for debugging
+    // Log start and end dates for debugging purposes
     console.log(`Filtering logs between: ${start} and ${end}`);
 
     // Initialize the filtered statistics object
@@ -1372,8 +1372,8 @@ function filterStatsByDateRange(startDate, endDate) {
         // Log the current entry being processed
         console.log(`Processing entry ${index + 1} with date: ${entryDate}`);
 
-        // Check if the log entry date falls within the specified date range
-        if (entryDate >= start && entryDate <= end) {
+        // Ensure the entry date falls within the specified date range (inclusive)
+        if (entryDate.getTime() >= start.getTime() && entryDate.getTime() <= end.getTime()) {
             console.log(`Entry ${index + 1} is within the date range.`);
 
             // Extract duration and convert to seconds
@@ -1397,16 +1397,17 @@ function filterStatsByDateRange(startDate, endDate) {
             if (!filteredStats.lastSessionDate || entryDate > filteredStats.lastSessionDate) {
                 filteredStats.lastSessionDate = entryDate;
             }
+        } else {
+            console.log(`Entry ${index + 1} is outside the date range.`);
         }
     });
 
-    // Log final filtered statistics for debugging
+    // Log final filtered statistics for debugging purposes
     console.log("Filtered Statistics:", filteredStats);
 
     // Display the filtered statistics
     displayStatistics(true, filteredStats);
 }
-
 
 function confirmDelete(logEntry, duration, earnings) {
     console.log('Delete button clicked'); // Log when the function is called
