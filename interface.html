@@ -1344,11 +1344,10 @@ function updateStatsChart(statsData) {
 function filterStatsByDateRange(startDate, endDate) {
     // Convert startDate and endDate to Date objects if they are not already
     const start = startDate instanceof Date ? startDate : new Date(startDate);
-    const end = endDate instanceof Date ? endDate : new Date(endDate);
+    start.setHours(0, 0, 0, 0); // Set start to the beginning of the day (00:00:00.000)
 
-    // Remove time component from start and end for comparison (set to midnight)
-    start.setHours(0, 0, 0, 0);
-    end.setHours(0, 0, 0, 0);
+    const end = endDate instanceof Date ? endDate : new Date(endDate);
+    end.setHours(23, 59, 59, 999); // Set end to the end of the day (23:59:59.999)
 
     // Log start and end dates for debugging purposes
     console.log(`Filtering logs between: ${start} and ${end}`);
@@ -1370,14 +1369,11 @@ function filterStatsByDateRange(startDate, endDate) {
         const dateText = entry.querySelector('.log-date').textContent;
         const entryDate = new Date(dateText);
 
-        // Remove time component from entry date for comparison
-        entryDate.setHours(0, 0, 0, 0);
-
         // Log the current entry being processed
         console.log(`Processing entry ${index + 1} with date: ${entryDate}`);
 
-        // Check if the entry date falls within the specified date range (inclusive)
-        if (entryDate >= start && entryDate <= end) {
+        // Check if the log entry date falls within the specified date range (inclusive)
+        if (entryDate.getTime() >= start.getTime() && entryDate.getTime() <= end.getTime()) {
             console.log(`Entry ${index + 1} is within the date range.`);
 
             // Extract duration and convert to seconds
@@ -1412,6 +1408,7 @@ function filterStatsByDateRange(startDate, endDate) {
     // Display the filtered statistics
     displayStatistics(true, filteredStats);
 }
+
 
 
 function confirmDelete(logEntry, duration, earnings) {
