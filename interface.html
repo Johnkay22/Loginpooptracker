@@ -1342,11 +1342,17 @@ function updateStatsChart(statsData) {
 }
 
 function filterStatsByDateRange(startDate, endDate) {
-    const start = new Date(startDate);
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(endDate);
-    end.setHours(23, 59, 59, 999);
+    // Convert startDate and endDate to Date objects if they are not already
+    const start = startDate instanceof Date ? startDate : new Date(startDate);
+    start.setHours(0, 0, 0, 0); // Set start to the beginning of the day
 
+    const end = endDate instanceof Date ? endDate : new Date(endDate);
+    end.setHours(23, 59, 59, 999); // Set end to the end of the day
+
+    // Log start and end dates for debugging
+    console.log(`Filtering logs between: ${start} and ${end}`);
+
+    // Initialize the filtered statistics object
     const filteredStats = {
         totalSessions: 0,
         totalPoopTime: 0,
@@ -1355,24 +1361,36 @@ function filterStatsByDateRange(startDate, endDate) {
         lastSessionDate: null
     };
 
+    // Get all log entries from the DOM (assuming poopLog is a container element with log entries)
     const logEntries = Array.from(poopLog.children);
-    
-    logEntries.forEach(entry => {
+
+    // Iterate over each log entry to filter by date range
+    logEntries.forEach((entry, index) => {
         const dateText = entry.querySelector('.log-date').textContent;
         const entryDate = new Date(dateText);
-        
+
+        // Log the current entry being processed
+        console.log(`Processing entry ${index + 1} with date: ${entryDate}`);
+
+        // Check if the log entry date falls within the specified date range
         if (entryDate >= start && entryDate <= end) {
+            console.log(`Entry ${index + 1} is within the date range.`);
+
+            // Extract duration and convert to seconds
             const durationText = entry.querySelector('.log-duration').textContent;
             const [hours, minutes, seconds] = durationText.match(/\d+/g).map(Number);
             const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
-            
+
+            // Extract earnings and convert to a numerical value
             const earningsText = entry.querySelector('.log-earnings').textContent;
             const earnings = parseFloat(earningsText.replace(/[^0-9.-]+/g, ''));
-            
+
+            // Update filtered statistics
             filteredStats.totalSessions++;
             filteredStats.totalPoopTime += totalSeconds;
             filteredStats.totalEarnings += earnings;
-            
+
+            // Update first and last session dates
             if (!filteredStats.firstSessionDate || entryDate < filteredStats.firstSessionDate) {
                 filteredStats.firstSessionDate = entryDate;
             }
@@ -1382,8 +1400,13 @@ function filterStatsByDateRange(startDate, endDate) {
         }
     });
 
+    // Log final filtered statistics for debugging
+    console.log("Filtered Statistics:", filteredStats);
+
+    // Display the filtered statistics
     displayStatistics(true, filteredStats);
 }
+
 
 function confirmDelete(logEntry, duration, earnings) {
     console.log('Delete button clicked'); // Log when the function is called
@@ -1681,14 +1704,22 @@ function shareViaSMS(message) {
     });
 
     function filterStatsByDay(date) {
-        const startOfDay = new Date(date);
-        startOfDay.setHours(0, 0, 0, 0);
-        
-        const endOfDay = new Date(date);
-        endOfDay.setHours(23, 59, 59, 999);
-        
-        filterStatsByDateRange(startOfDay.toISOString().split('T')[0], endOfDay.toISOString().split('T')[0]);
-    }
+    // Set the start and end of the day for the given date
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0); // Start of the day (00:00:00.000)
+
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999); // End of the day (23:59:59.999)
+
+    // Log start and end times for debugging
+    console.log("Filtering stats for the day:", date);
+    console.log("Start of Day:", startOfDay);
+    console.log("End of Day:", endOfDay);
+
+    // Call filterStatsByDateRange to filter logs for the specific day
+    filterStatsByDateRange(startOfDay, endOfDay);
+}
+
 
     filterButton.addEventListener('click', () => {
         const startDate = startDateInput.value;
