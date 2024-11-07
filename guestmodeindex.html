@@ -119,12 +119,16 @@ body, html {
         background-size: cover; /* This prevents stretching */
         background-position: center; /* Centers the image */
     }
-}
     
-#guest-mode-container {
-    margin-top: 20px; /* Adjust this value to control the space between the box and the new button */
-    text-align: center; /* Align the button centrally */
+#options {
+    margin-bottom: 20px; /* To add some spacing between the options box and guest mode button */
 }
+
+#guest-mode-container {
+    text-align: center; /* Align the button centrally */
+    margin-top: 8px; /* Adjust this to control the space between the options box and the guest mode button */
+}
+
 
 #guestModeButton {
     width: 100%; /* Ensures consistency with the other buttons */
@@ -295,11 +299,11 @@ input::placeholder {
     <button onclick="showLogin()">Sign in</button>
 </div>
 
-<!-- Add the guest mode button below the options box -->
-<div id="guest-mode-container" class="guest-mode-container">
+<!-- Guest mode button container, appearing with the options -->
+<div id="guest-mode-container" style="visibility: hidden; opacity: 0;">
     <button id="guestModeButton" onclick="tryGuestMode()">Try in Guest Mode</button>
 </div>
-        
+    
         <div id="registration" class="box">
             <h2>Create an account</h2>
             <form id="registerForm">
@@ -345,13 +349,14 @@ input::placeholder {
         }
 
         function showOptions() {
-            fadeOut('intro');
-            fadeOut('registration');
-            fadeOut('login');
-            setTimeout(() => {
-                fadeIn('options');
-            }, 1000);
-        }
+    fadeOut('intro');
+    fadeOut('registration');
+    fadeOut('login');
+    setTimeout(() => {
+        fadeIn('options');
+        fadeIn('guest-mode-container'); // Ensure the guest mode button also fades in when the options appear
+    }, 1000);
+}
 
         function showRegistration() {
             fadeOut('options');
