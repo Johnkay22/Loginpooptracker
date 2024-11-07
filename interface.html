@@ -1344,10 +1344,11 @@ function updateStatsChart(statsData) {
 function filterStatsByDateRange(startDate, endDate) {
     // Convert startDate and endDate to Date objects if they are not already
     const start = startDate instanceof Date ? startDate : new Date(startDate);
-    start.setHours(0, 0, 0, 0); // Set start to the beginning of the day
-
     const end = endDate instanceof Date ? endDate : new Date(endDate);
-    end.setHours(23, 59, 59, 999); // Set end to the end of the day
+
+    // Remove time component from start and end for comparison (set to midnight)
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
 
     // Log start and end dates for debugging purposes
     console.log(`Filtering logs between: ${start} and ${end}`);
@@ -1369,11 +1370,14 @@ function filterStatsByDateRange(startDate, endDate) {
         const dateText = entry.querySelector('.log-date').textContent;
         const entryDate = new Date(dateText);
 
+        // Remove time component from entry date for comparison
+        entryDate.setHours(0, 0, 0, 0);
+
         // Log the current entry being processed
         console.log(`Processing entry ${index + 1} with date: ${entryDate}`);
 
-        // Ensure the entry date falls within the specified date range (inclusive)
-        if (entryDate.getTime() >= start.getTime() && entryDate.getTime() <= end.getTime()) {
+        // Check if the entry date falls within the specified date range (inclusive)
+        if (entryDate >= start && entryDate <= end) {
             console.log(`Entry ${index + 1} is within the date range.`);
 
             // Extract duration and convert to seconds
@@ -1392,10 +1396,10 @@ function filterStatsByDateRange(startDate, endDate) {
 
             // Update first and last session dates
             if (!filteredStats.firstSessionDate || entryDate < filteredStats.firstSessionDate) {
-                filteredStats.firstSessionDate = entryDate;
+                filteredStats.firstSessionDate = new Date(dateText);
             }
             if (!filteredStats.lastSessionDate || entryDate > filteredStats.lastSessionDate) {
-                filteredStats.lastSessionDate = entryDate;
+                filteredStats.lastSessionDate = new Date(dateText);
             }
         } else {
             console.log(`Entry ${index + 1} is outside the date range.`);
@@ -1408,6 +1412,7 @@ function filterStatsByDateRange(startDate, endDate) {
     // Display the filtered statistics
     displayStatistics(true, filteredStats);
 }
+
 
 function confirmDelete(logEntry, duration, earnings) {
     console.log('Delete button clicked'); // Log when the function is called
