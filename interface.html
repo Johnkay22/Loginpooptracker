@@ -1809,37 +1809,24 @@ function clearActiveFilters() {
 function openRatingModal() {
     const ratingModal = document.getElementById('ratingModal');
     const congratsMessage = document.getElementById('congratsMessage');
-    const poopEmojis = document.querySelectorAll('.poopEmoji'); // Poop emojis for rating
+    const poopEmojis = document.querySelectorAll('.poopEmoji');
     
-    // Calculate earnings and update congratulations message
     const earnings = ((hourlyWage / 3600) * seconds).toFixed(2);
     congratsMessage.textContent = `Congratulations! You just earned $${earnings}!`;
-
-    // Show the rating modal
+    
     ratingModal.style.display = 'block';
     selectedRating = 0;
-
+    
     poopEmojis.forEach(emoji => {
-        emoji.style.opacity = '0.5';  // Reset emoji opacity to indicate no rating is selected yet
+        emoji.style.opacity = '0.5';
     });
 
-    // Add Turd Token notification if it's the first session of the day
     if (isFirstSessionOfDay()) {
         turdTokens++;
         updateTurdTokenDisplay();
-
-        // Create and add the token award notification to the rating modal
-        const tokenNotification = document.createElement('div');
-        tokenNotification.className = 'token-award-notification';
-        tokenNotification.textContent = '🎉 You earned 1 Turd Token for your first poop of the day!';
-        ratingModal.appendChild(tokenNotification);
-
-        setTimeout(() => {
-            tokenNotification.remove();
-        }, 3000);
+        showTokenAwardNotification();
     }
 
-    // Log entry update logic remains unchanged
     const currentDate = new Date().toLocaleString();
     const logEntry = document.createElement('div');
     logEntry.className = 'log-entry';
@@ -1851,16 +1838,15 @@ function openRatingModal() {
         <p class="log-rating">Rating: <span class="rating-value">Not rated</span></p>
     `;
 
-    // Add delete functionality for the log entry
+    // Assign delete button event handler
     const deleteButton = logEntry.querySelector('.delete-button');
     deleteButton.onclick = () => confirmDelete(logEntry, seconds, parseFloat(earnings));
 
-    // Add the log entry to the poop log section
     if (poopLog.children.length === 0) {
         poopLogPlaceholder.style.display = 'none';
     }
+    
     poopLog.insertBefore(logEntry, poopLog.firstChild);
-
     updateStatistics(seconds, earnings);
 }
 
