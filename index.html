@@ -2,38 +2,209 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>PoopProfit: Log in or Create an Account</title>
+  <title>PoopProfit • Sign in or Create an Account</title>
   <meta name="description" content="Create a PoopProfit account or sign in to track how much you get paid to poop at work and earn Turd Tokens." />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <link rel="canonical" href="https://www.poopprofit.com" />
   <meta property="og:title" content="PoopProfit: Get Paid To Poop" />
   <meta property="og:description" content="Calculate, log, and share your poop break earnings. Earn Turd Tokens and play bathroom games." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg" />
-  <link rel="canonical" href="https://www.poopprofit.com" />
   <style>
+    /* Layout */
     html,body{height:100%;margin:0}
-    body{font-family:Arial,Helvetica,sans-serif;color:#00ffff;background:#000;overflow:hidden}
+    body{font-family:Arial,Helvetica,sans-serif;background:#000;color:#00ffff;overflow:hidden}
 
-    /* Background image: visible, not clickable */
-    #background{
+    /* Non-interactive background: cannot steal taps */
+    #bg{
       position:fixed;inset:0;
-      background-image:url('https://www.poopprofit.com/WelcomeMobile_20241025_072029_0000.jpg');
-      background-size:cover;background-position:center;background-repeat:no-repeat;
-      opacity:.95;transition:opacity .6s;
-      z-index:0;
-      pointer-events:none; /* fix: do not block taps */
+      background:#000 url('https://www.poopprofit.com/WelcomeMobile_20241025_072029_0000.jpg') center/cover no-repeat;
+      opacity:.95;pointer-events:none;z-index:0;
     }
     @media (min-width:768px){
-      #background{background-image:url('https://www.poopprofit.com/WelcomeDesktop%20(1).png')}
+      #bg{background-image:url('https://www.poopprofit.com/WelcomeDesktop%20(1).png')}
     }
 
-    .container{
+    /* Foreground container sits above everything */
+    .stage{
       position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-      z-index:10;padding:16px
+      padding:16px;z-index:20;
     }
-    .box{
+
+    /* Card panels */
+    .panel{
       width:92%;max-width:420px;
-      background:rgba(0,0,0,.78);
+      background:rgba(0,0,0,.8);
+      border:1px solid #00ffff;border-radius:12px;
+      box-shadow:0 0 22px rgba(0,255,255,.55);
+      padding:22px;
+      visibility:hidden;opacity:0;transform:translateY(8px);
+      transition:opacity .18s,transform .18s,visibility .18s;
+    }
+    .panel.active{visibility:visible;opacity:1;transform:none}
+
+    h1,h2{margin:0 0 14px;text-align:center;letter-spacing:.5px}
+    p.lead{margin:6px 0 16px;text-align:center;color:#9ff}
+
+    /* Buttons */
+    .btn{
+      display:inline-block;width:100%;
+      padding:12px 16px;border-radius:8px;border:0;cursor:pointer;
+      font-weight:800;text-align:center;
+    }
+    .btn-primary{background:#00ffff;color:#003c3c}
+    .btn-ghost{background:transparent;border:1px solid #00ffff;color:#00ffff}
+    .btn:hover{filter:brightness(1.08)}
+
+    .stack{display:flex;flex-direction:column;gap:10px}
+
+    /* Forms */
+    form{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+    input{
+      padding:12px;border:1px solid #00ffff;border-radius:8px;
+      background:rgba(0,255,255,.08);color:#00ffff
+    }
+    input::placeholder{color:#9ff}
+    .msg{min-height:18px;font-size:.9em;text-align:center}
+    .error{color:#ff5252}
+    .ok{color:#5CFF7A}
+
+    .back{margin-top:8px;text-align:center;color:#9ff;cursor:pointer}
+
+    /* Ensure no other full-screen element can block clicks */
+    [data-noninteractive="true"]{pointer-events:none}
+  </style>
+</head>
+<body>
+  <!-- Decorative background cannot receive clicks -->
+  <div id="bg" aria-hidden="true"></div>
+
+  <main class="stage" role="main">
+    <!-- Intro -->
+    <section id="intro" class="panel active" aria-hidden="false">
+      <h2>Are you ready for the greatest bathroom innovation in history</h2>
+      <p class="lead">Tap Yes to begin</p>
+      <button id="introYes" class="btn btn-primary" type="button">Yes</button>
+    </section>
+
+    <!-- Choice -->
+    <section id="choice" class="panel" aria-hidden="true">
+      <div class="stack">
+        <button id="toRegister" class="btn btn-primary" type="button">Create an account</button>
+        <button id="toLogin" class="btn btn-ghost" type="button">Sign in</button>
+      </div>
+    </section>
+
+    <!-- Register -->
+    <section id="registerPanel" class="panel" aria-hidden="true">
+      <h2>Create an account</h2>
+      <form id="registerForm" novalidate>
+        <input name="email" type="email" placeholder="Email" required autocomplete="email" />
+        <input name="password" type="password" placeholder="Password" required autocomplete="new-password" />
+        <input name="confirm" type="password" placeholder="Confirm password" required autocomplete="new-password" />
+        <div id="regErr" class="msg error"></div>
+        <div id="regOk" class="msg ok"></div>
+        <button class="btn btn-primary" type="submit">Register</button>
+      </form>
+      <div id="backFromRegister" class="back">Back</div>
+    </section>
+
+    <!-- Login -->
+    <section id="loginPanel" class="panel" aria-hidden="true">
+      <h2>Welcome back</h2>
+      <form id="loginForm" novalidate>
+        <input name="email" type="email" placeholder="Email" required autocomplete="email" />
+        <input name="password" type="password" placeholder="Password" required autocomplete="current-password" />
+        <div id="logErr" class="msg error"></div>
+        <div id="logOk" class="msg ok"></div>
+        <button class="btn btn-primary" type="submit">Sign in</button>
+      </form>
+      <div id="backFromLogin" class="back">Back</div>
+    </section>
+  </main>
+
+  <script>
+    /* Utilities */
+    function qs(sel,root=document){return root.querySelector(sel)}
+    function qsa(sel,root=document){return Array.from(root.querySelectorAll(sel))}
+    function show(id){
+      qsa('.panel').forEach(p=>{
+        const on = p.id===id
+        p.classList.toggle('active', on)
+        p.setAttribute('aria-hidden', on?'false':'true')
+      })
+    }
+    function getUsers(){ try{return JSON.parse(localStorage.getItem('users')||'{}')}catch(_){return{}} }
+    function setUsers(val){ localStorage.setItem('users', JSON.stringify(val)) }
+    function setCurrentUser(email,data){ localStorage.setItem('currentUser', JSON.stringify({email,data})) }
+
+    /* Bind after DOM ready to avoid race with HTML */
+    window.addEventListener('DOMContentLoaded', () => {
+      const introYes = qs('#introYes')
+      const toRegister = qs('#toRegister')
+      const toLogin = qs('#toLogin')
+      const backFromRegister = qs('#backFromRegister')
+      const backFromLogin = qs('#backFromLogin')
+      const registerForm = qs('#registerForm')
+      const loginForm = qs('#loginForm')
+
+      introYes.addEventListener('click', () => show('choice'))
+      toRegister.addEventListener('click', () => show('registerPanel'))
+      toLogin.addEventListener('click', () => show('loginPanel'))
+      backFromRegister.addEventListener('click', () => show('choice'))
+      backFromLogin.addEventListener('click', () => show('choice'))
+
+      registerForm.addEventListener('submit', (e) => {
+        e.preventDefault()
+        const email = registerForm.email.value.trim().toLowerCase()
+        const pw = registerForm.password.value
+        const cpw = registerForm.confirm.value
+        const users = getUsers()
+        const err = qs('#regErr'), ok = qs('#regOk')
+        err.textContent = ''; ok.textContent=''
+
+        if(!email || !pw || !cpw){ err.textContent='All fields are required'; return }
+        if(pw !== cpw){ err.textContent='Passwords do not match'; return }
+        if(users[email]){ err.textContent='Email already registered'; return }
+
+        users[email] = {
+          password: pw,
+          data: {
+            hourlyWage:0,
+            annualSalary:'',
+            weeklyHours:'',
+            hourlyWageInput:'',
+            wageToggle:false,
+            poopLogs:[],
+            turdTokens:0,
+            lastAwardDate:null
+          }
+        }
+        setUsers(users)
+        setCurrentUser(email, users[email].data)
+        ok.textContent = 'Registration successful. Redirecting…'
+        setTimeout(()=>{ window.location.href = 'interface.html' }, 600)
+      })
+
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault()
+        const email = loginForm.email.value.trim().toLowerCase()
+        const pw = loginForm.password.value
+        const users = getUsers()
+        const err = qs('#logErr'), ok = qs('#logOk')
+        err.textContent=''; ok.textContent=''
+
+        if(!users[email] || users[email].password !== pw){
+          err.textContent = 'Invalid email or password'; return
+        }
+        setCurrentUser(email, users[email].data)
+        ok.textContent = 'Login successful. Redirecting…'
+        setTimeout(()=>{ window.location.href = 'interface.html' }, 600)
+      })
+    })
+  </script>
+</body>
+</html>
       border:1px solid #00ffff;border-radius:10px;
       box-shadow:0 0 18px rgba(0,255,255,.55);
       padding:22px;
