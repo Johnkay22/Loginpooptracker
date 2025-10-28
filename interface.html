@@ -977,6 +977,1705 @@
     background-color: var(--secondary-color); /* Customizable background color */
     border: none;
     border-radius: 75%; /* Circular button style */
+    width: 75px
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let annualSalaryInput, weeklyHoursInput, wageToggle, hourlyWageField, hourlyWageDisplay;
+let salaryHoursInputs, hourlyWageInput, toggleLabel;
+let timerInterval, isTimerRunning = false, seconds = 0;
+let hourlyWage = 0;
+let poopLogs = [];
+let turdTokens = 0;
+let lastAwardDate = null;
+let chart;
+const poopLog = document.getElementById('poopLog');
+const poopLogPlaceholder = document.getElementById('poopLogPlaceholder');
+const timerDisplay = document.getElementById('timerDisplay');
+const earningsDisplay = document.getElementById('earningsDisplay');
+const timerButton = document.getElementById('timerButton');
+const poopEmoji = document.querySelector('.poop-emoji');
+
+function formatTime(seconds) {
+    const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+    const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${h}:${m}:${s}`;
+}
+
+function updateHourlyWage() {
+    if (wageToggle.checked) {
+        hourlyWage = parseFloat(hourlyWageField.value) || 0;
+    } else {
+        const annualSalary = parseFloat(annualSalaryInput.value) || 0;
+        const weeklyHours = parseFloat(weeklyHoursInput.value) || 0;
+        hourlyWage = (annualSalary / 52 / weeklyHours) || 0;
+    }
+    hourlyWageDisplay.textContent = `Your hourly wage: $${hourlyWage.toFixed(2)}`;
+    saveUserData();
+}
+
+function startTimer() {
+    if (!isTimerRunning) {
+        isTimerRunning = true;
+        timerButton.textContent = 'Stop Pooping';
+        poopEmoji.classList.add('wiggle');
+        timerInterval = setInterval(() => {
+            seconds++;
+            timerDisplay.textContent = formatTime(seconds);
+            const earnings = ((hourlyWage / 3600) * seconds).toFixed(2);
+            earningsDisplay.textContent = `Current earnings: $${earnings}`;
+        }, 1000);
+    } else {
+        isTimerRunning = false;
+        clearInterval(timerInterval);
+        timerButton.textContent = 'Start Pooping';
+        poopEmoji.classList.remove('wiggle');
+        openRatingModal(); // Assume this handles ending the session and rating
+        seconds = 0;
+        timerDisplay.textContent = '00:00:00';
+        earningsDisplay.textContent = '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    annualSalaryInput = document.getElementById('annualSalary');
+    weeklyHoursInput = document.getElementById('weeklyHours');
+    wageToggle = document.getElementById('wageToggle');
+    hourlyWageField = document.getElementById('hourlyWageField');
+    hourlyWageDisplay = document.getElementById('hourlyWage');
+    salaryHoursInputs = document.getElementById('salaryHoursInputs');
+    hourlyWageInput = document.getElementById('hourlyWageInput');
+    toggleLabel = document.getElementById('toggleLabel');
+
+    checkLoginStatus();
+    loadUserData();
+    updateHourlyWage();
+    displayStatistics();
+
+    annualSalaryInput.addEventListener('input', updateHourlyWage);
+    weeklyHoursInput.addEventListener('input', updateHourlyWage);
+    hourlyWageField.addEventListener('input', updateHourlyWage);
+    
+    const allTimeStatsBtn = document.getElementById('allTimeStats');
+    const todayStatsBtn = document.getElementById('todayStats');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const filterButton = document.getElementById('filterStats');
+    const resetButton = document.getElementById('resetStats');
+
+    const ratingModal = document.getElementById('ratingModal');
+    const congratsMessage = document.getElementById('congratsMessage');
+    const poopEmojis = document.querySelectorAll('.poopEmoji');
+    const submitRatingButton = document.getElementById('submitRatingButton');
+    let selectedRating = 0;
+
+    poopEmojis.forEach(emoji => {
+        emoji.addEventListener('click', () => {
+            selectedRating = parseInt(emoji.dataset.rating);
+            poopEmojis.forEach((e, index) => {
+                e.style.opacity = index < selectedRating ? '1' : '0.5';
+            });
+        });
+    });
+
+    submitRatingButton.addEventListener('click', () => {
+    if (selectedRating > 0) {
+        poopLogs[poopLogs.length - 1].rating = '💩'.repeat(selectedRating);
+        ratingModal.style.display = 'none';
+        
+        // Get the earnings from the latest poop log
+        const earnings = poopLogs[poopLogs.length - 1].earnings.toFixed(2);
+
+        renderPoopLogs();
+        saveUserData();
+        // Show the share modal with accurate earnings
+        openShareModal(earnings, selectedRating);
+    }
+});
+
+
+function openShareModal(earnings, rating) {
+    const ratingText = rating > 0 ? '💩'.repeat(rating) : '';
+    const message = `I just had a ${ratingText}-poop and earned $${earnings}! Find out how much you make to poop at www.poopprofit.com!`;
+
+    const shareModal = document.getElementById('shareModal');
+    shareModal.style.display = 'block';
+
+    // Set up event listeners for the sharing buttons
+    document.getElementById('twitterShareButton').onclick = () => shareOnTwitter(message);
+    document.getElementById('facebookShareButton').onclick = () => shareOnFacebook(message);
+    document.getElementById('smsShareButton').onclick = () => shareViaSMS(message);
+}
+
+function shareOnTwitter(message) {
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
+    window.open(twitterUrl, '_blank');
+}
+
+function shareOnFacebook(message) {
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://www.poopprofit.com')}&quote=${encodeURIComponent(message)}`;
+    window.open(facebookUrl, '_blank');
+}
+
+function shareViaSMS(message) {
+    window.open(`sms:?&body=${encodeURIComponent(message)}`);
+}
+
+    timerButton.addEventListener('click', startTimer);
+
+    todayStatsBtn.addEventListener('click', () => {
+        clearActiveFilters();
+        todayStatsBtn.classList.add('active');
+        filterStatsByDay(new Date());
+    });
+
+    allTimeStatsBtn.addEventListener('click', () => {
+        clearActiveFilters();
+        allTimeStatsBtn.classList.add('active');
+        displayStatistics();
+    });
+
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabId = tab.getAttribute('data-tab');
+            const activeContent = document.querySelector('.tab-content.active');
+            const newContent = document.getElementById(`${tabId}Tab`);
+
+            activeContent.classList.add('fade-out');
+
+            setTimeout(() => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active', 'fade-out'));
+                
+                tab.classList.add('active');
+                newContent.classList.add('active', 'fade-out');
+
+                void newContent.offsetWidth;
+
+                newContent.classList.remove('fade-out');
+            }, 300); 
+        });
+    });
+
+    function filterStatsByDay(date) {
+    // Set the start and end of the day for the given date
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0); // Start of the day (00:00:00.000)
+
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999); // End of the day (23:59:59.999)
+
+    // Log start and end times for debugging
+    console.log("Filtering stats for the day:", date);
+    console.log("Start of Day:", startOfDay);
+    console.log("End of Day:", endOfDay);
+
+    // Call filterStatsByDateRange to filter logs for the specific day
+    filterStatsByDateRange(startOfDay, endOfDay);
+}
+
+
+    filterButton.addEventListener('click', () => {
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+        if (startDate && endDate) {
+            filterStatsByDateRange(startDate, endDate);
+        } else {
+            alert('Please select both start and end dates.');
+        }
+    });
+
+    resetButton.addEventListener('click', () => {
+        clearActiveFilters();
+        displayStatistics();
+    });
+
+    const turdTokenBalance = document.getElementById('turdTokenBalance');
+    const turdTokenWallet = document.getElementById('turdTokenWallet');
+    const walletBalance = document.getElementById('walletBalance');
+
+    turdTokenBalance.addEventListener('click', () => {
+        turdTokenWallet.style.display = 'block';
+        walletBalance.textContent = turdTokens;
+    });
+
+    turdTokenWallet.querySelector('.close').addEventListener('click', () => {
+        turdTokenWallet.style.display = 'none';
+    });
+
+    wageToggle.addEventListener('change', function() {
+        if (this.checked) {
+            salaryHoursInputs.style.display = 'none';
+            hourlyWageInput.style.display = 'block';
+            toggleLabel.textContent = 'Hourly Wage';
+        } else {
+            salaryHoursInputs.style.display = 'block';
+            hourlyWageInput.style.display = 'none';
+            toggleLabel.textContent = 'Salary & Hours';
+        }
+        updateHourlyWage();
+    });
+
+    window.onclick = function(event) {
+        if (event.target == ratingModal) {
+            ratingModal.style.display = "none";
+        }
+        if (event.target == document.getElementById('shareModal')) {
+            document.getElementById('shareModal').style.display = 'none';
+        }
+        if (event.target == document.getElementById('turdTokenWallet')) {
+            document.getElementById('turdTokenWallet').style.display = 'none';
+        }
+        if (event.target == document.querySelector('.confirm-dialog')) {
+            document.querySelector('.confirm-dialog').style.display = 'none';
+        }
+    }
+});
+
+function checkLoginStatus() {
+    if (!localStorage.getItem('currentUser')) {
+        window.location.href = '/index.html';
+    }
+}
+
+function loadUserData() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser && currentUser.data) {
+        poopLogs = currentUser.data.poopLogs || [];
+        turdTokens = currentUser.data.turdTokens || 0;
+        lastAwardDate = currentUser.data.lastAwardDate || null;
+        annualSalaryInput.value = currentUser.data.annualSalary || '';
+        weeklyHoursInput.value = currentUser.data.weeklyHours || '';
+        hourlyWageField.value = currentUser.data.hourlyWageInput || '';
+        wageToggle.checked = currentUser.data.wageToggle || false;
+        if (wageToggle.checked) {
+            salaryHoursInputs.style.display = 'none';
+            hourlyWageInput.style.display = 'block';
+            toggleLabel.textContent = 'Hourly Wage';
+        } else {
+            salaryHoursInputs.style.display = 'block';
+            hourlyWageInput.style.display = 'none';
+            toggleLabel.textContent = 'Salary & Hours';
+        }
+        renderPoopLogs();
+        updateTurdTokenDisplay();
+    }
+}
+
+function saveUserData() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser) {
+        currentUser.data.poopLogs = poopLogs;
+        currentUser.data.turdTokens = turdTokens;
+        currentUser.data.lastAwardDate = lastAwardDate;
+        currentUser.data.annualSalary = annualSalaryInput.value;
+        currentUser.data.weeklyHours = weeklyHoursInput.value;
+        currentUser.data.hourlyWageInput = hourlyWageField.value;
+        currentUser.data.wageToggle = wageToggle.checked;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        const users = JSON.parse(localStorage.getItem('users'));
+        if (users && users[currentUser.email]) {
+            users[currentUser.email].data = currentUser.data;
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+    }
+}
+
+function isFirstSessionOfDay() {
+    const today = new Date().toDateString();
+    return !lastAwardDate || new Date(lastAwardDate).toDateString() !== today;
+}
+
+function showTokenAwardNotification() {
+    alert('You earned a Turd Token for your first poop today!');
+}
+
+function renderPoopLogs() {
+    poopLog.innerHTML = '';
+    poopLogs.forEach((log, index) => {
+        const logEntry = document.createElement('div');
+        logEntry.className = 'log-entry';
+        logEntry.innerHTML = `
+            <button class="delete-button">×</button>
+            <p class="log-date">${new Date(log.date).toLocaleString()}</p>
+            <p class="log-duration">Duration: ${formatTime(log.duration)}</p>
+            <p class="log-earnings">Earnings: $${log.earnings.toFixed(2)}</p>
+            <p class="log-rating">Rating: <span class="rating-value">${log.rating || 'Not rated'}</span></p>
+        `;
+        const deleteButton = logEntry.querySelector('.delete-button');
+        deleteButton.onclick = () => confirmDelete(logEntry);
+        logEntry.dataset.index = index;
+        poopLog.appendChild(logEntry);
+    });
+    poopLogPlaceholder.style.display = poopLogs.length === 0 ? 'block' : 'none';
+}
+
+function confirmDelete(logEntry) {
+    const dialog = document.querySelector('.confirm-dialog');
+    dialog.style.display = 'block';
+    const confirmBtn = dialog.querySelector('.confirm');
+    const cancelBtn = dialog.querySelector('.cancel');
+
+    const confirmListener = () => {
+        const index = parseInt(logEntry.dataset.index);
+        poopLogs.splice(index, 1);
+        renderPoopLogs();
+        displayStatistics();
+        saveUserData();
+        dialog.style.display = 'none';
+        confirmBtn.removeEventListener('click', confirmListener);
+        cancelBtn.removeEventListener('click', cancelListener);
+    };
+
+    const cancelListener = () => {
+        dialog.style.display = 'none';
+        confirmBtn.removeEventListener('click', confirmListener);
+        cancelBtn.removeEventListener('click', cancelListener);
+    };
+
+    confirmBtn.addEventListener('click', confirmListener);
+    cancelBtn.addEventListener('click', cancelListener);
+}
+
+function updateTurdTokenDisplay() {
+    document.querySelector('#turdTokenBalance span').textContent = `TT: ${turdTokens}`;
+}
+
+function openRatingModal() {
+    const ratingModal = document.getElementById('ratingModal');
+    const congratsMessage = document.getElementById('congratsMessage');
+    const poopEmojis = document.querySelectorAll('.poopEmoji');
+    
+    const earnings = ((hourlyWage / 3600) * seconds).toFixed(2);
+    congratsMessage.textContent = `Congratulations! You just earned $${earnings}!`;
+    
+    ratingModal.style.display = 'block';
+    selectedRating = 0;
+    
+    poopEmojis.forEach(emoji => {
+        emoji.style.opacity = '0.5';
+    });
+
+    if (isFirstSessionOfDay()) {
+        turdTokens++;
+        lastAwardDate = new Date().toISOString();
+        updateTurdTokenDisplay();
+        showTokenAwardNotification();
+    }
+
+    const currentDate = new Date().toISOString();
+    poopLogs.unshift({
+        date: currentDate,
+        duration: seconds,
+        earnings: parseFloat(earnings),
+        rating: null
+    });
+
+    renderPoopLogs();
+    saveUserData();
+}
+
+function shareStatisticsOnTwitter() {
+    const statsText = getShareableStats();
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(statsText)}`;
+    window.open(twitterUrl, '_blank');
+}
+
+function shareStatisticsOnFacebook() {
+    const statsText = getShareableStats();
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://www.poopprofit.com')}&quote=${encodeURIComponent(statsText)}`;
+    window.open(facebookUrl, '_blank');
+}
+
+function shareStatisticsViaSMS() {
+    const statsText = getShareableStats();
+    window.open(`sms:?&body=${encodeURIComponent(statsText)}`);
+}
+
+function getShareableStats() {
+    const totalSessions = poopLogs.length;
+    const totalEarnings = poopLogs.reduce((sum, log) => sum + log.earnings, 0);
+    const avgEarnings = totalSessions > 0 ? (totalEarnings / totalSessions).toFixed(2) : 0;
+    return `My Poop Profit Stats:
+Total Poops at Work: ${totalSessions}
+Total I've Got Paid to Poop: $${totalEarnings.toFixed(2)}
+Average Earnings Per Poop: $${avgEarnings}
+Find out how much YOU get paid to poop at www.poopprofit.com!`;
+}
+
+function clearActiveFilters() {
+    document.getElementById('allTimeStats').classList.remove('active');
+    document.getElementById('todayStats').classList.remove('active');
+    document.getElementById('startDate').value = '';
+    document.getElementById('endDate').value = '';
+}
+
+function filterStatsByDateRange(start, end) {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    endDate.setHours(23, 59, 59, 999);
+    const filteredLogs = poopLogs.filter(log => {
+        const logDate = new Date(log.date);
+        return logDate >= startDate && logDate <= endDate;
+    });
+    displayStatistics(filteredLogs);
+}
+
+function displayStatistics(filteredLogs = null) {
+    const logs = filteredLogs || poopLogs;
+    const tempStats = {
+        totalSessions: logs.length,
+        totalPoopTime: logs.reduce((sum, l) => sum + l.duration, 0),
+        totalEarnings: logs.reduce((sum, l) => sum + l.earnings, 0),
+        avgPoopsPerDay: 0
+    };
+
+    if (logs.length > 0) {
+        const sorted = [...logs].sort((a, b) => new Date(a.date) - new Date(b.date));
+        const firstDate = new Date(sorted[0].date);
+        const lastDate = new Date(sorted[sorted.length - 1].date);
+        const days = Math.max(1, (lastDate - firstDate) / (1000 * 60 * 60 * 24) + 1);
+        tempStats.avgPoopsPerDay = (tempStats.totalSessions / days).toFixed(2);
+    }
+
+    document.getElementById('totalEarnings').textContent = tempStats.totalEarnings.toFixed(2);
+    document.getElementById('totalSessions').textContent = tempStats.totalSessions;
+    document.getElementById('totalTime').textContent = formatTime(tempStats.totalPoopTime);
+    document.getElementById('avgPoopTime').textContent = formatTime(tempStats.totalPoopTime / tempStats.totalSessions || 0);
+    document.getElementById('avgEarnings').textContent = (tempStats.totalEarnings / tempStats.totalSessions || 0).toFixed(2);
+    document.getElementById('avgPoopsPerDay').textContent = tempStats.avgPoopsPerDay;
+
+    const chartData = getChartData(logs);
+    const ctx = document.getElementById('statsChart').getContext('2d');
+    if (chart) chart.destroy();
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Daily Earnings',
+                data: chartData.data,
+                borderColor: 'rgb(52, 152, 219)',
+                backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                fill: true
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function getChartData(logs) {
+    const grouped = {};
+    logs.forEach(log => {
+        const dateStr = new Date(log.date).toDateString();
+        if (!grouped[dateStr]) grouped[dateStr] = 0;
+        grouped[dateStr] += log.earnings;
+    });
+    const sortedDates = Object.keys(grouped).sort((a, b) => new Date(a) - new Date(b));
+    return {
+        labels: sortedDates,
+        data: sortedDates.map(d => grouped[d])
+    };
+}
+
+// Clear `currentUser` on logout
+function logout() {
+    localStorage.removeItem('currentUser');
+    window.location.href = '/index.html'; // Redirect to login page
+}
+</script>
+</head>
+<body>
+<div class="app-container">
+    <header>
+        <img src="https://www.poopprofit.com/BANNER.jpeg" alt="Poop Profit Header" class="header-image">
+    </header>
+    <main>
+        <div class="interface-container">
+            <div class="turd-token-balance" id="turdTokenBalance">
+                <img src="https://www.poopprofit.com/Turdtoken.png" alt="Turd Token" class="turd-token-icon">
+                <span>TT: 1</span>
+            </div>
+            <div class="tabs">
+                <button class="tab active" data-tab="calculator">
+                    <img src="https://www.poopprofit.com/calc.png" alt="Calculator" class="tab-icon">
+                </button>
+                <button class="tab" data-tab="statistics">
+                    <img src="https://www.poopprofit.com/stats.png" alt="Bathroom Game 2" class="tab-icon">
+                </button>
+                <button class="tab" data-tab="games">
+                    <img src="https://www.poopprofit.com/games.png" alt="Statistics" class="tab-icon">
+                </button>
+                <button class="tab" data-tab="shop">
+                    <img src="https://www.poopprofit.com/shop.png" alt="Shop" class="tab-icon">
+                </button>
+            </div>
+
+            <div class="tab-content-container">
+                <div id="shopTab" class="tab-content">
+                    <img src="https://www.poopprofit.com/Storecomingsoon.png" alt="Shop Items Coming Soon" class="shop-image" style="display: block; margin: 0 auto; max-width: 100%; height: auto;">
+                </div><div id="gamesTab" class="tab-content">
+                    <h2></h2>
+                    <div class="game-grid">
+                        <a href="/TurdToTheMoon.html" class="game-link" target="_blank">
+                            <img src="https://www.poopprofit.com/Screenshot_20241017_202614.jpg" alt="Bathroom Game 1" class="game-image">
+                        </a>
+                        <a href="/TurdRaceGame.html" class="game-link" target="_blank">
+                            <img src="https://www.poopprofit.com/Screenshot_20241017_202104.jpg" alt="Bathroom Game 3" class="game-image">
+                        </a>
+                        <a href="#game2" class="game-link" target="_blank">
+                            <img src="https://www.poopprofit.com/Screenshot_20241017_202832.jpg" alt="Bathroom Game 2" class="game-image">
+                        </a>
+                    </div>
+                </div><div id="calculatorTab" class="tab-content active">
+                    <div class="calculator-container">
+                        <h1 class="calculator-title">Poop Profit Calculator</h1>
+                        <p class="calculator-description">Calculate how much money you make while pooping at work!</p>
+
+                        <div class="input-section card">
+                            <div class="wage-input-container">
+                                <div class="toggle-container">
+                                    <label class="switch">
+                                        <input type="checkbox" id="wageToggle">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span id="toggleLabel">Salary &amp; Hours</span>
+                                </div>
+                                <div id="salaryHoursInputs">
+                                    <div class="input-group">
+                                        <label for="annualSalary" class="input-label">Annual Salary</label>
+                                        <input type="number" id="annualSalary" class="input-field" placeholder="Enter your annual salary">
+                                        <span id="salaryError" class="error-message"></span>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="weeklyHours" class="input-label">Weekly Work Hours</label>
+                                        <input type="number" id="weeklyHours" class="input-field" placeholder="Enter your weekly work hours">
+                                        <span id="hoursError" class="error-message"></span>
+                                    </div>
+                                </div>
+                                <div id="hourlyWageInput" style="display: none;">
+                                    <div class="input-group">
+                                        <label for="hourlyWageField" class="input-label">Hourly Wage</label>
+                                        <input type="number" id="hourlyWageField" class="input-field" placeholder="Enter your hourly wage">
+                                        <span id="hourlyWageError" class="error-message"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hourly-wage" id="hourlyWage">Your hourly wage: $250.00</div>
+
+                        <div class="timer-section card">
+                            <div class="poop-emoji">💩</div>
+                            <div class="timer-display" id="timerDisplay">00:00:00</div>
+                            <button class="timer-button" id="timerButton">Start Pooping</button>
+                            <div class="earnings-display" id="earningsDisplay"></div>
+                        </div>
+
+                        <div class="poop-log-section card">
+                            <h2 class="poop-log-title">Poop Log</h2>
+                            <p class="poop-log-placeholder" id="poopLogPlaceholder" style="display: none;">No poop sessions logged yet!</p>
+                            <div id="poopLog"><div class="log-entry">
+        <button class="delete-button">×</button>
+        <p class="log-date">11/5/2024, 4:30:27 AM</p>
+        <p class="log-duration">Duration: 00:00:01</p>
+        <p class="log-earnings">Earnings: $0.07</p>
+        <p class="log-rating">Rating: <span class="rating-value">Not rated</span></p>
+    </div><div class="log-entry">
+        <button class="delete-button">×</button>
+        <p class="log-date">11/5/2024, 4:30:22 AM</p>
+        <p class="log-duration">Duration: 00:00:02</p>
+        <p class="log-earnings">Earnings: $0.14</p>
+        <p class="log-rating">Rating: <span class="rating-value">💩💩💩💩💩</span></p>
+    </div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="statisticsTab" class="tab-content">
+                    <h2></h2>
+                    <div class="date-range-header">View Statistics By</div>
+                    <div class="date-range-controls">
+                        <button id="allTimeStats" class="quick-filter-btn">All Time</button>
+                        <button id="todayStats" class="quick-filter-btn">Today</button>
+                        <div class="date-range-divider">or</div>
+                        <input type="date" id="startDate" placeholder="Start Date">
+                        <input type="date" id="endDate" placeholder="End Date">
+                        <button id="filterStats">Filter Range</button>
+                        <button id="resetStats">Reset</button>
+                    </div>
+                    <div id="statisticsSection" class="statistics-grid">
+                        <div class="stat-card featured" style="grid-column: 1 / -1; margin-bottom: 20px;">
+    <p id="totalEarnings">0.21</p>
+    <span>Total Earnings</span>
+</div>
+                        <div class="stat-card">
+                            <p id="totalSessions">2</p>
+                            <span>Total Sessions</span>
+                        </div>
+                        <div class="stat-card">
+                            <p id="totalTime">00:00:05</p>
+                            <span>Total Time</span>
+                        </div>
+                        <div class="stat-card">
+                            <p id="avgPoopTime">00:00:02</p>
+                            <span>Avg Poop Time</span>
+                        </div>
+                        <div class="stat-card">
+                            <p id="avgEarnings">0.11</p>
+                            <span>Avg Earnings</span>
+                        </div>
+                        <div class="stat-card">
+                            <p id="avgPoopsPerDay">2.00</p>
+                            <span>Avg Poops/Day</span>
+                        </div>
+                    </div>
+                    <canvas id="statsChart" width="1063" height="797" style="margin-top: 20px; display: block; box-sizing: border-box; height: 797px; width: 1063px;"></canvas>
+                    <div class="share-statistics">
+    <button class="share-button twitter" onclick="shareStatisticsOnTwitter()">
+        <img src="https://www.poopprofit.com/xicon.png" alt="Twitter Icon">
+    </button>
+    <button class="share-button facebook" onclick="shareStatisticsOnFacebook()">
+        <img src="https://www.poopprofit.com/fbicon.png" alt="Facebook Icon">
+    </button>
+    <button class="share-button sms" onclick="shareStatisticsViaSMS()">
+        <img src="https://www.poopprofit.com/txticon.png" alt="SMS Icon">
+    </button>
+</div>
+
+                
+
+                
+            </div>
+        </div>
+    </div></main>
+</div>
+
+<div id="ratingModal" class="modal">
+    <div class="modal-content">
+        <p id="congratsMessage" class="congrats-message"></p>
+        <h2>Rate Your Poop Session</h2>
+        <div class="emoji-rating">
+            <span class="poopEmoji" data-rating="1">💩</span>
+            <span class="poopEmoji" data-rating="2">💩</span>
+            <span class="poopEmoji" data-rating="3">💩</span>
+            <span class="poopEmoji" data-rating="4">💩</span>
+            <span class="poopEmoji" data-rating="5">💩</span>
+        </div>
+        <button id="submitRatingButton">Submit Rating</button>
+    </div>
+</div>
+
+<div id="shareModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="document.getElementById('shareModal').style.display='none'">×</span>
+        <h2>Share Your Earnings!</h2>
+        <button id="twitterShareButton">Share on Twitter</button>
+        <button id="facebookShareButton">Share on Facebook</button>
+        <button id="smsShareButton">Share via SMS</button>
+    </div>
+</div>
+
+<div class="confirm-dialog">
+    <div class="confirm-dialog-content">
+        <p>Are you sure you want to delete this log entry?</p>
+        <div class="confirm-dialog-buttons">
+            <button class="confirm">Yes, delete</button>
+            <button class="cancel">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="turdTokenWallet" class="modal">
+    <div class="modal-content">
+        <span class="close">×</span>
+        <h2>Turd Token Wallet</h2>
+        <div class="wallet-content">
+            <img src="https://www.poopprofit.com/Turdtoken.png" alt="Turd Token" class="wallet-token-icon" style="width: 64px; height: 64px; margin: 10px auto; display: block;">
+            <p>Balance: <span id="walletBalance">0</span> TT</p>
+        </div>
+        <p style="text-align: center; margin-top: 20px; font-style: italic;">COMING SOON</p>
+    </div>
+</div>
+<!-- Popup HTML -->
+<div id="gamesPopup" class="popup" style="display: none;">
+    <div class="popup-content">
+        <span class="close-btn" onclick="closePopup()">×</span>
+        <p>Turd Token Wallet Coming Soon! For now, only demo tokens are available for all games.</p>
+    </div>
+</div>
+
+<!-- JavaScript for Popup -->
+<script>
+    function showPopup() {
+        document.getElementById("gamesPopup").style.display = "flex";
+    }
+
+    function closePopup() {
+        document.getElementById("gamesPopup").style.display = "none";
+    }
+
+    // Trigger popup when "Games" tab is clicked
+    document.querySelector('.tab[data-tab="games"]').addEventListener("click", function(event) {
+        event.preventDefault(); // Prevents any default behavior
+        showPopup();
+    });
+</script>
+
+<button class="logout-btn" onclick="logout()">Logout</button>
+
+</body></html><!-- JSON-LD Structured Data for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PoopProfit",
+  "operatingSystem": "All",
+  "applicationCategory": "WebApplication",
+  "url": "https://www.poopprofit.com",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Poop Earnings Calculator",
+    "View and Share Statistics",
+    "Turd Token Rewards",
+    "Degenerate Bathroom Games"
+  ],
+  "description": "PoopProfit is a unique web app where you can calculate your earnings from bathroom breaks at work, see your statistics, share your results, earn rewards, and play games.",
+  "softwareVersion": "1.0.0"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "PoopProfit.com",
+  "url": "https://www.poopprofit.com",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.poopprofit.com/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Poop Profit - Calculate Your Earnings on Poop Breaks at Work.",
+  "description": "Calculate how much you make to poop at work, view and share statistics, earn rewards, and play degenerate fun games at PoopProfit.com.",
+  "url": "https://www.poopprofit.com",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://www.poopprofit.com"
+  }
+}
+</script>
+<!-- End of JSON-LD Structured Data -->
+
+<base href="https://poopprofit.com/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Poop Profit: Your Ultimate Bathroom Companion</title>
+<style>
+    :root {
+        --primary-color: #1a1a2e;
+        --secondary-color: #16213e;
+        --accent-color: #0f3460;
+        --text-color: #00CED1;
+        --light-text: #f1f1f1;
+        --neon-blue: #3498db;
+        --light-grey: #e0e0e0;
+    }
+
+    body {
+        background-image: url('https://www.poopprofit.com/MAINDESKTOPBG.jpeg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        color: var(--light-text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .app-container {
+        background-color: rgba(26, 26, 46, 0.8);
+        border-radius: 10px;
+        padding: 20px;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-top: 60px;
+    }
+
+    header {
+        position: relative;
+        width: 100%;
+        padding: 0;
+        margin-bottom: 0.5rem;
+        overflow: hidden;
+        border-radius: 10px;
+    }
+
+    .header-image {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .turd-token-balance {
+        position: fixed;
+        top: 20px;
+        right: 10px;
+        transform: none;
+        z-index: 1000;
+        font-size: 1.2em;
+        padding: 10px;
+        background-color: rgba(22, 33, 62, 0.9);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .turd-token-icon {
+        width: 30px;
+        height: 30px;
+        margin-right: 5px;
+    }
+
+    main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .interface-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tabs {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        width: 100%;
+        background-color: rgba(22, 33, 62, 0.9);
+        padding: 20px 0;
+        border-radius: 10px 10px 0 0;
+        position: relative;
+    }
+
+    .tab {
+        padding: 15px;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-bottom: 4px solid transparent;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .tab.active {
+        background-color: var(--primary-color);
+        border-bottom: 4px solid var(--neon-blue);
+    }
+
+    .tab:hover {
+        background-color: var(--accent-color);
+    }
+
+    .tab-icon {
+        width: 60px;
+        height: 60px;
+        transition: transform 0.3s ease;
+    }
+
+    @media (min-width: 768px) {
+        .tab-icon {
+            width: 80px;  
+            height: 80px;
+        }
+
+        .tab {
+            padding: 20px;
+        }
+    }
+
+    .tab:hover .tab-icon {
+        transform: scale(1.1);
+    }
+
+    .tab-content-container {
+        flex: 1;
+        background-color: rgba(26, 26, 46, 0.9);
+        border-radius: 0 10px 10px 0;
+        padding: 20px;
+    }
+
+    .tab-content {
+        display: none;
+        background-color: var(--primary-color);
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        transition: opacity 0.3s ease-in-out;
+        opacity: 1;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .tab-content.fade-out {
+        opacity: 0;
+    }
+
+    .calculator-container {
+        background-color: transparent;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    .calculator-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 1rem;
+        color: var(--neon-blue);
+        text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue), 0 0 30px var(--neon-blue);
+    }
+
+    .calculator-description {
+        font-size: 1.2rem;
+        text-align: center;
+        color: var(--light-grey);
+        margin-bottom: 2rem;
+    }
+
+    .input-section {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+
+    .wage-input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .toggle-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+        margin-right: 15px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--accent-color);
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider {
+        background-color: var(--neon-blue);
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+
+    #toggleLabel {
+        font-size: 1rem;
+        color: var(--light-text);
+    }
+
+    .input-group {
+        margin-bottom: 15px;
+    }
+
+    .input-label {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--light-grey);
+        font-size: 0.9rem;
+    }
+
+    .input-field {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--accent-color);
+        border-radius: 5px;
+        background-color: var(--secondary-color);
+        color: var(--light-text);
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .input-field:focus {
+        outline: none;
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    }
+
+    .error-message {
+        color: #ff4d4d;
+        font-size: 0.8rem;
+        margin-top: 5px;
+        display: none;
+    }
+
+    @media (min-width: 768px) {
+        #salaryHoursInputs, #hourlyWageInput {
+            display: flex;
+            gap: 20px;
+        }
+
+        .input-group {
+            flex: 1;
+        }
+    }
+
+    .hourly-wage {
+        text-align: center;
+        font-size: 1.2rem;
+        margin-top: 1rem;
+        color: var(--text-color);
+    }
+
+    .timer-section {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .poop-emoji {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .poop-emoji.wiggle {
+        animation: wiggle 0.5s infinite;
+    }
+
+    .timer-display {
+        font-size: 3rem;
+        font-weight: bold;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+
+    .timer-button {
+        padding: 15px 30px;
+        font-size: 1.2rem;
+        border: none;
+        border-radius: 50px;
+        background-color: var(--neon-blue);
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .timer-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px var(--neon-blue);
+    }
+
+    .earnings-display {
+        font-size: 1.2rem;
+        color: var(--text-color);
+        margin-top: 1rem;
+        font-weight: bold;
+    }
+
+    .poop-log-section {
+        text-align: center;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .poop-log-title {
+        font-size: 1.5rem;
+        color: var(--light-grey);
+        margin-bottom: 1rem;
+    }
+
+    .poop-log-placeholder {
+        color: var(--light-grey);
+        font-style: italic;
+    }
+
+    .log-entry {
+        background-color: var(--secondary-color);
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    .log-entry p {
+        margin: 5px 0;
+    }
+
+    .log-entry .log-date {
+        font-weight: bold;
+        color: var(--neon-blue);
+    }
+
+    .log-entry .log-duration,
+    .log-entry .log-earnings,
+    .log-entry .log-rating {
+        color: var(--light-grey);
+    }
+
+    .delete-button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .delete-button:hover {
+        background-color: #ff1a1a;
+    }
+
+    .card {
+        background-color: rgba(22, 33, 62, 0.8);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes wiggle {
+        0% { transform: rotate(0deg); }
+        25% { transform: rotate(-5deg); }
+        75% { transform: rotate(5deg); }
+        100% { transform: rotate(0deg); }
+    }
+
+    @media (max-width: 767px) {
+        .tabs {
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            flex: 1 0 25%;
+            max-width: 25%;
+        }
+
+        .turd-token-balance {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: auto;
+        }
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: var(--secondary-color);
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid var(--accent-color);
+        width: 300px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .emoji-rating {
+        font-size: 2rem;
+        margin: 20px 0;
+    }
+
+    .poopEmoji {
+        cursor: pointer;
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+    }
+
+    .poopEmoji:hover {
+        opacity: 1;
+    }
+
+    #submitRatingButton {
+        padding: 10px 20px;
+        background-color: var(--neon-blue);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #submitRatingButton:hover {
+        background-color: #2980b9;
+    }
+
+    .congrats-message {
+        color: #4CAF50;
+        font-weight: bold;
+        margin-bottom: 15px;
+        font-size: 1.1em;
+    }
+
+    #shareModal .modal-content {
+        width: 400px;
+    }
+
+    #shareModal button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        background-color: var(--neon-blue);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #shareModal button:hover {
+        background-color: #2980b9;
+    }
+
+    #twitterShareButton {
+        background-color: #1DA1F2;
+    }
+
+    #facebookShareButton {
+        background-color: #4267B2;
+    }
+
+    #smsShareButton {
+        background-color: #25D366;
+    }
+
+    #statisticsSection {
+        margin-bottom: 20px;
+    }
+
+    .statistics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+        background: rgba(26, 26, 46, 0.4);
+        padding: 20px;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(52, 152, 219, 0.2);
+    }
+
+    .stat-card {
+        background: linear-gradient(145deg, rgba(22, 33, 62, 0.9), rgba(15, 52, 96, 0.9));
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card:before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            45deg,
+            transparent,
+            rgba(52, 152, 219, 0.1),
+            transparent
+        );
+        transform: rotate(45deg);
+        animation: shine 3s infinite;
+    }
+
+    .stat-card.featured {
+        background: linear-gradient(145deg, rgba(52, 152, 219, 0.2), rgba(41, 128, 185, 0.2));
+        border: 2px solid rgba(52, 152, 219, 0.5);
+        padding: 30px;
+    }
+
+    .stat-card.featured p {
+        font-size: 3.5rem;
+        background: linear-gradient(45deg, #3498db, #2ecc71);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        margin-bottom: 10px;
+    }
+
+    .stat-card:not(.featured) p {
+        font-size: 1.8rem;
+        color: var(--text-color);
+        text-shadow: 0 0 10px rgba(0, 206, 209, 0.5);
+        margin-bottom: 5px;
+    }
+
+    .stat-card span {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    @keyframes shine {
+        0% {
+            left: -100%;
+        }
+        20% {
+            left: 100%;
+        }
+        100% {
+            left: 100%;
+        }
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3), 
+                    0 0 15px rgba(52, 152, 219, 0.5);
+    }
+
+    #statsChart {
+        background: rgba(26, 26, 46, 0.8);
+        border-radius: 15px;
+        padding: 20px;
+        border: 1px solid rgba(52, 152, 219, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        backdrop-filter: blur(4px);
+    }
+
+    .date-range-controls {
+        background: linear-gradient(145deg, rgba(22, 33, 62, 0.9), rgba(15, 52, 96, 0.9));
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        border: 1px solid rgba(52, 152, 219, 0.2);
+        backdrop-filter: blur(10px);
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .quick-filter-btn {
+        background: linear-gradient(145deg, rgba(22, 33, 62, 0.9), rgba(15, 52, 96, 0.9));
+        border: 1px solid rgba(52, 152, 219, 0.3);
+        padding: 12px 24px;
+        border-radius: 10px;
+        color: var(--light-text);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .quick-filter-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+        border-color: rgba(52, 152, 219, 0.6);
+    }
+
+    .quick-filter-btn.active {
+        background: linear-gradient(145deg, var(--neon-blue), #2980b9);
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 15px rgba(52, 152, 219, 0.5);
+    }
+
+    #startDate, #endDate {
+        background: linear-gradient(145deg, rgba(22, 33, 62, 0.9), rgba(15, 52, 96, 0.9));
+        border: 1px solid rgba(52, 152, 219, 0.3);
+        border-radius: 10px;
+        padding: 12px;
+        color: var(--light-text);
+        transition: all 0.3s ease;
+    }
+
+    #startDate:focus, #endDate:focus {
+        outline: none;
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
+    }
+
+    #filterStats, #resetStats {
+        background: linear-gradient(145deg, rgba(22, 33, 62, 0.9), rgba(15, 52, 96, 0.9));
+        border: 1px solid rgba(52, 152, 219, 0.3);
+        border-radius: 10px;
+        padding: 12px 24px;
+        color: var(--light-text);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    #filterStats {
+        background: linear-gradient(145deg, var(--neon-blue), #2980b9);
+    }
+
+    #filterStats:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+    }
+
+    #resetStats {
+        background: linear-gradient(145deg, #e74c3c, #c0392b);
+        border-color: #e74c3c;
+    }
+
+    #resetStats:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+    }
+
+    .date-range-divider {
+        color: var(--light-text);
+        opacity: 0.7;
+        font-size: 0.9em;
+    }
+
+    .date-range-header {
+        color: var(--light-text);
+        font-size: 1.2em;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+    }
+
+    .game-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .game-link {
+        display: block;
+        text-align: center;
+    }
+
+    .game-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .game-image:hover {
+        transform: scale(1.05);
+    }
+
+    .confirm-dialog {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .confirm-dialog-content {
+        background-color: var(--secondary-color);
+        border-radius: 10px;
+        padding: 20px;
+        width: 300px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+    .confirm-dialog-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .confirm-dialog button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .confirm-dialog .confirm {
+        background-color: #ff4d4d;
+        color: white;
+    }
+
+    .confirm-dialog .cancel {
+        background-color: var(--neon-blue);
+        color: white;
+    }
+
+    .confirm-dialog button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+ .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background-color: #000;
+    border: 1px solid #00ffff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+    color: #00ffff;
+}
+
+.close-btn {
+    color: #00ffff;
+    float: right;
+    font-size: 1.5em;
+    cursor: pointer;
+    margin-top: -10px;
+}
+
+    .logout-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background: linear-gradient(145deg, var(--secondary-color), var(--accent-color));
+    color: var(--light-text);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    z-index: 1000;
+}
+
+.logout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    background: linear-gradient(145deg, var(--accent-color), var(--neon-blue));
+}
+
+    /* Container for share buttons */
+.share-statistics {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Base style for each share button */
+.share-button {
+    background-color: var(--secondary-color); /* Customizable background color */
+    border: none;
+    border-radius: 75%; /* Circular button style */
     width: 75px; /* Button size */
     height: 75px;
     cursor: pointer;
