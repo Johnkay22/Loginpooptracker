@@ -2,38 +2,196 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>PoopProfit.com: Find Out How Much You Make to Poop! At Work!</title>
-  <meta name="description" content="Discover how much you get paid to poop at work. Calculate, log, and share your poop break earnings, see your stats, earn Turd Tokens, and enjoy bathroom games." />
+  <title>PoopProfit: Log in or Create an Account</title>
+  <meta name="description" content="Create a PoopProfit account or sign in to track how much you get paid to poop at work and earn Turd Tokens." />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <meta property="og:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?" />
-  <meta property="og:description" content="Calculate, log, and share your poop break earnings. Earn Turd Tokens and play degenerate bathroom games while you're pooping at work." />
+  <meta property="og:title" content="PoopProfit: Get Paid To Poop" />
+  <meta property="og:description" content="Calculate, log, and share your poop break earnings. Earn Turd Tokens and play bathroom games." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?" />
-  <meta name="twitter:description" content="Find out how much you make to poop at work. Calculate, log, and share your stats." />
-  <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg" />
   <link rel="canonical" href="https://www.poopprofit.com" />
   <style>
-    html,body{height:100%;margin:0;padding:0;font-family:Arial,sans-serif;color:#00ffff;overflow:hidden;background:#000}
-    #background{position:fixed;inset:0;background-image:url('https://www.poopprofit.com/WelcomeMobile_20241025_072029_0000.jpg');background-size:cover;background-position:center;background-repeat:no-repeat;opacity:0;transition:opacity 1s}
-    @media (min-width:768px){#background{background-image:url('https://www.poopprofit.com/WelcomeDesktop%20(1).png')}}
-    .container{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;z-index:10}
-    .box{background:rgba(0,0,0,.7);padding:30px;border-radius:8px;width:90%;max-width:400px;box-shadow:0 0 15px #00ffff;border:1px solid #00ffff;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
-    @media(max-width:767px){.box{width:85%;padding:20px}}
-    h2{text-align:center;text-transform:uppercase;letter-spacing:2px;margin:0 0 20px}
-    button{background:#00ffff;color:#000;padding:10px 16px;border:0;border-radius:4px;cursor:pointer;margin:10px 0;font-weight:700;width:100%}
-    button:hover{background:#66ffff}
-    form{display:flex;flex-direction:column;gap:10px}
-    input{padding:10px;border:1px solid #00ffff;border-radius:4px;background:rgba(0,255,255,.1);color:#00ffff}
-    input::placeholder{color:#00ffff;opacity:.7}
-    .msg{font-size:.9em;text-align:center;min-height:18px}
-    .error{color:#ff4444;opacity:0;transition:opacity .2s}
-    .ok{color:#00ff00;opacity:0;transition:opacity .2s}
-    .back-arrow{color:#00ffff;font-size:2em;cursor:pointer;text-align:center;margin-top:8px}
-    .contact-link{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:#00ffff;text-decoration:none;font-size:.9em;opacity:.8}
+    html,body{height:100%;margin:0}
+    body{font-family:Arial,Helvetica,sans-serif;color:#00ffff;background:#000;overflow:hidden}
+
+    /* Background image: visible, not clickable */
+    #background{
+      position:fixed;inset:0;
+      background-image:url('https://www.poopprofit.com/WelcomeMobile_20241025_072029_0000.jpg');
+      background-size:cover;background-position:center;background-repeat:no-repeat;
+      opacity:.95;transition:opacity .6s;
+      z-index:0;
+      pointer-events:none; /* fix: do not block taps */
+    }
+    @media (min-width:768px){
+      #background{background-image:url('https://www.poopprofit.com/WelcomeDesktop%20(1).png')}
+    }
+
+    .container{
+      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+      z-index:10;padding:16px
+    }
+    .box{
+      width:92%;max-width:420px;
+      background:rgba(0,0,0,.78);
+      border:1px solid #00ffff;border-radius:10px;
+      box-shadow:0 0 18px rgba(0,255,255,.55);
+      padding:22px;
+      visibility:hidden;opacity:0;transform:translateY(8px);
+      transition:opacity .2s,transform .2s,visibility .2s
+    }
+    .box.active{visibility:visible;opacity:1;transform:none}
+    h2{margin:0 0 16px;text-align:center;letter-spacing:1px}
+    .cta{background:#00ffff;color:#003c3c;border:0;border-radius:6px;padding:12px 16px;font-weight:800;cursor:pointer;width:100%}
+    .cta:hover{filter:brightness(1.1)}
+    .link-btn{background:transparent;border:1px solid #00ffff;color:#00ffff;border-radius:6px;padding:10px 12px;width:100%;cursor:pointer}
+    .stack{display:flex;flex-direction:column;gap:10px}
+
+    form{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+    input{
+      padding:12px;border:1px solid #00ffff;border-radius:6px;
+      background:rgba(0,255,255,.08);color:#00ffff
+    }
+    input::placeholder{color:#9ff;opacity:.8}
+    .msg{min-height:18px;font-size:.9em;text-align:center}
+    .error{color:#ff5252}
+    .ok{color:#5CFF7A}
+
+    .back{margin-top:6px;text-align:center;color:#9ff;cursor:pointer}
+    .footer-link{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);color:#9ff;text-decoration:none;font-size:.9em;opacity:.85}
   </style>
 </head>
+<body>
+  <div id="background" aria-hidden="true"></div>
+
+  <div class="container">
+    <!-- Step 1: intro -->
+    <section id="intro" class="box active" aria-hidden="false">
+      <h2>Are you ready for the greatest bathroom innovation in history</h2>
+      <button id="introYes" class="cta">Yes</button>
+    </section>
+
+    <!-- Step 2: auth choice -->
+    <section id="options" class="box" aria-hidden="true">
+      <div class="stack">
+        <button id="goRegister" class="cta">Create an account</button>
+        <button id="goLogin" class="link-btn">Sign in</button>
+      </div>
+    </section>
+
+    <!-- Step 3a: register -->
+    <section id="registration" class="box" aria-hidden="true">
+      <h2>Create an account</h2>
+      <form id="registerForm" novalidate>
+        <input type="email" name="email" placeholder="Email" autocomplete="email" required />
+        <input type="password" name="password" placeholder="Password" autocomplete="new-password" required />
+        <input type="password" name="confirmPassword" placeholder="Confirm password" autocomplete="new-password" required />
+        <div id="registerError" class="msg error"></div>
+        <div id="registerSuccess" class="msg ok"></div>
+        <button type="submit" class="cta">Register</button>
+      </form>
+      <div id="backFromRegister" class="back">Back</div>
+    </section>
+
+    <!-- Step 3b: login -->
+    <section id="login" class="box" aria-hidden="true">
+      <h2>Welcome back</h2>
+      <form id="loginForm" novalidate>
+        <input type="email" name="email" placeholder="Email" autocomplete="email" required />
+        <input type="password" name="password" placeholder="Password" autocomplete="current-password" required />
+        <div id="loginError" class="msg error"></div>
+        <div id="loginSuccess" class="msg ok"></div>
+        <button type="submit" class="cta">Sign in</button>
+      </form>
+      <div id="backFromLogin" class="back">Back</div>
+    </section>
+  </div>
+
+  <a class="footer-link" href="mailto:poopprofit@gmail.com?subject=Inquiry&body=Hello%20PoopProfit.com%20Team,">Get in touch</a>
+
+  <script>
+    /* tiny view/state helper */
+    function show(id){
+      document.querySelectorAll('.box').forEach(b=>{
+        const on = b.id===id;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-hidden', on?'false':'true');
+      });
+    }
+
+    /* storage helpers */
+    function getUsers(){ try{return JSON.parse(localStorage.getItem('users')||'{}')}catch(_){return{}} }
+    function setUsers(v){ localStorage.setItem('users', JSON.stringify(v)); }
+    function setCurrentUser(email, data){ localStorage.setItem('currentUser', JSON.stringify({ email, data })); }
+
+    /* DOM ready before wiring events */
+    window.addEventListener('DOMContentLoaded', () => {
+      const introYes = document.getElementById('introYes');
+      const goRegister = document.getElementById('goRegister');
+      const goLogin = document.getElementById('goLogin');
+      const backFromRegister = document.getElementById('backFromRegister');
+      const backFromLogin = document.getElementById('backFromLogin');
+      const registerForm = document.getElementById('registerForm');
+      const loginForm = document.getElementById('loginForm');
+
+      introYes.addEventListener('click', () => show('options'));
+      goRegister.addEventListener('click', () => show('registration'));
+      goLogin.addEventListener('click', () => show('login'));
+      backFromRegister.addEventListener('click', () => show('options'));
+      backFromLogin.addEventListener('click', () => show('options'));
+
+      registerForm.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const email = registerForm.email.value.trim().toLowerCase();
+        const pw = registerForm.password.value;
+        const cpw = registerForm.confirmPassword.value;
+        const err = document.getElementById('registerError');
+        const ok = document.getElementById('registerSuccess');
+        err.textContent=''; ok.textContent='';
+
+        if(!email || !pw || !cpw){ err.textContent='All fields are required'; return; }
+        if(pw !== cpw){ err.textContent='Passwords do not match'; return; }
+        const users = getUsers();
+        if(users[email]){ err.textContent='Email already registered'; return; }
+
+        users[email] = {
+          password: pw,
+          data:{
+            hourlyWage:0,
+            annualSalary:'',
+            weeklyHours:'',
+            hourlyWageInput:'',
+            wageToggle:false,
+            stats:{ totalSessions:0,totalPoopTime:0,totalEarnings:0,firstSessionDate:null,lastSessionDate:null },
+            turdTokens:0,
+            lastAwardDate:null,
+            poopLogs:[]
+          }
+        };
+        setUsers(users);
+        setCurrentUser(email, users[email].data);
+        ok.textContent='Registration successful. Redirecting…';
+        setTimeout(()=>{ window.location.href = 'interface.html'; }, 700);
+      });
+
+      loginForm.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const email = loginForm.email.value.trim().toLowerCase();
+        const pw = loginForm.password.value;
+        const err = document.getElementById('loginError');
+        const ok = document.getElementById('loginSuccess');
+        err.textContent=''; ok.textContent='';
+
+        const users = getUsers();
+        if(!users[email] || users[email].password !== pw){ err.textContent='Invalid email or password'; return; }
+        setCurrentUser(email, users[email].data);
+        ok.textContent='Login successful. Redirecting…';
+        setTimeout(()=>{ window.location.href = 'interface.html'; }, 700);
+      });
+    });
+  </script>
+</body>
+</html>
 <body>
   <div id="background"></div>
 
