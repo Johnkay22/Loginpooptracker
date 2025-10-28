@@ -1,39 +1,190 @@
-<html><head>
-    <!-- Title and SEO Meta Tags -->
-    <title>PoopProfit.com: Find Out How Much You Make to Poop! At Work!</title>
-    <meta name="description" content="Discover how much you get paid to poop at work! Calculate, log, and share your poop break earnings, see your stats, earn Turd Tokens, and enjoy degenerate bathroom games." />
-    <meta name="keywords" content="poop profit, get paid to poop, earnings calculator, work poop, calculate poop earnings, log bathroom breaks, profit calculator, Turd Tokens, bathroom games, degenerate, wager, earnings estimation, statistics, share on social media">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PoopProfit.com: Find Out How Much You Make to Poop! At Work!</title>
+  <meta name="description" content="Discover how much you get paid to poop at work. Calculate, log, and share your poop break earnings, see your stats, earn Turd Tokens, and enjoy bathroom games." />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta property="og:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?" />
+  <meta property="og:description" content="Calculate, log, and share your poop break earnings. Earn Turd Tokens and play degenerate bathroom games while you're pooping at work." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?" />
+  <meta name="twitter:description" content="Find out how much you make to poop at work. Calculate, log, and share your stats." />
+  <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg" />
+  <link rel="canonical" href="https://www.poopprofit.com" />
+  <style>
+    html,body{height:100%;margin:0;padding:0;font-family:Arial,sans-serif;color:#00ffff;overflow:hidden;background:#000}
+    #background{position:fixed;inset:0;background-image:url('https://www.poopprofit.com/WelcomeMobile_20241025_072029_0000.jpg');background-size:cover;background-position:center;background-repeat:no-repeat;opacity:0;transition:opacity 1s}
+    @media (min-width:768px){#background{background-image:url('https://www.poopprofit.com/WelcomeDesktop%20(1).png')}}
+    .container{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;z-index:10}
+    .box{background:rgba(0,0,0,.7);padding:30px;border-radius:8px;width:90%;max-width:400px;box-shadow:0 0 15px #00ffff;border:1px solid #00ffff;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+    @media(max-width:767px){.box{width:85%;padding:20px}}
+    h2{text-align:center;text-transform:uppercase;letter-spacing:2px;margin:0 0 20px}
+    button{background:#00ffff;color:#000;padding:10px 16px;border:0;border-radius:4px;cursor:pointer;margin:10px 0;font-weight:700;width:100%}
+    button:hover{background:#66ffff}
+    form{display:flex;flex-direction:column;gap:10px}
+    input{padding:10px;border:1px solid #00ffff;border-radius:4px;background:rgba(0,255,255,.1);color:#00ffff}
+    input::placeholder{color:#00ffff;opacity:.7}
+    .msg{font-size:.9em;text-align:center;min-height:18px}
+    .error{color:#ff4444;opacity:0;transition:opacity .2s}
+    .ok{color:#00ff00;opacity:0;transition:opacity .2s}
+    .back-arrow{color:#00ffff;font-size:2em;cursor:pointer;text-align:center;margin-top:8px}
+    .contact-link{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:#00ffff;text-decoration:none;font-size:.9em;opacity:.8}
+  </style>
+</head>
+<body>
+  <div id="background"></div>
 
-    <!-- Open Graph Meta Tags for Social Sharing -->
-    <meta property="og:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?" />
-    <meta property="og:description" content="Calculate, log, and share your poop break earnings with PoopProfit.com. Earn Turd Tokens daily and enjoy degenerate bathroom games while you're pooping at work!" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.poopprofit.com" />
-    <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg" /> <!-- Ensure filename has no spaces or special characters -->
-    <meta property="og:site_name" content="PoopProfit.com" />
+  <div class="container">
+    <div id="intro" class="box" aria-hidden="true">
+      <h2>Ready for the greatest bathroom innovation in history</h2>
+      <button id="introYes">Yes</button>
+    </div>
 
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?">
-    <meta name="twitter:description" content="Find out how much you make to poop at work! Calculate, log, and share your stats! Plus, earn Turd Tokens and play degenerate bathroom games!" />
-    <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg"> <!-- Simplify image filename as needed -->
+    <div id="options" class="box" aria-hidden="true">
+      <button id="goRegister">Create an account</button>
+      <button id="goLogin">Sign in</button>
+    </div>
 
-    <!-- Canonical Link -->
-    <link rel="canonical" href="https://www.poopprofit.com" />
+    <div id="registration" class="box" aria-hidden="true">
+      <h2>Create an account</h2>
+      <form id="registerForm" novalidate>
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <input type="password" name="confirmPassword" placeholder="Confirm Password" required />
+        <div id="registerError" class="msg error"></div>
+        <div id="registerSuccess" class="msg ok"></div>
+        <button type="submit">Register</button>
+      </form>
+      <div class="back-arrow" id="backFromRegister">&#8592;</div>
+    </div>
 
-    <!-- Google Analytics Tag -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-R1E17DCKNC');
-    </script>
+    <div id="login" class="box" aria-hidden="true">
+      <h2>Welcome back</h2>
+      <form id="loginForm" novalidate>
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <div id="loginError" class="msg error"></div>
+        <div id="loginSuccess" class="msg ok"></div>
+        <button type="submit">Sign in</button>
+      </form>
+      <div class="back-arrow" id="backFromLogin">&#8592;</div>
+    </div>
+  </div>
 
-    <!-- Base URL for Relative Links -->
-    <base href="https://www.poopprofit.com/">
+  <a class="contact-link" href="mailto:poopprofit@gmail.com?subject=Inquiry&body=Hello%20PoopProfit.com%20Team,">Get in Touch</a>
+
+  <script>
+    // simple show/hide
+    function showBox(id){
+      document.querySelectorAll('.box').forEach(b=>{
+        const on = b.id===id;
+        b.style.visibility = on?'visible':'hidden';
+        b.style.opacity = on?1:0;
+        b.setAttribute('aria-hidden', on?'false':'true');
+      });
+    }
+
+    // flow
+    const introYes = document.getElementById('introYes');
+    const goRegister = document.getElementById('goRegister');
+    const goLogin = document.getElementById('goLogin');
+    const backFromRegister = document.getElementById('backFromRegister');
+    const backFromLogin = document.getElementById('backFromLogin');
+
+    introYes.addEventListener('click', ()=>{
+      document.getElementById('background').style.opacity = 1;
+      showBox('options');
+    });
+    goRegister.addEventListener('click', ()=>showBox('registration'));
+    goLogin.addEventListener('click', ()=>showBox('login'));
+    backFromRegister.addEventListener('click', ()=>showBox('options'));
+    backFromLogin.addEventListener('click', ()=>showBox('options'));
+
+    // auth
+    const registerForm = document.getElementById('registerForm');
+    const loginForm = document.getElementById('loginForm');
+
+    function getUsers(){ try{return JSON.parse(localStorage.getItem('users')||'{}')}catch(e){return{}} }
+    function setUsers(v){ localStorage.setItem('users', JSON.stringify(v)); }
+
+    // Standardized currentUser shape: { email, data }
+    function setCurrentUser(email, data){
+      localStorage.setItem('currentUser', JSON.stringify({ email, data }));
+    }
+
+    registerForm.addEventListener('submit', e=>{
+      e.preventDefault();
+      const email = registerForm.email.value.trim().toLowerCase();
+      const password = registerForm.password.value;
+      const confirm = registerForm.confirmPassword.value;
+      const err = document.getElementById('registerError');
+      const ok = document.getElementById('registerSuccess');
+      err.style.opacity = 0; ok.style.opacity = 0;
+
+      if(!email || !password || !confirm){
+        err.textContent = 'All fields are required';
+        err.style.opacity = 1; return;
+      }
+      if(password !== confirm){
+        err.textContent = 'Passwords do not match';
+        err.style.opacity = 1; return;
+      }
+      const users = getUsers();
+      if(users[email]){
+        err.textContent = 'Email already registered';
+        err.style.opacity = 1; return;
+      }
+      users[email] = {
+        password,
+        data:{
+          hourlyWage:0,
+          annualSalary:'',
+          weeklyHours:'',
+          hourlyWageInput:'',
+          wageToggle:false,
+          stats:{ totalSessions:0, totalPoopTime:0, totalEarnings:0, firstSessionDate:null, lastSessionDate:null },
+          turdTokens:0,
+          lastAwardDate:null,
+          poopLogs:[]
+        }
+      };
+      setUsers(users);
+      setCurrentUser(email, users[email].data);
+      ok.textContent = 'Registration successful. Redirecting...';
+      ok.style.opacity = 1;
+      setTimeout(()=>{ window.location.href = 'interface.html'; }, 900);
+    });
+
+    loginForm.addEventListener('submit', e=>{
+      e.preventDefault();
+      const email = loginForm.email.value.trim().toLowerCase();
+      const password = loginForm.password.value;
+      const err = document.getElementById('loginError');
+      const ok = document.getElementById('loginSuccess');
+      err.style.opacity = 0; ok.style.opacity = 0;
+
+      const users = getUsers();
+      if(!users[email] || users[email].password !== password){
+        err.textContent = 'Invalid email or password';
+        err.style.opacity = 1; return;
+      }
+      setCurrentUser(email, users[email].data);
+      ok.textContent = 'Login successful. Redirecting...';
+      ok.style.opacity = 1;
+      setTimeout(()=>{ window.location.href = 'interface.html'; }, 900);
+    });
+
+    // initial
+    window.addEventListener('load', ()=>{
+      showBox('intro');
+      setTimeout(()=>{ document.getElementById('background').style.opacity = 1; }, 200);
+    });
+  </script>
+</body>
+</html>
 <!-- JSON-LD Structured Data for SEO -->
 <script type="application/ld+json">
 {
