@@ -1,82 +1,12 @@
-<html><head>
-<title>Welcome to Your Dashboard. Enjoy Your Poop.</title>
-    <meta name="description" content="The main interface to perfectly calculate how much you’re getting paid to poop, plus degenerate time killer games, and more! .">
-    <meta name="keywords" content="poop profit, get paid to poop, earnings calculator, work poop, calculate poop earnings, log bathroom breaks, profit calculator, Turd Tokens, bathroom games, degenerate, wager, earnings estimation, statistics, share on social media">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!DOCTYPE html><html><head>
+ <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-    <meta property="og:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?">
-    <meta property="og:description" content="Calculate, log, and share your poop break earnings with PoopProfit.com. Earn Turd Tokens daily and enjoy degenerate bathroom games while you're pooping at work!">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.poopprofit.com">
-    <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg"> <meta property="og:site_name" content="PoopProfit.com">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?">
-    <meta name="twitter:description" content="Find out how much you make to poop at work! Calculate, log, and share your stats! Plus, earn Turd Tokens and play degenerate bathroom games!">
-    <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg"> <link rel="canonical" href="https://www.poopprofit.com">
-
-    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-R1E17DCKNC');
-    </script>
-
-    <base href="https://www.poopprofit.com/">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "PoopProfit",
-  "operatingSystem": "All",
-  "applicationCategory": "WebApplication",
-  "url": "https://www.poopprofit.com",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  },
-  "featureList": [
-    "Poop Earnings Calculator",
-    "View and Share Statistics",
-    "Turd Token Rewards",
-    "Degenerate Bathroom Games"
-  ],
-  "description": "PoopProfit is a unique web app where you can calculate your earnings from bathroom breaks at work, see your statistics, share your results, earn rewards, and play games.",
-  "softwareVersion": "1.0.0"
-}
-</script>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "PoopProfit.com",
-  "url": "https://www.poopprofit.com",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://www.poopprofit.com/?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
-}
-</script>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Poop Profit - Calculate Your Earnings on Poop Breaks at Work.",
-  "description": "Calculate how much you make to poop at work, view and share statistics, earn rewards, and play degenerate fun games at PoopProfit.com.",
-  "url": "https://www.poopprofit.com",
-  "inLanguage": "en",
-  "isPartOf": {
-    "@type": "WebSite",
-    "url": "https://www.poopprofit.com"
-  }
-}
-</script>
+  gtag('config', 'G-R1E17DCKNC');
+</script>   
 <base href="https://poopprofit.com/">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -1029,8 +959,6 @@ let stats = {
 let turdTokens = 0;
 let lastAwardDate = null;
 
-let timerInterval;
-let seconds = 0;
 let isTimerRunning = false;
 
 function formatTime(totalSeconds) {
@@ -1041,9 +969,9 @@ function formatTime(totalSeconds) {
 }
 
 function updateHourlyWage() {
-    if (wageToggle.checked) {
+    if (wageToggle && wageToggle.checked) {
         hourlyWage = parseFloat(hourlyWageField.value) || 0;
-    } else {
+    } else if (annualSalaryInput && weeklyHoursInput) {
         const annualSalary = parseFloat(annualSalaryInput.value) || 0;
         const weeklyHours = parseFloat(weeklyHoursInput.value) || 0;
         
@@ -1053,122 +981,136 @@ function updateHourlyWage() {
             hourlyWage = 0;
         }
     }
-    hourlyWageDisplay.textContent = `Your hourly wage: $${hourlyWage.toFixed(2)}`;
+    if (hourlyWageDisplay) {
+        hourlyWageDisplay.textContent = `Your hourly wage: $${hourlyWage.toFixed(2)}`;
+    }
     saveUserData();
 }
 
 function loadUserData() {
-    const savedUser = JSON.parse(localStorage.getItem('currentUser'));
-    const userData = savedUser?.data || savedUser;
+    try {
+        const savedUser = JSON.parse(localStorage.getItem('currentUser'));
+        const userData = savedUser?.data || savedUser;
 
-    if (userData) {
-        hourlyWage = userData.hourlyWage || 0;
-        annualSalaryInput.value = userData.annualSalary || '';
-        weeklyHoursInput.value = userData.weeklyHours || '';
-        hourlyWageField.value = userData.hourlyWageInput || '';
-        wageToggle.checked = userData.wageToggle || false;
-        turdTokens = userData.turdTokens || 0;
-        lastAwardDate = userData.lastAwardDate || null;
+        if (userData) {
+            hourlyWage = userData.hourlyWage || 0;
+            if(annualSalaryInput) annualSalaryInput.value = userData.annualSalary || '';
+            if(weeklyHoursInput) weeklyHoursInput.value = userData.weeklyHours || '';
+            if(hourlyWageField) hourlyWageField.value = userData.hourlyWageInput || '';
+            if(wageToggle) wageToggle.checked = userData.wageToggle || false;
+            turdTokens = userData.turdTokens || 0;
+            lastAwardDate = userData.lastAwardDate || null;
 
-        // Load structured data or migrate old HTML data
-        if (userData.poopLogData) {
-            poopLogData = userData.poopLogData;
-        } else if (userData.poopLogs && userData.poopLogs.length > 0) {
-            migrateOldData(userData.poopLogs);
-        } else {
-            poopLogData = [];
+            // Initialize or Migrate data
+            if (userData.poopLogData) {
+                poopLogData = userData.poopLogData;
+            } else if (userData.poopLogs && userData.poopLogs.length > 0) {
+                try {
+                    migrateOldData(userData.poopLogs);
+                } catch (e) {
+                    console.error("Migration failed, starting fresh", e);
+                    poopLogData = [];
+                }
+            } else {
+                poopLogData = [];
+            }
+
+            renderPoopLogs();
+            recalculateStatistics(); 
+            updateTurdTokenDisplay();
+            updateHourlyWage();
         }
-
-        renderPoopLogs();
-        recalculateStatistics(); // Calculate stats from logs directly
-        updateTurdTokenDisplay();
-        updateHourlyWage();
+    } catch (e) {
+        console.error("Error loading user data:", e);
     }
 }
 
 function migrateOldData(oldHtmlLogs) {
-    // Temporary helper to convert old HTML strings to new data objects
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = oldHtmlLogs.join('');
     
     poopLogData = Array.from(tempDiv.children).map((entry, index) => {
-        const dateText = entry.querySelector('.log-date').textContent;
-        const durationText = entry.querySelector('.log-duration').textContent;
-        const earningsText = entry.querySelector('.log-earnings').textContent;
-        const ratingText = entry.querySelector('.rating-value').textContent;
+        // Safe navigation to avoid crashes on malformed logs
+        const dateText = entry.querySelector('.log-date')?.textContent || new Date().toLocaleString();
+        const durationText = entry.querySelector('.log-duration')?.textContent || "00:00:00";
+        const earningsText = entry.querySelector('.log-earnings')?.textContent || "$0.00";
+        const ratingElement = entry.querySelector('.rating-value');
+        const ratingText = ratingElement ? ratingElement.textContent : "";
 
-        // Parse duration back to seconds
-        const [hours, minutes, seconds] = durationText.match(/\d+/g).map(Number);
+        const [hours, minutes, seconds] = (durationText.match(/\d+/g) || [0,0,0]).map(Number);
         const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
         
         const ratingCount = (ratingText.match(/💩/g) || []).length;
 
         return {
-            id: Date.now() + index, // Generate unique ID
+            id: Date.now() + index, 
             date: dateText,
             durationSeconds: totalSeconds,
-            earnings: parseFloat(earningsText.replace(/[^0-9.-]+/g, '')),
+            earnings: parseFloat(earningsText.replace(/[^0-9.-]+/g, '') || 0),
             rating: ratingCount
         };
     });
 }
 
 function standardizeUsersFormat() {
-    const users = JSON.parse(localStorage.getItem('users') || '{}');
-    Object.keys(users).forEach(email => {
-        if (typeof users[email] === 'string') {
-            users[email] = { password: users[email], data: {} };
-        }
-    });
-    localStorage.setItem('users', JSON.stringify(users));
+    try {
+        const users = JSON.parse(localStorage.getItem('users') || '{}');
+        Object.keys(users).forEach(email => {
+            if (typeof users[email] === 'string') {
+                users[email] = { password: users[email], data: {} };
+            }
+        });
+        localStorage.setItem('users', JSON.stringify(users));
+    } catch(e) { console.error(e); }
 }
 standardizeUsersFormat();
 
 function saveUserData() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const users = JSON.parse(localStorage.getItem('users') || '{}');
+    try {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const users = JSON.parse(localStorage.getItem('users') || '{}');
 
-    if (currentUser) {
-        if (!currentUser.email) {
-            currentUser.email = Object.keys(users).find(email => users[email].data === currentUser.data);
+        if (currentUser) {
+            if (!currentUser.email) {
+                currentUser.email = Object.keys(users).find(email => users[email].data === currentUser.data);
+            }
+
+            currentUser.data = {
+                hourlyWage: hourlyWage,
+                annualSalary: annualSalaryInput ? annualSalaryInput.value : '',
+                weeklyHours: weeklyHoursInput ? weeklyHoursInput.value : '',
+                hourlyWageInput: hourlyWageField ? hourlyWageField.value : '',
+                wageToggle: wageToggle ? wageToggle.checked : false,
+                turdTokens: turdTokens,
+                lastAwardDate: lastAwardDate,
+                poopLogData: poopLogData 
+            };
+
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            if (currentUser.email && users[currentUser.email]) {
+                users[currentUser.email].data = currentUser.data;
+                localStorage.setItem('users', JSON.stringify(users));
+            }
         }
-
-        currentUser.data = {
-            hourlyWage: hourlyWage,
-            annualSalary: annualSalaryInput.value,
-            weeklyHours: weeklyHoursInput.value,
-            hourlyWageInput: hourlyWageField.value,
-            wageToggle: wageToggle.checked,
-            // stats: stats, // We now calculate stats dynamically, but can save for caching if needed
-            turdTokens: turdTokens,
-            lastAwardDate: lastAwardDate,
-            poopLogData: poopLogData // Save the structured data
-        };
-
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-        if (currentUser.email && users[currentUser.email]) {
-            users[currentUser.email].data = currentUser.data;
-            localStorage.setItem('users', JSON.stringify(users));
-        }
-    }
+    } catch (e) { console.error("Error saving", e); }
 }
 
-// Render the logs from the data array
 function renderPoopLogs(logsToRender = poopLogData) {
     const container = document.getElementById('poopLog');
     const placeholder = document.getElementById('poopLogPlaceholder');
     
+    if(!container) return;
+
     container.innerHTML = '';
     
     if (logsToRender.length === 0) {
-        placeholder.style.display = 'block';
+        if(placeholder) placeholder.style.display = 'block';
         return;
     } else {
-        placeholder.style.display = 'none';
+        if(placeholder) placeholder.style.display = 'none';
     }
 
-    // Sort logs by date descending (newest first)
     const sortedLogs = [...logsToRender].sort((a, b) => new Date(b.date) - new Date(a.date));
 
     sortedLogs.forEach(log => {
@@ -1188,7 +1130,6 @@ function renderPoopLogs(logsToRender = poopLogData) {
 }
 
 function recalculateStatistics(logsToCalculate = poopLogData) {
-    // Reset stats
     let newStats = {
         totalSessions: 0,
         totalPoopTime: 0,
@@ -1208,8 +1149,6 @@ function recalculateStatistics(logsToCalculate = poopLogData) {
             newStats.totalEarnings += log.earnings;
         });
     }
-
-    // Update global stats object for display
     stats = newStats;
     displayStatistics();
 }
@@ -1221,14 +1160,12 @@ function confirmDelete(id) {
     const confirmButton = confirmDialog.querySelector('.confirm');
     const cancelButton = confirmDialog.querySelector('.cancel');
 
-    // Remove existing listeners to prevent multiple firings
     const newConfirm = confirmButton.cloneNode(true);
     const newCancel = cancelButton.cloneNode(true);
     confirmButton.parentNode.replaceChild(newConfirm, confirmButton);
     cancelButton.parentNode.replaceChild(newCancel, cancelButton);
 
     newConfirm.addEventListener('click', () => {
-        // Remove from data array
         poopLogData = poopLogData.filter(log => log.id !== id);
         saveUserData();
         renderPoopLogs();
@@ -1254,12 +1191,10 @@ function isFirstSessionOfDay() {
     if (today !== lastAwardDay) {
         lastAwardDate = new Date().toISOString();
         saveUserData();
-        showTokenAwardNotification();
         return true;
     }
     return false;
 }
-
 
 function showTokenAwardNotification() {
     const ratingsBox = document.querySelector('.ratings-box') || document.body;
@@ -1267,7 +1202,6 @@ function showTokenAwardNotification() {
     const notification = document.createElement('div');
     notification.className = 'token-award-notification';
     notification.textContent = '🎉 You earned 1 Turd Token for your first poop of the day!';
-    // Add minimal styling for the notification if not already present
     notification.style.position = 'fixed';
     notification.style.bottom = '20px';
     notification.style.left = '50%';
@@ -1284,7 +1218,6 @@ function showTokenAwardNotification() {
         notification.remove();
     }, 3000);
 }
-
 
 function updateTurdTokenDisplay() {
     const tokenDisplay = document.querySelector('.turd-token-balance span');
@@ -1315,22 +1248,22 @@ function displayStatistics() {
 
     document.getElementById('totalSessions').textContent = stats.totalSessions;
     document.getElementById('totalTime').textContent = `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}:${String(totalSecs).padStart(2, '0')}`;
-    document.getElementById('totalEarnings').textContent = `${stats.totalEarnings.toFixed(2)}`;
+    document.getElementById('totalEarnings').textContent = `$${stats.totalEarnings.toFixed(2)}`;
     document.getElementById('avgPoopTime').textContent = `${String(avgHours).padStart(2, '0')}:${String(avgMinutes).padStart(2, '0')}:${String(avgSecs).padStart(2, '0')}`;
-    document.getElementById('avgEarnings').textContent = `${(stats.totalSessions > 0 ? stats.totalEarnings / stats.totalSessions : 0).toFixed(2)}`;
+    document.getElementById('avgEarnings').textContent = `$${(stats.totalSessions > 0 ? stats.totalEarnings / stats.totalSessions : 0).toFixed(2)}`;
     document.getElementById('avgPoopsPerDay').textContent = avgPoopsPerDay;
 
     updateStatsChart(stats);
 }
 
 function updateStatsChart(statsData) {
-    const ctx = document.getElementById('statsChart').getContext('2d');
+    const ctx = document.getElementById('statsChart')?.getContext('2d');
+    if(!ctx) return;
     
     if (window.statsBarChart) {
         window.statsBarChart.destroy();
     }
     
-    // Recalculate date difference for chart label consistency
     let chartTotalDays = 1;
     if (statsData.firstSessionDate && statsData.lastSessionDate) {
          chartTotalDays = Math.max(1, Math.ceil((statsData.lastSessionDate - statsData.firstSessionDate) / (1000 * 60 * 60 * 24)));
@@ -1349,83 +1282,46 @@ function updateStatsChart(statsData) {
                     Math.floor((statsData.totalPoopTime / statsData.totalSessions / 60) || 0),
                     parseFloat(statsData.totalEarnings.toFixed(2))
                 ],
-                backgroundColor: [
-                    'rgba(52, 152, 219, 0.6)',
-                    'rgba(46, 204, 113, 0.6)',
-                    'rgba(155, 89, 182, 0.6)',
-                    'rgba(241, 196, 15, 0.6)',
-                    'rgba(231, 76, 60, 0.6)'
-                ],
-                borderColor: [
-                    'rgba(52, 152, 219, 1)',
-                    'rgba(46, 204, 113, 1)',
-                    'rgba(155, 89, 182, 1)',
-                    'rgba(241, 196, 15, 1)',
-                    'rgba(231, 76, 60, 1)'
-                ],
+                backgroundColor: ['rgba(52, 152, 219, 0.6)', 'rgba(46, 204, 113, 0.6)', 'rgba(155, 89, 182, 0.6)', 'rgba(241, 196, 15, 0.6)', 'rgba(231, 76, 60, 0.6)'],
+                borderColor: ['rgba(52, 152, 219, 1)', 'rgba(46, 204, 113, 1)', 'rgba(155, 89, 182, 1)', 'rgba(241, 196, 15, 1)', 'rgba(231, 76, 60, 1)'],
                 borderWidth: 1
             }]
         },
         options: {
             responsive: true,
             scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    },
-                    ticks: {
-                        color: '#f1f1f1'
-                    }
-                },
-                x: {
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    },
-                    ticks: {
-                        color: '#f1f1f1'
-                    }
-                }
+                y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#f1f1f1' } },
+                x: { grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#f1f1f1' } }
             },
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
+            plugins: { legend: { display: false } }
         }
     });
 }
 
 function filterStatsByDateRange(startDate, endDate) {
-    // Normalize start and end dates to start/end of day
     const start = new Date(startDate);
     start.setHours(0,0,0,0);
     
     const end = new Date(endDate);
     end.setHours(23,59,59,999);
 
-    console.log(`Filtering logs between: ${start} and ${end}`);
-
     const filteredLogs = poopLogData.filter(log => {
         const logDate = new Date(log.date);
         return logDate >= start && logDate <= end;
     });
 
-    // Display filtered logs and calculate filtered stats
-    console.log("Filtered logs found:", filteredLogs.length);
-    renderPoopLogs(filteredLogs); // Optional: show only filtered logs in the list? 
-    recalculateStatistics(filteredLogs); // Update the stats cards with filtered data
+    renderPoopLogs(filteredLogs); 
+    recalculateStatistics(filteredLogs); 
 }
 
-// Helper to clear filters and show everything
 function clearActiveFilters() {
     document.getElementById('allTimeStats').classList.remove('active');
     document.getElementById('todayStats').classList.remove('active');
     document.getElementById('startDate').value = '';
     document.getElementById('endDate').value = '';
     
-    renderPoopLogs(); // Show all logs
-    recalculateStatistics(); // Show all stats
+    renderPoopLogs(); 
+    recalculateStatistics(); 
 }
 
 function validateInputs() {
@@ -1458,12 +1354,12 @@ function validateInputs() {
 }
 
 function startTimer() {
+    // Force validation before starting
     if (!validateInputs()) {
+        alert("Please fill in your salary information first!");
         return; 
     }
     const timerButton = document.getElementById('timerButton');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const earningsDisplay = document.getElementById('earningsDisplay');
     const poopEmoji = document.querySelector('.poop-emoji');
 
     if (!isTimerRunning) {
@@ -1471,43 +1367,63 @@ function startTimer() {
         timerButton.textContent = 'Stop Pooping';
         poopEmoji.classList.add('wiggle');
 
+        // Save start state
+        localStorage.setItem('timerStart', Date.now());
+        localStorage.setItem('isTimerRunning', true);
+
         if (isFirstSessionOfDay()) {
             turdTokens++; 
             updateTurdTokenDisplay(); 
             showTokenAwardNotification(); 
         }
 
-        timerInterval = setInterval(() => {
-            seconds++;
-            timerDisplay.textContent = formatTime(seconds);
-            const earnings = ((hourlyWage / 3600) * seconds).toFixed(2);
-            earningsDisplay.textContent = `Current earnings: $${earnings}`;
-        }, 1000);
+        updateTimer();
     } else {
+        // Stop the timer
         isTimerRunning = false;
-        clearInterval(timerInterval);
+        localStorage.removeItem('timerStart');
+        localStorage.removeItem('isTimerRunning');
+
         timerButton.textContent = 'Start Pooping';
         poopEmoji.classList.remove('wiggle');
         openRatingModal(); 
-        
-        // Reset after modal opens (or handle inside modal logic)
-        // seconds = 0; 
-        // timerDisplay.textContent = '00:00:00';
-        // earningsDisplay.textContent = '';
     }
 }
 
+function updateTimer() {
+    const startTime = parseInt(localStorage.getItem('timerStart'), 10);
+    const isRunning = JSON.parse(localStorage.getItem('isTimerRunning'));
+    
+    if (!startTime || !isRunning) return;
+
+    const timerDisplay = document.getElementById('timerDisplay');
+    const earningsDisplay = document.getElementById('earningsDisplay');
+    
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    // Update global seconds variable so saving works correctly
+    window.seconds = elapsed;
+
+    if(timerDisplay) timerDisplay.textContent = formatTime(elapsed);
+    if(earningsDisplay) {
+        const earnings = ((hourlyWage / 3600) * elapsed).toFixed(2);
+        earningsDisplay.textContent = `Current earnings: $${earnings}`;
+    }
+
+    requestAnimationFrame(updateTimer);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Assignments
     annualSalaryInput = document.getElementById('annualSalary');
     weeklyHoursInput = document.getElementById('weeklyHours');
     wageToggle = document.getElementById('wageToggle');
     hourlyWageField = document.getElementById('hourlyWageField');
     hourlyWageDisplay = document.getElementById('hourlyWage');
 
-    annualSalaryInput.addEventListener('input', updateHourlyWage);
-    weeklyHoursInput.addEventListener('input', updateHourlyWage);
-    hourlyWageField.addEventListener('input', updateHourlyWage);
+    // Listeners
+    if(annualSalaryInput) annualSalaryInput.addEventListener('input', updateHourlyWage);
+    if(weeklyHoursInput) weeklyHoursInput.addEventListener('input', updateHourlyWage);
+    if(hourlyWageField) hourlyWageField.addEventListener('input', updateHourlyWage);
     
     const allTimeStatsBtn = document.getElementById('allTimeStats');
     const todayStatsBtn = document.getElementById('todayStats');
@@ -1516,6 +1432,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterButton = document.getElementById('filterStats');
     const resetButton = document.getElementById('resetStats');
 
+    // Rating Modal Logic
     const ratingModal = document.getElementById('ratingModal');
     const submitRatingButton = document.getElementById('submitRatingButton');
     const poopEmojis = document.querySelectorAll('.poopEmoji');
@@ -1531,102 +1448,77 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     submitRatingButton.addEventListener('click', () => {
-        if (selectedRating > 0) {
-            // Update the latest entry in the data array
-            if (poopLogData.length > 0) {
-                poopLogData[0].rating = selectedRating;
-                saveUserData();
-                renderPoopLogs(); // Re-render to show the rating
-            }
+        if (selectedRating > 0 && poopLogData.length > 0) {
+            poopLogData[0].rating = selectedRating;
+            saveUserData();
+            renderPoopLogs();
             
-            ratingModal.style.display = 'none';
-            
-            // Show share modal
             const latestLog = poopLogData[0];
             openShareModal(latestLog.earnings.toFixed(2), selectedRating);
         }
+        ratingModal.style.display = 'none';
     });
 
-    function openShareModal(earnings, rating) {
-        const ratingText = rating > 0 ? '💩'.repeat(rating) : '';
-        const message = `I just had a ${ratingText}-poop and earned $${earnings}! Find out how much you make to poop at www.poopprofit.com!`;
+    // Timer Button Logic
+    const timerButton = document.getElementById('timerButton');
+    if(timerButton) timerButton.addEventListener('click', startTimer);
 
-        const shareModal = document.getElementById('shareModal');
-        shareModal.style.display = 'block';
-
-        document.getElementById('twitterShareButton').onclick = () => shareOnTwitter(message);
-        document.getElementById('facebookShareButton').onclick = () => shareOnFacebook(message);
-        document.getElementById('smsShareButton').onclick = () => shareViaSMS(message);
+    // Wage Toggle Logic
+    if(wageToggle) {
+        wageToggle.addEventListener('change', function() {
+            const hourlyInputDiv = document.getElementById('hourlyWageInput');
+            const salaryInputDiv = document.getElementById('salaryHoursInputs');
+            const label = document.getElementById('toggleLabel');
+            
+            if (this.checked) {
+                if(salaryInputDiv) salaryInputDiv.style.display = 'none';
+                if(hourlyInputDiv) hourlyInputDiv.style.display = 'block';
+                if(label) label.textContent = 'Hourly Wage';
+            } else {
+                if(salaryInputDiv) salaryInputDiv.style.display = 'block';
+                if(hourlyInputDiv) hourlyInputDiv.style.display = 'none';
+                if(label) label.textContent = 'Salary & Hours';
+            }
+            updateHourlyWage();
+        });
     }
 
-    function shareOnTwitter(message) {
-        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
-        window.open(twitterUrl, '_blank');
-    }
-
-    function shareOnFacebook(message) {
-        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://www.poopprofit.com')}&quote=${encodeURIComponent(message)}`;
-        window.open(facebookUrl, '_blank');
-    }
-
-    function shareViaSMS(message) {
-        window.open(`sms:?&body=${encodeURIComponent(message)}`);
-    }
-
-    checkLoginStatus();
-    lastAwardDate = localStorage.getItem('lastAwardDate');
-    turdTokens = parseInt(localStorage.getItem('turdTokens')) || 0;
-    updateTurdTokenDisplay();
-    
-    wageToggle.addEventListener('change', function() {
-        if (this.checked) {
-            document.getElementById('salaryHoursInputs').style.display = 'none';
-            document.getElementById('hourlyWageInput').style.display = 'block';
-            document.getElementById('toggleLabel').textContent = 'Hourly Wage';
-        } else {
-            document.getElementById('salaryHoursInputs').style.display = 'block';
-            document.getElementById('hourlyWageInput').style.display = 'none';
-            document.getElementById('toggleLabel').textContent = 'Salary & Hours';
+    // Resume Timer if needed
+    if (localStorage.getItem('isTimerRunning')) {
+        isTimerRunning = true;
+        if(timerButton) {
+            timerButton.textContent = 'Stop Pooping';
+            const emoji = document.querySelector('.poop-emoji');
+            if(emoji) emoji.classList.add('wiggle');
         }
-        updateHourlyWage();
-    });
+        updateTimer();
+    }
 
-    todayStatsBtn.addEventListener('click', () => {
-        clearActiveFilters(); // Reset UI first
+    // Stats Filtering
+    if(todayStatsBtn) todayStatsBtn.addEventListener('click', () => {
+        clearActiveFilters();
         todayStatsBtn.classList.add('active');
         filterStatsByDay(new Date());
     });
 
-    allTimeStatsBtn.addEventListener('click', () => {
+    if(allTimeStatsBtn) allTimeStatsBtn.addEventListener('click', () => {
         clearActiveFilters();
         allTimeStatsBtn.classList.add('active');
     });
 
-    function filterStatsByDay(date) {
-        const startOfDay = new Date(date);
-        startOfDay.setHours(0, 0, 0, 0);
-        const endOfDay = new Date(date);
-        endOfDay.setHours(23, 59, 59, 999);
-        filterStatsByDateRange(startOfDay, endOfDay);
-    }
-
-    filterButton.addEventListener('click', () => {
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-        if (startDate && endDate) {
-            filterStatsByDateRange(startDate, endDate);
+    if(filterButton) filterButton.addEventListener('click', () => {
+        if (startDateInput.value && endDateInput.value) {
+            filterStatsByDateRange(startDateInput.value, endDateInput.value);
         } else {
             alert('Please select both start and end dates.');
         }
     });
 
-    resetButton.addEventListener('click', () => {
-        clearActiveFilters();
-    });
+    if(resetButton) resetButton.addEventListener('click', clearActiveFilters);
 
+    // Tabs
     const tabs = document.querySelectorAll('.tab');
     const tabContents = document.querySelectorAll('.tab-content');
-
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const tabId = tab.getAttribute('data-tab');
@@ -1638,72 +1530,83 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 tabs.forEach(t => t.classList.remove('active'));
                 tabContents.forEach(content => content.classList.remove('active', 'fade-out'));
-                
                 tab.classList.add('active');
                 newContent.classList.add('active', 'fade-out');
-
                 void newContent.offsetWidth;
-
                 newContent.classList.remove('fade-out');
             }, 300); 
         });
     });
 
-    loadUserData();
-    updateHourlyWage();
-
+    // Wallet Modal
     const turdTokenBalance = document.getElementById('turdTokenBalance');
     const turdTokenWallet = document.getElementById('turdTokenWallet');
-    const walletBalance = document.getElementById('walletBalance');
-
-    turdTokenBalance.addEventListener('click', () => {
-        turdTokenWallet.style.display = 'block';
-        walletBalance.textContent = turdTokens;
-    });
-
-    turdTokenWallet.querySelector('.close').addEventListener('click', () => {
-        turdTokenWallet.style.display = 'none';
-    });
-
-    window.onclick = function(event) {
-        if (event.target == ratingModal) {
-            ratingModal.style.display = "none";
-        }
-        if (event.target == document.getElementById('shareModal')) {
-            document.getElementById('shareModal').style.display = 'none';
-        }
-        if (event.target == document.getElementById('turdTokenWallet')) {
-            document.getElementById('turdTokenWallet').style.display = 'none';
-        }
-        if (event.target == document.querySelector('.confirm-dialog')) {
-            document.querySelector('.confirm-dialog').style.display = 'none';
-        }
+    if(turdTokenBalance && turdTokenWallet) {
+        turdTokenBalance.addEventListener('click', () => {
+            turdTokenWallet.style.display = 'block';
+            const wb = document.getElementById('walletBalance');
+            if(wb) wb.textContent = turdTokens;
+        });
+        
+        turdTokenWallet.querySelector('.close').addEventListener('click', () => {
+            turdTokenWallet.style.display = 'none';
+        });
     }
+
+    // Global Click Handler for Modals
+    window.onclick = function(event) {
+        if (event.target == ratingModal) ratingModal.style.display = "none";
+        if (event.target == document.getElementById('shareModal')) document.getElementById('shareModal').style.display = 'none';
+        if (event.target == turdTokenWallet) turdTokenWallet.style.display = 'none';
+        if (event.target == document.querySelector('.confirm-dialog')) document.querySelector('.confirm-dialog').style.display = 'none';
+    }
+
+    checkLoginStatus();
+    loadUserData();
+    updateHourlyWage();
 });
 
+function filterStatsByDay(date) {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+    filterStatsByDateRange(startOfDay, endOfDay);
+}
+
+function openShareModal(earnings, rating) {
+    const ratingText = rating > 0 ? '💩'.repeat(rating) : '';
+    const message = `I just had a ${ratingText}-poop and earned $${earnings}! Find out how much you make to poop at www.poopprofit.com!`;
+    const shareModal = document.getElementById('shareModal');
+    if(shareModal) shareModal.style.display = 'block';
+
+    document.getElementById('twitterShareButton').onclick = () => {
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`, '_blank');
+    };
+    document.getElementById('facebookShareButton').onclick = () => {
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://www.poopprofit.com')}&quote=${encodeURIComponent(message)}`, '_blank');
+    };
+    document.getElementById('smsShareButton').onclick = () => {
+        window.open(`sms:?&body=${encodeURIComponent(message)}`);
+    };
+}
+
 function shareStatisticsOnTwitter() {
-    const statsText = getShareableStats();
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(statsText)}`;
-    window.open(twitterUrl, '_blank');
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareableStats())}`, '_blank');
 }
-
 function shareStatisticsOnFacebook() {
-    const statsText = getShareableStats();
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://www.poopprofit.com')}&quote=${encodeURIComponent(statsText)}`;
-    window.open(facebookUrl, '_blank');
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://www.poopprofit.com')}&quote=${encodeURIComponent(getShareableStats())}`, '_blank');
 }
-
 function shareStatisticsViaSMS() {
-    const statsText = getShareableStats();
-    window.open(`sms:?&body=${encodeURIComponent(statsText)}`);
+    window.open(`sms:?&body=${encodeURIComponent(getShareableStats())}`);
 }
 
 function getShareableStats() {
-    return `My Poop Profit Stats:
-Total Poops at Work: ${stats.totalSessions}
-Total I've Got Paid to Poop: $${stats.totalEarnings.toFixed(2)}
-Average Earnings Per Poop: $${(stats.totalEarnings / stats.totalSessions || 0).toFixed(2)}
-Find out how much YOU get paid to poop at www.poopprofit.com!`;
+    return `🚽 My Poop Profit Stats:
+Total Sessions: ${stats.totalSessions}
+Total Earnings: $${stats.totalEarnings.toFixed(2)}
+Average Per Session: $${(stats.totalEarnings / stats.totalSessions || 0).toFixed(2)}
+Track your bathroom breaks at www.poopprofit.com!`;
 }
 
 function openRatingModal() {
@@ -1711,266 +1614,49 @@ function openRatingModal() {
     const congratsMessage = document.getElementById('congratsMessage');
     const poopEmojis = document.querySelectorAll('.poopEmoji');
     
-    const earnings = parseFloat(((hourlyWage / 3600) * seconds).toFixed(2));
-    congratsMessage.textContent = `Congratulations! You just earned $${earnings.toFixed(2)}!`;
+    // Access global seconds which is updated by updateTimer
+    const s = window.seconds || 0; 
+    const earnings = parseFloat(((hourlyWage / 3600) * s).toFixed(2));
     
-    ratingModal.style.display = 'block';
-    selectedRating = 0;
+    if(congratsMessage) congratsMessage.textContent = `Congratulations! You just earned $${earnings.toFixed(2)}!`;
+    if(ratingModal) ratingModal.style.display = 'block';
     
-    poopEmojis.forEach(emoji => {
-        emoji.style.opacity = '0.5';
-    });
+    // Reset rating selection
+    if(poopEmojis) poopEmojis.forEach(emoji => emoji.style.opacity = '0.5');
 
-    // Create new log data object
     const newLog = {
         id: Date.now(),
         date: new Date().toLocaleString(),
-        durationSeconds: seconds,
+        durationSeconds: s,
         earnings: earnings,
-        rating: 0 // Will be updated when user rates
+        rating: 0 
     };
 
-    // Add to start of array
     poopLogData.unshift(newLog);
     saveUserData();
     renderPoopLogs();
     recalculateStatistics();
 
-    // Reset timer display
-    seconds = 0;
-    document.getElementById('timerDisplay').textContent = '00:00:00';
-    document.getElementById('earningsDisplay').textContent = '';
+    // Reset UI
+    const timerDisplay = document.getElementById('timerDisplay');
+    const earningsDisplay = document.getElementById('earningsDisplay');
+    if(timerDisplay) timerDisplay.textContent = '00:00:00';
+    if(earningsDisplay) earningsDisplay.textContent = '';
+    window.seconds = 0;
 }
 
-</script>
-</head>
-<body>
-<div class="app-container">
-    <header>
-        <img src="https://www.poopprofit.com/BANNER.jpeg" alt="Poop Profit Header" class="header-image">
-    </header>
-    <main>
-        <div class="interface-container">
-            <div class="turd-token-balance" id="turdTokenBalance">
-                <img src="https://www.poopprofit.com/Turdtoken.png" alt="Turd Token" class="turd-token-icon">
-                <span>TT: 1</span>
-            </div>
-            <div class="tabs">
-                <button class="tab active" data-tab="calculator">
-                    <img src="https://www.poopprofit.com/calc.png" alt="Calculator" class="tab-icon">
-                </button>
-                <button class="tab" data-tab="statistics">
-                    <img src="https://www.poopprofit.com/stats.png" alt="Bathroom Game 2" class="tab-icon">
-                </button>
-                <button class="tab" data-tab="games">
-                    <img src="https://www.poopprofit.com/games.png" alt="Statistics" class="tab-icon">
-                </button>
-                <button class="tab" data-tab="shop">
-                    <img src="https://www.poopprofit.com/shop.png" alt="Shop" class="tab-icon">
-                </button>
-            </div>
-
-            <div class="tab-content-container">
-                <div id="shopTab" class="tab-content">
-                    <img src="https://www.poopprofit.com/Storecomingsoon.png" alt="Shop Items Coming Soon" class="shop-image" style="display: block; margin: 0 auto; max-width: 100%; height: auto;">
-                </div><div id="gamesTab" class="tab-content">
-                    <h2></h2>
-                    <div class="game-grid">
-                        <a href="/TurdToTheMoon.html" class="game-link" target="_blank">
-                            <img src="https://www.poopprofit.com/Screenshot_20241017_202614.jpg" alt="Bathroom Game 1" class="game-image">
-                        </a>
-                        <a href="/TurdRaceGame.html" class="game-link" target="_blank">
-                            <img src="https://www.poopprofit.com/Screenshot_20241017_202104.jpg" alt="Bathroom Game 3" class="game-image">
-                        </a>
-                        <a href="#game2" class="game-link" target="_blank">
-                            <img src="https://www.poopprofit.com/Screenshot_20241017_202832.jpg" alt="Bathroom Game 2" class="game-image">
-                        </a>
-                    </div>
-                </div><div id="calculatorTab" class="tab-content active">
-                    <div class="calculator-container">
-                        <h1 class="calculator-title">Poop Profit Calculator</h1>
-                        <p class="calculator-description">Calculate how much money you make while pooping at work!</p>
-
-                        <div class="input-section card">
-                            <div class="wage-input-container">
-                                <div class="toggle-container">
-                                    <label class="switch">
-                                        <input type="checkbox" id="wageToggle">
-                                        <span class="slider round"></span>
-                                    </label>
-                                    <span id="toggleLabel">Salary &amp; Hours</span>
-                                </div>
-                                <div id="salaryHoursInputs">
-                                    <div class="input-group">
-                                        <label for="annualSalary" class="input-label">Annual Salary</label>
-                                        <input type="number" id="annualSalary" class="input-field" placeholder="Enter your annual salary">
-                                        <span id="salaryError" class="error-message"></span>
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="weeklyHours" class="input-label">Weekly Work Hours</label>
-                                        <input type="number" id="weeklyHours" class="input-field" placeholder="Enter your weekly work hours">
-                                        <span id="hoursError" class="error-message"></span>
-                                    </div>
-                                </div>
-                                <div id="hourlyWageInput" style="display: none;">
-                                    <div class="input-group">
-                                        <label for="hourlyWageField" class="input-label">Hourly Wage</label>
-                                        <input type="number" id="hourlyWageField" class="input-field" placeholder="Enter your hourly wage">
-                                        <span id="hourlyWageError" class="error-message"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="hourly-wage" id="hourlyWage">Your hourly wage: $250.00</div>
-
-                        <div class="timer-section card">
-                            <div class="poop-emoji">💩</div>
-                            <div class="timer-display" id="timerDisplay">00:00:00</div>
-                            <button class="timer-button" id="timerButton">Start Pooping</button>
-                            <div class="earnings-display" id="earningsDisplay"></div>
-                        </div>
-
-                        <div class="poop-log-section card">
-                            <h2 class="poop-log-title">Poop Log</h2>
-                            <p class="poop-log-placeholder" id="poopLogPlaceholder" style="display: none;">No poop sessions logged yet!</p>
-                            <div id="poopLog"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="statisticsTab" class="tab-content">
-                    <h2></h2>
-                    <div class="date-range-header">View Statistics By</div>
-                    <div class="date-range-controls">
-                        <button id="allTimeStats" class="quick-filter-btn">All Time</button>
-                        <button id="todayStats" class="quick-filter-btn">Today</button>
-                        <div class="date-range-divider">or</div>
-                        <input type="date" id="startDate" placeholder="Start Date">
-                        <input type="date" id="endDate" placeholder="End Date">
-                        <button id="filterStats">Filter Range</button>
-                        <button id="resetStats">Reset</button>
-                    </div>
-                    <div id="statisticsSection" class="statistics-grid">
-                        <div class="stat-card featured" style="grid-column: 1 / -1; margin-bottom: 20px;">
-    <p id="totalEarnings">0.00</p>
-    <span>Total Earnings</span>
-</div>
-                        <div class="stat-card">
-                            <p id="totalSessions">0</p>
-                            <span>Total Sessions</span>
-                        </div>
-                        <div class="stat-card">
-                            <p id="totalTime">00:00:00</p>
-                            <span>Total Time</span>
-                        </div>
-                        <div class="stat-card">
-                            <p id="avgPoopTime">00:00:00</p>
-                            <span>Avg Poop Time</span>
-                        </div>
-                        <div class="stat-card">
-                            <p id="avgEarnings">0.00</p>
-                            <span>Avg Earnings</span>
-                        </div>
-                        <div class="stat-card">
-                            <p id="avgPoopsPerDay">0.00</p>
-                            <span>Avg Poops/Day</span>
-                        </div>
-                    </div>
-                    <canvas id="statsChart" width="1063" height="797" style="margin-top: 20px; display: block; box-sizing: border-box; height: 797px; width: 1063px;"></canvas>
-                    <div class="share-statistics">
-    <button class="share-button twitter" onclick="shareStatisticsOnTwitter()">
-        <img src="https://www.poopprofit.com/xicon.png" alt="Twitter Icon">
-    </button>
-    <button class="share-button facebook" onclick="shareStatisticsOnFacebook()">
-        <img src="https://www.poopprofit.com/fbicon.png" alt="Facebook Icon">
-    </button>
-    <button class="share-button sms" onclick="shareStatisticsViaSMS()">
-        <img src="https://www.poopprofit.com/txticon.png" alt="SMS Icon">
-    </button>
-</div>
-
-                
-
-                
-            </div>
-        </div>
-    </div></main>
-</div>
-
-<div id="ratingModal" class="modal">
-    <div class="modal-content">
-        <p id="congratsMessage" class="congrats-message"></p>
-        <h2>Rate Your Poop Session</h2>
-        <div class="emoji-rating">
-            <span class="poopEmoji" data-rating="1">💩</span>
-            <span class="poopEmoji" data-rating="2">💩</span>
-            <span class="poopEmoji" data-rating="3">💩</span>
-            <span class="poopEmoji" data-rating="4">💩</span>
-            <span class="poopEmoji" data-rating="5">💩</span>
-        </div>
-        <button id="submitRatingButton">Submit Rating</button>
-    </div>
-</div>
-
-<div id="shareModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="document.getElementById('shareModal').style.display='none'">×</span>
-        <h2>Share Your Earnings!</h2>
-        <button id="twitterShareButton">Share on Twitter</button>
-        <button id="facebookShareButton">Share on Facebook</button>
-        <button id="smsShareButton">Share via SMS</button>
-    </div>
-</div>
-
-<div class="confirm-dialog">
-    <div class="confirm-dialog-content">
-        <p>Are you sure you want to delete this log entry?</p>
-        <div class="confirm-dialog-buttons">
-            <button class="confirm">Yes, delete</button>
-            <button class="cancel">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<div id="turdTokenWallet" class="modal">
-    <div class="modal-content">
-        <span class="close">×</span>
-        <h2>Turd Token Wallet</h2>
-        <div class="wallet-content">
-            <img src="https://www.poopprofit.com/Turdtoken.png" alt="Turd Token" class="wallet-token-icon" style="width: 64px; height: 64px; margin: 10px auto; display: block;">
-            <p>Balance: <span id="walletBalance">0</span> TT</p>
-        </div>
-        <p style="text-align: center; margin-top: 20px; font-style: italic;">COMING SOON</p>
-    </div>
-</div>
-<div id="gamesPopup" class="popup" style="display: none;">
-    <div class="popup-content">
-        <span class="close-btn" onclick="closePopup()">×</span>
-        <p>Turd Token Wallet Coming Soon! For now, only demo tokens are available for all games.</p>
-    </div>
-</div>
-
-<script>
-    function showPopup() {
-        document.getElementById("gamesPopup").style.display = "flex";
-    }
-
-    function closePopup() {
-        document.getElementById("gamesPopup").style.display = "none";
-    }
-
-    // Trigger popup when "Games" tab is clicked
-    document.querySelector('.tab[data-tab="games"]').addEventListener("click", function(event) {
-        event.preventDefault(); // Prevents any default behavior
-        showPopup();
-    });
- // Clear `currentUser` on logout
+// Games Popup Logic
+function showPopup() {
+    const gp = document.getElementById("gamesPopup");
+    if(gp) gp.style.display = "flex";
+}
+function closePopup() {
+    const gp = document.getElementById("gamesPopup");
+    if(gp) gp.style.display = "none";
+}
 function logout() {
     localStorage.removeItem('currentUser');
-    window.location.href = '/loggedout.html'; // Redirect to login page
+    window.location.href = '/loggedout.html'; 
 }
 </script>
-
-<button class="logout-btn" onclick="logout()">Logout</button>
-
 </body></html>
