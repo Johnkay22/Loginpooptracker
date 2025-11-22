@@ -1,29 +1,21 @@
 <html><head>
-    <!-- Title and SEO Meta Tags -->
     <title>PoopProfit.com: Find Out How Much You Make to Poop! At Work!</title>
     <meta name="description" content="Discover how much you get paid to poop at work! Calculate, log, and share your poop break earnings, see your stats, earn Turd Tokens, and enjoy degenerate bathroom games." />
     <meta name="keywords" content="poop profit, get paid to poop, earnings calculator, work poop, calculate poop earnings, log bathroom breaks, profit calculator, Turd Tokens, bathroom games, degenerate, wager, earnings estimation, statistics, share on social media">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <!-- Open Graph Meta Tags for Social Sharing -->
     <meta property="og:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?" />
     <meta property="og:description" content="Calculate, log, and share your poop break earnings with PoopProfit.com. Earn Turd Tokens daily and enjoy degenerate bathroom games while you're pooping at work!" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.poopprofit.com" />
-    <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg" /> <!-- Ensure filename has no spaces or special characters -->
-    <meta property="og:site_name" content="PoopProfit.com" />
+    <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg" /> <meta property="og:site_name" content="PoopProfit.com" />
 
-    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?">
     <meta name="twitter:description" content="Find out how much you make to poop at work! Calculate, log, and share your stats! Plus, earn Turd Tokens and play degenerate bathroom games!" />
-    <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg"> <!-- Simplify image filename as needed -->
+    <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg"> <link rel="canonical" href="https://www.poopprofit.com" />
 
-    <!-- Canonical Link -->
-    <link rel="canonical" href="https://www.poopprofit.com" />
-
-    <!-- Google Analytics Tag -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -32,9 +24,7 @@
       gtag('config', 'G-R1E17DCKNC');
     </script>
 
-    <!-- Base URL for Relative Links -->
     <base href="https://www.poopprofit.com/">
-<!-- JSON-LD Structured Data for SEO -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -87,8 +77,6 @@
   }
 }
 </script>
-<!-- End of JSON-LD Structured Data -->
-
 <style>
 body, html {
     height: 100%;
@@ -376,6 +364,7 @@ input::placeholder {
                 fadeIn('intro');
             }, 1000);
         };
+
 // Register form submission
 document.getElementById('registerForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -402,6 +391,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
         return;
     }
 
+    // --- UPDATED SECTION: Initializing poopLogData ---
     users[email] = {
         password: password,
         data: {
@@ -413,18 +403,20 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
             stats: { totalSessions: 0, totalPoopTime: 0, totalEarnings: 0 },
             turdTokens: 0,
             lastAwardDate: null,
-            poopLogs: []
+            poopLogs: [],      // Kept for backward compatibility logic
+            poopLogData: []    // NEW: Initialize structured data for the new dashboard
         }
     };
+    // ------------------------------------------------
 
     localStorage.setItem('users', JSON.stringify(users));
     localStorage.setItem('currentUser', JSON.stringify(users[email]));
-    console.log("currentUser set after registration:", JSON.parse(localStorage.getItem('currentUser')));
-
+    
     registerSuccess.textContent = 'Registration successful! Redirecting...';
     registerSuccess.style.opacity = '1';
     setTimeout(() => window.location.href = '/interface.html', 1500);
 });
+
 document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const email = this.email.value;
@@ -444,20 +436,16 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         return;
     }
 
-    // Set `currentUser` to full data object including `poopLogs`
+    // Set `currentUser` to full data object
     localStorage.setItem('currentUser', JSON.stringify({
         email: email,
         data: users[email].data
     }));
-
-    console.log("currentUser set after login:", JSON.parse(localStorage.getItem('currentUser')));
     
     loginSuccess.textContent = 'Login successful! Redirecting...';
     loginSuccess.style.opacity = '1';
     setTimeout(() => window.location.href = '/interface.html', 1500);
 });
-
-
     </script>
 </body>
 </html>
