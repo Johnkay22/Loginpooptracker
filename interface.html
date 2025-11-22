@@ -1,29 +1,21 @@
 <html><head>
-<!-- Title and SEO Meta Tags -->
-    <title>Welcome to Your Dashboard. Enjoy Your Poop.</title>
+<title>Welcome to Your Dashboard. Enjoy Your Poop.</title>
     <meta name="description" content="The main interface to perfectly calculate how much you’re getting paid to poop, plus degenerate time killer games, and more! .">
     <meta name="keywords" content="poop profit, get paid to poop, earnings calculator, work poop, calculate poop earnings, log bathroom breaks, profit calculator, Turd Tokens, bathroom games, degenerate, wager, earnings estimation, statistics, share on social media">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <!-- Open Graph Meta Tags for Social Sharing -->
     <meta property="og:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?">
     <meta property="og:description" content="Calculate, log, and share your poop break earnings with PoopProfit.com. Earn Turd Tokens daily and enjoy degenerate bathroom games while you're pooping at work!">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.poopprofit.com">
-    <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg"> <!-- Ensure filename has no spaces or special characters -->
-    <meta property="og:site_name" content="PoopProfit.com">
+    <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg"> <meta property="og:site_name" content="PoopProfit.com">
 
-    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?">
     <meta name="twitter:description" content="Find out how much you make to poop at work! Calculate, log, and share your stats! Plus, earn Turd Tokens and play degenerate bathroom games!">
-    <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg"> <!-- Simplify image filename as needed -->
+    <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg"> <link rel="canonical" href="https://www.poopprofit.com">
 
-    <!-- Canonical Link -->
-    <link rel="canonical" href="https://www.poopprofit.com">
-
-    <!-- Google Analytics Tag -->
     <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -32,9 +24,7 @@
       gtag('config', 'G-R1E17DCKNC');
     </script>
 
-    <!-- Base URL for Relative Links -->
     <base href="https://www.poopprofit.com/">
-<!-- JSON-LD Structured Data for SEO -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -87,8 +77,6 @@
   }
 }
 </script>
-<!-- End of JSON-LD Structured Data -->
-
 <base href="https://poopprofit.com/">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -1027,6 +1015,9 @@ let hourlyWageField;
 let hourlyWageDisplay;
 let hourlyWage = 0;
 
+// NEW: Store logs as data objects, not HTML strings
+let poopLogData = []; 
+
 let stats = {
     totalSessions: 0,
     totalPoopTime: 0,
@@ -1067,70 +1058,61 @@ function updateHourlyWage() {
 }
 
 function loadUserData() {
-    console.log("loadUserData is running...");
-    
     const savedUser = JSON.parse(localStorage.getItem('currentUser'));
     const userData = savedUser?.data || savedUser;
 
     if (userData) {
-        console.log("Loaded user data:", userData);
-
-        // Log each field update
         hourlyWage = userData.hourlyWage || 0;
-        console.log("Hourly Wage Set:", hourlyWage);
-
         annualSalaryInput.value = userData.annualSalary || '';
-        console.log("Annual Salary Set:", annualSalaryInput.value);
-
         weeklyHoursInput.value = userData.weeklyHours || '';
-        console.log("Weekly Hours Set:", weeklyHoursInput.value);
-
         hourlyWageField.value = userData.hourlyWageInput || '';
-        console.log("Hourly Wage Input Set:", hourlyWageField.value);
-
         wageToggle.checked = userData.wageToggle || false;
-        console.log("Wage Toggle Set:", wageToggle.checked);
-
-        stats = userData.stats || { totalSessions: 0, totalPoopTime: 0, totalEarnings: 0 };
-        console.log("Stats Set:", stats);
-
         turdTokens = userData.turdTokens || 0;
-        console.log("Turd Tokens Set:", turdTokens);
-
         lastAwardDate = userData.lastAwardDate || null;
-        console.log("Last Award Date Set:", lastAwardDate);
 
-        // Set poop logs and verify
-        if (userData.poopLogs && userData.poopLogs.length > 0) {
-            poopLogPlaceholder.style.display = 'none';
-            poopLog.innerHTML = userData.poopLogs.join('');
-            console.log("Poop Logs Set:", poopLog.innerHTML);
-
-            // Assign delete button event handlers to each log entry
-            poopLog.querySelectorAll('.delete-button').forEach(button => {
-                const logEntry = button.parentElement;
-                const durationText = logEntry.querySelector('.log-duration').textContent;
-                
-                // Extract duration from the text (assuming format like "Duration: 1h 30m")
-                const duration = parseInt(durationText.match(/\d+/g).reduce((acc, val) => acc * 60 + parseInt(val), 0));
-                const earnings = parseFloat(logEntry.querySelector('.log-earnings').textContent.replace(/[^0-9.-]+/g, ''));
-
-                // Assign confirmDelete function to the button click event
-                button.onclick = () => confirmDelete(logEntry, duration, earnings);
-            });
+        // Load structured data or migrate old HTML data
+        if (userData.poopLogData) {
+            poopLogData = userData.poopLogData;
+        } else if (userData.poopLogs && userData.poopLogs.length > 0) {
+            migrateOldData(userData.poopLogs);
+        } else {
+            poopLogData = [];
         }
 
-        // Display and update UI elements
-        displayStatistics();
+        renderPoopLogs();
+        recalculateStatistics(); // Calculate stats from logs directly
         updateTurdTokenDisplay();
         updateHourlyWage();
-    } else {
-        console.log("No user data found in localStorage.");
     }
 }
 
+function migrateOldData(oldHtmlLogs) {
+    // Temporary helper to convert old HTML strings to new data objects
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = oldHtmlLogs.join('');
+    
+    poopLogData = Array.from(tempDiv.children).map((entry, index) => {
+        const dateText = entry.querySelector('.log-date').textContent;
+        const durationText = entry.querySelector('.log-duration').textContent;
+        const earningsText = entry.querySelector('.log-earnings').textContent;
+        const ratingText = entry.querySelector('.rating-value').textContent;
 
-// Standardize `users` to ensure consistent format for each account
+        // Parse duration back to seconds
+        const [hours, minutes, seconds] = durationText.match(/\d+/g).map(Number);
+        const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+        
+        const ratingCount = (ratingText.match(/💩/g) || []).length;
+
+        return {
+            id: Date.now() + index, // Generate unique ID
+            date: dateText,
+            durationSeconds: totalSeconds,
+            earnings: parseFloat(earningsText.replace(/[^0-9.-]+/g, '')),
+            rating: ratingCount
+        };
+    });
+}
+
 function standardizeUsersFormat() {
     const users = JSON.parse(localStorage.getItem('users') || '{}');
     Object.keys(users).forEach(email => {
@@ -1140,8 +1122,6 @@ function standardizeUsersFormat() {
     });
     localStorage.setItem('users', JSON.stringify(users));
 }
-
-// Call to initialize format on page load
 standardizeUsersFormat();
 
 function saveUserData() {
@@ -1149,49 +1129,117 @@ function saveUserData() {
     const users = JSON.parse(localStorage.getItem('users') || '{}');
 
     if (currentUser) {
-        // Ensure currentUser has an email property
         if (!currentUser.email) {
             currentUser.email = Object.keys(users).find(email => users[email].data === currentUser.data);
         }
 
-        // Update data fields in currentUser, including poopLogs
         currentUser.data = {
             hourlyWage: hourlyWage,
             annualSalary: annualSalaryInput.value,
             weeklyHours: weeklyHoursInput.value,
             hourlyWageInput: hourlyWageField.value,
             wageToggle: wageToggle.checked,
-            stats: stats,
+            // stats: stats, // We now calculate stats dynamically, but can save for caching if needed
             turdTokens: turdTokens,
             lastAwardDate: lastAwardDate,
-            poopLogs: Array.from(poopLog.children).map(entry => entry.outerHTML)
+            poopLogData: poopLogData // Save the structured data
         };
 
-        // Sync currentUser and users to ensure data persistence
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-        // Update users[currentUser.email] with the updated data
         if (currentUser.email && users[currentUser.email]) {
             users[currentUser.email].data = currentUser.data;
             localStorage.setItem('users', JSON.stringify(users));
         }
-        console.log("Updated currentUser and users with poopLogs:", currentUser, users);
     }
 }
+
+// Render the logs from the data array
+function renderPoopLogs(logsToRender = poopLogData) {
+    const container = document.getElementById('poopLog');
+    const placeholder = document.getElementById('poopLogPlaceholder');
     
-function confirmDelete(logEntry, duration, earnings) {
-    if (confirm("Are you sure you want to delete this log?")) {
-        // Update stats before removing log
-        stats.totalPoopTime -= duration;
-        stats.totalEarnings -= earnings;
-        stats.totalSessions--;
-
-        logEntry.remove();
-        saveUserData();
-        displayStatistics();
+    container.innerHTML = '';
+    
+    if (logsToRender.length === 0) {
+        placeholder.style.display = 'block';
+        return;
+    } else {
+        placeholder.style.display = 'none';
     }
+
+    // Sort logs by date descending (newest first)
+    const sortedLogs = [...logsToRender].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    sortedLogs.forEach(log => {
+        const logEntry = document.createElement('div');
+        logEntry.className = 'log-entry';
+        const ratingString = log.rating > 0 ? '💩'.repeat(log.rating) : 'Not rated';
+        
+        logEntry.innerHTML = `
+            <button class="delete-button" onclick="confirmDelete(${log.id})">×</button>
+            <p class="log-date">${log.date}</p>
+            <p class="log-duration">Duration: ${formatTime(log.durationSeconds)}</p>
+            <p class="log-earnings">Earnings: $${log.earnings.toFixed(2)}</p>
+            <p class="log-rating">Rating: <span class="rating-value">${ratingString}</span></p>
+        `;
+        container.appendChild(logEntry);
+    });
 }
 
+function recalculateStatistics(logsToCalculate = poopLogData) {
+    // Reset stats
+    let newStats = {
+        totalSessions: 0,
+        totalPoopTime: 0,
+        totalEarnings: 0,
+        firstSessionDate: null,
+        lastSessionDate: null
+    };
+
+    if (logsToCalculate.length > 0) {
+        const dates = logsToCalculate.map(l => new Date(l.date));
+        newStats.firstSessionDate = new Date(Math.min(...dates));
+        newStats.lastSessionDate = new Date(Math.max(...dates));
+        
+        logsToCalculate.forEach(log => {
+            newStats.totalSessions++;
+            newStats.totalPoopTime += log.durationSeconds;
+            newStats.totalEarnings += log.earnings;
+        });
+    }
+
+    // Update global stats object for display
+    stats = newStats;
+    displayStatistics();
+}
+
+function confirmDelete(id) {
+    const confirmDialog = document.querySelector('.confirm-dialog');
+    confirmDialog.style.display = 'block';
+
+    const confirmButton = confirmDialog.querySelector('.confirm');
+    const cancelButton = confirmDialog.querySelector('.cancel');
+
+    // Remove existing listeners to prevent multiple firings
+    const newConfirm = confirmButton.cloneNode(true);
+    const newCancel = cancelButton.cloneNode(true);
+    confirmButton.parentNode.replaceChild(newConfirm, confirmButton);
+    cancelButton.parentNode.replaceChild(newCancel, cancelButton);
+
+    newConfirm.addEventListener('click', () => {
+        // Remove from data array
+        poopLogData = poopLogData.filter(log => log.id !== id);
+        saveUserData();
+        renderPoopLogs();
+        recalculateStatistics();
+        confirmDialog.style.display = 'none';
+    });
+
+    newCancel.addEventListener('click', () => {
+        confirmDialog.style.display = 'none';
+    });
+}
 
 function checkLoginStatus() {
     if (!localStorage.getItem('currentUser')) {
@@ -1206,7 +1254,7 @@ function isFirstSessionOfDay() {
     if (today !== lastAwardDay) {
         lastAwardDate = new Date().toISOString();
         saveUserData();
-        showTokenAwardNotification(); // Ensure this is called
+        showTokenAwardNotification();
         return true;
     }
     return false;
@@ -1214,15 +1262,22 @@ function isFirstSessionOfDay() {
 
 
 function showTokenAwardNotification() {
-    const ratingsBox = document.querySelector('.ratings-box'); // Ensure the class matches the correct ratings box in your HTML
-    if (!ratingsBox) {
-        console.warn("Ratings box not found");
-        return;
-    }
+    const ratingsBox = document.querySelector('.ratings-box') || document.body;
     
     const notification = document.createElement('div');
     notification.className = 'token-award-notification';
     notification.textContent = '🎉 You earned 1 Turd Token for your first poop of the day!';
+    // Add minimal styling for the notification if not already present
+    notification.style.position = 'fixed';
+    notification.style.bottom = '20px';
+    notification.style.left = '50%';
+    notification.style.transform = 'translateX(-50%)';
+    notification.style.backgroundColor = '#4CAF50';
+    notification.style.color = 'white';
+    notification.style.padding = '15px';
+    notification.style.borderRadius = '5px';
+    notification.style.zIndex = '2000';
+    
     ratingsBox.appendChild(notification);
 
     setTimeout(() => {
@@ -1239,39 +1294,33 @@ function updateTurdTokenDisplay() {
     localStorage.setItem('turdTokens', turdTokens);
 }
 
- 
-
-function displayStatistics(filtered = false, filteredStats = null) {
-    const statsToUse = filtered ? filteredStats : stats;
-    const totalTime = statsToUse.totalPoopTime;
+function displayStatistics() {
+    const totalTime = stats.totalPoopTime;
     const totalHours = Math.floor(totalTime / 3600);
     const totalMinutes = Math.floor((totalTime % 3600) / 60);
     const totalSecs = totalTime % 60;
 
-    const avgPoopTime = statsToUse.totalSessions > 0 ? totalTime / statsToUse.totalSessions : 0;
+    const avgPoopTime = stats.totalSessions > 0 ? totalTime / stats.totalSessions : 0;
     const avgHours = Math.floor(avgPoopTime / 3600);
     const avgMinutes = Math.floor((avgPoopTime % 3600) / 60);
     const avgSecs = Math.floor(avgPoopTime % 60);
 
-    // Fix date calculation
-    let totalDays = 1; // Default to 1 to avoid division by zero
-    if (statsToUse.firstSessionDate && statsToUse.lastSessionDate) {
-        const firstDate = new Date(statsToUse.firstSessionDate);
-        const lastDate = new Date(statsToUse.lastSessionDate);
-        const timeDiff = Math.abs(lastDate - firstDate);
+    let totalDays = 1;
+    if (stats.firstSessionDate && stats.lastSessionDate) {
+        const timeDiff = Math.abs(stats.lastSessionDate - stats.firstSessionDate);
         totalDays = Math.max(1, Math.ceil(timeDiff / (1000 * 60 * 60 * 24)));
     }
     
-    const avgPoopsPerDay = (statsToUse.totalSessions / totalDays).toFixed(2);
+    const avgPoopsPerDay = (stats.totalSessions / totalDays).toFixed(2);
 
-    document.getElementById('totalSessions').textContent = statsToUse.totalSessions;
+    document.getElementById('totalSessions').textContent = stats.totalSessions;
     document.getElementById('totalTime').textContent = `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}:${String(totalSecs).padStart(2, '0')}`;
-    document.getElementById('totalEarnings').textContent = `${statsToUse.totalEarnings.toFixed(2)}`;
+    document.getElementById('totalEarnings').textContent = `${stats.totalEarnings.toFixed(2)}`;
     document.getElementById('avgPoopTime').textContent = `${String(avgHours).padStart(2, '0')}:${String(avgMinutes).padStart(2, '0')}:${String(avgSecs).padStart(2, '0')}`;
-    document.getElementById('avgEarnings').textContent = `${(statsToUse.totalSessions > 0 ? statsToUse.totalEarnings / statsToUse.totalSessions : 0).toFixed(2)}`;
+    document.getElementById('avgEarnings').textContent = `${(stats.totalSessions > 0 ? stats.totalEarnings / stats.totalSessions : 0).toFixed(2)}`;
     document.getElementById('avgPoopsPerDay').textContent = avgPoopsPerDay;
 
-    updateStatsChart(statsToUse);
+    updateStatsChart(stats);
 }
 
 function updateStatsChart(statsData) {
@@ -1279,6 +1328,12 @@ function updateStatsChart(statsData) {
     
     if (window.statsBarChart) {
         window.statsBarChart.destroy();
+    }
+    
+    // Recalculate date difference for chart label consistency
+    let chartTotalDays = 1;
+    if (statsData.firstSessionDate && statsData.lastSessionDate) {
+         chartTotalDays = Math.max(1, Math.ceil((statsData.lastSessionDate - statsData.firstSessionDate) / (1000 * 60 * 60 * 24)));
     }
 
     window.statsBarChart = new Chart(ctx, {
@@ -1289,7 +1344,7 @@ function updateStatsChart(statsData) {
                 label: 'Statistics',
                 data: [
                     statsData.totalSessions,
-                    parseFloat((statsData.totalSessions / Math.max(1, Math.ceil((statsData.lastSessionDate - statsData.firstSessionDate) / (1000 * 60 * 60 * 24)))).toFixed(2)),
+                    parseFloat((statsData.totalSessions / chartTotalDays).toFixed(2)),
                     Math.floor(statsData.totalPoopTime / 3600),
                     Math.floor((statsData.totalPoopTime / statsData.totalSessions / 60) || 0),
                     parseFloat(statsData.totalEarnings.toFixed(2))
@@ -1342,150 +1397,40 @@ function updateStatsChart(statsData) {
 }
 
 function filterStatsByDateRange(startDate, endDate) {
-    // Normalize start and end dates to YYYY-MM-DD
+    // Normalize start and end dates to start/end of day
     const start = new Date(startDate);
+    start.setHours(0,0,0,0);
+    
     const end = new Date(endDate);
+    end.setHours(23,59,59,999);
 
-    const normalizeDate = (date) => {
-        return date.toISOString().split('T')[0]; // Extract YYYY-MM-DD
-    };
+    console.log(`Filtering logs between: ${start} and ${end}`);
 
-    const normalizedStart = normalizeDate(start);
-    const normalizedEnd = normalizeDate(end);
-
-    console.log(`Filtering logs between: ${normalizedStart} and ${normalizedEnd}`);
-
-    // Initialize the filtered statistics object
-    const filteredStats = {
-        totalSessions: 0,
-        totalPoopTime: 0,
-        totalEarnings: 0,
-        firstSessionDate: null,
-        lastSessionDate: null
-    };
-
-    // Get all log entries from the DOM (assuming poopLog is a container element with log entries)
-    const logEntries = Array.from(poopLog.children);
-
-    // Iterate over each log entry to filter by date range
-    logEntries.forEach((entry, index) => {
-        const dateText = entry.querySelector('.log-date').textContent;
-        const entryDate = new Date(dateText);
-        const normalizedEntryDate = normalizeDate(entryDate);
-
-        // Log the current entry being processed
-        console.log(`Processing entry ${index + 1} with date: ${normalizedEntryDate}`);
-
-        // Check if the log entry date falls within the specified date range (inclusive)
-        if (normalizedEntryDate >= normalizedStart && normalizedEntryDate <= normalizedEnd) {
-            console.log(`Entry ${index + 1} is within the date range.`);
-
-            // Extract duration and convert to seconds
-            const durationText = entry.querySelector('.log-duration').textContent;
-            const [hours, minutes, seconds] = durationText.match(/\d+/g).map(Number);
-            const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
-
-            // Extract earnings and convert to a numerical value
-            const earningsText = entry.querySelector('.log-earnings').textContent;
-            const earnings = parseFloat(earningsText.replace(/[^0-9.-]+/g, ''));
-
-            // Update filtered statistics
-            filteredStats.totalSessions++;
-            filteredStats.totalPoopTime += totalSeconds;
-            filteredStats.totalEarnings += earnings;
-
-            // Update first and last session dates
-            if (!filteredStats.firstSessionDate || entryDate < filteredStats.firstSessionDate) {
-                filteredStats.firstSessionDate = entryDate;
-            }
-            if (!filteredStats.lastSessionDate || entryDate > filteredStats.lastSessionDate) {
-                filteredStats.lastSessionDate = entryDate;
-            }
-        } else {
-            console.log(`Entry ${index + 1} is outside the date range.`);
-        }
+    const filteredLogs = poopLogData.filter(log => {
+        const logDate = new Date(log.date);
+        return logDate >= start && logDate <= end;
     });
 
-    // Log final filtered statistics for debugging purposes
-    console.log("Filtered Statistics:", filteredStats);
-
-    // Display the filtered statistics
-    displayStatistics(true, filteredStats);
+    // Display filtered logs and calculate filtered stats
+    console.log("Filtered logs found:", filteredLogs.length);
+    renderPoopLogs(filteredLogs); // Optional: show only filtered logs in the list? 
+    recalculateStatistics(filteredLogs); // Update the stats cards with filtered data
 }
 
-function confirmDelete(logEntry, duration, earnings) {
-    console.log('Delete button clicked'); // Log when the function is called
-    console.log('Log entry:', logEntry); // Log the log entry being deleted
-    console.log('Duration:', duration); // Log the duration of the entry
-    console.log('Earnings:', earnings); // Log the earnings of the entry
-
-    const confirmDialog = document.querySelector('.confirm-dialog');
-    if (!confirmDialog) {
-        console.log('Confirm dialog not found!');
-        return;
-    }
-    confirmDialog.style.display = 'block';
-    console.log('Confirm dialog displayed');
+// Helper to clear filters and show everything
+function clearActiveFilters() {
+    document.getElementById('allTimeStats').classList.remove('active');
+    document.getElementById('todayStats').classList.remove('active');
+    document.getElementById('startDate').value = '';
+    document.getElementById('endDate').value = '';
     
-    const confirmButton = confirmDialog.querySelector('.confirm');
-    const cancelButton = confirmDialog.querySelector('.cancel');
-    console.log('Buttons located:', confirmButton, cancelButton);
-
-    const handleDelete = () => {
-        console.log('Confirmed delete'); // Log when the delete is confirmed
-
-        stats.totalSessions--;
-        stats.totalPoopTime -= duration;
-        stats.totalEarnings -= earnings;
-
-        logEntry.remove();
-        console.log('Log entry removed from DOM');
-
-        if (poopLog.children.length === 0) {
-            document.getElementById('poopLogPlaceholder').style.display = 'block';
-        }
-
-        updateDateRangeStats();
-        displayStatistics();
-        saveUserData();
-        confirmDialog.style.display = 'none';
-
-        confirmButton.removeEventListener('click', handleDelete);
-        cancelButton.removeEventListener('click', handleCancel);
-    };
-
-    const handleCancel = () => {
-        console.log('Delete canceled'); // Log when the delete is canceled
-        confirmDialog.style.display = 'none';
-
-        confirmButton.removeEventListener('click', handleDelete);
-        cancelButton.removeEventListener('click', handleCancel);
-    };
-
-    confirmButton.addEventListener('click', handleDelete);
-    cancelButton.addEventListener('click', handleCancel);
+    renderPoopLogs(); // Show all logs
+    recalculateStatistics(); // Show all stats
 }
 
-
-
-function updateDateRangeStats() {
-    if (stats.totalSessions === 0) {
-        stats.firstSessionDate = null;
-        stats.lastSessionDate = null;
-    } else {
-        const entries = Array.from(poopLog.children);
-        if (entries.length > 0) {
-            const dates = entries.map(entry => new Date(entry.querySelector('.log-date').textContent));
-            stats.firstSessionDate = new Date(Math.min(...dates));
-            stats.lastSessionDate = new Date(Math.max(...dates));
-        }
-    }
-}
-
- function validateInputs() {
+function validateInputs() {
     let isValid = true;
     if (wageToggle.checked) {
-        // Check hourly wage input
         if (!hourlyWageField.value) {
             document.getElementById('hourlyWageError').textContent = 'Please enter your hourly wage';
             document.getElementById('hourlyWageError').style.display = 'block';
@@ -1494,7 +1439,6 @@ function updateDateRangeStats() {
             document.getElementById('hourlyWageError').style.display = 'none';
         }
     } else {
-        // Check annual salary input
         if (!annualSalaryInput.value) {
             document.getElementById('salaryError').textContent = 'Please enter your annual salary';
             document.getElementById('salaryError').style.display = 'block';
@@ -1502,7 +1446,6 @@ function updateDateRangeStats() {
         } else {
             document.getElementById('salaryError').style.display = 'none';
         }
-        // Check weekly hours input
         if (!weeklyHoursInput.value) {
             document.getElementById('hoursError').textContent = 'Please enter your weekly work hours';
             document.getElementById('hoursError').style.display = 'block';
@@ -1516,7 +1459,7 @@ function updateDateRangeStats() {
 
 function startTimer() {
     if (!validateInputs()) {
-        return; // Stop the function if inputs are not valid
+        return; 
     }
     const timerButton = document.getElementById('timerButton');
     const timerDisplay = document.getElementById('timerDisplay');
@@ -1528,11 +1471,10 @@ function startTimer() {
         timerButton.textContent = 'Stop Pooping';
         poopEmoji.classList.add('wiggle');
 
-        // Check if it's the first session of the day to award a Turd Token
         if (isFirstSessionOfDay()) {
-            turdTokens++; // Increment Turd Tokens
-            updateTurdTokenDisplay(); // Update the display of Turd Tokens
-            showTokenAwardNotification(); // Show a notification about the new Turd Token
+            turdTokens++; 
+            updateTurdTokenDisplay(); 
+            showTokenAwardNotification(); 
         }
 
         timerInterval = setInterval(() => {
@@ -1546,30 +1488,15 @@ function startTimer() {
         clearInterval(timerInterval);
         timerButton.textContent = 'Start Pooping';
         poopEmoji.classList.remove('wiggle');
-        openRatingModal(); // Assume this handles ending the session and rating
-        seconds = 0;
-        timerDisplay.textContent = '00:00:00';
-        earningsDisplay.textContent = '';
+        openRatingModal(); 
+        
+        // Reset after modal opens (or handle inside modal logic)
+        // seconds = 0; 
+        // timerDisplay.textContent = '00:00:00';
+        // earningsDisplay.textContent = '';
     }
 }
 
-
-function updateStatistics(duration, earnings) {
-    stats.totalSessions++;
-    stats.totalPoopTime += duration;
-    stats.totalEarnings += parseFloat(earnings);
-
-    const currentDate = new Date();
-    if (!stats.firstSessionDate || currentDate < new Date(stats.firstSessionDate)) {
-        stats.firstSessionDate = currentDate;
-    }
-    if (!stats.lastSessionDate || currentDate > new Date(stats.lastSessionDate)) {
-        stats.lastSessionDate = currentDate;
-    }
-
-    displayStatistics();
-    saveUserData();
-}
 
 document.addEventListener('DOMContentLoaded', () => {
     annualSalaryInput = document.getElementById('annualSalary');
@@ -1579,8 +1506,8 @@ document.addEventListener('DOMContentLoaded', () => {
     hourlyWageDisplay = document.getElementById('hourlyWage');
 
     annualSalaryInput.addEventListener('input', updateHourlyWage);
-weeklyHoursInput.addEventListener('input', updateHourlyWage);
-hourlyWageField.addEventListener('input', updateHourlyWage);
+    weeklyHoursInput.addEventListener('input', updateHourlyWage);
+    hourlyWageField.addEventListener('input', updateHourlyWage);
     
     const allTimeStatsBtn = document.getElementById('allTimeStats');
     const todayStatsBtn = document.getElementById('todayStats');
@@ -1590,9 +1517,8 @@ hourlyWageField.addEventListener('input', updateHourlyWage);
     const resetButton = document.getElementById('resetStats');
 
     const ratingModal = document.getElementById('ratingModal');
-    const congratsMessage = document.getElementById('congratsMessage');
-    const poopEmojis = document.querySelectorAll('.poopEmoji');
     const submitRatingButton = document.getElementById('submitRatingButton');
+    const poopEmojis = document.querySelectorAll('.poopEmoji');
     let selectedRating = 0;
 
     poopEmojis.forEach(emoji => {
@@ -1605,50 +1531,47 @@ hourlyWageField.addEventListener('input', updateHourlyWage);
     });
 
     submitRatingButton.addEventListener('click', () => {
-    if (selectedRating > 0) {
-        const latestEntry = poopLog.firstElementChild;
-        if (latestEntry) {
-            const ratingValue = latestEntry.querySelector('.rating-value');
-            ratingValue.textContent = '💩'.repeat(selectedRating);
+        if (selectedRating > 0) {
+            // Update the latest entry in the data array
+            if (poopLogData.length > 0) {
+                poopLogData[0].rating = selectedRating;
+                saveUserData();
+                renderPoopLogs(); // Re-render to show the rating
+            }
+            
+            ratingModal.style.display = 'none';
+            
+            // Show share modal
+            const latestLog = poopLogData[0];
+            openShareModal(latestLog.earnings.toFixed(2), selectedRating);
         }
-        ratingModal.style.display = 'none';
-        
-        // Get the earnings from the latest poop log
-        const earningsText = latestEntry.querySelector('.log-earnings').textContent;
-        const earnings = parseFloat(earningsText.replace(/[^0-9.-]+/g, '')).toFixed(2);
+    });
 
-        // Show the share modal with accurate earnings
-        openShareModal(earnings, selectedRating);
+    function openShareModal(earnings, rating) {
+        const ratingText = rating > 0 ? '💩'.repeat(rating) : '';
+        const message = `I just had a ${ratingText}-poop and earned $${earnings}! Find out how much you make to poop at www.poopprofit.com!`;
+
+        const shareModal = document.getElementById('shareModal');
+        shareModal.style.display = 'block';
+
+        document.getElementById('twitterShareButton').onclick = () => shareOnTwitter(message);
+        document.getElementById('facebookShareButton').onclick = () => shareOnFacebook(message);
+        document.getElementById('smsShareButton').onclick = () => shareViaSMS(message);
     }
-});
 
+    function shareOnTwitter(message) {
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
+        window.open(twitterUrl, '_blank');
+    }
 
-function openShareModal(earnings, rating) {
-    const ratingText = rating > 0 ? '💩'.repeat(rating) : '';
-    const message = `I just had a ${ratingText}-poop and earned $${earnings}! Find out how much you make to poop at www.poopprofit.com!`;
+    function shareOnFacebook(message) {
+        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://www.poopprofit.com')}&quote=${encodeURIComponent(message)}`;
+        window.open(facebookUrl, '_blank');
+    }
 
-    const shareModal = document.getElementById('shareModal');
-    shareModal.style.display = 'block';
-
-    // Set up event listeners for the sharing buttons
-    document.getElementById('twitterShareButton').onclick = () => shareOnTwitter(message);
-    document.getElementById('facebookShareButton').onclick = () => shareOnFacebook(message);
-    document.getElementById('smsShareButton').onclick = () => shareViaSMS(message);
-}
-
-function shareOnTwitter(message) {
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
-    window.open(twitterUrl, '_blank');
-}
-
-function shareOnFacebook(message) {
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://www.poopprofit.com')}&quote=${encodeURIComponent(message)}`;
-    window.open(facebookUrl, '_blank');
-}
-
-function shareViaSMS(message) {
-    window.open(`sms:?&body=${encodeURIComponent(message)}`);
-}
+    function shareViaSMS(message) {
+        window.open(`sms:?&body=${encodeURIComponent(message)}`);
+    }
 
     checkLoginStatus();
     lastAwardDate = localStorage.getItem('lastAwardDate');
@@ -1657,22 +1580,19 @@ function shareViaSMS(message) {
     
     wageToggle.addEventListener('change', function() {
         if (this.checked) {
-            salaryHoursInputs.style.display = 'none';
-            hourlyWageInput.style.display = 'block';
-            toggleLabel.textContent = 'Hourly Wage';
+            document.getElementById('salaryHoursInputs').style.display = 'none';
+            document.getElementById('hourlyWageInput').style.display = 'block';
+            document.getElementById('toggleLabel').textContent = 'Hourly Wage';
         } else {
-            salaryHoursInputs.style.display = 'block';
-            hourlyWageInput.style.display = 'none';
-            toggleLabel.textContent = 'Salary & Hours';
+            document.getElementById('salaryHoursInputs').style.display = 'block';
+            document.getElementById('hourlyWageInput').style.display = 'none';
+            document.getElementById('toggleLabel').textContent = 'Salary & Hours';
         }
         updateHourlyWage();
     });
 
-    const timerButton = document.getElementById('timerButton');
-    timerButton.addEventListener('click', startTimer);
-
     todayStatsBtn.addEventListener('click', () => {
-        clearActiveFilters();
+        clearActiveFilters(); // Reset UI first
         todayStatsBtn.classList.add('active');
         filterStatsByDay(new Date());
     });
@@ -1680,7 +1600,28 @@ function shareViaSMS(message) {
     allTimeStatsBtn.addEventListener('click', () => {
         clearActiveFilters();
         allTimeStatsBtn.classList.add('active');
-        displayStatistics();
+    });
+
+    function filterStatsByDay(date) {
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(date);
+        endOfDay.setHours(23, 59, 59, 999);
+        filterStatsByDateRange(startOfDay, endOfDay);
+    }
+
+    filterButton.addEventListener('click', () => {
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+        if (startDate && endDate) {
+            filterStatsByDateRange(startDate, endDate);
+        } else {
+            alert('Please select both start and end dates.');
+        }
+    });
+
+    resetButton.addEventListener('click', () => {
+        clearActiveFilters();
     });
 
     const tabs = document.querySelectorAll('.tab');
@@ -1692,7 +1633,7 @@ function shareViaSMS(message) {
             const activeContent = document.querySelector('.tab-content.active');
             const newContent = document.getElementById(`${tabId}Tab`);
 
-            activeContent.classList.add('fade-out');
+            if(activeContent) activeContent.classList.add('fade-out');
 
             setTimeout(() => {
                 tabs.forEach(t => t.classList.remove('active'));
@@ -1708,42 +1649,8 @@ function shareViaSMS(message) {
         });
     });
 
-    function filterStatsByDay(date) {
-    // Set the start and end of the day for the given date
-    const startOfDay = new Date(date);
-    startOfDay.setHours(0, 0, 0, 0); // Start of the day (00:00:00.000)
-
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999); // End of the day (23:59:59.999)
-
-    // Log start and end times for debugging
-    console.log("Filtering stats for the day:", date);
-    console.log("Start of Day:", startOfDay);
-    console.log("End of Day:", endOfDay);
-
-    // Call filterStatsByDateRange to filter logs for the specific day
-    filterStatsByDateRange(startOfDay, endOfDay);
-}
-
-
-    filterButton.addEventListener('click', () => {
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-        if (startDate && endDate) {
-            filterStatsByDateRange(startDate, endDate);
-        } else {
-            alert('Please select both start and end dates.');
-        }
-    });
-
-    resetButton.addEventListener('click', () => {
-        clearActiveFilters();
-        displayStatistics();
-    });
-
     loadUserData();
     updateHourlyWage();
-    displayStatistics();
 
     const turdTokenBalance = document.getElementById('turdTokenBalance');
     const turdTokenWallet = document.getElementById('turdTokenWallet');
@@ -1799,20 +1706,13 @@ Average Earnings Per Poop: $${(stats.totalEarnings / stats.totalSessions || 0).t
 Find out how much YOU get paid to poop at www.poopprofit.com!`;
 }
 
-function clearActiveFilters() {
-    document.getElementById('allTimeStats').classList.remove('active');
-    document.getElementById('todayStats').classList.remove('active');
-    document.getElementById('startDate').value = '';
-    document.getElementById('endDate').value = '';
-}
-
 function openRatingModal() {
     const ratingModal = document.getElementById('ratingModal');
     const congratsMessage = document.getElementById('congratsMessage');
     const poopEmojis = document.querySelectorAll('.poopEmoji');
     
-    const earnings = ((hourlyWage / 3600) * seconds).toFixed(2);
-    congratsMessage.textContent = `Congratulations! You just earned $${earnings}!`;
+    const earnings = parseFloat(((hourlyWage / 3600) * seconds).toFixed(2));
+    congratsMessage.textContent = `Congratulations! You just earned $${earnings.toFixed(2)}!`;
     
     ratingModal.style.display = 'block';
     selectedRating = 0;
@@ -1821,33 +1721,25 @@ function openRatingModal() {
         emoji.style.opacity = '0.5';
     });
 
-    if (isFirstSessionOfDay()) {
-        turdTokens++;
-        updateTurdTokenDisplay();
-        showTokenAwardNotification();
-    }
+    // Create new log data object
+    const newLog = {
+        id: Date.now(),
+        date: new Date().toLocaleString(),
+        durationSeconds: seconds,
+        earnings: earnings,
+        rating: 0 // Will be updated when user rates
+    };
 
-    const currentDate = new Date().toLocaleString();
-    const logEntry = document.createElement('div');
-    logEntry.className = 'log-entry';
-    logEntry.innerHTML = `
-        <button class="delete-button">×</button>
-        <p class="log-date">${currentDate}</p>
-        <p class="log-duration">Duration: ${formatTime(seconds)}</p>
-        <p class="log-earnings">Earnings: $${earnings}</p>
-        <p class="log-rating">Rating: <span class="rating-value">Not rated</span></p>
-    `;
+    // Add to start of array
+    poopLogData.unshift(newLog);
+    saveUserData();
+    renderPoopLogs();
+    recalculateStatistics();
 
-    // Assign delete button event handler
-    const deleteButton = logEntry.querySelector('.delete-button');
-    deleteButton.onclick = () => confirmDelete(logEntry, seconds, parseFloat(earnings));
-
-    if (poopLog.children.length === 0) {
-        poopLogPlaceholder.style.display = 'none';
-    }
-    
-    poopLog.insertBefore(logEntry, poopLog.firstChild);
-    updateStatistics(seconds, earnings);
+    // Reset timer display
+    seconds = 0;
+    document.getElementById('timerDisplay').textContent = '00:00:00';
+    document.getElementById('earningsDisplay').textContent = '';
 }
 
 </script>
@@ -1941,19 +1833,7 @@ function openRatingModal() {
                         <div class="poop-log-section card">
                             <h2 class="poop-log-title">Poop Log</h2>
                             <p class="poop-log-placeholder" id="poopLogPlaceholder" style="display: none;">No poop sessions logged yet!</p>
-                            <div id="poopLog"><div class="log-entry">
-        <button class="delete-button">×</button>
-        <p class="log-date">11/5/2024, 4:30:27 AM</p>
-        <p class="log-duration">Duration: 00:00:01</p>
-        <p class="log-earnings">Earnings: $0.07</p>
-        <p class="log-rating">Rating: <span class="rating-value">Not rated</span></p>
-    </div><div class="log-entry">
-        <button class="delete-button">×</button>
-        <p class="log-date">11/5/2024, 4:30:22 AM</p>
-        <p class="log-duration">Duration: 00:00:02</p>
-        <p class="log-earnings">Earnings: $0.14</p>
-        <p class="log-rating">Rating: <span class="rating-value">💩💩💩💩💩</span></p>
-    </div></div>
+                            <div id="poopLog"></div>
                         </div>
                     </div>
                 </div>
@@ -1972,27 +1852,27 @@ function openRatingModal() {
                     </div>
                     <div id="statisticsSection" class="statistics-grid">
                         <div class="stat-card featured" style="grid-column: 1 / -1; margin-bottom: 20px;">
-    <p id="totalEarnings">0.21</p>
+    <p id="totalEarnings">0.00</p>
     <span>Total Earnings</span>
 </div>
                         <div class="stat-card">
-                            <p id="totalSessions">2</p>
+                            <p id="totalSessions">0</p>
                             <span>Total Sessions</span>
                         </div>
                         <div class="stat-card">
-                            <p id="totalTime">00:00:05</p>
+                            <p id="totalTime">00:00:00</p>
                             <span>Total Time</span>
                         </div>
                         <div class="stat-card">
-                            <p id="avgPoopTime">00:00:02</p>
+                            <p id="avgPoopTime">00:00:00</p>
                             <span>Avg Poop Time</span>
                         </div>
                         <div class="stat-card">
-                            <p id="avgEarnings">0.11</p>
+                            <p id="avgEarnings">0.00</p>
                             <span>Avg Earnings</span>
                         </div>
                         <div class="stat-card">
-                            <p id="avgPoopsPerDay">2.00</p>
+                            <p id="avgPoopsPerDay">0.00</p>
                             <span>Avg Poops/Day</span>
                         </div>
                     </div>
@@ -2063,7 +1943,6 @@ function openRatingModal() {
         <p style="text-align: center; margin-top: 20px; font-style: italic;">COMING SOON</p>
     </div>
 </div>
-<!-- Popup HTML -->
 <div id="gamesPopup" class="popup" style="display: none;">
     <div class="popup-content">
         <span class="close-btn" onclick="closePopup()">×</span>
@@ -2071,7 +1950,6 @@ function openRatingModal() {
     </div>
 </div>
 
-<!-- JavaScript for Popup -->
 <script>
     function showPopup() {
         document.getElementById("gamesPopup").style.display = "flex";
