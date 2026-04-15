@@ -3,25 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Poop Profit Core Preview</title>
+  <title>Poop Profit</title>
   <style>
     :root {
       --bg: #060b16;
-      --bg-soft: #101a30;
-      --panel: rgba(18, 27, 50, 0.86);
-      --panel-strong: rgba(12, 18, 34, 0.92);
-      --line: rgba(65, 170, 255, 0.28);
-      --line-strong: rgba(65, 170, 255, 0.5);
-      --text: #eaf3ff;
-      --muted: #b4c6e5;
+      --panel: rgba(14, 23, 44, 0.9);
+      --panel-strong: rgba(9, 15, 30, 0.94);
+      --line: rgba(68, 172, 255, 0.25);
+      --line-strong: rgba(68, 172, 255, 0.52);
+      --text: #eaf2ff;
+      --muted: #b4c8e8;
       --primary: #43b3ff;
       --primary-strong: #1f96ea;
       --success: #2edb9c;
       --warning: #ffd166;
-      --danger: #ff7b7b;
+      --danger: #ff8080;
       --shadow: 0 24px 55px rgba(0, 0, 0, 0.45);
-      --glow-cyan: rgba(67, 179, 255, 0.34);
-      --glow-green: rgba(46, 219, 156, 0.24);
     }
 
     * {
@@ -37,254 +34,161 @@
       color: var(--text);
       background-color: var(--bg);
       background-image:
-        linear-gradient(130deg, rgba(6, 11, 22, 0.92), rgba(6, 11, 22, 0.82)),
+        linear-gradient(135deg, rgba(6, 11, 22, 0.93), rgba(6, 11, 22, 0.8)),
         url("MAINDESKTOPBG.jpeg");
-      background-size: cover;
       background-position: center;
+      background-size: cover;
       background-attachment: fixed;
     }
 
-    body::before,
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    body::before {
-      background:
-        radial-gradient(circle at 18% 15%, rgba(67, 179, 255, 0.14), transparent 36%),
-        radial-gradient(circle at 80% 84%, rgba(46, 219, 156, 0.1), transparent 38%);
-      animation: ambientShift 16s ease-in-out infinite;
-    }
-
-    body::after {
-      opacity: 0.22;
-      background-image: linear-gradient(to bottom, rgba(67, 179, 255, 0.35) 1px, transparent 1px);
-      background-size: 100% 4px;
-      mix-blend-mode: screen;
-    }
-
     .page {
-      width: min(1180px, 94vw);
-      margin: 24px auto 56px;
+      width: min(1180px, 95vw);
+      margin: 18px auto 56px;
+    }
+
+    .shell {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(15, 24, 45, 0.9), rgba(10, 15, 28, 0.94));
+      box-shadow: var(--shadow);
+      padding: 14px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .shell::before {
+      content: "";
+      position: absolute;
+      width: 380px;
+      height: 380px;
+      border-radius: 999px;
+      top: -180px;
+      right: -100px;
+      background: radial-gradient(circle, rgba(67, 179, 255, 0.25), transparent 70%);
+      pointer-events: none;
+    }
+
+    .top-banner {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
+      margin-bottom: 12px;
       position: relative;
       z-index: 1;
     }
 
-    .site-shell {
-      position: relative;
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      background: linear-gradient(180deg, rgba(15, 24, 45, 0.92), rgba(10, 15, 28, 0.92));
-      box-shadow: var(--shadow);
-      padding: 16px;
-      backdrop-filter: blur(8px);
-      overflow: hidden;
-    }
-
-    .site-shell::before {
-      content: "";
-      position: absolute;
-      inset: -35% auto auto -15%;
-      width: 48%;
-      height: 120%;
-      background: linear-gradient(180deg, rgba(67, 179, 255, 0.2), transparent 70%);
-      transform: rotate(8deg);
-      pointer-events: none;
-      filter: blur(4px);
-    }
-
-    .top-banner {
-      position: relative;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
-      margin-bottom: 14px;
-    }
-
-    .top-banner::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(3, 8, 16, 0.28), transparent 56%);
-      pointer-events: none;
-    }
-
     .top-banner img {
       width: 100%;
+      display: block;
       height: auto;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 14px;
+      position: sticky;
+      top: 8px;
+      z-index: 30;
+      background: rgba(7, 12, 22, 0.72);
+      border: 1px solid rgba(67, 179, 255, 0.22);
+      border-radius: 12px;
+      padding: 8px;
+      backdrop-filter: blur(6px);
+    }
+
+    .tab-btn {
+      border: 1px solid rgba(67, 179, 255, 0.24);
+      border-radius: 10px;
+      background: rgba(8, 14, 28, 0.86);
+      color: var(--muted);
+      min-height: 48px;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.94rem;
+    }
+
+    .tab-btn img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+    }
+
+    .tab-btn.active {
+      color: #fff;
+      border-color: var(--line-strong);
+      background: linear-gradient(180deg, rgba(67, 179, 255, 0.24), rgba(24, 83, 133, 0.34));
+      box-shadow: 0 0 0 1px rgba(67, 179, 255, 0.25), 0 8px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .tab-panel {
+      display: none;
+      animation: fadeUp 0.2s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tab-panel.active {
       display: block;
     }
 
-    .banner-actions {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .pill {
-      background: rgba(7, 12, 22, 0.75);
-      color: #cce8ff;
-      border: 1px solid rgba(65, 170, 255, 0.38);
-      border-radius: 999px;
-      padding: 6px 11px;
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      font-weight: 700;
-    }
-
-    .intro-strip {
-      border: 1px solid rgba(65, 170, 255, 0.36);
-      border-radius: 14px;
-      background: linear-gradient(130deg, rgba(17, 29, 54, 0.95), rgba(12, 20, 38, 0.95));
-      padding: 14px 16px;
-      margin-bottom: 16px;
+    .panel-grid {
       display: grid;
       gap: 12px;
-    }
-
-    .intro-headline {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .intro-strip h1 {
-      margin: 0 0 6px;
-      font-size: clamp(1.4rem, 1.2rem + 0.9vw, 2rem);
-      letter-spacing: 0.01em;
-    }
-
-    .intro-strip p {
-      margin: 0;
-      color: var(--muted);
-      max-width: 75ch;
-      line-height: 1.45;
-    }
-
-    .intro-kicker {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 0.76rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      font-weight: 700;
-      border: 1px solid rgba(65, 170, 255, 0.42);
-      background: rgba(67, 179, 255, 0.12);
-      color: #cfe9ff;
-      white-space: nowrap;
-    }
-
-    .intro-metrics {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 9px;
-    }
-
-    @media (min-width: 900px) {
-      .intro-metrics {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-    }
-
-    .hero-metric {
-      border-radius: 12px;
-      border: 1px solid rgba(65, 170, 255, 0.28);
-      background: rgba(6, 11, 22, 0.68);
-      padding: 10px;
-      min-height: 76px;
-      display: grid;
-      align-content: center;
-      gap: 4px;
-    }
-
-    .hero-metric .label {
-      color: var(--muted);
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-
-    .hero-metric .value {
-      font-size: 1.2rem;
-      font-weight: 800;
-      letter-spacing: 0.01em;
-    }
-
-    .card-grid {
-      display: grid;
-      gap: 14px;
       grid-template-columns: repeat(12, 1fr);
     }
 
     .card {
       background: linear-gradient(170deg, var(--panel), var(--panel-strong));
       border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.3);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
       min-width: 0;
-      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
     }
 
-    .card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(65, 170, 255, 0.52);
-      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(67, 179, 255, 0.12);
-    }
-
-    .card-title {
-      margin: 0 0 12px;
-      font-size: 1.02rem;
-      letter-spacing: 0.01em;
+    .card h2,
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .card-title img {
-      width: 26px;
-      height: 26px;
-      object-fit: contain;
-      border-radius: 6px;
-      background: rgba(7, 12, 22, 0.7);
-      border: 1px solid rgba(65, 170, 255, 0.25);
+    .card h2 img,
+    .card h3 img {
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+      border: 1px solid rgba(67, 179, 255, 0.25);
       padding: 3px;
+      background: rgba(7, 12, 22, 0.7);
+      object-fit: contain;
     }
 
-    .calculator-card,
+    .wage-card,
     .timer-card,
-    .stats-card,
-    .share-card,
     .log-card {
       grid-column: span 12;
     }
 
     @media (min-width: 980px) {
-      .calculator-card,
-      .timer-card,
-      .share-card {
-        grid-column: span 4;
+      .wage-card,
+      .timer-card {
+        grid-column: span 6;
       }
 
-      .stats-card,
       .log-card {
-        grid-column: span 6;
+        grid-column: span 12;
       }
     }
 
@@ -297,23 +201,19 @@
 
     .button {
       border: 1px solid transparent;
-      border-radius: 11px;
+      border-radius: 10px;
       padding: 10px 14px;
       cursor: pointer;
       font-weight: 700;
       letter-spacing: 0.01em;
       background: linear-gradient(180deg, var(--primary), var(--primary-strong));
       color: #04101f;
-      transition: transform 0.15s ease, filter 0.2s ease, border-color 0.2s ease;
+      transition: transform 0.14s ease, filter 0.2s ease;
     }
 
     .button:hover {
       transform: translateY(-1px);
       filter: brightness(1.05);
-    }
-
-    .button:active {
-      transform: translateY(0);
     }
 
     .button.ghost {
@@ -324,9 +224,9 @@
     }
 
     .button.warn {
-      background: rgba(255, 123, 123, 0.16);
-      border-color: rgba(255, 123, 123, 0.45);
-      color: #ffd8d8;
+      background: rgba(255, 128, 128, 0.16);
+      border-color: rgba(255, 128, 128, 0.42);
+      color: #ffd9d9;
       font-weight: 600;
     }
 
@@ -336,12 +236,16 @@
 
     .row {
       display: grid;
-      gap: 10px;
       grid-template-columns: 1fr;
+      gap: 9px;
       margin-bottom: 8px;
     }
 
-    @media (min-width: 580px) {
+    .row.two {
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 560px) {
       .row.two {
         grid-template-columns: 1fr 1fr;
       }
@@ -349,20 +253,20 @@
 
     label {
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       color: var(--muted);
-      font-size: 0.91rem;
+      font-size: 0.9rem;
     }
 
     input,
     select {
       width: 100%;
       border-radius: 10px;
-      border: 1px solid rgba(65, 170, 255, 0.3);
-      background: rgba(6, 11, 22, 0.72);
+      border: 1px solid rgba(67, 179, 255, 0.3);
+      background: rgba(6, 11, 22, 0.76);
       color: var(--text);
-      padding: 10px 12px;
       outline: none;
+      padding: 10px 12px;
     }
 
     input:focus,
@@ -373,34 +277,34 @@
 
     .segmented {
       display: inline-flex;
-      border-radius: 11px;
-      border: 1px solid rgba(65, 170, 255, 0.35);
+      border: 1px solid rgba(67, 179, 255, 0.34);
+      border-radius: 10px;
       overflow: hidden;
-      margin-bottom: 12px;
-      background: rgba(6, 11, 22, 0.45);
+      margin-bottom: 10px;
+      background: rgba(6, 11, 22, 0.5);
     }
 
     .segmented button {
       border: 0;
       background: transparent;
       color: var(--muted);
-      padding: 9px 13px;
+      padding: 9px 12px;
       cursor: pointer;
       font-weight: 600;
     }
 
     .segmented button.active {
       background: rgba(67, 179, 255, 0.2);
-      color: #ffffff;
+      color: #fff;
     }
 
     .hourly-display {
-      margin-top: 9px;
-      border-radius: 11px;
-      padding: 11px;
-      border: 1px solid rgba(67, 179, 255, 0.35);
-      background: rgba(67, 179, 255, 0.1);
+      border-radius: 10px;
+      border: 1px solid rgba(67, 179, 255, 0.34);
+      background: rgba(67, 179, 255, 0.12);
+      padding: 10px;
       font-weight: 700;
+      margin-top: 6px;
     }
 
     .timer {
@@ -408,54 +312,157 @@
     }
 
     .timer .emoji {
-      font-size: 2.35rem;
+      font-size: 2.3rem;
       margin-bottom: 6px;
     }
 
     .timer-value {
-      font-size: clamp(2rem, 1.4rem + 2vw, 2.95rem);
+      font-size: clamp(2rem, 1.5rem + 1.8vw, 2.9rem);
       font-weight: 800;
       letter-spacing: 0.04em;
-      margin: 4px 0 11px;
-      text-shadow: 0 0 16px rgba(67, 179, 255, 0.25);
+      margin: 4px 0 10px;
     }
 
     .earnings-now {
       min-height: 22px;
-      margin-bottom: 10px;
-      font-weight: 700;
       color: var(--success);
+      font-weight: 700;
+      margin-bottom: 8px;
     }
 
     .timer-subline {
-      min-height: 20px;
+      min-height: 18px;
       color: var(--muted);
-      font-size: 0.88rem;
-      margin-bottom: 8px;
+      font-size: 0.84rem;
+      margin-bottom: 7px;
     }
 
     .timer-progress {
       width: 100%;
-      height: 9px;
       border-radius: 999px;
-      border: 1px solid rgba(65, 170, 255, 0.28);
-      background: rgba(6, 11, 22, 0.72);
+      height: 8px;
       overflow: hidden;
-      margin-bottom: 10px;
+      background: rgba(67, 179, 255, 0.14);
+      border: 1px solid rgba(67, 179, 255, 0.26);
+      margin-bottom: 8px;
     }
 
     .timer-progress > div {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, rgba(67, 179, 255, 0.8), rgba(46, 219, 156, 0.8));
-      box-shadow: 0 0 14px var(--glow-cyan);
-      transition: width 0.25s ease;
+      background: linear-gradient(90deg, #54b9ff, #2edb9c);
+      transition: width 0.4s ease;
     }
 
     .status {
       min-height: 19px;
       font-size: 0.9rem;
       color: var(--warning);
+      margin-top: 8px;
+    }
+
+    .timer-card.running {
+      border-color: rgba(46, 219, 156, 0.58);
+      box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.35),
+        0 0 0 1px rgba(46, 219, 156, 0.25),
+        0 0 32px rgba(46, 219, 156, 0.35);
+    }
+
+    .timer-card.running .emoji {
+      animation: pulseBounce 1.2s ease-in-out infinite;
+    }
+
+    .log-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 9px;
+    }
+
+    .log-list {
+      display: grid;
+      gap: 8px;
+      max-height: 340px;
+      overflow-y: auto;
+      padding-right: 3px;
+    }
+
+    .log-entry {
+      border: 1px solid rgba(67, 179, 255, 0.24);
+      border-radius: 12px;
+      background: rgba(6, 11, 22, 0.78);
+      padding: 10px;
+      display: grid;
+      gap: 6px;
+      animation: fadeUp 0.2s ease;
+    }
+
+    .log-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .log-date {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .log-earnings {
+      color: var(--success);
+      font-weight: 800;
+    }
+
+    .log-meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .log-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .icon-button {
+      border: 1px solid rgba(67, 179, 255, 0.34);
+      border-radius: 10px;
+      background: rgba(67, 179, 255, 0.14);
+      color: #d8ebff;
+      cursor: pointer;
+      min-height: 36px;
+      min-width: 36px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 0.84rem;
+    }
+
+    .icon-button.warn {
+      border-color: rgba(255, 128, 128, 0.38);
+      background: rgba(255, 128, 128, 0.15);
+      color: #ffd9d9;
+    }
+
+    .icon-share {
+      font-size: 0.95rem;
+      line-height: 1;
+    }
+
+    .empty-state {
+      border: 1px dashed rgba(67, 179, 255, 0.35);
+      border-radius: 12px;
+      text-align: center;
+      color: var(--muted);
+      padding: 22px 14px;
     }
 
     .stats-grid {
@@ -466,27 +473,47 @@
     }
 
     .stat {
-      border: 1px solid rgba(65, 170, 255, 0.28);
-      border-radius: 12px;
+      border: 1px solid rgba(67, 179, 255, 0.28);
+      border-radius: 11px;
       background: rgba(6, 11, 22, 0.68);
       padding: 10px;
     }
 
     .stat .label {
       color: var(--muted);
-      font-size: 0.82rem;
+      font-size: 0.81rem;
       margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
     }
 
     .stat .value {
-      font-size: 1.18rem;
+      font-size: 1.16rem;
       font-weight: 800;
     }
 
+    .share-stat-btn {
+      border: 1px solid rgba(67, 179, 255, 0.35);
+      border-radius: 8px;
+      background: rgba(67, 179, 255, 0.15);
+      color: #d7ebff;
+      cursor: pointer;
+      padding: 0 8px;
+      min-height: 28px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
     .trend-panel {
-      border: 1px solid rgba(65, 170, 255, 0.25);
+      border: 1px solid rgba(67, 179, 255, 0.24);
       border-radius: 12px;
-      background: rgba(6, 11, 22, 0.66);
+      background: rgba(6, 11, 22, 0.65);
       padding: 10px;
       margin-bottom: 10px;
     }
@@ -503,11 +530,11 @@
 
     #trendCanvas {
       width: 100%;
-      height: 140px;
+      height: 136px;
       display: block;
       border-radius: 8px;
       background: linear-gradient(180deg, rgba(11, 17, 33, 0.8), rgba(8, 13, 24, 0.9));
-      border: 1px solid rgba(65, 170, 255, 0.18);
+      border: 1px solid rgba(67, 179, 255, 0.17);
     }
 
     .insights-grid {
@@ -518,7 +545,7 @@
 
     .insight {
       border-radius: 10px;
-      border: 1px solid rgba(65, 170, 255, 0.24);
+      border: 1px solid rgba(67, 179, 255, 0.24);
       background: rgba(6, 11, 22, 0.68);
       padding: 9px;
     }
@@ -537,7 +564,39 @@
       color: #dff2ff;
     }
 
+    .coming-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      margin-bottom: 12px;
+    }
+
+    .coming-card {
+      border: 1px solid rgba(67, 179, 255, 0.24);
+      border-radius: 12px;
+      background: rgba(6, 11, 22, 0.7);
+      padding: 12px;
+    }
+
+    .coming-card h4 {
+      margin: 0 0 6px;
+      font-size: 0.96rem;
+      color: #d9edff;
+    }
+
+    .coming-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.42;
+    }
+
     .share-controls {
+      border: 1px solid rgba(67, 179, 255, 0.25);
+      border-radius: 12px;
+      background: rgba(6, 11, 22, 0.66);
+      padding: 10px;
+      margin-top: 10px;
       display: grid;
       gap: 10px;
     }
@@ -549,23 +608,18 @@
     }
 
     .share-buttons button {
-      border: 1px solid rgba(65, 170, 255, 0.25);
+      border: 1px solid rgba(67, 179, 255, 0.25);
       border-radius: 10px;
       background: rgba(6, 11, 22, 0.72);
       color: var(--text);
       cursor: pointer;
       padding: 9px 8px;
       font-weight: 600;
+      min-height: 42px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 7px;
-      min-height: 42px;
-    }
-
-    .share-buttons button:hover {
-      border-color: var(--line-strong);
-      background: rgba(67, 179, 255, 0.14);
     }
 
     .share-buttons img {
@@ -574,215 +628,132 @@
       object-fit: contain;
     }
 
-    .log-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-
-    .log-list {
-      display: grid;
-      gap: 8px;
-      max-height: 350px;
-      overflow-y: auto;
-      padding-right: 3px;
-    }
-
-    .log-entry {
-      border: 1px solid rgba(65, 170, 255, 0.24);
-      border-radius: 12px;
-      background: rgba(6, 11, 22, 0.78);
-      padding: 10px;
-      display: grid;
-      gap: 6px;
-      animation: fadeUp 0.25s ease;
-    }
-
-    .log-top {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .log-date {
-      font-size: 0.84rem;
-      color: var(--muted);
-    }
-
-    .log-earnings {
-      color: var(--success);
-      font-weight: 800;
-    }
-
-    .log-meta {
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .log-actions {
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .empty-state {
-      border: 1px dashed rgba(65, 170, 255, 0.33);
-      border-radius: 12px;
-      text-align: center;
-      color: var(--muted);
-      padding: 22px 14px;
-    }
-
     .preview-footnote {
       margin-top: 14px;
       padding-top: 12px;
-      border-top: 1px solid rgba(65, 170, 255, 0.2);
+      border-top: 1px solid rgba(67, 179, 255, 0.22);
       color: var(--muted);
-      font-size: 0.84rem;
+      font-size: 0.83rem;
       display: flex;
       justify-content: space-between;
       gap: 8px;
       flex-wrap: wrap;
     }
 
-    .preview-footnote strong {
-      color: #d2ecff;
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
-    .modal {
+    .mobile-nav {
       position: fixed;
-      inset: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+      border-top: 1px solid rgba(67, 179, 255, 0.24);
+      background: linear-gradient(180deg, rgba(8, 13, 24, 0.95), rgba(6, 10, 18, 0.98));
+      backdrop-filter: blur(8px);
+      z-index: 65;
+      display: none;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .mobile-nav-btn {
+      border: 1px solid rgba(67, 179, 255, 0.2);
+      border-radius: 10px;
+      background: rgba(8, 14, 26, 0.8);
+      color: #d8e8ff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      min-height: 44px;
+      padding: 6px 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .mobile-nav-btn img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+    }
+
+    .mobile-nav-btn.active {
+      border-color: rgba(67, 179, 255, 0.55);
+      background: rgba(67, 179, 255, 0.2);
+      color: #fff;
+    }
+
+    .mobile-fab {
+      position: fixed;
+      right: 14px;
+      bottom: calc(74px + env(safe-area-inset-bottom));
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      border: 1px solid rgba(67, 179, 255, 0.5);
+      background: radial-gradient(circle at 30% 30%, #6cc7ff, #1f96ea 70%);
+      color: #021426;
+      font-size: 1.35rem;
+      font-weight: 900;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), 0 0 24px rgba(67, 179, 255, 0.45);
       display: none;
       align-items: center;
       justify-content: center;
-      background: rgba(3, 8, 16, 0.72);
-      backdrop-filter: blur(4px);
-      padding: 16px;
-      z-index: 2000;
+      flex-direction: column;
+      gap: 1px;
+      cursor: pointer;
+      z-index: 70;
+      transition: transform 0.13s ease, filter 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .modal.open {
-      display: flex;
+    .mobile-fab.haptic,
+    .mobile-fab:active {
+      transform: scale(0.94);
+      filter: brightness(1.08);
     }
 
-    .modal-panel {
-      width: min(560px, 100%);
-      border-radius: 16px;
-      border: 1px solid rgba(65, 170, 255, 0.35);
-      background: linear-gradient(180deg, rgba(18, 27, 50, 0.98), rgba(10, 15, 30, 0.98));
-      box-shadow: var(--shadow);
-      padding: 20px;
+    .mobile-fab.running {
+      background: radial-gradient(circle at 30% 30%, #ffb0b0, #ff6f6f 70%);
+      border-color: rgba(255, 132, 132, 0.55);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), 0 0 24px rgba(255, 132, 132, 0.4);
     }
 
-    .modal-panel h3 {
-      margin: 0 0 10px;
-      font-size: 1.2rem;
-    }
-
-    .modal-panel ul {
-      margin: 10px 0 0 20px;
-      padding: 0;
-      color: var(--muted);
-    }
-
-    .modal-panel li {
-      margin-bottom: 8px;
-    }
-
-    .modal-footer {
-      margin-top: 14px;
-      display: flex;
-      justify-content: flex-end;
+    .fab-label {
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      margin-top: -2px;
     }
 
     @media (max-width: 760px) {
       .page {
-        width: min(100%, 100vw);
+        width: 100%;
         margin: 0 auto;
-        padding: 10px 10px calc(86px + env(safe-area-inset-bottom));
+        padding: 10px 10px calc(132px + env(safe-area-inset-bottom));
       }
 
-      .site-shell {
+      .shell {
         border-radius: 14px;
         padding: 10px;
       }
 
-      .site-shell::before {
-        filter: blur(30px);
+      .tabs {
+        top: 6px;
       }
 
-      .top-banner {
-        margin-bottom: 10px;
-        border-radius: 12px;
+      .tab-btn {
+        min-height: 46px;
+        font-size: 0.84rem;
       }
 
-      .banner-actions {
-        position: static;
-        width: 100%;
-        justify-content: space-between;
-        gap: 10px;
-        padding: 8px;
-        background: rgba(8, 13, 23, 0.78);
-        border-top: 1px solid rgba(65, 170, 255, 0.25);
+      .tab-btn span {
+        display: none;
       }
 
-      .pill {
-        font-size: 0.68rem;
-        letter-spacing: 0.05em;
-        padding: 6px 9px;
-      }
-
-      .intro-strip {
-        padding: 12px;
-        margin-bottom: 12px;
-      }
-
-      .intro-headline {
-        gap: 8px;
-      }
-
-      .intro-kicker {
-        font-size: 0.66rem;
-        align-self: flex-start;
-      }
-
-      .intro-metrics {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .hero-metric {
-        padding: 10px;
-      }
-
-      .hero-metric .value {
-        font-size: 1rem;
-      }
-
-      .card-grid {
-        gap: 10px;
-      }
-
-      .card {
-        border-radius: 13px;
-        padding: 13px;
-      }
-
-      .card-title {
-        font-size: 0.96rem;
-        margin-bottom: 10px;
-      }
-
-      .card-title img {
-        width: 22px;
-        height: 22px;
+      input,
+      select {
+        font-size: 16px;
       }
 
       .segmented {
@@ -795,41 +766,8 @@
         padding: 11px 8px;
       }
 
-      input,
-      select {
-        font-size: 16px;
-        padding: 11px 12px;
-      }
-
-      .timer .emoji {
-        font-size: 2.1rem;
-      }
-
-      .timer-value {
-        font-size: clamp(1.85rem, 1.4rem + 2.2vw, 2.35rem);
-        letter-spacing: 0.02em;
-      }
-
-      .timer-progress {
-        height: 10px;
-      }
-
-      #timerButton {
-        position: sticky;
-        bottom: calc(10px + env(safe-area-inset-bottom));
-        z-index: 40;
-        min-height: 48px;
-        box-shadow:
-          0 14px 28px rgba(0, 0, 0, 0.45),
-          0 0 0 1px rgba(65, 170, 255, 0.35);
-      }
-
       .stats-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .trend-panel {
-        padding: 8px;
       }
 
       #trendCanvas {
@@ -854,135 +792,26 @@
         max-height: 260px;
       }
 
+      .mobile-nav,
       .mobile-fab {
-        display: inline-flex;
-      }
-
-      .mobile-quicknav {
         display: grid;
       }
 
-      .preview-footnote {
-        font-size: 0.78rem;
+      .mobile-fab {
+        display: inline-flex;
       }
     }
 
     @media (max-width: 420px) {
-      .intro-metrics,
       .stats-grid {
         grid-template-columns: 1fr;
       }
-
-      .banner-actions {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .banner-actions .button {
-        width: 100%;
-      }
-
-      .mobile-quicknav {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-    }
-
-    .mobile-fab {
-      position: fixed;
-      right: 14px;
-      bottom: calc(78px + env(safe-area-inset-bottom));
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      border: 1px solid rgba(65, 170, 255, 0.5);
-      background: radial-gradient(circle at 30% 30%, #6cc7ff, #1f96ea 70%);
-      color: #021426;
-      font-size: 1.35rem;
-      font-weight: 900;
-      box-shadow:
-        0 14px 30px rgba(0, 0, 0, 0.45),
-        0 0 24px rgba(65, 170, 255, 0.45);
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 70;
-      display: none;
-      transition: transform 0.12s ease, filter 0.2s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .mobile-fab:active,
-    .mobile-fab.haptic {
-      transform: scale(0.94);
-      filter: brightness(1.08);
-    }
-
-    .mobile-fab.running {
-      background: radial-gradient(circle at 30% 30%, #ffb0b0, #ff6f6f 70%);
-      border-color: rgba(255, 132, 132, 0.55);
-      box-shadow:
-        0 14px 30px rgba(0, 0, 0, 0.45),
-        0 0 24px rgba(255, 132, 132, 0.4);
-    }
-
-    .mobile-quicknav {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
-      border-top: 1px solid rgba(65, 170, 255, 0.25);
-      background: linear-gradient(180deg, rgba(8, 13, 24, 0.95), rgba(6, 10, 18, 0.98));
-      backdrop-filter: blur(8px);
-      z-index: 65;
-      display: none;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 6px;
-    }
-
-    .mobile-nav-btn {
-      border: 1px solid rgba(65, 170, 255, 0.2);
-      border-radius: 10px;
-      background: rgba(8, 14, 26, 0.8);
-      color: #d8e8ff;
-      font-size: 0.74rem;
-      font-weight: 600;
-      min-height: 44px;
-      padding: 6px 4px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      cursor: pointer;
-    }
-
-    .mobile-nav-btn.active {
-      border-color: rgba(65, 170, 255, 0.55);
-      background: rgba(67, 179, 255, 0.2);
-      color: #ffffff;
-    }
-
-    .timer-card.running {
-      border-color: rgba(46, 219, 156, 0.58);
-      box-shadow:
-        0 18px 42px rgba(0, 0, 0, 0.35),
-        0 0 0 1px rgba(46, 219, 156, 0.25),
-        0 0 32px var(--glow-green);
-    }
-
-    .timer-card.running .emoji {
-      animation: pulseBounce 1.2s ease-in-out infinite;
     }
 
     @keyframes pulseBounce {
       0% { transform: translateY(0) scale(1); }
       40% { transform: translateY(-3px) scale(1.06); }
       100% { transform: translateY(0) scale(1); }
-    }
-
-    @keyframes ambientShift {
-      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-      50% { transform: translate3d(8px, -6px, 0) scale(1.02); }
     }
 
     @keyframes fadeUp {
@@ -999,243 +828,216 @@
 </head>
 <body>
   <main class="page">
-    <section class="site-shell">
+    <section class="shell">
       <header class="top-banner">
         <img src="BANNER.jpeg" alt="Poop Profit banner">
-        <div class="banner-actions">
-          <span class="pill">Core Preview</span>
-          <button id="comingSoonButton" class="button ghost" type="button">What's Coming to Poop Profit?</button>
-        </div>
       </header>
 
-      <section class="intro-strip">
-        <div class="intro-headline">
-          <div>
-            <h1>Modern Core Experience (No Account Required)</h1>
-            <p>
-              This streamlined build keeps Poop Profit focused on the essentials: calculate your wage, run sessions, track your history,
-              and share your stats. Everything is saved in localStorage on this device.
-            </p>
-          </div>
-          <span class="intro-kicker">Live Core Build</span>
-        </div>
-        <div class="intro-metrics">
-          <article class="hero-metric">
-            <div class="label">Today Earnings</div>
-            <div id="heroTodayEarnings" class="value">$0.00</div>
+      <nav class="tabs" aria-label="Main tabs">
+        <button class="tab-btn active" data-tab="calculator" type="button">
+          <img src="calc.png" alt="">
+          <span>Calculator</span>
+        </button>
+        <button class="tab-btn" data-tab="stats" type="button">
+          <img src="stats.png" alt="">
+          <span>Stats</span>
+        </button>
+        <button class="tab-btn" data-tab="coming" type="button">
+          <img src="shop.png" alt="">
+          <span>Coming Soon</span>
+        </button>
+      </nav>
+
+      <section id="panel-calculator" class="tab-panel active" aria-label="Calculator tab">
+        <div class="panel-grid">
+          <article class="card wage-card">
+            <h2><img src="calc.png" alt="">Wage Calculator</h2>
+            <div class="segmented" role="group" aria-label="Wage input mode">
+              <button id="hourlyModeButton" type="button">Hourly Wage</button>
+              <button id="salaryModeButton" type="button">Salary + Weekly Hours</button>
+            </div>
+
+            <div id="hourlyInputs" class="row">
+              <div>
+                <label for="hourlyWageInput">Hourly Wage (USD)</label>
+                <input id="hourlyWageInput" type="number" min="0" step="0.01" placeholder="e.g. 25">
+              </div>
+            </div>
+
+            <div id="salaryInputs" class="row two" hidden>
+              <div>
+                <label for="annualSalaryInput">Annual Salary (USD)</label>
+                <input id="annualSalaryInput" type="number" min="0" step="0.01" placeholder="e.g. 65000">
+              </div>
+              <div>
+                <label for="weeklyHoursInput">Weekly Hours</label>
+                <input id="weeklyHoursInput" type="number" min="0" step="0.1" placeholder="e.g. 40">
+              </div>
+            </div>
+
+            <div id="hourlyWageDisplay" class="hourly-display">Effective hourly wage: $0.00</div>
           </article>
-          <article class="hero-metric">
-            <div class="label">Total Sessions</div>
-            <div id="heroTotalSessions" class="value">0</div>
+
+          <article class="card timer-card">
+            <h2><img src="poopemojifinal.jpeg" alt="">Session Timer</h2>
+            <div class="timer">
+              <div class="emoji" aria-hidden="true">💩</div>
+              <div id="timerDisplay" class="timer-value">00:00:00</div>
+              <div id="liveEarnings" class="earnings-now"></div>
+              <div id="sessionProjection" class="timer-subline"></div>
+              <div class="timer-progress" aria-hidden="true">
+                <div id="timerProgressBar"></div>
+              </div>
+              <div id="timerMilestone" class="timer-subline"></div>
+              <button id="timerButton" class="button full" type="button">Start Session</button>
+              <div id="statusMessage" class="status"></div>
+            </div>
           </article>
-          <article class="hero-metric">
-            <div class="label">Best Session</div>
-            <div id="heroBestSession" class="value">$0.00</div>
-          </article>
-          <article class="hero-metric">
-            <div class="label">Current Streak</div>
-            <div id="heroStreak" class="value">0 days</div>
+
+          <article class="card log-card">
+            <div class="log-header">
+              <h3 style="margin: 0;"><img src="calc.png" alt="">Session Log</h3>
+              <button id="clearAllButton" class="button warn" type="button">Clear All</button>
+            </div>
+            <div id="logList" class="log-list" aria-live="polite"></div>
           </article>
         </div>
       </section>
 
-      <section class="card-grid">
-        <article class="card calculator-card">
-          <h2 class="card-title">
-            <img src="calc.png" alt="">
-            Wage Calculator
-          </h2>
-          <div class="segmented" role="group" aria-label="Wage input mode">
-            <button id="hourlyModeButton" type="button">Hourly Wage</button>
-            <button id="salaryModeButton" type="button">Salary + Weekly Hours</button>
-          </div>
+      <section id="panel-stats" class="tab-panel" aria-label="Stats tab">
+        <div class="panel-grid">
+          <article class="card" style="grid-column: span 12;">
+            <h2><img src="stats.png" alt="">Statistics</h2>
+            <div class="stats-grid">
+              <div class="stat">
+                <div class="label">Total Sessions <button class="share-stat-btn" data-stat-share="totalSessions" type="button"><span class="icon-share">↗</span>Share</button></div>
+                <div id="statSessions" class="value">0</div>
+              </div>
+              <div class="stat">
+                <div class="label">Total Time <button class="share-stat-btn" data-stat-share="totalTime" type="button"><span class="icon-share">↗</span>Share</button></div>
+                <div id="statTime" class="value">00:00:00</div>
+              </div>
+              <div class="stat">
+                <div class="label">Total Earnings <button class="share-stat-btn" data-stat-share="totalEarnings" type="button"><span class="icon-share">↗</span>Share</button></div>
+                <div id="statEarnings" class="value">$0.00</div>
+              </div>
+              <div class="stat">
+                <div class="label">Average Session <button class="share-stat-btn" data-stat-share="avgSession" type="button"><span class="icon-share">↗</span>Share</button></div>
+                <div id="statAvgTime" class="value">00:00:00</div>
+              </div>
+              <div class="stat">
+                <div class="label">Average Earnings <button class="share-stat-btn" data-stat-share="avgEarnings" type="button"><span class="icon-share">↗</span>Share</button></div>
+                <div id="statAvgEarnings" class="value">$0.00</div>
+              </div>
+              <div class="stat">
+                <div class="label">Today's Sessions <button class="share-stat-btn" data-stat-share="todaySessions" type="button"><span class="icon-share">↗</span>Share</button></div>
+                <div id="statToday" class="value">0</div>
+              </div>
+            </div>
 
-          <div id="hourlyInputs" class="row">
-            <div>
-              <label for="hourlyWageInput">Hourly Wage (USD)</label>
-              <input id="hourlyWageInput" type="number" min="0" step="0.01" placeholder="e.g. 25">
+            <div class="trend-panel">
+              <div class="trend-head">
+                <span>Recent Earnings Trend</span>
+                <span id="trendRangeLabel">Last 14 sessions</span>
+              </div>
+              <canvas id="trendCanvas"></canvas>
             </div>
-          </div>
 
-          <div id="salaryInputs" class="row two" hidden>
-            <div>
-              <label for="annualSalaryInput">Annual Salary (USD)</label>
-              <input id="annualSalaryInput" type="number" min="0" step="0.01" placeholder="e.g. 65000">
+            <div class="insights-grid">
+              <article class="insight">
+                <div class="label">Longest Session</div>
+                <div id="insightLongest" class="value">00:00:00</div>
+              </article>
+              <article class="insight">
+                <div class="label">Best Day</div>
+                <div id="insightBestDay" class="value">$0.00</div>
+              </article>
+              <article class="insight">
+                <div class="label">Profit Rate</div>
+                <div id="insightProfitRate" class="value">$0.00 / hr</div>
+              </article>
             </div>
-            <div>
-              <label for="weeklyHoursInput">Weekly Hours</label>
-              <input id="weeklyHoursInput" type="number" min="0" step="0.1" placeholder="e.g. 40">
-            </div>
-          </div>
 
-          <div id="hourlyWageDisplay" class="hourly-display">Effective hourly wage: $0.00</div>
-        </article>
+            <div class="share-controls">
+              <div>
+                <label for="shareScopeSelect">Share scope</label>
+                <select id="shareScopeSelect">
+                  <option value="overall">Overall Stats</option>
+                  <option value="latest">Latest Session</option>
+                </select>
+              </div>
+              <div class="share-buttons">
+                <button data-share-target="native" type="button">Native Share</button>
+                <button data-share-target="x" type="button"><img src="xicon.png" alt="">Share to X</button>
+                <button data-share-target="facebook" type="button"><img src="fbicon.png" alt="">Facebook</button>
+                <button data-share-target="sms" type="button"><img src="txticon.png" alt="">SMS</button>
+                <button data-share-target="copy" type="button" style="grid-column: 1 / -1;">Copy Share Text</button>
+              </div>
+              <div id="shareStatus" class="status"></div>
+            </div>
+          </article>
+        </div>
+      </section>
 
-        <article class="card timer-card">
-          <h2 class="card-title">
-            <img src="poopemojifinal.jpeg" alt="">
-            Session Timer
-          </h2>
-          <div class="timer">
-            <div class="emoji" aria-hidden="true">💩</div>
-            <div id="timerDisplay" class="timer-value">00:00:00</div>
-            <div id="liveEarnings" class="earnings-now"></div>
-            <div id="sessionProjection" class="timer-subline"></div>
-            <div class="timer-progress" aria-hidden="true">
-              <div id="timerProgressBar"></div>
+      <section id="panel-coming" class="tab-panel" aria-label="Coming soon tab">
+        <div class="panel-grid">
+          <article class="card" style="grid-column: span 12;">
+            <h2><img src="shop.png" alt="">What's Coming to Poop Profit</h2>
+            <div class="coming-grid">
+              <article class="coming-card">
+                <h4>Accounts + Cloud Sync</h4>
+                <p>Optional sign-in and backup so sessions and stats move with you across devices.</p>
+              </article>
+              <article class="coming-card">
+                <h4>Turd Token Wallet</h4>
+                <p>A wallet and rewards layer tied to activity, streaks, and special milestones.</p>
+              </article>
+              <article class="coming-card">
+                <h4>Games + Leaderboards</h4>
+                <p>Integrated game hub with live rankings and challenge events.</p>
+              </article>
+              <article class="coming-card">
+                <h4>Shop + Unlockables</h4>
+                <p>Redeemable items, profile cosmetics, and limited drops.</p>
+              </article>
+              <article class="coming-card">
+                <h4>Deeper Analytics</h4>
+                <p>More trends, performance snapshots, and richer share cards.</p>
+              </article>
+              <article class="coming-card">
+                <h4>Community Features</h4>
+                <p>Competitive and social features focused on fun and retention.</p>
+              </article>
             </div>
-            <div id="timerMilestone" class="timer-subline"></div>
-            <button id="timerButton" class="button full" type="button">Start Session</button>
-            <div id="statusMessage" class="status"></div>
-          </div>
-        </article>
-
-        <article class="card share-card">
-          <h2 class="card-title">
-            <img src="xicon.png" alt="">
-            Share Results
-          </h2>
-          <div class="share-controls">
-            <div>
-              <label for="shareScopeSelect">What do you want to share?</label>
-              <select id="shareScopeSelect">
-                <option value="overall">Overall Stats</option>
-                <option value="latest">Latest Session</option>
-              </select>
-            </div>
-            <div class="share-buttons">
-              <button data-share-target="native" type="button">Native Share</button>
-              <button data-share-target="x" type="button"><img src="xicon.png" alt="">Share to X</button>
-              <button data-share-target="facebook" type="button"><img src="fbicon.png" alt="">Facebook</button>
-              <button data-share-target="sms" type="button"><img src="txticon.png" alt="">SMS</button>
-              <button data-share-target="copy" type="button" style="grid-column: 1 / -1;">Copy Share Text</button>
-            </div>
-            <div id="shareStatus" class="status"></div>
-          </div>
-        </article>
-
-        <article class="card stats-card">
-          <h2 class="card-title">
-            <img src="stats.png" alt="">
-            Session Stats
-          </h2>
-          <div class="stats-grid">
-            <div class="stat">
-              <div class="label">Total Sessions</div>
-              <div id="statSessions" class="value">0</div>
-            </div>
-            <div class="stat">
-              <div class="label">Total Time</div>
-              <div id="statTime" class="value">00:00:00</div>
-            </div>
-            <div class="stat">
-              <div class="label">Total Earnings</div>
-              <div id="statEarnings" class="value">$0.00</div>
-            </div>
-            <div class="stat">
-              <div class="label">Average Session</div>
-              <div id="statAvgTime" class="value">00:00:00</div>
-            </div>
-            <div class="stat">
-              <div class="label">Average Earnings</div>
-              <div id="statAvgEarnings" class="value">$0.00</div>
-            </div>
-            <div class="stat">
-              <div class="label">Today's Sessions</div>
-              <div id="statToday" class="value">0</div>
-            </div>
-          </div>
-          <div class="trend-panel">
-            <div class="trend-head">
-              <span>Recent Earnings Trend</span>
-              <span id="trendRangeLabel">Last 14 sessions</span>
-            </div>
-            <canvas id="trendCanvas"></canvas>
-          </div>
-          <div class="insights-grid">
-            <article class="insight">
-              <div class="label">Longest Session</div>
-              <div id="insightLongest" class="value">00:00:00</div>
-            </article>
-            <article class="insight">
-              <div class="label">Best Day</div>
-              <div id="insightBestDay" class="value">$0.00</div>
-            </article>
-            <article class="insight">
-              <div class="label">Profit Rate</div>
-              <div id="insightProfitRate" class="value">$0.00 / hr</div>
-            </article>
-          </div>
-        </article>
-
-        <article class="card log-card">
-          <div class="log-header">
-            <h2 class="card-title" style="margin: 0;">
-              <img src="calc.png" alt="">
-              Session Log
-            </h2>
-            <button id="clearAllButton" class="button warn" type="button">Clear All</button>
-          </div>
-          <div id="logList" class="log-list" aria-live="polite"></div>
-        </article>
+          </article>
+        </div>
       </section>
 
       <footer class="preview-footnote">
-        <span><strong>Core preview mode:</strong> localStorage only (data stays on this browser/device until cleared).</span>
-        <span>Designed for live-safe iteration while full platform features are in planning.</span>
+        <span>Data is stored locally on this browser/device until cleared.</span>
+        <span>Built for smooth live usage while the full platform evolves.</span>
       </footer>
     </section>
   </main>
 
-  <nav class="mobile-quicknav" aria-label="Quick sections">
-    <button class="mobile-nav-btn active" data-jump-target=".calculator-card" type="button">
-      <img src="calc.png" alt="">
-      <span>Calc</span>
-    </button>
-    <button class="mobile-nav-btn" data-jump-target=".timer-card" type="button">
-      <img src="poopemojifinal.jpeg" alt="">
-      <span>Timer</span>
-    </button>
-    <button class="mobile-nav-btn" data-jump-target=".stats-card" type="button">
-      <img src="stats.png" alt="">
-      <span>Stats</span>
-    </button>
-    <button class="mobile-nav-btn" data-jump-target=".log-card" type="button">
-      <img src="calc.png" alt="">
-      <span>Log</span>
-    </button>
+  <nav class="mobile-nav" aria-label="Quick tabs">
+    <button class="mobile-nav-btn active" data-mobile-tab="calculator" type="button"><img src="calc.png" alt=""><span>Calc</span></button>
+    <button class="mobile-nav-btn" data-mobile-tab="stats" type="button"><img src="stats.png" alt=""><span>Stats</span></button>
+    <button class="mobile-nav-btn" data-mobile-tab="coming" type="button"><img src="shop.png" alt=""><span>Soon</span></button>
   </nav>
 
   <button id="fabTimerButton" class="mobile-fab" type="button" aria-label="Start session">
     <span id="fabEmoji">🚀</span>
-    <span id="fabLabel">Start</span>
+    <span id="fabLabel" class="fab-label">Start</span>
   </button>
-
-  <div id="comingSoonModal" class="modal" aria-hidden="true">
-    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="comingSoonTitle">
-      <h3 id="comingSoonTitle">What’s Coming to Poop Profit</h3>
-      <p class="muted" style="margin: 0;">
-        This stripped-down build focuses on the essentials while the full platform is being planned.
-      </p>
-      <ul>
-        <li>Optional accounts + cloud sync across devices.</li>
-        <li>Turd Token economy with wallet + rewards.</li>
-        <li>Integrated games and leaderboard challenges.</li>
-        <li>Shop unlocks and cosmetic profile upgrades.</li>
-        <li>Enhanced analytics and richer sharing cards.</li>
-      </ul>
-      <div class="modal-footer">
-        <button id="closeComingSoonButton" class="button" type="button">Close</button>
-      </div>
-    </div>
-  </div>
 
   <script>
     (function () {
       "use strict";
 
-      var STORAGE_KEY = "pp_core_preview_v1";
+      var STORAGE_KEY = "pp_core_tabs_v1";
       var DEFAULT_STATE = {
+        activeTab: "calculator",
         wageMode: "hourly",
         hourlyWage: "",
         annualSalary: "",
@@ -1247,6 +1049,14 @@
       var state = loadState();
       var timerIntervalId = null;
       var resizeTimerId = null;
+
+      var tabButtons = document.querySelectorAll("[data-tab]");
+      var tabPanels = {
+        calculator: document.getElementById("panel-calculator"),
+        stats: document.getElementById("panel-stats"),
+        coming: document.getElementById("panel-coming")
+      };
+      var mobileTabButtons = document.querySelectorAll("[data-mobile-tab]");
 
       var hourlyModeButton = document.getElementById("hourlyModeButton");
       var salaryModeButton = document.getElementById("salaryModeButton");
@@ -1260,15 +1070,15 @@
       var timerDisplay = document.getElementById("timerDisplay");
       var liveEarnings = document.getElementById("liveEarnings");
       var timerButton = document.getElementById("timerButton");
-      var mobileFabButton = document.getElementById("fabTimerButton");
-      var mobileFabEmoji = document.getElementById("fabEmoji");
-      var mobileFabLabel = document.getElementById("fabLabel");
-      var mobileNavButtons = document.querySelectorAll("[data-jump-target]");
       var statusMessage = document.getElementById("statusMessage");
       var timerCard = document.querySelector(".timer-card");
       var sessionProjection = document.getElementById("sessionProjection");
       var timerProgressBar = document.getElementById("timerProgressBar");
       var timerMilestone = document.getElementById("timerMilestone");
+
+      var mobileFabButton = document.getElementById("fabTimerButton");
+      var mobileFabEmoji = document.getElementById("fabEmoji");
+      var mobileFabLabel = document.getElementById("fabLabel");
 
       var statSessions = document.getElementById("statSessions");
       var statTime = document.getElementById("statTime");
@@ -1276,10 +1086,7 @@
       var statAvgTime = document.getElementById("statAvgTime");
       var statAvgEarnings = document.getElementById("statAvgEarnings");
       var statToday = document.getElementById("statToday");
-      var heroTodayEarnings = document.getElementById("heroTodayEarnings");
-      var heroTotalSessions = document.getElementById("heroTotalSessions");
-      var heroBestSession = document.getElementById("heroBestSession");
-      var heroStreak = document.getElementById("heroStreak");
+
       var trendCanvas = document.getElementById("trendCanvas");
       var trendRangeLabel = document.getElementById("trendRangeLabel");
       var insightLongest = document.getElementById("insightLongest");
@@ -1291,18 +1098,32 @@
 
       var shareScopeSelect = document.getElementById("shareScopeSelect");
       var shareStatus = document.getElementById("shareStatus");
-
-      var comingSoonButton = document.getElementById("comingSoonButton");
-      var comingSoonModal = document.getElementById("comingSoonModal");
-      var closeComingSoonButton = document.getElementById("closeComingSoonButton");
+      var statShareButtons = document.querySelectorAll("[data-stat-share]");
 
       hydrateInputs();
+      renderTabs();
       renderWageMode();
       renderAll();
       wireEvents();
       restoreRunningSession();
 
       function wireEvents() {
+        tabButtons.forEach(function (button) {
+          button.addEventListener("click", function () {
+            var tab = button.getAttribute("data-tab");
+            setActiveTab(tab);
+            triggerHapticVisual(button);
+          });
+        });
+
+        mobileTabButtons.forEach(function (button) {
+          button.addEventListener("click", function () {
+            var tab = button.getAttribute("data-mobile-tab");
+            setActiveTab(tab);
+            triggerHapticVisual(button);
+          });
+        });
+
         hourlyModeButton.addEventListener("click", function () {
           state.wageMode = "hourly";
           persist();
@@ -1336,32 +1157,16 @@
         });
 
         timerButton.addEventListener("click", function () {
-          if (state.activeSessionStartMs) {
-            stopSession();
-          } else {
-            startSession();
-          }
+          toggleSession();
         });
 
         if (mobileFabButton) {
           mobileFabButton.addEventListener("click", function () {
             triggerHapticVisual(mobileFabButton);
-            if (state.activeSessionStartMs) {
-              stopSession();
-            } else {
-              startSession();
+            toggleSession();
+            if (state.activeTab !== "calculator") {
+              setActiveTab("calculator");
             }
-          });
-        }
-
-        if (mobileNavButtons && mobileNavButtons.length) {
-          mobileNavButtons.forEach(function (button) {
-            button.addEventListener("click", function () {
-              triggerHapticVisual(button);
-              var target = button.getAttribute("data-jump-target");
-              scrollToSection(target);
-              highlightMobileNav(target);
-            });
           });
         }
 
@@ -1386,31 +1191,41 @@
           });
         });
 
-        comingSoonButton.addEventListener("click", function () {
-          comingSoonModal.classList.add("open");
-          comingSoonModal.setAttribute("aria-hidden", "false");
-        });
-
-        closeComingSoonButton.addEventListener("click", closeComingSoonModal);
-        comingSoonModal.addEventListener("click", function (event) {
-          if (event.target === comingSoonModal) {
-            closeComingSoonModal();
-          }
+        statShareButtons.forEach(function (button) {
+          button.addEventListener("click", function () {
+            var statKey = button.getAttribute("data-stat-share");
+            shareStatByKey(statKey);
+          });
         });
 
         window.addEventListener("resize", function () {
-          if (resizeTimerId !== null) {
-            window.clearTimeout(resizeTimerId);
-          }
+          if (resizeTimerId !== null) window.clearTimeout(resizeTimerId);
           resizeTimerId = window.setTimeout(function () {
             renderTrend(state.sessions);
           }, 100);
         });
       }
 
-      function closeComingSoonModal() {
-        comingSoonModal.classList.remove("open");
-        comingSoonModal.setAttribute("aria-hidden", "true");
+      function setActiveTab(tabName) {
+        if (!tabPanels[tabName]) return;
+        state.activeTab = tabName;
+        persist();
+        renderTabs();
+      }
+
+      function renderTabs() {
+        var active = state.activeTab || "calculator";
+        tabButtons.forEach(function (button) {
+          button.classList.toggle("active", button.getAttribute("data-tab") === active);
+        });
+        mobileTabButtons.forEach(function (button) {
+          button.classList.toggle("active", button.getAttribute("data-mobile-tab") === active);
+        });
+
+        Object.keys(tabPanels).forEach(function (key) {
+          if (!tabPanels[key]) return;
+          tabPanels[key].classList.toggle("active", key === active);
+        });
       }
 
       function hydrateInputs() {
@@ -1438,6 +1253,14 @@
         var weeklyHours = normalizeNumber(state.weeklyHours);
         if (annualSalary <= 0 || weeklyHours <= 0) return 0;
         return annualSalary / 52 / weeklyHours;
+      }
+
+      function toggleSession() {
+        if (state.activeSessionStartMs) {
+          stopSession();
+        } else {
+          startSession();
+        }
       }
 
       function startSession() {
@@ -1474,7 +1297,6 @@
 
         state.activeSessionStartMs = null;
         persist();
-
         clearIntervalIfRunning();
         renderAll();
         setStatus(statusMessage, "Session saved. Nice work.", "ok");
@@ -1515,42 +1337,16 @@
         timerButton.style.background = running
           ? "linear-gradient(180deg, #ff8a8a, #ff6f6f)"
           : "linear-gradient(180deg, var(--primary), var(--primary-strong))";
+
         if (mobileFabButton) {
           mobileFabButton.classList.toggle("running", running);
           mobileFabButton.setAttribute("aria-label", running ? "Stop session" : "Start session");
           if (mobileFabEmoji) mobileFabEmoji.textContent = running ? "⏹" : "🚀";
           if (mobileFabLabel) mobileFabLabel.textContent = running ? "Stop" : "Start";
         }
+
         if (timerCard) {
           timerCard.classList.toggle("running", running);
-        }
-      }
-
-      function scrollToSection(target) {
-        if (!target) return;
-        var section = document.querySelector(target);
-        if (!section) return;
-        var offset = window.matchMedia("(max-width: 760px)").matches ? 78 : 20;
-        var top = section.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top: top, behavior: "smooth" });
-      }
-
-      function highlightMobileNav(target) {
-        if (!mobileNavButtons || !mobileNavButtons.length) return;
-        mobileNavButtons.forEach(function (button) {
-          var buttonTarget = button.getAttribute("data-jump-target");
-          button.classList.toggle("active", buttonTarget === target);
-        });
-      }
-
-      function triggerHapticVisual(element) {
-        if (!element) return;
-        element.classList.add("haptic");
-        window.setTimeout(function () {
-          element.classList.remove("haptic");
-        }, 140);
-        if (navigator.vibrate) {
-          navigator.vibrate(12);
         }
       }
 
@@ -1581,15 +1377,10 @@
           return isSameDay(session.endedAtMs, Date.now());
         });
         var todaySessions = todaySessionsList.length;
-        var todayEarnings = todaySessionsList.reduce(function (sum, item) { return sum + item.earnings; }, 0);
-        var bestSession = sessions.reduce(function (max, session) {
-          return Math.max(max, session.earnings);
-        }, 0);
         var longestSession = sessions.reduce(function (max, session) {
           return Math.max(max, session.durationSeconds);
         }, 0);
         var bestDayEarnings = getBestDayEarnings(sessions);
-        var streakDays = calculateStreakDays(sessions);
         var profitRate = totalTimeSeconds > 0 ? totalEarnings / (totalTimeSeconds / 3600) : 0;
 
         statSessions.textContent = String(totalSessions);
@@ -1598,11 +1389,6 @@
         statAvgTime.textContent = formatDuration(Math.floor(avgTime));
         statAvgEarnings.textContent = "$" + avgEarnings.toFixed(2);
         statToday.textContent = String(todaySessions);
-
-        heroTodayEarnings.textContent = "$" + todayEarnings.toFixed(2);
-        heroTotalSessions.textContent = String(totalSessions);
-        heroBestSession.textContent = "$" + bestSession.toFixed(2);
-        heroStreak.textContent = streakDays + (streakDays === 1 ? " day" : " days");
 
         insightLongest.textContent = formatDuration(longestSession);
         insightBestDay.textContent = "$" + bestDayEarnings.toFixed(2);
@@ -1647,14 +1433,24 @@
           var actions = document.createElement("div");
           actions.className = "log-actions";
 
+          var shareBtn = document.createElement("button");
+          shareBtn.type = "button";
+          shareBtn.className = "icon-button";
+          shareBtn.innerHTML = "<span class=\"icon-share\">↗</span>Share";
+          shareBtn.setAttribute("aria-label", "Share this log entry");
+          shareBtn.addEventListener("click", function () {
+            shareSingleLog(session);
+          });
+
           var remove = document.createElement("button");
           remove.type = "button";
-          remove.className = "button ghost";
+          remove.className = "icon-button warn";
           remove.textContent = "Delete";
           remove.addEventListener("click", function () {
             deleteSession(session.id);
           });
 
+          actions.appendChild(shareBtn);
           actions.appendChild(remove);
           row.appendChild(top);
           row.appendChild(meta);
@@ -1676,32 +1472,64 @@
           setStatus(shareStatus, "Nothing to share yet. Log a session first.", "warn");
           return;
         }
+        shareText(text, target);
+      }
 
+      function shareSingleLog(session) {
+        var message = "I earned $" + session.earnings.toFixed(2) + " in " +
+          formatDuration(session.durationSeconds) + " on Poop Profit. Check yours at poopprofit.com";
+        shareText(message, "native");
+      }
+
+      function shareStatByKey(statKey) {
+        var message = buildStatShareMessage(statKey);
+        if (!message) return;
+        shareText(message, "native");
+      }
+
+      function buildStatShareMessage(statKey) {
+        var sessions = state.sessions;
+        var totalSessions = sessions.length;
+        var totalTimeSeconds = sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
+        var totalEarnings = sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
+        var avgTime = totalSessions ? totalTimeSeconds / totalSessions : 0;
+        var avgEarnings = totalSessions ? totalEarnings / totalSessions : 0;
+        var todaySessions = sessions.filter(function (session) {
+          return isSameDay(session.endedAtMs, Date.now());
+        }).length;
+
+        var map = {
+          totalSessions: "My total poop sessions: " + totalSessions + ". Track yours at poopprofit.com",
+          totalTime: "My total poop time: " + formatDuration(totalTimeSeconds) + ". Track yours at poopprofit.com",
+          totalEarnings: "My total poop earnings: $" + totalEarnings.toFixed(2) + ". Track yours at poopprofit.com",
+          avgSession: "My average poop session: " + formatDuration(Math.floor(avgTime)) + ". Track yours at poopprofit.com",
+          avgEarnings: "My average poop earnings per session: $" + avgEarnings.toFixed(2) + ". Track yours at poopprofit.com",
+          todaySessions: "My poop sessions today: " + todaySessions + ". Track yours at poopprofit.com"
+        };
+        return map[statKey] || "";
+      }
+
+      function shareText(text, target) {
+        var shareTarget = target || "native";
         var url = "https://www.poopprofit.com";
 
-        if (target === "native") {
+        if (shareTarget === "native") {
           if (navigator.share) {
-            navigator.share({
-              title: "Poop Profit",
-              text: text,
-              url: url
-            }).then(function () {
-              setStatus(shareStatus, "Shared successfully.", "ok");
-            }).catch(function () {
-              setStatus(shareStatus, "Share canceled.", "warn");
-            });
+            navigator.share({ title: "Poop Profit", text: text, url: url })
+              .then(function () { setStatus(shareStatus, "Shared successfully.", "ok"); })
+              .catch(function () { setStatus(shareStatus, "Share canceled.", "warn"); });
           } else {
             copyToClipboard(text);
           }
           return;
         }
 
-        if (target === "x") {
+        if (shareTarget === "x") {
           window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text), "_blank");
           return;
         }
 
-        if (target === "facebook") {
+        if (shareTarget === "facebook") {
           window.open(
             "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url) + "&quote=" + encodeURIComponent(text),
             "_blank"
@@ -1709,12 +1537,12 @@
           return;
         }
 
-        if (target === "sms") {
+        if (shareTarget === "sms") {
           window.open("sms:?&body=" + encodeURIComponent(text));
           return;
         }
 
-        if (target === "copy") {
+        if (shareTarget === "copy") {
           copyToClipboard(text);
         }
       }
@@ -1756,26 +1584,21 @@
         helper.value = text;
         document.body.appendChild(helper);
         helper.select();
-
         try {
           document.execCommand("copy");
           setStatus(shareStatus, "Copied to clipboard.", "ok");
         } catch (error) {
           setStatus(shareStatus, "Copy failed.", "warn");
         }
-
         helper.remove();
       }
 
       function setStatus(element, message, mode) {
+        if (!element) return;
         element.textContent = message;
-        if (mode === "ok") {
-          element.style.color = "var(--success)";
-        } else if (mode === "warn") {
-          element.style.color = "var(--warning)";
-        } else {
-          element.style.color = "var(--muted)";
-        }
+        if (mode === "ok") element.style.color = "var(--success)";
+        else if (mode === "warn") element.style.color = "var(--warning)";
+        else element.style.color = "var(--muted)";
       }
 
       function renderTimerRuntimeUI(elapsedSeconds, currentEarnings) {
@@ -1795,8 +1618,8 @@
 
         var fiveMinuteProjection = (earnings / Math.max(1, elapsed)) * 300;
         var tenMinuteProjection = (earnings / Math.max(1, elapsed)) * 600;
-        sessionProjection.textContent =
-          "Projection: 5m = $" + fiveMinuteProjection.toFixed(2) + " | 10m = $" + tenMinuteProjection.toFixed(2);
+        sessionProjection.textContent = "Projection: 5m = $" + fiveMinuteProjection.toFixed(2) +
+          " | 10m = $" + tenMinuteProjection.toFixed(2);
 
         var progressPercent = Math.min(100, (elapsed / 900) * 100);
         timerProgressBar.style.width = progressPercent.toFixed(1) + "%";
@@ -1812,7 +1635,6 @@
 
       function renderTrend(sessions) {
         if (!trendCanvas) return;
-
         var context = trendCanvas.getContext("2d");
         var dpr = window.devicePixelRatio || 1;
         var width = trendCanvas.clientWidth;
@@ -1840,7 +1662,7 @@
         var maxValue = Math.max.apply(null, plotted.map(function (s) { return s.earnings; }));
         maxValue = maxValue <= 0 ? 1 : maxValue;
 
-        context.strokeStyle = "rgba(65, 170, 255, 0.16)";
+        context.strokeStyle = "rgba(67, 172, 255, 0.16)";
         context.lineWidth = 1;
         for (var row = 0; row <= 3; row++) {
           var yGrid = padding.top + (chartHeight / 3) * row;
@@ -1855,7 +1677,7 @@
             ? padding.left + chartWidth / 2
             : padding.left + (chartWidth * index / (plotted.length - 1));
           var y = padding.top + chartHeight - ((session.earnings / maxValue) * chartHeight);
-          return { x: x, y: y, value: session.earnings };
+          return { x: x, y: y };
         });
 
         context.beginPath();
@@ -1869,9 +1691,7 @@
 
         context.beginPath();
         context.moveTo(points[0].x, padding.top + chartHeight);
-        points.forEach(function (point) {
-          context.lineTo(point.x, point.y);
-        });
+        points.forEach(function (point) { context.lineTo(point.x, point.y); });
         context.lineTo(points[points.length - 1].x, padding.top + chartHeight);
         context.closePath();
         var gradient = context.createLinearGradient(0, padding.top, 0, padding.top + chartHeight);
@@ -1879,52 +1699,17 @@
         gradient.addColorStop(1, "rgba(67, 179, 255, 0.04)");
         context.fillStyle = gradient;
         context.fill();
-
-        points.forEach(function (point) {
-          context.beginPath();
-          context.arc(point.x, point.y, 3.2, 0, Math.PI * 2);
-          context.fillStyle = "#b7e7ff";
-          context.fill();
-          context.beginPath();
-          context.arc(point.x, point.y, 5.8, 0, Math.PI * 2);
-          context.strokeStyle = "rgba(183, 231, 255, 0.35)";
-          context.lineWidth = 1;
-          context.stroke();
-        });
       }
 
       function getBestDayEarnings(sessions) {
         if (!sessions.length) return 0;
-
         var totalsByDay = {};
         sessions.forEach(function (session) {
           var key = toDayKey(session.endedAtMs);
           totalsByDay[key] = (totalsByDay[key] || 0) + session.earnings;
         });
-
         var values = Object.values(totalsByDay);
-        if (!values.length) return 0;
-        return Math.max.apply(null, values);
-      }
-
-      function calculateStreakDays(sessions) {
-        if (!sessions.length) return 0;
-
-        var daySet = new Set(sessions.map(function (session) {
-          return toDayKey(session.endedAtMs);
-        }));
-
-        var cursor = new Date();
-        cursor.setHours(0, 0, 0, 0);
-
-        if (!daySet.has(toDayKey(cursor.getTime()))) return 0;
-
-        var streak = 0;
-        while (daySet.has(toDayKey(cursor.getTime()))) {
-          streak += 1;
-          cursor.setDate(cursor.getDate() - 1);
-        }
-        return streak;
+        return values.length ? Math.max.apply(null, values) : 0;
       }
 
       function toDayKey(timestamp) {
@@ -1935,11 +1720,19 @@
         return year + "-" + month + "-" + day;
       }
 
+      function triggerHapticVisual(element) {
+        if (!element) return;
+        element.classList.add("haptic");
+        window.setTimeout(function () {
+          element.classList.remove("haptic");
+        }, 140);
+        if (navigator.vibrate) navigator.vibrate(12);
+      }
+
       function loadState() {
         try {
           var raw = localStorage.getItem(STORAGE_KEY);
           if (!raw) return cloneDefaultState();
-
           var parsed = JSON.parse(raw);
           return sanitizeState(parsed);
         } catch (error) {
@@ -1951,6 +1744,7 @@
         var safe = cloneDefaultState();
         if (!candidate || typeof candidate !== "object") return safe;
 
+        safe.activeTab = ["calculator", "stats", "coming"].includes(candidate.activeTab) ? candidate.activeTab : "calculator";
         safe.wageMode = candidate.wageMode === "salary" ? "salary" : "hourly";
         safe.hourlyWage = toInputString(candidate.hourlyWage);
         safe.annualSalary = toInputString(candidate.annualSalary);
@@ -1961,15 +1755,12 @@
           safe.sessions = candidate.sessions
             .map(function (session) {
               if (!session || typeof session !== "object") return null;
-
               var durationSeconds = Math.max(1, Math.floor(normalizeNumber(session.durationSeconds)));
               var endedAtMs = normalizeNumber(session.endedAtMs);
               var startedAtMs = normalizeNumber(session.startedAtMs) || (endedAtMs - durationSeconds * 1000);
               var earnings = roundCurrency(normalizeNumber(session.earnings));
               var hourlyWageSnapshot = roundCurrency(normalizeNumber(session.hourlyWageSnapshot));
-
               if (!isFiniteNumber(endedAtMs) || endedAtMs <= 0) return null;
-
               return {
                 id: String(session.id || Date.now() + Math.random()),
                 startedAtMs: startedAtMs,
