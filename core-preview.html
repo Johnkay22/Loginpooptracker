@@ -20,6 +20,8 @@
       --warning: #ffd166;
       --danger: #ff7b7b;
       --shadow: 0 24px 55px rgba(0, 0, 0, 0.45);
+      --glow-cyan: rgba(67, 179, 255, 0.34);
+      --glow-green: rgba(46, 219, 156, 0.24);
     }
 
     * {
@@ -42,18 +44,57 @@
       background-attachment: fixed;
     }
 
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background:
+        radial-gradient(circle at 18% 15%, rgba(67, 179, 255, 0.14), transparent 36%),
+        radial-gradient(circle at 80% 84%, rgba(46, 219, 156, 0.1), transparent 38%);
+      animation: ambientShift 16s ease-in-out infinite;
+    }
+
+    body::after {
+      opacity: 0.22;
+      background-image: linear-gradient(to bottom, rgba(67, 179, 255, 0.35) 1px, transparent 1px);
+      background-size: 100% 4px;
+      mix-blend-mode: screen;
+    }
+
     .page {
       width: min(1180px, 94vw);
       margin: 24px auto 56px;
+      position: relative;
+      z-index: 1;
     }
 
     .site-shell {
+      position: relative;
       border: 1px solid var(--line);
       border-radius: 20px;
       background: linear-gradient(180deg, rgba(15, 24, 45, 0.92), rgba(10, 15, 28, 0.92));
       box-shadow: var(--shadow);
       padding: 16px;
       backdrop-filter: blur(8px);
+      overflow: hidden;
+    }
+
+    .site-shell::before {
+      content: "";
+      position: absolute;
+      inset: -35% auto auto -15%;
+      width: 48%;
+      height: 120%;
+      background: linear-gradient(180deg, rgba(67, 179, 255, 0.2), transparent 70%);
+      transform: rotate(8deg);
+      pointer-events: none;
+      filter: blur(4px);
     }
 
     .top-banner {
@@ -63,6 +104,14 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
       margin-bottom: 14px;
+    }
+
+    .top-banner::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(3, 8, 16, 0.28), transparent 56%);
+      pointer-events: none;
     }
 
     .top-banner img {
@@ -95,11 +144,21 @@
     }
 
     .intro-strip {
-      border: 1px solid var(--line);
+      border: 1px solid rgba(65, 170, 255, 0.36);
       border-radius: 14px;
       background: linear-gradient(130deg, rgba(17, 29, 54, 0.95), rgba(12, 20, 38, 0.95));
       padding: 14px 16px;
       margin-bottom: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .intro-headline {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     .intro-strip h1 {
@@ -115,6 +174,58 @@
       line-height: 1.45;
     }
 
+    .intro-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 700;
+      border: 1px solid rgba(65, 170, 255, 0.42);
+      background: rgba(67, 179, 255, 0.12);
+      color: #cfe9ff;
+      white-space: nowrap;
+    }
+
+    .intro-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    @media (min-width: 900px) {
+      .intro-metrics {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .hero-metric {
+      border-radius: 12px;
+      border: 1px solid rgba(65, 170, 255, 0.28);
+      background: rgba(6, 11, 22, 0.68);
+      padding: 10px;
+      min-height: 76px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+    }
+
+    .hero-metric .label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .hero-metric .value {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
     .card-grid {
       display: grid;
       gap: 14px;
@@ -128,6 +239,13 @@
       padding: 16px;
       box-shadow: 0 14px 35px rgba(0, 0, 0, 0.3);
       min-width: 0;
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(65, 170, 255, 0.52);
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(67, 179, 255, 0.12);
     }
 
     .card-title {
@@ -295,6 +413,7 @@
       font-weight: 800;
       letter-spacing: 0.04em;
       margin: 4px 0 11px;
+      text-shadow: 0 0 16px rgba(67, 179, 255, 0.25);
     }
 
     .earnings-now {
@@ -302,6 +421,31 @@
       margin-bottom: 10px;
       font-weight: 700;
       color: var(--success);
+    }
+
+    .timer-subline {
+      min-height: 20px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-bottom: 8px;
+    }
+
+    .timer-progress {
+      width: 100%;
+      height: 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(65, 170, 255, 0.28);
+      background: rgba(6, 11, 22, 0.72);
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .timer-progress > div {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(67, 179, 255, 0.8), rgba(46, 219, 156, 0.8));
+      box-shadow: 0 0 14px var(--glow-cyan);
+      transition: width 0.25s ease;
     }
 
     .status {
@@ -314,6 +458,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
       gap: 9px;
+      margin-bottom: 10px;
     }
 
     .stat {
@@ -332,6 +477,60 @@
     .stat .value {
       font-size: 1.18rem;
       font-weight: 800;
+    }
+
+    .trend-panel {
+      border: 1px solid rgba(65, 170, 255, 0.25);
+      border-radius: 12px;
+      background: rgba(6, 11, 22, 0.66);
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .trend-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    #trendCanvas {
+      width: 100%;
+      height: 140px;
+      display: block;
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(11, 17, 33, 0.8), rgba(8, 13, 24, 0.9));
+      border: 1px solid rgba(65, 170, 255, 0.18);
+    }
+
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+    }
+
+    .insight {
+      border-radius: 10px;
+      border: 1px solid rgba(65, 170, 255, 0.24);
+      background: rgba(6, 11, 22, 0.68);
+      padding: 9px;
+    }
+
+    .insight .label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .insight .value {
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: #dff2ff;
     }
 
     .share-controls {
@@ -395,6 +594,7 @@
       padding: 10px;
       display: grid;
       gap: 6px;
+      animation: fadeUp 0.25s ease;
     }
 
     .log-top {
@@ -439,6 +639,14 @@
       border-top: 1px solid rgba(65, 170, 255, 0.2);
       color: var(--muted);
       font-size: 0.84rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preview-footnote strong {
+      color: #d2ecff;
     }
 
     .muted {
@@ -490,6 +698,40 @@
       display: flex;
       justify-content: flex-end;
     }
+
+    .timer-card.running {
+      border-color: rgba(46, 219, 156, 0.58);
+      box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.35),
+        0 0 0 1px rgba(46, 219, 156, 0.25),
+        0 0 32px var(--glow-green);
+    }
+
+    .timer-card.running .emoji {
+      animation: pulseBounce 1.2s ease-in-out infinite;
+    }
+
+    @keyframes pulseBounce {
+      0% { transform: translateY(0) scale(1); }
+      40% { transform: translateY(-3px) scale(1.06); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    @keyframes ambientShift {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(8px, -6px, 0) scale(1.02); }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 <body>
@@ -504,11 +746,34 @@
       </header>
 
       <section class="intro-strip">
-        <h1>Modern Core Experience (No Account Required)</h1>
-        <p>
-          This streamlined build keeps Poop Profit focused on the essentials: calculate your wage, run sessions, track your history,
-          and share your stats. Everything is saved in localStorage on this device.
-        </p>
+        <div class="intro-headline">
+          <div>
+            <h1>Modern Core Experience (No Account Required)</h1>
+            <p>
+              This streamlined build keeps Poop Profit focused on the essentials: calculate your wage, run sessions, track your history,
+              and share your stats. Everything is saved in localStorage on this device.
+            </p>
+          </div>
+          <span class="intro-kicker">Live Core Build</span>
+        </div>
+        <div class="intro-metrics">
+          <article class="hero-metric">
+            <div class="label">Today Earnings</div>
+            <div id="heroTodayEarnings" class="value">$0.00</div>
+          </article>
+          <article class="hero-metric">
+            <div class="label">Total Sessions</div>
+            <div id="heroTotalSessions" class="value">0</div>
+          </article>
+          <article class="hero-metric">
+            <div class="label">Best Session</div>
+            <div id="heroBestSession" class="value">$0.00</div>
+          </article>
+          <article class="hero-metric">
+            <div class="label">Current Streak</div>
+            <div id="heroStreak" class="value">0 days</div>
+          </article>
+        </div>
       </section>
 
       <section class="card-grid">
@@ -552,6 +817,11 @@
             <div class="emoji" aria-hidden="true">💩</div>
             <div id="timerDisplay" class="timer-value">00:00:00</div>
             <div id="liveEarnings" class="earnings-now"></div>
+            <div id="sessionProjection" class="timer-subline"></div>
+            <div class="timer-progress" aria-hidden="true">
+              <div id="timerProgressBar"></div>
+            </div>
+            <div id="timerMilestone" class="timer-subline"></div>
             <button id="timerButton" class="button full" type="button">Start Session</button>
             <div id="statusMessage" class="status"></div>
           </div>
@@ -612,6 +882,27 @@
               <div id="statToday" class="value">0</div>
             </div>
           </div>
+          <div class="trend-panel">
+            <div class="trend-head">
+              <span>Recent Earnings Trend</span>
+              <span id="trendRangeLabel">Last 14 sessions</span>
+            </div>
+            <canvas id="trendCanvas"></canvas>
+          </div>
+          <div class="insights-grid">
+            <article class="insight">
+              <div class="label">Longest Session</div>
+              <div id="insightLongest" class="value">00:00:00</div>
+            </article>
+            <article class="insight">
+              <div class="label">Best Day</div>
+              <div id="insightBestDay" class="value">$0.00</div>
+            </article>
+            <article class="insight">
+              <div class="label">Profit Rate</div>
+              <div id="insightProfitRate" class="value">$0.00 / hr</div>
+            </article>
+          </div>
         </article>
 
         <article class="card log-card">
@@ -627,7 +918,8 @@
       </section>
 
       <footer class="preview-footnote">
-        Core preview mode: localStorage only (data stays on this browser/device until cleared).
+        <span><strong>Core preview mode:</strong> localStorage only (data stays on this browser/device until cleared).</span>
+        <span>Designed for live-safe iteration while full platform features are in planning.</span>
       </footer>
     </section>
   </main>
@@ -681,6 +973,10 @@
       var liveEarnings = document.getElementById("liveEarnings");
       var timerButton = document.getElementById("timerButton");
       var statusMessage = document.getElementById("statusMessage");
+      var timerCard = document.querySelector(".timer-card");
+      var sessionProjection = document.getElementById("sessionProjection");
+      var timerProgressBar = document.getElementById("timerProgressBar");
+      var timerMilestone = document.getElementById("timerMilestone");
 
       var statSessions = document.getElementById("statSessions");
       var statTime = document.getElementById("statTime");
@@ -688,6 +984,15 @@
       var statAvgTime = document.getElementById("statAvgTime");
       var statAvgEarnings = document.getElementById("statAvgEarnings");
       var statToday = document.getElementById("statToday");
+      var heroTodayEarnings = document.getElementById("heroTodayEarnings");
+      var heroTotalSessions = document.getElementById("heroTotalSessions");
+      var heroBestSession = document.getElementById("heroBestSession");
+      var heroStreak = document.getElementById("heroStreak");
+      var trendCanvas = document.getElementById("trendCanvas");
+      var trendRangeLabel = document.getElementById("trendRangeLabel");
+      var insightLongest = document.getElementById("insightLongest");
+      var insightBestDay = document.getElementById("insightBestDay");
+      var insightProfitRate = document.getElementById("insightProfitRate");
 
       var logList = document.getElementById("logList");
       var clearAllButton = document.getElementById("clearAllButton");
@@ -777,6 +1082,10 @@
           if (event.target === comingSoonModal) {
             closeComingSoonModal();
           }
+        });
+
+        window.addEventListener("resize", function () {
+          renderTrend(state.sessions);
         });
       }
 
@@ -878,6 +1187,7 @@
         var currentEarnings = (getEffectiveHourlyWage() / 3600) * elapsedSeconds;
         timerDisplay.textContent = formatDuration(elapsedSeconds);
         liveEarnings.textContent = "Current earnings: $" + currentEarnings.toFixed(2);
+        renderTimerRuntimeUI(elapsedSeconds, currentEarnings);
       }
 
       function renderTimerButton() {
@@ -886,6 +1196,9 @@
         timerButton.style.background = running
           ? "linear-gradient(180deg, #ff8a8a, #ff6f6f)"
           : "linear-gradient(180deg, var(--primary), var(--primary-strong))";
+        if (timerCard) {
+          timerCard.classList.toggle("running", running);
+        }
       }
 
       function renderAll() {
@@ -897,6 +1210,7 @@
           liveEarnings.textContent = "";
         }
 
+        renderTimerRuntimeUI();
         renderTimerButton();
         renderStats();
         renderLog();
@@ -910,9 +1224,20 @@
         var avgTime = totalSessions ? totalTimeSeconds / totalSessions : 0;
         var avgEarnings = totalSessions ? totalEarnings / totalSessions : 0;
 
-        var todaySessions = sessions.filter(function (session) {
+        var todaySessionsList = sessions.filter(function (session) {
           return isSameDay(session.endedAtMs, Date.now());
-        }).length;
+        });
+        var todaySessions = todaySessionsList.length;
+        var todayEarnings = todaySessionsList.reduce(function (sum, item) { return sum + item.earnings; }, 0);
+        var bestSession = sessions.reduce(function (max, session) {
+          return Math.max(max, session.earnings);
+        }, 0);
+        var longestSession = sessions.reduce(function (max, session) {
+          return Math.max(max, session.durationSeconds);
+        }, 0);
+        var bestDayEarnings = getBestDayEarnings(sessions);
+        var streakDays = calculateStreakDays(sessions);
+        var profitRate = totalTimeSeconds > 0 ? totalEarnings / (totalTimeSeconds / 3600) : 0;
 
         statSessions.textContent = String(totalSessions);
         statTime.textContent = formatDuration(totalTimeSeconds);
@@ -920,6 +1245,17 @@
         statAvgTime.textContent = formatDuration(Math.floor(avgTime));
         statAvgEarnings.textContent = "$" + avgEarnings.toFixed(2);
         statToday.textContent = String(todaySessions);
+
+        heroTodayEarnings.textContent = "$" + todayEarnings.toFixed(2);
+        heroTotalSessions.textContent = String(totalSessions);
+        heroBestSession.textContent = "$" + bestSession.toFixed(2);
+        heroStreak.textContent = streakDays + (streakDays === 1 ? " day" : " days");
+
+        insightLongest.textContent = formatDuration(longestSession);
+        insightBestDay.textContent = "$" + bestDayEarnings.toFixed(2);
+        insightProfitRate.textContent = "$" + profitRate.toFixed(2) + " / hr";
+
+        renderTrend(sessions);
       }
 
       function renderLog() {
@@ -1087,6 +1423,163 @@
         } else {
           element.style.color = "var(--muted)";
         }
+      }
+
+      function renderTimerRuntimeUI(elapsedSeconds, currentEarnings) {
+        if (!state.activeSessionStartMs) {
+          timerProgressBar.style.width = "0%";
+          sessionProjection.textContent = "Projection: start a session to estimate 5m and 10m outcomes.";
+          timerMilestone.textContent = "Next milestone: 1 minute.";
+          return;
+        }
+
+        var elapsed = typeof elapsedSeconds === "number"
+          ? elapsedSeconds
+          : Math.max(0, Math.floor((Date.now() - state.activeSessionStartMs) / 1000));
+        var earnings = typeof currentEarnings === "number"
+          ? currentEarnings
+          : (getEffectiveHourlyWage() / 3600) * elapsed;
+
+        var fiveMinuteProjection = (earnings / Math.max(1, elapsed)) * 300;
+        var tenMinuteProjection = (earnings / Math.max(1, elapsed)) * 600;
+        sessionProjection.textContent =
+          "Projection: 5m = $" + fiveMinuteProjection.toFixed(2) + " | 10m = $" + tenMinuteProjection.toFixed(2);
+
+        var progressPercent = Math.min(100, (elapsed / 900) * 100);
+        timerProgressBar.style.width = progressPercent.toFixed(1) + "%";
+
+        var milestones = [60, 180, 300, 600, 900];
+        var nextMilestone = milestones.find(function (value) { return elapsed < value; });
+        if (nextMilestone) {
+          timerMilestone.textContent = "Next milestone: " + formatDuration(nextMilestone) + ".";
+        } else {
+          timerMilestone.textContent = "Milestone complete: 15+ minute marathon session.";
+        }
+      }
+
+      function renderTrend(sessions) {
+        if (!trendCanvas) return;
+
+        var context = trendCanvas.getContext("2d");
+        var dpr = window.devicePixelRatio || 1;
+        var width = trendCanvas.clientWidth;
+        var height = trendCanvas.clientHeight;
+        trendCanvas.width = Math.max(1, Math.floor(width * dpr));
+        trendCanvas.height = Math.max(1, Math.floor(height * dpr));
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
+        context.clearRect(0, 0, width, height);
+
+        var plotted = sessions.slice(0, 14).reverse();
+        trendRangeLabel.textContent = plotted.length
+          ? "Last " + plotted.length + " session" + (plotted.length === 1 ? "" : "s")
+          : "No sessions yet";
+
+        if (!plotted.length) {
+          context.fillStyle = "rgba(180, 198, 229, 0.8)";
+          context.font = "12px Inter, sans-serif";
+          context.fillText("Log sessions to unlock your earnings trend.", 14, height / 2);
+          return;
+        }
+
+        var padding = { top: 14, right: 12, bottom: 18, left: 12 };
+        var chartWidth = width - padding.left - padding.right;
+        var chartHeight = height - padding.top - padding.bottom;
+        var maxValue = Math.max.apply(null, plotted.map(function (s) { return s.earnings; }));
+        maxValue = maxValue <= 0 ? 1 : maxValue;
+
+        context.strokeStyle = "rgba(65, 170, 255, 0.16)";
+        context.lineWidth = 1;
+        for (var row = 0; row <= 3; row++) {
+          var yGrid = padding.top + (chartHeight / 3) * row;
+          context.beginPath();
+          context.moveTo(padding.left, yGrid);
+          context.lineTo(width - padding.right, yGrid);
+          context.stroke();
+        }
+
+        var points = plotted.map(function (session, index) {
+          var x = plotted.length === 1
+            ? padding.left + chartWidth / 2
+            : padding.left + (chartWidth * index / (plotted.length - 1));
+          var y = padding.top + chartHeight - ((session.earnings / maxValue) * chartHeight);
+          return { x: x, y: y, value: session.earnings };
+        });
+
+        context.beginPath();
+        points.forEach(function (point, index) {
+          if (index === 0) context.moveTo(point.x, point.y);
+          else context.lineTo(point.x, point.y);
+        });
+        context.strokeStyle = "rgba(67, 179, 255, 0.98)";
+        context.lineWidth = 2.4;
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(points[0].x, padding.top + chartHeight);
+        points.forEach(function (point) {
+          context.lineTo(point.x, point.y);
+        });
+        context.lineTo(points[points.length - 1].x, padding.top + chartHeight);
+        context.closePath();
+        var gradient = context.createLinearGradient(0, padding.top, 0, padding.top + chartHeight);
+        gradient.addColorStop(0, "rgba(67, 179, 255, 0.35)");
+        gradient.addColorStop(1, "rgba(67, 179, 255, 0.04)");
+        context.fillStyle = gradient;
+        context.fill();
+
+        points.forEach(function (point) {
+          context.beginPath();
+          context.arc(point.x, point.y, 3.2, 0, Math.PI * 2);
+          context.fillStyle = "#b7e7ff";
+          context.fill();
+          context.beginPath();
+          context.arc(point.x, point.y, 5.8, 0, Math.PI * 2);
+          context.strokeStyle = "rgba(183, 231, 255, 0.35)";
+          context.lineWidth = 1;
+          context.stroke();
+        });
+      }
+
+      function getBestDayEarnings(sessions) {
+        if (!sessions.length) return 0;
+
+        var totalsByDay = {};
+        sessions.forEach(function (session) {
+          var key = toDayKey(session.endedAtMs);
+          totalsByDay[key] = (totalsByDay[key] || 0) + session.earnings;
+        });
+
+        var values = Object.values(totalsByDay);
+        if (!values.length) return 0;
+        return Math.max.apply(null, values);
+      }
+
+      function calculateStreakDays(sessions) {
+        if (!sessions.length) return 0;
+
+        var daySet = new Set(sessions.map(function (session) {
+          return toDayKey(session.endedAtMs);
+        }));
+
+        var cursor = new Date();
+        cursor.setHours(0, 0, 0, 0);
+
+        if (!daySet.has(toDayKey(cursor.getTime()))) return 0;
+
+        var streak = 0;
+        while (daySet.has(toDayKey(cursor.getTime()))) {
+          streak += 1;
+          cursor.setDate(cursor.getDate() - 1);
+        }
+        return streak;
+      }
+
+      function toDayKey(timestamp) {
+        var date = new Date(timestamp);
+        var year = date.getFullYear();
+        var month = String(date.getMonth() + 1).padStart(2, "0");
+        var day = String(date.getDate()).padStart(2, "0");
+        return year + "-" + month + "-" + day;
       }
 
       function loadState() {
