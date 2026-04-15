@@ -6,18 +6,22 @@
   <title>Poop Profit Core Preview</title>
   <style>
     :root {
-      --bg: #0b1020;
-      --bg-soft: #11172b;
-      --panel: rgba(20, 30, 55, 0.86);
-      --line: rgba(88, 179, 255, 0.25);
-      --text: #e8f1ff;
-      --muted: #b7c4de;
+      --bg: #060b16;
+      --bg-soft: #101a30;
+      --panel: rgba(18, 27, 50, 0.86);
+      --panel-strong: rgba(12, 18, 34, 0.92);
+      --line: rgba(65, 170, 255, 0.28);
+      --line-strong: rgba(65, 170, 255, 0.5);
+      --text: #eaf3ff;
+      --muted: #b4c6e5;
       --primary: #43b3ff;
-      --primary-strong: #1f97eb;
+      --primary-strong: #1f96ea;
       --success: #2edb9c;
-      --danger: #ff6f6f;
       --warning: #ffd166;
-      --shadow: 0 16px 45px rgba(0, 0, 0, 0.35);
+      --danger: #ff7b7b;
+      --shadow: 0 24px 55px rgba(0, 0, 0, 0.45);
+      --glow-cyan: rgba(67, 179, 255, 0.34);
+      --glow-green: rgba(46, 219, 156, 0.24);
     }
 
     * {
@@ -28,82 +32,250 @@
     body {
       margin: 0;
       padding: 0;
-      font-family: Inter, "Segoe UI", Roboto, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 15% 0%, rgba(67, 179, 255, 0.18), transparent 45%),
-        radial-gradient(circle at 85% 100%, rgba(46, 219, 156, 0.14), transparent 45%),
-        var(--bg);
       min-height: 100%;
+      font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(130deg, rgba(6, 11, 22, 0.92), rgba(6, 11, 22, 0.82)),
+        url("MAINDESKTOPBG.jpeg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background:
+        radial-gradient(circle at 18% 15%, rgba(67, 179, 255, 0.14), transparent 36%),
+        radial-gradient(circle at 80% 84%, rgba(46, 219, 156, 0.1), transparent 38%);
+      animation: ambientShift 16s ease-in-out infinite;
+    }
+
+    body::after {
+      opacity: 0.22;
+      background-image: linear-gradient(to bottom, rgba(67, 179, 255, 0.35) 1px, transparent 1px);
+      background-size: 100% 4px;
+      mix-blend-mode: screen;
     }
 
     .page {
-      width: min(1120px, 92vw);
-      margin: 28px auto 60px;
-      display: grid;
-      gap: 18px;
+      width: min(1180px, 94vw);
+      margin: 24px auto 56px;
+      position: relative;
+      z-index: 1;
     }
 
-    .hero {
-      background: linear-gradient(155deg, rgba(20, 30, 55, 0.95), rgba(14, 22, 42, 0.95));
+    .site-shell {
+      position: relative;
       border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 20px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(15, 24, 45, 0.92), rgba(10, 15, 28, 0.92));
       box-shadow: var(--shadow);
+      padding: 16px;
+      backdrop-filter: blur(8px);
+      overflow: hidden;
+    }
+
+    .site-shell::before {
+      content: "";
+      position: absolute;
+      inset: -35% auto auto -15%;
+      width: 48%;
+      height: 120%;
+      background: linear-gradient(180deg, rgba(67, 179, 255, 0.2), transparent 70%);
+      transform: rotate(8deg);
+      pointer-events: none;
+      filter: blur(4px);
+    }
+
+    .top-banner {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
+      margin-bottom: 14px;
+    }
+
+    .top-banner::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(3, 8, 16, 0.28), transparent 56%);
+      pointer-events: none;
+    }
+
+    .top-banner img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .banner-actions {
+      position: absolute;
+      top: 12px;
+      right: 12px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
+      gap: 8px;
       align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      background: rgba(7, 12, 22, 0.75);
+      color: #cce8ff;
+      border: 1px solid rgba(65, 170, 255, 0.38);
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 700;
+    }
+
+    .intro-strip {
+      border: 1px solid rgba(65, 170, 255, 0.36);
+      border-radius: 14px;
+      background: linear-gradient(130deg, rgba(17, 29, 54, 0.95), rgba(12, 20, 38, 0.95));
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .intro-headline {
+      display: flex;
+      align-items: flex-start;
       justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    .hero h1 {
+    .intro-strip h1 {
+      margin: 0 0 6px;
+      font-size: clamp(1.4rem, 1.2rem + 0.9vw, 2rem);
+      letter-spacing: 0.01em;
+    }
+
+    .intro-strip p {
       margin: 0;
-      font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.1rem);
+      color: var(--muted);
+      max-width: 75ch;
+      line-height: 1.45;
     }
 
-    .hero p {
-      margin: 8px 0 0;
+    .intro-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 700;
+      border: 1px solid rgba(65, 170, 255, 0.42);
+      background: rgba(67, 179, 255, 0.12);
+      color: #cfe9ff;
+      white-space: nowrap;
+    }
+
+    .intro-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    @media (min-width: 900px) {
+      .intro-metrics {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .hero-metric {
+      border-radius: 12px;
+      border: 1px solid rgba(65, 170, 255, 0.28);
+      background: rgba(6, 11, 22, 0.68);
+      padding: 10px;
+      min-height: 76px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+    }
+
+    .hero-metric .label {
       color: var(--muted);
-      max-width: 62ch;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .hero-metric .value {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
     }
 
     .card-grid {
       display: grid;
-      gap: 18px;
+      gap: 14px;
       grid-template-columns: repeat(12, 1fr);
     }
 
     .card {
-      background: var(--panel);
+      background: linear-gradient(170deg, var(--panel), var(--panel-strong));
       border: 1px solid var(--line);
       border-radius: 16px;
-      padding: 18px;
-      box-shadow: var(--shadow);
+      padding: 16px;
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.3);
       min-width: 0;
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
     }
 
-    .calculator-card {
-      grid-column: span 12;
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(65, 170, 255, 0.52);
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(67, 179, 255, 0.12);
     }
 
-    .timer-card {
-      grid-column: span 12;
+    .card-title {
+      margin: 0 0 12px;
+      font-size: 1.02rem;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .stats-card {
-      grid-column: span 12;
+    .card-title img {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      border-radius: 6px;
+      background: rgba(7, 12, 22, 0.7);
+      border: 1px solid rgba(65, 170, 255, 0.25);
+      padding: 3px;
     }
 
-    .share-card {
-      grid-column: span 12;
-    }
-
+    .calculator-card,
+    .timer-card,
+    .stats-card,
+    .share-card,
     .log-card {
       grid-column: span 12;
     }
 
-    @media (min-width: 960px) {
+    @media (min-width: 980px) {
       .calculator-card,
       .timer-card,
       .share-card {
@@ -116,49 +288,45 @@
       }
     }
 
-    h2 {
-      margin: 0 0 14px;
-      font-size: 1.05rem;
-      letter-spacing: 0.02em;
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
     .button,
     button,
-    select,
-    input {
+    input,
+    select {
       font: inherit;
     }
 
     .button {
       border: 1px solid transparent;
-      background: linear-gradient(180deg, var(--primary), var(--primary-strong));
-      color: #04101f;
+      border-radius: 11px;
       padding: 10px 14px;
-      border-radius: 10px;
       cursor: pointer;
       font-weight: 700;
       letter-spacing: 0.01em;
+      background: linear-gradient(180deg, var(--primary), var(--primary-strong));
+      color: #04101f;
+      transition: transform 0.15s ease, filter 0.2s ease, border-color 0.2s ease;
     }
 
     .button:hover {
-      filter: brightness(1.06);
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    .button:active {
+      transform: translateY(0);
     }
 
     .button.ghost {
-      background: rgba(67, 179, 255, 0.1);
+      background: rgba(67, 179, 255, 0.12);
+      border-color: rgba(67, 179, 255, 0.42);
       color: var(--text);
-      border-color: var(--line);
       font-weight: 600;
     }
 
     .button.warn {
-      background: rgba(255, 111, 111, 0.18);
-      color: #ffd5d5;
-      border-color: rgba(255, 111, 111, 0.45);
+      background: rgba(255, 123, 123, 0.16);
+      border-color: rgba(255, 123, 123, 0.45);
+      color: #ffd8d8;
       font-weight: 600;
     }
 
@@ -170,10 +338,10 @@
       display: grid;
       gap: 10px;
       grid-template-columns: 1fr;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
-    @media (min-width: 560px) {
+    @media (min-width: 580px) {
       .row.two {
         grid-template-columns: 1fr 1fr;
       }
@@ -183,54 +351,55 @@
       display: block;
       margin-bottom: 6px;
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 0.91rem;
     }
 
     input,
     select {
       width: 100%;
-      padding: 10px 12px;
       border-radius: 10px;
-      border: 1px solid var(--line);
-      background: rgba(9, 16, 32, 0.8);
+      border: 1px solid rgba(65, 170, 255, 0.3);
+      background: rgba(6, 11, 22, 0.72);
       color: var(--text);
+      padding: 10px 12px;
       outline: none;
     }
 
     input:focus,
     select:focus {
-      border-color: var(--primary);
+      border-color: var(--line-strong);
       box-shadow: 0 0 0 3px rgba(67, 179, 255, 0.2);
     }
 
     .segmented {
       display: inline-flex;
-      border-radius: 10px;
-      border: 1px solid var(--line);
+      border-radius: 11px;
+      border: 1px solid rgba(65, 170, 255, 0.35);
       overflow: hidden;
       margin-bottom: 12px;
+      background: rgba(6, 11, 22, 0.45);
     }
 
     .segmented button {
-      border: none;
+      border: 0;
       background: transparent;
       color: var(--muted);
-      padding: 8px 12px;
+      padding: 9px 13px;
       cursor: pointer;
       font-weight: 600;
     }
 
     .segmented button.active {
       background: rgba(67, 179, 255, 0.2);
-      color: var(--text);
+      color: #ffffff;
     }
 
     .hourly-display {
-      margin-top: 8px;
-      padding: 10px;
-      border-radius: 10px;
-      background: rgba(67, 179, 255, 0.12);
-      border: 1px solid rgba(67, 179, 255, 0.25);
+      margin-top: 9px;
+      border-radius: 11px;
+      padding: 11px;
+      border: 1px solid rgba(67, 179, 255, 0.35);
+      background: rgba(67, 179, 255, 0.1);
       font-weight: 700;
     }
 
@@ -239,52 +408,133 @@
     }
 
     .timer .emoji {
-      font-size: 2.4rem;
+      font-size: 2.35rem;
       margin-bottom: 6px;
     }
 
     .timer-value {
-      font-size: clamp(2rem, 1.5rem + 1.8vw, 2.9rem);
+      font-size: clamp(2rem, 1.4rem + 2vw, 2.95rem);
       font-weight: 800;
       letter-spacing: 0.04em;
-      margin: 4px 0 10px;
+      margin: 4px 0 11px;
+      text-shadow: 0 0 16px rgba(67, 179, 255, 0.25);
     }
 
     .earnings-now {
-      min-height: 24px;
-      color: var(--success);
+      min-height: 22px;
+      margin-bottom: 10px;
       font-weight: 700;
+      color: var(--success);
+    }
+
+    .timer-subline {
+      min-height: 20px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-bottom: 8px;
+    }
+
+    .timer-progress {
+      width: 100%;
+      height: 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(65, 170, 255, 0.28);
+      background: rgba(6, 11, 22, 0.72);
+      overflow: hidden;
       margin-bottom: 10px;
     }
 
+    .timer-progress > div {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(67, 179, 255, 0.8), rgba(46, 219, 156, 0.8));
+      box-shadow: 0 0 14px var(--glow-cyan);
+      transition: width 0.25s ease;
+    }
+
     .status {
-      min-height: 20px;
-      color: var(--warning);
+      min-height: 19px;
       font-size: 0.9rem;
+      color: var(--warning);
     }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      gap: 9px;
+      margin-bottom: 10px;
     }
 
     .stat {
-      border: 1px solid var(--line);
+      border: 1px solid rgba(65, 170, 255, 0.28);
       border-radius: 12px;
+      background: rgba(6, 11, 22, 0.68);
       padding: 10px;
-      background: rgba(8, 14, 28, 0.65);
     }
 
     .stat .label {
       color: var(--muted);
-      font-size: 0.84rem;
-      margin-bottom: 5px;
+      font-size: 0.82rem;
+      margin-bottom: 4px;
     }
 
     .stat .value {
-      font-size: 1.2rem;
+      font-size: 1.18rem;
       font-weight: 800;
+    }
+
+    .trend-panel {
+      border: 1px solid rgba(65, 170, 255, 0.25);
+      border-radius: 12px;
+      background: rgba(6, 11, 22, 0.66);
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .trend-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    #trendCanvas {
+      width: 100%;
+      height: 140px;
+      display: block;
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(11, 17, 33, 0.8), rgba(8, 13, 24, 0.9));
+      border: 1px solid rgba(65, 170, 255, 0.18);
+    }
+
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+    }
+
+    .insight {
+      border-radius: 10px;
+      border: 1px solid rgba(65, 170, 255, 0.24);
+      background: rgba(6, 11, 22, 0.68);
+      padding: 9px;
+    }
+
+    .insight .label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .insight .value {
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: #dff2ff;
     }
 
     .share-controls {
@@ -299,55 +549,69 @@
     }
 
     .share-buttons button {
-      border: 1px solid var(--line);
+      border: 1px solid rgba(65, 170, 255, 0.25);
       border-radius: 10px;
-      padding: 10px 8px;
-      background: rgba(8, 14, 28, 0.75);
+      background: rgba(6, 11, 22, 0.72);
       color: var(--text);
       cursor: pointer;
+      padding: 9px 8px;
       font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 42px;
     }
 
     .share-buttons button:hover {
-      border-color: var(--primary);
+      border-color: var(--line-strong);
+      background: rgba(67, 179, 255, 0.14);
+    }
+
+    .share-buttons img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
     }
 
     .log-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 10px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
     }
 
     .log-list {
       display: grid;
       gap: 8px;
-      max-height: 330px;
+      max-height: 350px;
       overflow-y: auto;
-      padding-right: 4px;
+      padding-right: 3px;
     }
 
     .log-entry {
-      border: 1px solid var(--line);
+      border: 1px solid rgba(65, 170, 255, 0.24);
       border-radius: 12px;
-      background: rgba(8, 14, 28, 0.78);
+      background: rgba(6, 11, 22, 0.78);
       padding: 10px;
       display: grid;
       gap: 6px;
+      animation: fadeUp 0.25s ease;
     }
 
     .log-top {
       display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
       justify-content: space-between;
       gap: 8px;
-      align-items: baseline;
-      flex-wrap: wrap;
     }
 
     .log-date {
-      color: var(--muted);
       font-size: 0.84rem;
+      color: var(--muted);
     }
 
     .log-earnings {
@@ -356,8 +620,8 @@
     }
 
     .log-meta {
-      font-size: 0.9rem;
       color: var(--muted);
+      font-size: 0.9rem;
     }
 
     .log-actions {
@@ -366,11 +630,31 @@
     }
 
     .empty-state {
-      border: 1px dashed var(--line);
+      border: 1px dashed rgba(65, 170, 255, 0.33);
       border-radius: 12px;
-      padding: 20px;
-      color: var(--muted);
       text-align: center;
+      color: var(--muted);
+      padding: 22px 14px;
+    }
+
+    .preview-footnote {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(65, 170, 255, 0.2);
+      color: var(--muted);
+      font-size: 0.84rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preview-footnote strong {
+      color: #d2ecff;
+    }
+
+    .muted {
+      color: var(--muted);
     }
 
     .modal {
@@ -379,8 +663,8 @@
       display: none;
       align-items: center;
       justify-content: center;
-      background: rgba(3, 8, 16, 0.65);
-      backdrop-filter: blur(3px);
+      background: rgba(3, 8, 16, 0.72);
+      backdrop-filter: blur(4px);
       padding: 16px;
       z-index: 2000;
     }
@@ -392,8 +676,8 @@
     .modal-panel {
       width: min(560px, 100%);
       border-radius: 16px;
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(18, 27, 50, 0.98), rgba(12, 18, 35, 0.98));
+      border: 1px solid rgba(65, 170, 255, 0.35);
+      background: linear-gradient(180deg, rgba(18, 27, 50, 0.98), rgba(10, 15, 30, 0.98));
       box-shadow: var(--shadow);
       padding: 20px;
     }
@@ -418,120 +702,514 @@
       display: flex;
       justify-content: flex-end;
     }
+
+    @media (max-width: 760px) {
+      .page {
+        width: min(100%, 100vw);
+        margin: 0 auto;
+        padding: 10px 10px calc(86px + env(safe-area-inset-bottom));
+      }
+
+      .site-shell {
+        border-radius: 14px;
+        padding: 10px;
+      }
+
+      .site-shell::before {
+        filter: blur(30px);
+      }
+
+      .top-banner {
+        margin-bottom: 10px;
+        border-radius: 12px;
+      }
+
+      .banner-actions {
+        position: static;
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 8px;
+        background: rgba(8, 13, 23, 0.78);
+        border-top: 1px solid rgba(65, 170, 255, 0.25);
+      }
+
+      .pill {
+        font-size: 0.68rem;
+        letter-spacing: 0.05em;
+        padding: 6px 9px;
+      }
+
+      .intro-strip {
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+
+      .intro-headline {
+        gap: 8px;
+      }
+
+      .intro-kicker {
+        font-size: 0.66rem;
+        align-self: flex-start;
+      }
+
+      .intro-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero-metric {
+        padding: 10px;
+      }
+
+      .hero-metric .value {
+        font-size: 1rem;
+      }
+
+      .card-grid {
+        gap: 10px;
+      }
+
+      .card {
+        border-radius: 13px;
+        padding: 13px;
+      }
+
+      .card-title {
+        font-size: 0.96rem;
+        margin-bottom: 10px;
+      }
+
+      .card-title img {
+        width: 22px;
+        height: 22px;
+      }
+
+      .segmented {
+        display: grid;
+        width: 100%;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .segmented button {
+        padding: 11px 8px;
+      }
+
+      input,
+      select {
+        font-size: 16px;
+        padding: 11px 12px;
+      }
+
+      .timer .emoji {
+        font-size: 2.1rem;
+      }
+
+      .timer-value {
+        font-size: clamp(1.85rem, 1.4rem + 2.2vw, 2.35rem);
+        letter-spacing: 0.02em;
+      }
+
+      .timer-progress {
+        height: 10px;
+      }
+
+      #timerButton {
+        position: sticky;
+        bottom: calc(10px + env(safe-area-inset-bottom));
+        z-index: 40;
+        min-height: 48px;
+        box-shadow:
+          0 14px 28px rgba(0, 0, 0, 0.45),
+          0 0 0 1px rgba(65, 170, 255, 0.35);
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .trend-panel {
+        padding: 8px;
+      }
+
+      #trendCanvas {
+        height: 120px;
+      }
+
+      .insights-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .share-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .share-buttons button {
+        min-height: 48px;
+        justify-content: flex-start;
+        padding-left: 12px;
+      }
+
+      .log-list {
+        max-height: 260px;
+      }
+
+      .mobile-fab {
+        display: inline-flex;
+      }
+
+      .mobile-quicknav {
+        display: grid;
+      }
+
+      .preview-footnote {
+        font-size: 0.78rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .intro-metrics,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .banner-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .banner-actions .button {
+        width: 100%;
+      }
+
+      .mobile-quicknav {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .mobile-fab {
+      position: fixed;
+      right: 14px;
+      bottom: calc(78px + env(safe-area-inset-bottom));
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 1px solid rgba(65, 170, 255, 0.5);
+      background: radial-gradient(circle at 30% 30%, #6cc7ff, #1f96ea 70%);
+      color: #021426;
+      font-size: 1.35rem;
+      font-weight: 900;
+      box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.45),
+        0 0 24px rgba(65, 170, 255, 0.45);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 70;
+      display: none;
+      transition: transform 0.12s ease, filter 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .mobile-fab:active,
+    .mobile-fab.haptic {
+      transform: scale(0.94);
+      filter: brightness(1.08);
+    }
+
+    .mobile-fab.running {
+      background: radial-gradient(circle at 30% 30%, #ffb0b0, #ff6f6f 70%);
+      border-color: rgba(255, 132, 132, 0.55);
+      box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.45),
+        0 0 24px rgba(255, 132, 132, 0.4);
+    }
+
+    .mobile-quicknav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+      border-top: 1px solid rgba(65, 170, 255, 0.25);
+      background: linear-gradient(180deg, rgba(8, 13, 24, 0.95), rgba(6, 10, 18, 0.98));
+      backdrop-filter: blur(8px);
+      z-index: 65;
+      display: none;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .mobile-nav-btn {
+      border: 1px solid rgba(65, 170, 255, 0.2);
+      border-radius: 10px;
+      background: rgba(8, 14, 26, 0.8);
+      color: #d8e8ff;
+      font-size: 0.74rem;
+      font-weight: 600;
+      min-height: 44px;
+      padding: 6px 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .mobile-nav-btn.active {
+      border-color: rgba(65, 170, 255, 0.55);
+      background: rgba(67, 179, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .timer-card.running {
+      border-color: rgba(46, 219, 156, 0.58);
+      box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.35),
+        0 0 0 1px rgba(46, 219, 156, 0.25),
+        0 0 32px var(--glow-green);
+    }
+
+    .timer-card.running .emoji {
+      animation: pulseBounce 1.2s ease-in-out infinite;
+    }
+
+    @keyframes pulseBounce {
+      0% { transform: translateY(0) scale(1); }
+      40% { transform: translateY(-3px) scale(1.06); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    @keyframes ambientShift {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(8px, -6px, 0) scale(1.02); }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 <body>
   <main class="page">
-    <section class="hero">
-      <div>
-        <h1>Poop Profit - Core Experience Preview</h1>
-        <p>
-          Account-free and local-first. Track your poop sessions, calculate earnings, view stats, and share your wins.
-        </p>
-      </div>
-      <button id="comingSoonButton" class="button ghost" type="button">What's Coming to Poop Profit?</button>
-    </section>
-
-    <section class="card-grid">
-      <article class="card calculator-card">
-        <h2>1) Wage Calculator</h2>
-        <div class="segmented" role="group" aria-label="Wage input mode">
-          <button id="hourlyModeButton" type="button">Hourly Wage</button>
-          <button id="salaryModeButton" type="button">Salary + Hours</button>
+    <section class="site-shell">
+      <header class="top-banner">
+        <img src="BANNER.jpeg" alt="Poop Profit banner">
+        <div class="banner-actions">
+          <span class="pill">Core Preview</span>
+          <button id="comingSoonButton" class="button ghost" type="button">What's Coming to Poop Profit?</button>
         </div>
+      </header>
 
-        <div id="hourlyInputs" class="row">
+      <section class="intro-strip">
+        <div class="intro-headline">
           <div>
-            <label for="hourlyWageInput">Hourly Wage (USD)</label>
-            <input id="hourlyWageInput" type="number" min="0" step="0.01" placeholder="e.g. 25">
+            <h1>Modern Core Experience (No Account Required)</h1>
+            <p>
+              This streamlined build keeps Poop Profit focused on the essentials: calculate your wage, run sessions, track your history,
+              and share your stats. Everything is saved in localStorage on this device.
+            </p>
           </div>
+          <span class="intro-kicker">Live Core Build</span>
         </div>
-
-        <div id="salaryInputs" class="row two" hidden>
-          <div>
-            <label for="annualSalaryInput">Annual Salary (USD)</label>
-            <input id="annualSalaryInput" type="number" min="0" step="0.01" placeholder="e.g. 65000">
-          </div>
-          <div>
-            <label for="weeklyHoursInput">Weekly Hours</label>
-            <input id="weeklyHoursInput" type="number" min="0" step="0.1" placeholder="e.g. 40">
-          </div>
-        </div>
-
-        <div id="hourlyWageDisplay" class="hourly-display">Effective hourly wage: $0.00</div>
-      </article>
-
-      <article class="card timer-card">
-        <h2>2) Session Timer</h2>
-        <div class="timer">
-          <div class="emoji" aria-hidden="true">💩</div>
-          <div id="timerDisplay" class="timer-value">00:00:00</div>
-          <div id="liveEarnings" class="earnings-now"></div>
-          <button id="timerButton" class="button full" type="button">Start Session</button>
-          <div id="statusMessage" class="status"></div>
-        </div>
-      </article>
-
-      <article class="card share-card">
-        <h2>3) Share Results</h2>
-        <div class="share-controls">
-          <div>
-            <label for="shareScopeSelect">What do you want to share?</label>
-            <select id="shareScopeSelect">
-              <option value="overall">Overall Stats</option>
-              <option value="latest">Latest Session</option>
-            </select>
-          </div>
-          <div class="share-buttons">
-            <button data-share-target="native" type="button">Native Share</button>
-            <button data-share-target="x" type="button">Share to X</button>
-            <button data-share-target="facebook" type="button">Share to Facebook</button>
-            <button data-share-target="sms" type="button">Share via SMS</button>
-            <button data-share-target="copy" type="button" style="grid-column: 1 / -1;">Copy Text</button>
-          </div>
-          <div id="shareStatus" class="status"></div>
-        </div>
-      </article>
-
-      <article class="card stats-card">
-        <h2>4) Stats</h2>
-        <div class="stats-grid">
-          <div class="stat">
+        <div class="intro-metrics">
+          <article class="hero-metric">
+            <div class="label">Today Earnings</div>
+            <div id="heroTodayEarnings" class="value">$0.00</div>
+          </article>
+          <article class="hero-metric">
             <div class="label">Total Sessions</div>
-            <div id="statSessions" class="value">0</div>
-          </div>
-          <div class="stat">
-            <div class="label">Total Time</div>
-            <div id="statTime" class="value">00:00:00</div>
-          </div>
-          <div class="stat">
-            <div class="label">Total Earnings</div>
-            <div id="statEarnings" class="value">$0.00</div>
-          </div>
-          <div class="stat">
-            <div class="label">Average Session</div>
-            <div id="statAvgTime" class="value">00:00:00</div>
-          </div>
-          <div class="stat">
-            <div class="label">Average Earnings</div>
-            <div id="statAvgEarnings" class="value">$0.00</div>
-          </div>
-          <div class="stat">
-            <div class="label">Today's Sessions</div>
-            <div id="statToday" class="value">0</div>
-          </div>
+            <div id="heroTotalSessions" class="value">0</div>
+          </article>
+          <article class="hero-metric">
+            <div class="label">Best Session</div>
+            <div id="heroBestSession" class="value">$0.00</div>
+          </article>
+          <article class="hero-metric">
+            <div class="label">Current Streak</div>
+            <div id="heroStreak" class="value">0 days</div>
+          </article>
         </div>
-      </article>
+      </section>
 
-      <article class="card log-card">
-        <div class="log-header">
-          <h2 style="margin: 0;">5) Session Log</h2>
-          <button id="clearAllButton" class="button warn" type="button">Clear All</button>
-        </div>
-        <div id="logList" class="log-list" aria-live="polite"></div>
-      </article>
+      <section class="card-grid">
+        <article class="card calculator-card">
+          <h2 class="card-title">
+            <img src="calc.png" alt="">
+            Wage Calculator
+          </h2>
+          <div class="segmented" role="group" aria-label="Wage input mode">
+            <button id="hourlyModeButton" type="button">Hourly Wage</button>
+            <button id="salaryModeButton" type="button">Salary + Weekly Hours</button>
+          </div>
+
+          <div id="hourlyInputs" class="row">
+            <div>
+              <label for="hourlyWageInput">Hourly Wage (USD)</label>
+              <input id="hourlyWageInput" type="number" min="0" step="0.01" placeholder="e.g. 25">
+            </div>
+          </div>
+
+          <div id="salaryInputs" class="row two" hidden>
+            <div>
+              <label for="annualSalaryInput">Annual Salary (USD)</label>
+              <input id="annualSalaryInput" type="number" min="0" step="0.01" placeholder="e.g. 65000">
+            </div>
+            <div>
+              <label for="weeklyHoursInput">Weekly Hours</label>
+              <input id="weeklyHoursInput" type="number" min="0" step="0.1" placeholder="e.g. 40">
+            </div>
+          </div>
+
+          <div id="hourlyWageDisplay" class="hourly-display">Effective hourly wage: $0.00</div>
+        </article>
+
+        <article class="card timer-card">
+          <h2 class="card-title">
+            <img src="poopemojifinal.jpeg" alt="">
+            Session Timer
+          </h2>
+          <div class="timer">
+            <div class="emoji" aria-hidden="true">💩</div>
+            <div id="timerDisplay" class="timer-value">00:00:00</div>
+            <div id="liveEarnings" class="earnings-now"></div>
+            <div id="sessionProjection" class="timer-subline"></div>
+            <div class="timer-progress" aria-hidden="true">
+              <div id="timerProgressBar"></div>
+            </div>
+            <div id="timerMilestone" class="timer-subline"></div>
+            <button id="timerButton" class="button full" type="button">Start Session</button>
+            <div id="statusMessage" class="status"></div>
+          </div>
+        </article>
+
+        <article class="card share-card">
+          <h2 class="card-title">
+            <img src="xicon.png" alt="">
+            Share Results
+          </h2>
+          <div class="share-controls">
+            <div>
+              <label for="shareScopeSelect">What do you want to share?</label>
+              <select id="shareScopeSelect">
+                <option value="overall">Overall Stats</option>
+                <option value="latest">Latest Session</option>
+              </select>
+            </div>
+            <div class="share-buttons">
+              <button data-share-target="native" type="button">Native Share</button>
+              <button data-share-target="x" type="button"><img src="xicon.png" alt="">Share to X</button>
+              <button data-share-target="facebook" type="button"><img src="fbicon.png" alt="">Facebook</button>
+              <button data-share-target="sms" type="button"><img src="txticon.png" alt="">SMS</button>
+              <button data-share-target="copy" type="button" style="grid-column: 1 / -1;">Copy Share Text</button>
+            </div>
+            <div id="shareStatus" class="status"></div>
+          </div>
+        </article>
+
+        <article class="card stats-card">
+          <h2 class="card-title">
+            <img src="stats.png" alt="">
+            Session Stats
+          </h2>
+          <div class="stats-grid">
+            <div class="stat">
+              <div class="label">Total Sessions</div>
+              <div id="statSessions" class="value">0</div>
+            </div>
+            <div class="stat">
+              <div class="label">Total Time</div>
+              <div id="statTime" class="value">00:00:00</div>
+            </div>
+            <div class="stat">
+              <div class="label">Total Earnings</div>
+              <div id="statEarnings" class="value">$0.00</div>
+            </div>
+            <div class="stat">
+              <div class="label">Average Session</div>
+              <div id="statAvgTime" class="value">00:00:00</div>
+            </div>
+            <div class="stat">
+              <div class="label">Average Earnings</div>
+              <div id="statAvgEarnings" class="value">$0.00</div>
+            </div>
+            <div class="stat">
+              <div class="label">Today's Sessions</div>
+              <div id="statToday" class="value">0</div>
+            </div>
+          </div>
+          <div class="trend-panel">
+            <div class="trend-head">
+              <span>Recent Earnings Trend</span>
+              <span id="trendRangeLabel">Last 14 sessions</span>
+            </div>
+            <canvas id="trendCanvas"></canvas>
+          </div>
+          <div class="insights-grid">
+            <article class="insight">
+              <div class="label">Longest Session</div>
+              <div id="insightLongest" class="value">00:00:00</div>
+            </article>
+            <article class="insight">
+              <div class="label">Best Day</div>
+              <div id="insightBestDay" class="value">$0.00</div>
+            </article>
+            <article class="insight">
+              <div class="label">Profit Rate</div>
+              <div id="insightProfitRate" class="value">$0.00 / hr</div>
+            </article>
+          </div>
+        </article>
+
+        <article class="card log-card">
+          <div class="log-header">
+            <h2 class="card-title" style="margin: 0;">
+              <img src="calc.png" alt="">
+              Session Log
+            </h2>
+            <button id="clearAllButton" class="button warn" type="button">Clear All</button>
+          </div>
+          <div id="logList" class="log-list" aria-live="polite"></div>
+        </article>
+      </section>
+
+      <footer class="preview-footnote">
+        <span><strong>Core preview mode:</strong> localStorage only (data stays on this browser/device until cleared).</span>
+        <span>Designed for live-safe iteration while full platform features are in planning.</span>
+      </footer>
     </section>
   </main>
+
+  <nav class="mobile-quicknav" aria-label="Quick sections">
+    <button class="mobile-nav-btn active" data-jump-target=".calculator-card" type="button">
+      <img src="calc.png" alt="">
+      <span>Calc</span>
+    </button>
+    <button class="mobile-nav-btn" data-jump-target=".timer-card" type="button">
+      <img src="poopemojifinal.jpeg" alt="">
+      <span>Timer</span>
+    </button>
+    <button class="mobile-nav-btn" data-jump-target=".stats-card" type="button">
+      <img src="stats.png" alt="">
+      <span>Stats</span>
+    </button>
+    <button class="mobile-nav-btn" data-jump-target=".log-card" type="button">
+      <img src="calc.png" alt="">
+      <span>Log</span>
+    </button>
+  </nav>
+
+  <button id="fabTimerButton" class="mobile-fab" type="button" aria-label="Start session">
+    <span id="fabEmoji">🚀</span>
+    <span id="fabLabel">Start</span>
+  </button>
 
   <div id="comingSoonModal" class="modal" aria-hidden="true">
     <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="comingSoonTitle">
@@ -568,6 +1246,7 @@
 
       var state = loadState();
       var timerIntervalId = null;
+      var resizeTimerId = null;
 
       var hourlyModeButton = document.getElementById("hourlyModeButton");
       var salaryModeButton = document.getElementById("salaryModeButton");
@@ -581,7 +1260,15 @@
       var timerDisplay = document.getElementById("timerDisplay");
       var liveEarnings = document.getElementById("liveEarnings");
       var timerButton = document.getElementById("timerButton");
+      var mobileFabButton = document.getElementById("fabTimerButton");
+      var mobileFabEmoji = document.getElementById("fabEmoji");
+      var mobileFabLabel = document.getElementById("fabLabel");
+      var mobileNavButtons = document.querySelectorAll("[data-jump-target]");
       var statusMessage = document.getElementById("statusMessage");
+      var timerCard = document.querySelector(".timer-card");
+      var sessionProjection = document.getElementById("sessionProjection");
+      var timerProgressBar = document.getElementById("timerProgressBar");
+      var timerMilestone = document.getElementById("timerMilestone");
 
       var statSessions = document.getElementById("statSessions");
       var statTime = document.getElementById("statTime");
@@ -589,6 +1276,15 @@
       var statAvgTime = document.getElementById("statAvgTime");
       var statAvgEarnings = document.getElementById("statAvgEarnings");
       var statToday = document.getElementById("statToday");
+      var heroTodayEarnings = document.getElementById("heroTodayEarnings");
+      var heroTotalSessions = document.getElementById("heroTotalSessions");
+      var heroBestSession = document.getElementById("heroBestSession");
+      var heroStreak = document.getElementById("heroStreak");
+      var trendCanvas = document.getElementById("trendCanvas");
+      var trendRangeLabel = document.getElementById("trendRangeLabel");
+      var insightLongest = document.getElementById("insightLongest");
+      var insightBestDay = document.getElementById("insightBestDay");
+      var insightProfitRate = document.getElementById("insightProfitRate");
 
       var logList = document.getElementById("logList");
       var clearAllButton = document.getElementById("clearAllButton");
@@ -647,6 +1343,28 @@
           }
         });
 
+        if (mobileFabButton) {
+          mobileFabButton.addEventListener("click", function () {
+            triggerHapticVisual(mobileFabButton);
+            if (state.activeSessionStartMs) {
+              stopSession();
+            } else {
+              startSession();
+            }
+          });
+        }
+
+        if (mobileNavButtons && mobileNavButtons.length) {
+          mobileNavButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+              triggerHapticVisual(button);
+              var target = button.getAttribute("data-jump-target");
+              scrollToSection(target);
+              highlightMobileNav(target);
+            });
+          });
+        }
+
         clearAllButton.addEventListener("click", function () {
           if (!state.sessions.length) {
             setStatus(statusMessage, "No sessions to clear.", "warn");
@@ -679,6 +1397,15 @@
             closeComingSoonModal();
           }
         });
+
+        window.addEventListener("resize", function () {
+          if (resizeTimerId !== null) {
+            window.clearTimeout(resizeTimerId);
+          }
+          resizeTimerId = window.setTimeout(function () {
+            renderTrend(state.sessions);
+          }, 100);
+        });
       }
 
       function closeComingSoonModal() {
@@ -698,6 +1425,8 @@
         salaryModeButton.classList.toggle("active", !isHourly);
         hourlyInputs.hidden = !isHourly;
         salaryInputs.hidden = isHourly;
+        hourlyInputs.style.display = isHourly ? "grid" : "none";
+        salaryInputs.style.display = isHourly ? "none" : "grid";
       }
 
       function getEffectiveHourlyWage() {
@@ -777,6 +1506,7 @@
         var currentEarnings = (getEffectiveHourlyWage() / 3600) * elapsedSeconds;
         timerDisplay.textContent = formatDuration(elapsedSeconds);
         liveEarnings.textContent = "Current earnings: $" + currentEarnings.toFixed(2);
+        renderTimerRuntimeUI(elapsedSeconds, currentEarnings);
       }
 
       function renderTimerButton() {
@@ -785,6 +1515,43 @@
         timerButton.style.background = running
           ? "linear-gradient(180deg, #ff8a8a, #ff6f6f)"
           : "linear-gradient(180deg, var(--primary), var(--primary-strong))";
+        if (mobileFabButton) {
+          mobileFabButton.classList.toggle("running", running);
+          mobileFabButton.setAttribute("aria-label", running ? "Stop session" : "Start session");
+          if (mobileFabEmoji) mobileFabEmoji.textContent = running ? "⏹" : "🚀";
+          if (mobileFabLabel) mobileFabLabel.textContent = running ? "Stop" : "Start";
+        }
+        if (timerCard) {
+          timerCard.classList.toggle("running", running);
+        }
+      }
+
+      function scrollToSection(target) {
+        if (!target) return;
+        var section = document.querySelector(target);
+        if (!section) return;
+        var offset = window.matchMedia("(max-width: 760px)").matches ? 78 : 20;
+        var top = section.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top: top, behavior: "smooth" });
+      }
+
+      function highlightMobileNav(target) {
+        if (!mobileNavButtons || !mobileNavButtons.length) return;
+        mobileNavButtons.forEach(function (button) {
+          var buttonTarget = button.getAttribute("data-jump-target");
+          button.classList.toggle("active", buttonTarget === target);
+        });
+      }
+
+      function triggerHapticVisual(element) {
+        if (!element) return;
+        element.classList.add("haptic");
+        window.setTimeout(function () {
+          element.classList.remove("haptic");
+        }, 140);
+        if (navigator.vibrate) {
+          navigator.vibrate(12);
+        }
       }
 
       function renderAll() {
@@ -796,6 +1563,7 @@
           liveEarnings.textContent = "";
         }
 
+        renderTimerRuntimeUI();
         renderTimerButton();
         renderStats();
         renderLog();
@@ -809,9 +1577,20 @@
         var avgTime = totalSessions ? totalTimeSeconds / totalSessions : 0;
         var avgEarnings = totalSessions ? totalEarnings / totalSessions : 0;
 
-        var todaySessions = sessions.filter(function (session) {
+        var todaySessionsList = sessions.filter(function (session) {
           return isSameDay(session.endedAtMs, Date.now());
-        }).length;
+        });
+        var todaySessions = todaySessionsList.length;
+        var todayEarnings = todaySessionsList.reduce(function (sum, item) { return sum + item.earnings; }, 0);
+        var bestSession = sessions.reduce(function (max, session) {
+          return Math.max(max, session.earnings);
+        }, 0);
+        var longestSession = sessions.reduce(function (max, session) {
+          return Math.max(max, session.durationSeconds);
+        }, 0);
+        var bestDayEarnings = getBestDayEarnings(sessions);
+        var streakDays = calculateStreakDays(sessions);
+        var profitRate = totalTimeSeconds > 0 ? totalEarnings / (totalTimeSeconds / 3600) : 0;
 
         statSessions.textContent = String(totalSessions);
         statTime.textContent = formatDuration(totalTimeSeconds);
@@ -819,6 +1598,17 @@
         statAvgTime.textContent = formatDuration(Math.floor(avgTime));
         statAvgEarnings.textContent = "$" + avgEarnings.toFixed(2);
         statToday.textContent = String(todaySessions);
+
+        heroTodayEarnings.textContent = "$" + todayEarnings.toFixed(2);
+        heroTotalSessions.textContent = String(totalSessions);
+        heroBestSession.textContent = "$" + bestSession.toFixed(2);
+        heroStreak.textContent = streakDays + (streakDays === 1 ? " day" : " days");
+
+        insightLongest.textContent = formatDuration(longestSession);
+        insightBestDay.textContent = "$" + bestDayEarnings.toFixed(2);
+        insightProfitRate.textContent = "$" + profitRate.toFixed(2) + " / hr";
+
+        renderTrend(sessions);
       }
 
       function renderLog() {
@@ -986,6 +1776,163 @@
         } else {
           element.style.color = "var(--muted)";
         }
+      }
+
+      function renderTimerRuntimeUI(elapsedSeconds, currentEarnings) {
+        if (!state.activeSessionStartMs) {
+          timerProgressBar.style.width = "0%";
+          sessionProjection.textContent = "Projection: start a session to estimate 5m and 10m outcomes.";
+          timerMilestone.textContent = "Next milestone: 1 minute.";
+          return;
+        }
+
+        var elapsed = typeof elapsedSeconds === "number"
+          ? elapsedSeconds
+          : Math.max(0, Math.floor((Date.now() - state.activeSessionStartMs) / 1000));
+        var earnings = typeof currentEarnings === "number"
+          ? currentEarnings
+          : (getEffectiveHourlyWage() / 3600) * elapsed;
+
+        var fiveMinuteProjection = (earnings / Math.max(1, elapsed)) * 300;
+        var tenMinuteProjection = (earnings / Math.max(1, elapsed)) * 600;
+        sessionProjection.textContent =
+          "Projection: 5m = $" + fiveMinuteProjection.toFixed(2) + " | 10m = $" + tenMinuteProjection.toFixed(2);
+
+        var progressPercent = Math.min(100, (elapsed / 900) * 100);
+        timerProgressBar.style.width = progressPercent.toFixed(1) + "%";
+
+        var milestones = [60, 180, 300, 600, 900];
+        var nextMilestone = milestones.find(function (value) { return elapsed < value; });
+        if (nextMilestone) {
+          timerMilestone.textContent = "Next milestone: " + formatDuration(nextMilestone) + ".";
+        } else {
+          timerMilestone.textContent = "Milestone complete: 15+ minute marathon session.";
+        }
+      }
+
+      function renderTrend(sessions) {
+        if (!trendCanvas) return;
+
+        var context = trendCanvas.getContext("2d");
+        var dpr = window.devicePixelRatio || 1;
+        var width = trendCanvas.clientWidth;
+        var height = trendCanvas.clientHeight;
+        trendCanvas.width = Math.max(1, Math.floor(width * dpr));
+        trendCanvas.height = Math.max(1, Math.floor(height * dpr));
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
+        context.clearRect(0, 0, width, height);
+
+        var plotted = sessions.slice(0, 14).reverse();
+        trendRangeLabel.textContent = plotted.length
+          ? "Last " + plotted.length + " session" + (plotted.length === 1 ? "" : "s")
+          : "No sessions yet";
+
+        if (!plotted.length) {
+          context.fillStyle = "rgba(180, 198, 229, 0.8)";
+          context.font = "12px Inter, sans-serif";
+          context.fillText("Log sessions to unlock your earnings trend.", 14, height / 2);
+          return;
+        }
+
+        var padding = { top: 14, right: 12, bottom: 18, left: 12 };
+        var chartWidth = width - padding.left - padding.right;
+        var chartHeight = height - padding.top - padding.bottom;
+        var maxValue = Math.max.apply(null, plotted.map(function (s) { return s.earnings; }));
+        maxValue = maxValue <= 0 ? 1 : maxValue;
+
+        context.strokeStyle = "rgba(65, 170, 255, 0.16)";
+        context.lineWidth = 1;
+        for (var row = 0; row <= 3; row++) {
+          var yGrid = padding.top + (chartHeight / 3) * row;
+          context.beginPath();
+          context.moveTo(padding.left, yGrid);
+          context.lineTo(width - padding.right, yGrid);
+          context.stroke();
+        }
+
+        var points = plotted.map(function (session, index) {
+          var x = plotted.length === 1
+            ? padding.left + chartWidth / 2
+            : padding.left + (chartWidth * index / (plotted.length - 1));
+          var y = padding.top + chartHeight - ((session.earnings / maxValue) * chartHeight);
+          return { x: x, y: y, value: session.earnings };
+        });
+
+        context.beginPath();
+        points.forEach(function (point, index) {
+          if (index === 0) context.moveTo(point.x, point.y);
+          else context.lineTo(point.x, point.y);
+        });
+        context.strokeStyle = "rgba(67, 179, 255, 0.98)";
+        context.lineWidth = 2.4;
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(points[0].x, padding.top + chartHeight);
+        points.forEach(function (point) {
+          context.lineTo(point.x, point.y);
+        });
+        context.lineTo(points[points.length - 1].x, padding.top + chartHeight);
+        context.closePath();
+        var gradient = context.createLinearGradient(0, padding.top, 0, padding.top + chartHeight);
+        gradient.addColorStop(0, "rgba(67, 179, 255, 0.35)");
+        gradient.addColorStop(1, "rgba(67, 179, 255, 0.04)");
+        context.fillStyle = gradient;
+        context.fill();
+
+        points.forEach(function (point) {
+          context.beginPath();
+          context.arc(point.x, point.y, 3.2, 0, Math.PI * 2);
+          context.fillStyle = "#b7e7ff";
+          context.fill();
+          context.beginPath();
+          context.arc(point.x, point.y, 5.8, 0, Math.PI * 2);
+          context.strokeStyle = "rgba(183, 231, 255, 0.35)";
+          context.lineWidth = 1;
+          context.stroke();
+        });
+      }
+
+      function getBestDayEarnings(sessions) {
+        if (!sessions.length) return 0;
+
+        var totalsByDay = {};
+        sessions.forEach(function (session) {
+          var key = toDayKey(session.endedAtMs);
+          totalsByDay[key] = (totalsByDay[key] || 0) + session.earnings;
+        });
+
+        var values = Object.values(totalsByDay);
+        if (!values.length) return 0;
+        return Math.max.apply(null, values);
+      }
+
+      function calculateStreakDays(sessions) {
+        if (!sessions.length) return 0;
+
+        var daySet = new Set(sessions.map(function (session) {
+          return toDayKey(session.endedAtMs);
+        }));
+
+        var cursor = new Date();
+        cursor.setHours(0, 0, 0, 0);
+
+        if (!daySet.has(toDayKey(cursor.getTime()))) return 0;
+
+        var streak = 0;
+        while (daySet.has(toDayKey(cursor.getTime()))) {
+          streak += 1;
+          cursor.setDate(cursor.getDate() - 1);
+        }
+        return streak;
+      }
+
+      function toDayKey(timestamp) {
+        var date = new Date(timestamp);
+        var year = date.getFullYear();
+        var month = String(date.getMonth() + 1).padStart(2, "0");
+        var day = String(date.getDate()).padStart(2, "0");
+        return year + "-" + month + "-" + day;
       }
 
       function loadState() {
