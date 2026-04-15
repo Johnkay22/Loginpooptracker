@@ -312,6 +312,10 @@
       filter: brightness(1.05);
     }
 
+    .button:active {
+      transform: translateY(0);
+    }
+
     .button.ghost {
       background: rgba(67, 179, 255, 0.12);
       border-color: rgba(67, 179, 255, 0.42);
@@ -699,6 +703,178 @@
       justify-content: flex-end;
     }
 
+    @media (max-width: 760px) {
+      .page {
+        width: min(100%, 100vw);
+        margin: 0 auto;
+        padding: 10px 10px calc(86px + env(safe-area-inset-bottom));
+      }
+
+      .site-shell {
+        border-radius: 14px;
+        padding: 10px;
+      }
+
+      .site-shell::before {
+        filter: blur(30px);
+      }
+
+      .top-banner {
+        margin-bottom: 10px;
+        border-radius: 12px;
+      }
+
+      .banner-actions {
+        position: static;
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 8px;
+        background: rgba(8, 13, 23, 0.78);
+        border-top: 1px solid rgba(65, 170, 255, 0.25);
+      }
+
+      .pill {
+        font-size: 0.68rem;
+        letter-spacing: 0.05em;
+        padding: 6px 9px;
+      }
+
+      .intro-strip {
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+
+      .intro-headline {
+        gap: 8px;
+      }
+
+      .intro-kicker {
+        font-size: 0.66rem;
+        align-self: flex-start;
+      }
+
+      .intro-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero-metric {
+        padding: 10px;
+      }
+
+      .hero-metric .value {
+        font-size: 1rem;
+      }
+
+      .card-grid {
+        gap: 10px;
+      }
+
+      .card {
+        border-radius: 13px;
+        padding: 13px;
+      }
+
+      .card-title {
+        font-size: 0.96rem;
+        margin-bottom: 10px;
+      }
+
+      .card-title img {
+        width: 22px;
+        height: 22px;
+      }
+
+      .segmented {
+        display: grid;
+        width: 100%;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .segmented button {
+        padding: 11px 8px;
+      }
+
+      input,
+      select {
+        font-size: 16px;
+        padding: 11px 12px;
+      }
+
+      .timer .emoji {
+        font-size: 2.1rem;
+      }
+
+      .timer-value {
+        font-size: clamp(1.85rem, 1.4rem + 2.2vw, 2.35rem);
+        letter-spacing: 0.02em;
+      }
+
+      .timer-progress {
+        height: 10px;
+      }
+
+      #timerButton {
+        position: sticky;
+        bottom: calc(10px + env(safe-area-inset-bottom));
+        z-index: 40;
+        min-height: 48px;
+        box-shadow:
+          0 14px 28px rgba(0, 0, 0, 0.45),
+          0 0 0 1px rgba(65, 170, 255, 0.35);
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .trend-panel {
+        padding: 8px;
+      }
+
+      #trendCanvas {
+        height: 120px;
+      }
+
+      .insights-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .share-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .share-buttons button {
+        min-height: 48px;
+        justify-content: flex-start;
+        padding-left: 12px;
+      }
+
+      .log-list {
+        max-height: 260px;
+      }
+
+      .preview-footnote {
+        font-size: 0.78rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .intro-metrics,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .banner-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .banner-actions .button {
+        width: 100%;
+      }
+    }
+
     .timer-card.running {
       border-color: rgba(46, 219, 156, 0.58);
       box-shadow:
@@ -959,6 +1135,7 @@
 
       var state = loadState();
       var timerIntervalId = null;
+      var resizeTimerId = null;
 
       var hourlyModeButton = document.getElementById("hourlyModeButton");
       var salaryModeButton = document.getElementById("salaryModeButton");
@@ -1085,7 +1262,12 @@
         });
 
         window.addEventListener("resize", function () {
-          renderTrend(state.sessions);
+          if (resizeTimerId !== null) {
+            window.clearTimeout(resizeTimerId);
+          }
+          resizeTimerId = window.setTimeout(function () {
+            renderTrend(state.sessions);
+          }, 100);
         });
       }
 
