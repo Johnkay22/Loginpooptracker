@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poop Profit Core Preview</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg-soft: #11172b;
+      --panel: rgba(20, 30, 55, 0.86);
+      --line: rgba(88, 179, 255, 0.25);
+      --text: #e8f1ff;
+      --muted: #b7c4de;
+      --primary: #43b3ff;
+      --primary-strong: #1f97eb;
+      --success: #2edb9c;
+      --danger: #ff6f6f;
+      --warning: #ffd166;
+      --shadow: 0 16px 45px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Inter, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 0%, rgba(67, 179, 255, 0.18), transparent 45%),
+        radial-gradient(circle at 85% 100%, rgba(46, 219, 156, 0.14), transparent 45%),
+        var(--bg);
+      min-height: 100%;
+    }
+
+    .page {
+      width: min(1120px, 92vw);
+      margin: 28px auto 60px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero {
+      background: linear-gradient(155deg, rgba(20, 30, 55, 0.95), rgba(14, 22, 42, 0.95));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.1rem);
+    }
+
+    .hero p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 62ch;
+    }
+
+    .card-grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(12, 1fr);
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .calculator-card {
+      grid-column: span 12;
+    }
+
+    .timer-card {
+      grid-column: span 12;
+    }
+
+    .stats-card {
+      grid-column: span 12;
+    }
+
+    .share-card {
+      grid-column: span 12;
+    }
+
+    .log-card {
+      grid-column: span 12;
+    }
+
+    @media (min-width: 960px) {
+      .calculator-card,
+      .timer-card,
+      .share-card {
+        grid-column: span 4;
+      }
+
+      .stats-card,
+      .log-card {
+        grid-column: span 6;
+      }
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .button,
+    button,
+    select,
+    input {
+      font: inherit;
+    }
+
+    .button {
+      border: 1px solid transparent;
+      background: linear-gradient(180deg, var(--primary), var(--primary-strong));
+      color: #04101f;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .button:hover {
+      filter: brightness(1.06);
+    }
+
+    .button.ghost {
+      background: rgba(67, 179, 255, 0.1);
+      color: var(--text);
+      border-color: var(--line);
+      font-weight: 600;
+    }
+
+    .button.warn {
+      background: rgba(255, 111, 111, 0.18);
+      color: #ffd5d5;
+      border-color: rgba(255, 111, 111, 0.45);
+      font-weight: 600;
+    }
+
+    .button.full {
+      width: 100%;
+    }
+
+    .row {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1fr;
+      margin-bottom: 10px;
+    }
+
+    @media (min-width: 560px) {
+      .row.two {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(9, 16, 32, 0.8);
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 179, 255, 0.2);
+    }
+
+    .segmented {
+      display: inline-flex;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .segmented button {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .segmented button.active {
+      background: rgba(67, 179, 255, 0.2);
+      color: var(--text);
+    }
+
+    .hourly-display {
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(67, 179, 255, 0.12);
+      border: 1px solid rgba(67, 179, 255, 0.25);
+      font-weight: 700;
+    }
+
+    .timer {
+      text-align: center;
+    }
+
+    .timer .emoji {
+      font-size: 2.4rem;
+      margin-bottom: 6px;
+    }
+
+    .timer-value {
+      font-size: clamp(2rem, 1.5rem + 1.8vw, 2.9rem);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      margin: 4px 0 10px;
+    }
+
+    .earnings-now {
+      min-height: 24px;
+      color: var(--success);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .status {
+      min-height: 20px;
+      color: var(--warning);
+      font-size: 0.9rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(8, 14, 28, 0.65);
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-size: 0.84rem;
+      margin-bottom: 5px;
+    }
+
+    .stat .value {
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    .share-controls {
+      display: grid;
+      gap: 10px;
+    }
+
+    .share-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .share-buttons button {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 8px;
+      background: rgba(8, 14, 28, 0.75);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .share-buttons button:hover {
+      border-color: var(--primary);
+    }
+
+    .log-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .log-list {
+      display: grid;
+      gap: 8px;
+      max-height: 330px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .log-entry {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(8, 14, 28, 0.78);
+      padding: 10px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .log-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    .log-date {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .log-earnings {
+      color: var(--success);
+      font-weight: 800;
+    }
+
+    .log-meta {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .log-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .empty-state {
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      padding: 20px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(3, 8, 16, 0.65);
+      backdrop-filter: blur(3px);
+      padding: 16px;
+      z-index: 2000;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-panel {
+      width: min(560px, 100%);
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(18, 27, 50, 0.98), rgba(12, 18, 35, 0.98));
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .modal-panel h3 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+    }
+
+    .modal-panel ul {
+      margin: 10px 0 0 20px;
+      padding: 0;
+      color: var(--muted);
+    }
+
+    .modal-panel li {
+      margin-bottom: 8px;
+    }
+
+    .modal-footer {
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div>
+        <h1>Poop Profit - Core Experience Preview</h1>
+        <p>
+          Account-free and local-first. Track your poop sessions, calculate earnings, view stats, and share your wins.
+        </p>
+      </div>
+      <button id="comingSoonButton" class="button ghost" type="button">What's Coming to Poop Profit?</button>
+    </section>
+
+    <section class="card-grid">
+      <article class="card calculator-card">
+        <h2>1) Wage Calculator</h2>
+        <div class="segmented" role="group" aria-label="Wage input mode">
+          <button id="hourlyModeButton" type="button">Hourly Wage</button>
+          <button id="salaryModeButton" type="button">Salary + Hours</button>
+        </div>
+
+        <div id="hourlyInputs" class="row">
+          <div>
+            <label for="hourlyWageInput">Hourly Wage (USD)</label>
+            <input id="hourlyWageInput" type="number" min="0" step="0.01" placeholder="e.g. 25">
+          </div>
+        </div>
+
+        <div id="salaryInputs" class="row two" hidden>
+          <div>
+            <label for="annualSalaryInput">Annual Salary (USD)</label>
+            <input id="annualSalaryInput" type="number" min="0" step="0.01" placeholder="e.g. 65000">
+          </div>
+          <div>
+            <label for="weeklyHoursInput">Weekly Hours</label>
+            <input id="weeklyHoursInput" type="number" min="0" step="0.1" placeholder="e.g. 40">
+          </div>
+        </div>
+
+        <div id="hourlyWageDisplay" class="hourly-display">Effective hourly wage: $0.00</div>
+      </article>
+
+      <article class="card timer-card">
+        <h2>2) Session Timer</h2>
+        <div class="timer">
+          <div class="emoji" aria-hidden="true">💩</div>
+          <div id="timerDisplay" class="timer-value">00:00:00</div>
+          <div id="liveEarnings" class="earnings-now"></div>
+          <button id="timerButton" class="button full" type="button">Start Session</button>
+          <div id="statusMessage" class="status"></div>
+        </div>
+      </article>
+
+      <article class="card share-card">
+        <h2>3) Share Results</h2>
+        <div class="share-controls">
+          <div>
+            <label for="shareScopeSelect">What do you want to share?</label>
+            <select id="shareScopeSelect">
+              <option value="overall">Overall Stats</option>
+              <option value="latest">Latest Session</option>
+            </select>
+          </div>
+          <div class="share-buttons">
+            <button data-share-target="native" type="button">Native Share</button>
+            <button data-share-target="x" type="button">Share to X</button>
+            <button data-share-target="facebook" type="button">Share to Facebook</button>
+            <button data-share-target="sms" type="button">Share via SMS</button>
+            <button data-share-target="copy" type="button" style="grid-column: 1 / -1;">Copy Text</button>
+          </div>
+          <div id="shareStatus" class="status"></div>
+        </div>
+      </article>
+
+      <article class="card stats-card">
+        <h2>4) Stats</h2>
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="label">Total Sessions</div>
+            <div id="statSessions" class="value">0</div>
+          </div>
+          <div class="stat">
+            <div class="label">Total Time</div>
+            <div id="statTime" class="value">00:00:00</div>
+          </div>
+          <div class="stat">
+            <div class="label">Total Earnings</div>
+            <div id="statEarnings" class="value">$0.00</div>
+          </div>
+          <div class="stat">
+            <div class="label">Average Session</div>
+            <div id="statAvgTime" class="value">00:00:00</div>
+          </div>
+          <div class="stat">
+            <div class="label">Average Earnings</div>
+            <div id="statAvgEarnings" class="value">$0.00</div>
+          </div>
+          <div class="stat">
+            <div class="label">Today's Sessions</div>
+            <div id="statToday" class="value">0</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card log-card">
+        <div class="log-header">
+          <h2 style="margin: 0;">5) Session Log</h2>
+          <button id="clearAllButton" class="button warn" type="button">Clear All</button>
+        </div>
+        <div id="logList" class="log-list" aria-live="polite"></div>
+      </article>
+    </section>
+  </main>
+
+  <div id="comingSoonModal" class="modal" aria-hidden="true">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="comingSoonTitle">
+      <h3 id="comingSoonTitle">What’s Coming to Poop Profit</h3>
+      <p class="muted" style="margin: 0;">
+        This stripped-down build focuses on the essentials while the full platform is being planned.
+      </p>
+      <ul>
+        <li>Optional accounts + cloud sync across devices.</li>
+        <li>Turd Token economy with wallet + rewards.</li>
+        <li>Integrated games and leaderboard challenges.</li>
+        <li>Shop unlocks and cosmetic profile upgrades.</li>
+        <li>Enhanced analytics and richer sharing cards.</li>
+      </ul>
+      <div class="modal-footer">
+        <button id="closeComingSoonButton" class="button" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var STORAGE_KEY = "pp_core_preview_v1";
+      var DEFAULT_STATE = {
+        wageMode: "hourly",
+        hourlyWage: "",
+        annualSalary: "",
+        weeklyHours: "",
+        sessions: [],
+        activeSessionStartMs: null
+      };
+
+      var state = loadState();
+      var timerIntervalId = null;
+
+      var hourlyModeButton = document.getElementById("hourlyModeButton");
+      var salaryModeButton = document.getElementById("salaryModeButton");
+      var hourlyInputs = document.getElementById("hourlyInputs");
+      var salaryInputs = document.getElementById("salaryInputs");
+      var hourlyWageInput = document.getElementById("hourlyWageInput");
+      var annualSalaryInput = document.getElementById("annualSalaryInput");
+      var weeklyHoursInput = document.getElementById("weeklyHoursInput");
+      var hourlyWageDisplay = document.getElementById("hourlyWageDisplay");
+
+      var timerDisplay = document.getElementById("timerDisplay");
+      var liveEarnings = document.getElementById("liveEarnings");
+      var timerButton = document.getElementById("timerButton");
+      var statusMessage = document.getElementById("statusMessage");
+
+      var statSessions = document.getElementById("statSessions");
+      var statTime = document.getElementById("statTime");
+      var statEarnings = document.getElementById("statEarnings");
+      var statAvgTime = document.getElementById("statAvgTime");
+      var statAvgEarnings = document.getElementById("statAvgEarnings");
+      var statToday = document.getElementById("statToday");
+
+      var logList = document.getElementById("logList");
+      var clearAllButton = document.getElementById("clearAllButton");
+
+      var shareScopeSelect = document.getElementById("shareScopeSelect");
+      var shareStatus = document.getElementById("shareStatus");
+
+      var comingSoonButton = document.getElementById("comingSoonButton");
+      var comingSoonModal = document.getElementById("comingSoonModal");
+      var closeComingSoonButton = document.getElementById("closeComingSoonButton");
+
+      hydrateInputs();
+      renderWageMode();
+      renderAll();
+      wireEvents();
+      restoreRunningSession();
+
+      function wireEvents() {
+        hourlyModeButton.addEventListener("click", function () {
+          state.wageMode = "hourly";
+          persist();
+          renderWageMode();
+          renderAll();
+        });
+
+        salaryModeButton.addEventListener("click", function () {
+          state.wageMode = "salary";
+          persist();
+          renderWageMode();
+          renderAll();
+        });
+
+        hourlyWageInput.addEventListener("input", function () {
+          state.hourlyWage = hourlyWageInput.value;
+          persist();
+          renderAll();
+        });
+
+        annualSalaryInput.addEventListener("input", function () {
+          state.annualSalary = annualSalaryInput.value;
+          persist();
+          renderAll();
+        });
+
+        weeklyHoursInput.addEventListener("input", function () {
+          state.weeklyHours = weeklyHoursInput.value;
+          persist();
+          renderAll();
+        });
+
+        timerButton.addEventListener("click", function () {
+          if (state.activeSessionStartMs) {
+            stopSession();
+          } else {
+            startSession();
+          }
+        });
+
+        clearAllButton.addEventListener("click", function () {
+          if (!state.sessions.length) {
+            setStatus(statusMessage, "No sessions to clear.", "warn");
+            return;
+          }
+
+          var approved = window.confirm("Clear all saved sessions from this device?");
+          if (!approved) return;
+
+          state.sessions = [];
+          persist();
+          renderAll();
+          setStatus(statusMessage, "All sessions cleared.", "warn");
+        });
+
+        document.querySelectorAll("[data-share-target]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            handleShare(button.getAttribute("data-share-target"));
+          });
+        });
+
+        comingSoonButton.addEventListener("click", function () {
+          comingSoonModal.classList.add("open");
+          comingSoonModal.setAttribute("aria-hidden", "false");
+        });
+
+        closeComingSoonButton.addEventListener("click", closeComingSoonModal);
+        comingSoonModal.addEventListener("click", function (event) {
+          if (event.target === comingSoonModal) {
+            closeComingSoonModal();
+          }
+        });
+      }
+
+      function closeComingSoonModal() {
+        comingSoonModal.classList.remove("open");
+        comingSoonModal.setAttribute("aria-hidden", "true");
+      }
+
+      function hydrateInputs() {
+        hourlyWageInput.value = state.hourlyWage;
+        annualSalaryInput.value = state.annualSalary;
+        weeklyHoursInput.value = state.weeklyHours;
+      }
+
+      function renderWageMode() {
+        var isHourly = state.wageMode === "hourly";
+        hourlyModeButton.classList.toggle("active", isHourly);
+        salaryModeButton.classList.toggle("active", !isHourly);
+        hourlyInputs.hidden = !isHourly;
+        salaryInputs.hidden = isHourly;
+      }
+
+      function getEffectiveHourlyWage() {
+        if (state.wageMode === "hourly") {
+          return normalizeNumber(state.hourlyWage);
+        }
+
+        var annualSalary = normalizeNumber(state.annualSalary);
+        var weeklyHours = normalizeNumber(state.weeklyHours);
+        if (annualSalary <= 0 || weeklyHours <= 0) return 0;
+        return annualSalary / 52 / weeklyHours;
+      }
+
+      function startSession() {
+        var hourly = getEffectiveHourlyWage();
+        if (hourly <= 0) {
+          setStatus(statusMessage, "Set a valid wage first so earnings can be calculated.", "warn");
+          return;
+        }
+
+        state.activeSessionStartMs = Date.now();
+        persist();
+        setStatus(statusMessage, "Session started. Let the profits flow.", "ok");
+        renderTimerButton();
+        runTimerTick();
+        timerIntervalId = window.setInterval(runTimerTick, 1000);
+      }
+
+      function stopSession() {
+        if (!state.activeSessionStartMs) return;
+
+        var endedAt = Date.now();
+        var durationSeconds = Math.max(1, Math.floor((endedAt - state.activeSessionStartMs) / 1000));
+        var hourly = getEffectiveHourlyWage();
+        var earnings = (hourly / 3600) * durationSeconds;
+
+        state.sessions.unshift({
+          id: String(Date.now()),
+          startedAtMs: state.activeSessionStartMs,
+          endedAtMs: endedAt,
+          durationSeconds: durationSeconds,
+          hourlyWageSnapshot: hourly,
+          earnings: roundCurrency(earnings)
+        });
+
+        state.activeSessionStartMs = null;
+        persist();
+
+        clearIntervalIfRunning();
+        renderAll();
+        setStatus(statusMessage, "Session saved. Nice work.", "ok");
+      }
+
+      function restoreRunningSession() {
+        if (!state.activeSessionStartMs) {
+          renderTimerButton();
+          return;
+        }
+
+        renderTimerButton();
+        runTimerTick();
+        timerIntervalId = window.setInterval(runTimerTick, 1000);
+        setStatus(statusMessage, "Resumed active session.", "ok");
+      }
+
+      function clearIntervalIfRunning() {
+        if (timerIntervalId !== null) {
+          window.clearInterval(timerIntervalId);
+          timerIntervalId = null;
+        }
+      }
+
+      function runTimerTick() {
+        if (!state.activeSessionStartMs) return;
+
+        var elapsedSeconds = Math.max(0, Math.floor((Date.now() - state.activeSessionStartMs) / 1000));
+        var currentEarnings = (getEffectiveHourlyWage() / 3600) * elapsedSeconds;
+        timerDisplay.textContent = formatDuration(elapsedSeconds);
+        liveEarnings.textContent = "Current earnings: $" + currentEarnings.toFixed(2);
+      }
+
+      function renderTimerButton() {
+        var running = Boolean(state.activeSessionStartMs);
+        timerButton.textContent = running ? "Stop + Save Session" : "Start Session";
+        timerButton.style.background = running
+          ? "linear-gradient(180deg, #ff8a8a, #ff6f6f)"
+          : "linear-gradient(180deg, var(--primary), var(--primary-strong))";
+      }
+
+      function renderAll() {
+        var hourly = getEffectiveHourlyWage();
+        hourlyWageDisplay.textContent = "Effective hourly wage: $" + hourly.toFixed(2);
+
+        if (!state.activeSessionStartMs) {
+          timerDisplay.textContent = "00:00:00";
+          liveEarnings.textContent = "";
+        }
+
+        renderTimerButton();
+        renderStats();
+        renderLog();
+      }
+
+      function renderStats() {
+        var sessions = state.sessions;
+        var totalSessions = sessions.length;
+        var totalTimeSeconds = sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
+        var totalEarnings = sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
+        var avgTime = totalSessions ? totalTimeSeconds / totalSessions : 0;
+        var avgEarnings = totalSessions ? totalEarnings / totalSessions : 0;
+
+        var todaySessions = sessions.filter(function (session) {
+          return isSameDay(session.endedAtMs, Date.now());
+        }).length;
+
+        statSessions.textContent = String(totalSessions);
+        statTime.textContent = formatDuration(totalTimeSeconds);
+        statEarnings.textContent = "$" + totalEarnings.toFixed(2);
+        statAvgTime.textContent = formatDuration(Math.floor(avgTime));
+        statAvgEarnings.textContent = "$" + avgEarnings.toFixed(2);
+        statToday.textContent = String(todaySessions);
+      }
+
+      function renderLog() {
+        logList.innerHTML = "";
+
+        if (!state.sessions.length) {
+          var empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.textContent = "No sessions yet. Start a session to build your log.";
+          logList.appendChild(empty);
+          return;
+        }
+
+        state.sessions.forEach(function (session) {
+          var row = document.createElement("article");
+          row.className = "log-entry";
+
+          var top = document.createElement("div");
+          top.className = "log-top";
+
+          var date = document.createElement("div");
+          date.className = "log-date";
+          date.textContent = new Date(session.endedAtMs).toLocaleString();
+
+          var earnings = document.createElement("div");
+          earnings.className = "log-earnings";
+          earnings.textContent = "$" + session.earnings.toFixed(2);
+
+          top.appendChild(date);
+          top.appendChild(earnings);
+
+          var meta = document.createElement("div");
+          meta.className = "log-meta";
+          meta.textContent = "Duration: " + formatDuration(session.durationSeconds) + " | Wage used: $" + session.hourlyWageSnapshot.toFixed(2) + "/hr";
+
+          var actions = document.createElement("div");
+          actions.className = "log-actions";
+
+          var remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "button ghost";
+          remove.textContent = "Delete";
+          remove.addEventListener("click", function () {
+            deleteSession(session.id);
+          });
+
+          actions.appendChild(remove);
+          row.appendChild(top);
+          row.appendChild(meta);
+          row.appendChild(actions);
+          logList.appendChild(row);
+        });
+      }
+
+      function deleteSession(sessionId) {
+        state.sessions = state.sessions.filter(function (s) { return s.id !== sessionId; });
+        persist();
+        renderAll();
+        setStatus(statusMessage, "Session deleted.", "warn");
+      }
+
+      function handleShare(target) {
+        var text = getShareText();
+        if (!text) {
+          setStatus(shareStatus, "Nothing to share yet. Log a session first.", "warn");
+          return;
+        }
+
+        var url = "https://www.poopprofit.com";
+
+        if (target === "native") {
+          if (navigator.share) {
+            navigator.share({
+              title: "Poop Profit",
+              text: text,
+              url: url
+            }).then(function () {
+              setStatus(shareStatus, "Shared successfully.", "ok");
+            }).catch(function () {
+              setStatus(shareStatus, "Share canceled.", "warn");
+            });
+          } else {
+            copyToClipboard(text);
+          }
+          return;
+        }
+
+        if (target === "x") {
+          window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text), "_blank");
+          return;
+        }
+
+        if (target === "facebook") {
+          window.open(
+            "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url) + "&quote=" + encodeURIComponent(text),
+            "_blank"
+          );
+          return;
+        }
+
+        if (target === "sms") {
+          window.open("sms:?&body=" + encodeURIComponent(text));
+          return;
+        }
+
+        if (target === "copy") {
+          copyToClipboard(text);
+        }
+      }
+
+      function getShareText() {
+        var scope = shareScopeSelect.value;
+
+        if (scope === "latest") {
+          if (!state.sessions.length) return "";
+          var latest = state.sessions[0];
+          return "I just earned $" + latest.earnings.toFixed(2) + " in " + formatDuration(latest.durationSeconds) +
+            " with Poop Profit. Track your poop profits at poopprofit.com";
+        }
+
+        if (!state.sessions.length) return "";
+
+        var totalSessions = state.sessions.length;
+        var totalEarnings = state.sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
+        var totalTimeSeconds = state.sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
+
+        return "My Poop Profit stats: " + totalSessions + " sessions, $" + totalEarnings.toFixed(2) +
+          " earned, " + formatDuration(totalTimeSeconds) + " total time. Check yours at poopprofit.com";
+      }
+
+      function copyToClipboard(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            setStatus(shareStatus, "Copied to clipboard.", "ok");
+          }).catch(function () {
+            fallbackCopy(text);
+          });
+        } else {
+          fallbackCopy(text);
+        }
+      }
+
+      function fallbackCopy(text) {
+        var helper = document.createElement("textarea");
+        helper.value = text;
+        document.body.appendChild(helper);
+        helper.select();
+
+        try {
+          document.execCommand("copy");
+          setStatus(shareStatus, "Copied to clipboard.", "ok");
+        } catch (error) {
+          setStatus(shareStatus, "Copy failed.", "warn");
+        }
+
+        helper.remove();
+      }
+
+      function setStatus(element, message, mode) {
+        element.textContent = message;
+        if (mode === "ok") {
+          element.style.color = "var(--success)";
+        } else if (mode === "warn") {
+          element.style.color = "var(--warning)";
+        } else {
+          element.style.color = "var(--muted)";
+        }
+      }
+
+      function loadState() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return cloneDefaultState();
+
+          var parsed = JSON.parse(raw);
+          return sanitizeState(parsed);
+        } catch (error) {
+          return cloneDefaultState();
+        }
+      }
+
+      function sanitizeState(candidate) {
+        var safe = cloneDefaultState();
+        if (!candidate || typeof candidate !== "object") return safe;
+
+        safe.wageMode = candidate.wageMode === "salary" ? "salary" : "hourly";
+        safe.hourlyWage = toInputString(candidate.hourlyWage);
+        safe.annualSalary = toInputString(candidate.annualSalary);
+        safe.weeklyHours = toInputString(candidate.weeklyHours);
+        safe.activeSessionStartMs = isFiniteNumber(candidate.activeSessionStartMs) ? candidate.activeSessionStartMs : null;
+
+        if (Array.isArray(candidate.sessions)) {
+          safe.sessions = candidate.sessions
+            .map(function (session) {
+              if (!session || typeof session !== "object") return null;
+
+              var durationSeconds = Math.max(1, Math.floor(normalizeNumber(session.durationSeconds)));
+              var endedAtMs = normalizeNumber(session.endedAtMs);
+              var startedAtMs = normalizeNumber(session.startedAtMs) || (endedAtMs - durationSeconds * 1000);
+              var earnings = roundCurrency(normalizeNumber(session.earnings));
+              var hourlyWageSnapshot = roundCurrency(normalizeNumber(session.hourlyWageSnapshot));
+
+              if (!isFiniteNumber(endedAtMs) || endedAtMs <= 0) return null;
+
+              return {
+                id: String(session.id || Date.now() + Math.random()),
+                startedAtMs: startedAtMs,
+                endedAtMs: endedAtMs,
+                durationSeconds: durationSeconds,
+                hourlyWageSnapshot: hourlyWageSnapshot,
+                earnings: earnings
+              };
+            })
+            .filter(Boolean);
+        }
+
+        return safe;
+      }
+
+      function persist() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function cloneDefaultState() {
+        return JSON.parse(JSON.stringify(DEFAULT_STATE));
+      }
+
+      function normalizeNumber(value) {
+        var number = Number(value);
+        return Number.isFinite(number) ? number : 0;
+      }
+
+      function roundCurrency(value) {
+        return Math.round(value * 100) / 100;
+      }
+
+      function toInputString(value) {
+        return value === undefined || value === null ? "" : String(value);
+      }
+
+      function isFiniteNumber(value) {
+        return typeof value === "number" && Number.isFinite(value);
+      }
+
+      function isSameDay(timeA, timeB) {
+        var dateA = new Date(timeA);
+        var dateB = new Date(timeB);
+        return dateA.getFullYear() === dateB.getFullYear() &&
+          dateA.getMonth() === dateB.getMonth() &&
+          dateA.getDate() === dateB.getDate();
+      }
+
+      function formatDuration(totalSeconds) {
+        var safeSeconds = Math.max(0, Math.floor(totalSeconds));
+        var hours = Math.floor(safeSeconds / 3600);
+        var minutes = Math.floor((safeSeconds % 3600) / 60);
+        var seconds = safeSeconds % 60;
+        return String(hours).padStart(2, "0") + ":" +
+          String(minutes).padStart(2, "0") + ":" +
+          String(seconds).padStart(2, "0");
+      }
+    })();
+  </script>
+</body>
+</html>
