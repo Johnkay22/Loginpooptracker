@@ -854,6 +854,14 @@
         max-height: 260px;
       }
 
+      .mobile-fab {
+        display: inline-flex;
+      }
+
+      .mobile-quicknav {
+        display: grid;
+      }
+
       .preview-footnote {
         font-size: 0.78rem;
       }
@@ -873,6 +881,85 @@
       .banner-actions .button {
         width: 100%;
       }
+
+      .mobile-quicknav {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .mobile-fab {
+      position: fixed;
+      right: 14px;
+      bottom: calc(78px + env(safe-area-inset-bottom));
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 1px solid rgba(65, 170, 255, 0.5);
+      background: radial-gradient(circle at 30% 30%, #6cc7ff, #1f96ea 70%);
+      color: #021426;
+      font-size: 1.35rem;
+      font-weight: 900;
+      box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.45),
+        0 0 24px rgba(65, 170, 255, 0.45);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 70;
+      display: none;
+      transition: transform 0.12s ease, filter 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .mobile-fab:active,
+    .mobile-fab.haptic {
+      transform: scale(0.94);
+      filter: brightness(1.08);
+    }
+
+    .mobile-fab.running {
+      background: radial-gradient(circle at 30% 30%, #ffb0b0, #ff6f6f 70%);
+      border-color: rgba(255, 132, 132, 0.55);
+      box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.45),
+        0 0 24px rgba(255, 132, 132, 0.4);
+    }
+
+    .mobile-quicknav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+      border-top: 1px solid rgba(65, 170, 255, 0.25);
+      background: linear-gradient(180deg, rgba(8, 13, 24, 0.95), rgba(6, 10, 18, 0.98));
+      backdrop-filter: blur(8px);
+      z-index: 65;
+      display: none;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .mobile-nav-btn {
+      border: 1px solid rgba(65, 170, 255, 0.2);
+      border-radius: 10px;
+      background: rgba(8, 14, 26, 0.8);
+      color: #d8e8ff;
+      font-size: 0.74rem;
+      font-weight: 600;
+      min-height: 44px;
+      padding: 6px 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .mobile-nav-btn.active {
+      border-color: rgba(65, 170, 255, 0.55);
+      background: rgba(67, 179, 255, 0.2);
+      color: #ffffff;
     }
 
     .timer-card.running {
@@ -1100,6 +1187,30 @@
     </section>
   </main>
 
+  <nav class="mobile-quicknav" aria-label="Quick sections">
+    <button class="mobile-nav-btn active" data-jump-target=".calculator-card" type="button">
+      <img src="calc.png" alt="">
+      <span>Calc</span>
+    </button>
+    <button class="mobile-nav-btn" data-jump-target=".timer-card" type="button">
+      <img src="poopemojifinal.jpeg" alt="">
+      <span>Timer</span>
+    </button>
+    <button class="mobile-nav-btn" data-jump-target=".stats-card" type="button">
+      <img src="stats.png" alt="">
+      <span>Stats</span>
+    </button>
+    <button class="mobile-nav-btn" data-jump-target=".log-card" type="button">
+      <img src="calc.png" alt="">
+      <span>Log</span>
+    </button>
+  </nav>
+
+  <button id="fabTimerButton" class="mobile-fab" type="button" aria-label="Start session">
+    <span id="fabEmoji">🚀</span>
+    <span id="fabLabel">Start</span>
+  </button>
+
   <div id="comingSoonModal" class="modal" aria-hidden="true">
     <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="comingSoonTitle">
       <h3 id="comingSoonTitle">What’s Coming to Poop Profit</h3>
@@ -1149,6 +1260,10 @@
       var timerDisplay = document.getElementById("timerDisplay");
       var liveEarnings = document.getElementById("liveEarnings");
       var timerButton = document.getElementById("timerButton");
+      var mobileFabButton = document.getElementById("fabTimerButton");
+      var mobileFabEmoji = document.getElementById("fabEmoji");
+      var mobileFabLabel = document.getElementById("fabLabel");
+      var mobileNavButtons = document.querySelectorAll("[data-jump-target]");
       var statusMessage = document.getElementById("statusMessage");
       var timerCard = document.querySelector(".timer-card");
       var sessionProjection = document.getElementById("sessionProjection");
@@ -1227,6 +1342,28 @@
             startSession();
           }
         });
+
+        if (mobileFabButton) {
+          mobileFabButton.addEventListener("click", function () {
+            triggerHapticVisual(mobileFabButton);
+            if (state.activeSessionStartMs) {
+              stopSession();
+            } else {
+              startSession();
+            }
+          });
+        }
+
+        if (mobileNavButtons && mobileNavButtons.length) {
+          mobileNavButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+              triggerHapticVisual(button);
+              var target = button.getAttribute("data-jump-target");
+              scrollToSection(target);
+              highlightMobileNav(target);
+            });
+          });
+        }
 
         clearAllButton.addEventListener("click", function () {
           if (!state.sessions.length) {
@@ -1378,8 +1515,42 @@
         timerButton.style.background = running
           ? "linear-gradient(180deg, #ff8a8a, #ff6f6f)"
           : "linear-gradient(180deg, var(--primary), var(--primary-strong))";
+        if (mobileFabButton) {
+          mobileFabButton.classList.toggle("running", running);
+          mobileFabButton.setAttribute("aria-label", running ? "Stop session" : "Start session");
+          if (mobileFabEmoji) mobileFabEmoji.textContent = running ? "⏹" : "🚀";
+          if (mobileFabLabel) mobileFabLabel.textContent = running ? "Stop" : "Start";
+        }
         if (timerCard) {
           timerCard.classList.toggle("running", running);
+        }
+      }
+
+      function scrollToSection(target) {
+        if (!target) return;
+        var section = document.querySelector(target);
+        if (!section) return;
+        var offset = window.matchMedia("(max-width: 760px)").matches ? 78 : 20;
+        var top = section.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top: top, behavior: "smooth" });
+      }
+
+      function highlightMobileNav(target) {
+        if (!mobileNavButtons || !mobileNavButtons.length) return;
+        mobileNavButtons.forEach(function (button) {
+          var buttonTarget = button.getAttribute("data-jump-target");
+          button.classList.toggle("active", buttonTarget === target);
+        });
+      }
+
+      function triggerHapticVisual(element) {
+        if (!element) return;
+        element.classList.add("haptic");
+        window.setTimeout(function () {
+          element.classList.remove("haptic");
+        }, 140);
+        if (navigator.vibrate) {
+          navigator.vibrate(12);
         }
       }
 
