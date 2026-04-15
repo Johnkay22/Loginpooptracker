@@ -6,18 +6,20 @@
   <title>Poop Profit Core Preview</title>
   <style>
     :root {
-      --bg: #0b1020;
-      --bg-soft: #11172b;
-      --panel: rgba(20, 30, 55, 0.86);
-      --line: rgba(88, 179, 255, 0.25);
-      --text: #e8f1ff;
-      --muted: #b7c4de;
+      --bg: #060b16;
+      --bg-soft: #101a30;
+      --panel: rgba(18, 27, 50, 0.86);
+      --panel-strong: rgba(12, 18, 34, 0.92);
+      --line: rgba(65, 170, 255, 0.28);
+      --line-strong: rgba(65, 170, 255, 0.5);
+      --text: #eaf3ff;
+      --muted: #b4c6e5;
       --primary: #43b3ff;
-      --primary-strong: #1f97eb;
+      --primary-strong: #1f96ea;
       --success: #2edb9c;
-      --danger: #ff6f6f;
       --warning: #ffd166;
-      --shadow: 0 16px 45px rgba(0, 0, 0, 0.35);
+      --danger: #ff7b7b;
+      --shadow: 0 24px 55px rgba(0, 0, 0, 0.45);
     }
 
     * {
@@ -28,82 +30,134 @@
     body {
       margin: 0;
       padding: 0;
-      font-family: Inter, "Segoe UI", Roboto, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 15% 0%, rgba(67, 179, 255, 0.18), transparent 45%),
-        radial-gradient(circle at 85% 100%, rgba(46, 219, 156, 0.14), transparent 45%),
-        var(--bg);
       min-height: 100%;
+      font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(130deg, rgba(6, 11, 22, 0.92), rgba(6, 11, 22, 0.82)),
+        url("MAINDESKTOPBG.jpeg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
     }
 
     .page {
-      width: min(1120px, 92vw);
-      margin: 28px auto 60px;
-      display: grid;
-      gap: 18px;
+      width: min(1180px, 94vw);
+      margin: 24px auto 56px;
     }
 
-    .hero {
-      background: linear-gradient(155deg, rgba(20, 30, 55, 0.95), rgba(14, 22, 42, 0.95));
+    .site-shell {
       border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 20px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(15, 24, 45, 0.92), rgba(10, 15, 28, 0.92));
       box-shadow: var(--shadow);
+      padding: 16px;
+      backdrop-filter: blur(8px);
+    }
+
+    .top-banner {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
+      margin-bottom: 14px;
+    }
+
+    .top-banner img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .banner-actions {
+      position: absolute;
+      top: 12px;
+      right: 12px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
+      gap: 8px;
       align-items: center;
-      justify-content: space-between;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
-    .hero h1 {
+    .pill {
+      background: rgba(7, 12, 22, 0.75);
+      color: #cce8ff;
+      border: 1px solid rgba(65, 170, 255, 0.38);
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 700;
+    }
+
+    .intro-strip {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(130deg, rgba(17, 29, 54, 0.95), rgba(12, 20, 38, 0.95));
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+
+    .intro-strip h1 {
+      margin: 0 0 6px;
+      font-size: clamp(1.4rem, 1.2rem + 0.9vw, 2rem);
+      letter-spacing: 0.01em;
+    }
+
+    .intro-strip p {
       margin: 0;
-      font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.1rem);
-    }
-
-    .hero p {
-      margin: 8px 0 0;
       color: var(--muted);
-      max-width: 62ch;
+      max-width: 75ch;
+      line-height: 1.45;
     }
 
     .card-grid {
       display: grid;
-      gap: 18px;
+      gap: 14px;
       grid-template-columns: repeat(12, 1fr);
     }
 
     .card {
-      background: var(--panel);
+      background: linear-gradient(170deg, var(--panel), var(--panel-strong));
       border: 1px solid var(--line);
       border-radius: 16px;
-      padding: 18px;
-      box-shadow: var(--shadow);
+      padding: 16px;
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.3);
       min-width: 0;
     }
 
-    .calculator-card {
-      grid-column: span 12;
+    .card-title {
+      margin: 0 0 12px;
+      font-size: 1.02rem;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .timer-card {
-      grid-column: span 12;
+    .card-title img {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      border-radius: 6px;
+      background: rgba(7, 12, 22, 0.7);
+      border: 1px solid rgba(65, 170, 255, 0.25);
+      padding: 3px;
     }
 
-    .stats-card {
-      grid-column: span 12;
-    }
-
-    .share-card {
-      grid-column: span 12;
-    }
-
+    .calculator-card,
+    .timer-card,
+    .stats-card,
+    .share-card,
     .log-card {
       grid-column: span 12;
     }
 
-    @media (min-width: 960px) {
+    @media (min-width: 980px) {
       .calculator-card,
       .timer-card,
       .share-card {
@@ -116,49 +170,41 @@
       }
     }
 
-    h2 {
-      margin: 0 0 14px;
-      font-size: 1.05rem;
-      letter-spacing: 0.02em;
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
     .button,
     button,
-    select,
-    input {
+    input,
+    select {
       font: inherit;
     }
 
     .button {
       border: 1px solid transparent;
-      background: linear-gradient(180deg, var(--primary), var(--primary-strong));
-      color: #04101f;
+      border-radius: 11px;
       padding: 10px 14px;
-      border-radius: 10px;
       cursor: pointer;
       font-weight: 700;
       letter-spacing: 0.01em;
+      background: linear-gradient(180deg, var(--primary), var(--primary-strong));
+      color: #04101f;
+      transition: transform 0.15s ease, filter 0.2s ease, border-color 0.2s ease;
     }
 
     .button:hover {
-      filter: brightness(1.06);
+      transform: translateY(-1px);
+      filter: brightness(1.05);
     }
 
     .button.ghost {
-      background: rgba(67, 179, 255, 0.1);
+      background: rgba(67, 179, 255, 0.12);
+      border-color: rgba(67, 179, 255, 0.42);
       color: var(--text);
-      border-color: var(--line);
       font-weight: 600;
     }
 
     .button.warn {
-      background: rgba(255, 111, 111, 0.18);
-      color: #ffd5d5;
-      border-color: rgba(255, 111, 111, 0.45);
+      background: rgba(255, 123, 123, 0.16);
+      border-color: rgba(255, 123, 123, 0.45);
+      color: #ffd8d8;
       font-weight: 600;
     }
 
@@ -170,10 +216,10 @@
       display: grid;
       gap: 10px;
       grid-template-columns: 1fr;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
-    @media (min-width: 560px) {
+    @media (min-width: 580px) {
       .row.two {
         grid-template-columns: 1fr 1fr;
       }
@@ -183,54 +229,55 @@
       display: block;
       margin-bottom: 6px;
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 0.91rem;
     }
 
     input,
     select {
       width: 100%;
-      padding: 10px 12px;
       border-radius: 10px;
-      border: 1px solid var(--line);
-      background: rgba(9, 16, 32, 0.8);
+      border: 1px solid rgba(65, 170, 255, 0.3);
+      background: rgba(6, 11, 22, 0.72);
       color: var(--text);
+      padding: 10px 12px;
       outline: none;
     }
 
     input:focus,
     select:focus {
-      border-color: var(--primary);
+      border-color: var(--line-strong);
       box-shadow: 0 0 0 3px rgba(67, 179, 255, 0.2);
     }
 
     .segmented {
       display: inline-flex;
-      border-radius: 10px;
-      border: 1px solid var(--line);
+      border-radius: 11px;
+      border: 1px solid rgba(65, 170, 255, 0.35);
       overflow: hidden;
       margin-bottom: 12px;
+      background: rgba(6, 11, 22, 0.45);
     }
 
     .segmented button {
-      border: none;
+      border: 0;
       background: transparent;
       color: var(--muted);
-      padding: 8px 12px;
+      padding: 9px 13px;
       cursor: pointer;
       font-weight: 600;
     }
 
     .segmented button.active {
       background: rgba(67, 179, 255, 0.2);
-      color: var(--text);
+      color: #ffffff;
     }
 
     .hourly-display {
-      margin-top: 8px;
-      padding: 10px;
-      border-radius: 10px;
-      background: rgba(67, 179, 255, 0.12);
-      border: 1px solid rgba(67, 179, 255, 0.25);
+      margin-top: 9px;
+      border-radius: 11px;
+      padding: 11px;
+      border: 1px solid rgba(67, 179, 255, 0.35);
+      background: rgba(67, 179, 255, 0.1);
       font-weight: 700;
     }
 
@@ -239,51 +286,51 @@
     }
 
     .timer .emoji {
-      font-size: 2.4rem;
+      font-size: 2.35rem;
       margin-bottom: 6px;
     }
 
     .timer-value {
-      font-size: clamp(2rem, 1.5rem + 1.8vw, 2.9rem);
+      font-size: clamp(2rem, 1.4rem + 2vw, 2.95rem);
       font-weight: 800;
       letter-spacing: 0.04em;
-      margin: 4px 0 10px;
+      margin: 4px 0 11px;
     }
 
     .earnings-now {
-      min-height: 24px;
-      color: var(--success);
-      font-weight: 700;
+      min-height: 22px;
       margin-bottom: 10px;
+      font-weight: 700;
+      color: var(--success);
     }
 
     .status {
-      min-height: 20px;
-      color: var(--warning);
+      min-height: 19px;
       font-size: 0.9rem;
+      color: var(--warning);
     }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      gap: 9px;
     }
 
     .stat {
-      border: 1px solid var(--line);
+      border: 1px solid rgba(65, 170, 255, 0.28);
       border-radius: 12px;
+      background: rgba(6, 11, 22, 0.68);
       padding: 10px;
-      background: rgba(8, 14, 28, 0.65);
     }
 
     .stat .label {
       color: var(--muted);
-      font-size: 0.84rem;
-      margin-bottom: 5px;
+      font-size: 0.82rem;
+      margin-bottom: 4px;
     }
 
     .stat .value {
-      font-size: 1.2rem;
+      font-size: 1.18rem;
       font-weight: 800;
     }
 
@@ -299,39 +346,52 @@
     }
 
     .share-buttons button {
-      border: 1px solid var(--line);
+      border: 1px solid rgba(65, 170, 255, 0.25);
       border-radius: 10px;
-      padding: 10px 8px;
-      background: rgba(8, 14, 28, 0.75);
+      background: rgba(6, 11, 22, 0.72);
       color: var(--text);
       cursor: pointer;
+      padding: 9px 8px;
       font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 42px;
     }
 
     .share-buttons button:hover {
-      border-color: var(--primary);
+      border-color: var(--line-strong);
+      background: rgba(67, 179, 255, 0.14);
+    }
+
+    .share-buttons img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
     }
 
     .log-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 10px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
     }
 
     .log-list {
       display: grid;
       gap: 8px;
-      max-height: 330px;
+      max-height: 350px;
       overflow-y: auto;
-      padding-right: 4px;
+      padding-right: 3px;
     }
 
     .log-entry {
-      border: 1px solid var(--line);
+      border: 1px solid rgba(65, 170, 255, 0.24);
       border-radius: 12px;
-      background: rgba(8, 14, 28, 0.78);
+      background: rgba(6, 11, 22, 0.78);
       padding: 10px;
       display: grid;
       gap: 6px;
@@ -339,15 +399,15 @@
 
     .log-top {
       display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
       justify-content: space-between;
       gap: 8px;
-      align-items: baseline;
-      flex-wrap: wrap;
     }
 
     .log-date {
-      color: var(--muted);
       font-size: 0.84rem;
+      color: var(--muted);
     }
 
     .log-earnings {
@@ -356,8 +416,8 @@
     }
 
     .log-meta {
-      font-size: 0.9rem;
       color: var(--muted);
+      font-size: 0.9rem;
     }
 
     .log-actions {
@@ -366,11 +426,23 @@
     }
 
     .empty-state {
-      border: 1px dashed var(--line);
+      border: 1px dashed rgba(65, 170, 255, 0.33);
       border-radius: 12px;
-      padding: 20px;
-      color: var(--muted);
       text-align: center;
+      color: var(--muted);
+      padding: 22px 14px;
+    }
+
+    .preview-footnote {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(65, 170, 255, 0.2);
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .muted {
+      color: var(--muted);
     }
 
     .modal {
@@ -379,8 +451,8 @@
       display: none;
       align-items: center;
       justify-content: center;
-      background: rgba(3, 8, 16, 0.65);
-      backdrop-filter: blur(3px);
+      background: rgba(3, 8, 16, 0.72);
+      backdrop-filter: blur(4px);
       padding: 16px;
       z-index: 2000;
     }
@@ -392,8 +464,8 @@
     .modal-panel {
       width: min(560px, 100%);
       border-radius: 16px;
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(18, 27, 50, 0.98), rgba(12, 18, 35, 0.98));
+      border: 1px solid rgba(65, 170, 255, 0.35);
+      background: linear-gradient(180deg, rgba(18, 27, 50, 0.98), rgba(10, 15, 30, 0.98));
       box-shadow: var(--shadow);
       padding: 20px;
     }
@@ -422,114 +494,141 @@
 </head>
 <body>
   <main class="page">
-    <section class="hero">
-      <div>
-        <h1>Poop Profit - Core Experience Preview</h1>
+    <section class="site-shell">
+      <header class="top-banner">
+        <img src="BANNER.jpeg" alt="Poop Profit banner">
+        <div class="banner-actions">
+          <span class="pill">Core Preview</span>
+          <button id="comingSoonButton" class="button ghost" type="button">What's Coming to Poop Profit?</button>
+        </div>
+      </header>
+
+      <section class="intro-strip">
+        <h1>Modern Core Experience (No Account Required)</h1>
         <p>
-          Account-free and local-first. Track your poop sessions, calculate earnings, view stats, and share your wins.
+          This streamlined build keeps Poop Profit focused on the essentials: calculate your wage, run sessions, track your history,
+          and share your stats. Everything is saved in localStorage on this device.
         </p>
-      </div>
-      <button id="comingSoonButton" class="button ghost" type="button">What's Coming to Poop Profit?</button>
-    </section>
+      </section>
 
-    <section class="card-grid">
-      <article class="card calculator-card">
-        <h2>1) Wage Calculator</h2>
-        <div class="segmented" role="group" aria-label="Wage input mode">
-          <button id="hourlyModeButton" type="button">Hourly Wage</button>
-          <button id="salaryModeButton" type="button">Salary + Hours</button>
-        </div>
+      <section class="card-grid">
+        <article class="card calculator-card">
+          <h2 class="card-title">
+            <img src="calc.png" alt="">
+            Wage Calculator
+          </h2>
+          <div class="segmented" role="group" aria-label="Wage input mode">
+            <button id="hourlyModeButton" type="button">Hourly Wage</button>
+            <button id="salaryModeButton" type="button">Salary + Weekly Hours</button>
+          </div>
 
-        <div id="hourlyInputs" class="row">
-          <div>
-            <label for="hourlyWageInput">Hourly Wage (USD)</label>
-            <input id="hourlyWageInput" type="number" min="0" step="0.01" placeholder="e.g. 25">
+          <div id="hourlyInputs" class="row">
+            <div>
+              <label for="hourlyWageInput">Hourly Wage (USD)</label>
+              <input id="hourlyWageInput" type="number" min="0" step="0.01" placeholder="e.g. 25">
+            </div>
           </div>
-        </div>
 
-        <div id="salaryInputs" class="row two" hidden>
-          <div>
-            <label for="annualSalaryInput">Annual Salary (USD)</label>
-            <input id="annualSalaryInput" type="number" min="0" step="0.01" placeholder="e.g. 65000">
+          <div id="salaryInputs" class="row two" hidden>
+            <div>
+              <label for="annualSalaryInput">Annual Salary (USD)</label>
+              <input id="annualSalaryInput" type="number" min="0" step="0.01" placeholder="e.g. 65000">
+            </div>
+            <div>
+              <label for="weeklyHoursInput">Weekly Hours</label>
+              <input id="weeklyHoursInput" type="number" min="0" step="0.1" placeholder="e.g. 40">
+            </div>
           </div>
-          <div>
-            <label for="weeklyHoursInput">Weekly Hours</label>
-            <input id="weeklyHoursInput" type="number" min="0" step="0.1" placeholder="e.g. 40">
-          </div>
-        </div>
 
-        <div id="hourlyWageDisplay" class="hourly-display">Effective hourly wage: $0.00</div>
-      </article>
+          <div id="hourlyWageDisplay" class="hourly-display">Effective hourly wage: $0.00</div>
+        </article>
 
-      <article class="card timer-card">
-        <h2>2) Session Timer</h2>
-        <div class="timer">
-          <div class="emoji" aria-hidden="true">💩</div>
-          <div id="timerDisplay" class="timer-value">00:00:00</div>
-          <div id="liveEarnings" class="earnings-now"></div>
-          <button id="timerButton" class="button full" type="button">Start Session</button>
-          <div id="statusMessage" class="status"></div>
-        </div>
-      </article>
+        <article class="card timer-card">
+          <h2 class="card-title">
+            <img src="poopemojifinal.jpeg" alt="">
+            Session Timer
+          </h2>
+          <div class="timer">
+            <div class="emoji" aria-hidden="true">💩</div>
+            <div id="timerDisplay" class="timer-value">00:00:00</div>
+            <div id="liveEarnings" class="earnings-now"></div>
+            <button id="timerButton" class="button full" type="button">Start Session</button>
+            <div id="statusMessage" class="status"></div>
+          </div>
+        </article>
 
-      <article class="card share-card">
-        <h2>3) Share Results</h2>
-        <div class="share-controls">
-          <div>
-            <label for="shareScopeSelect">What do you want to share?</label>
-            <select id="shareScopeSelect">
-              <option value="overall">Overall Stats</option>
-              <option value="latest">Latest Session</option>
-            </select>
+        <article class="card share-card">
+          <h2 class="card-title">
+            <img src="xicon.png" alt="">
+            Share Results
+          </h2>
+          <div class="share-controls">
+            <div>
+              <label for="shareScopeSelect">What do you want to share?</label>
+              <select id="shareScopeSelect">
+                <option value="overall">Overall Stats</option>
+                <option value="latest">Latest Session</option>
+              </select>
+            </div>
+            <div class="share-buttons">
+              <button data-share-target="native" type="button">Native Share</button>
+              <button data-share-target="x" type="button"><img src="xicon.png" alt="">Share to X</button>
+              <button data-share-target="facebook" type="button"><img src="fbicon.png" alt="">Facebook</button>
+              <button data-share-target="sms" type="button"><img src="txticon.png" alt="">SMS</button>
+              <button data-share-target="copy" type="button" style="grid-column: 1 / -1;">Copy Share Text</button>
+            </div>
+            <div id="shareStatus" class="status"></div>
           </div>
-          <div class="share-buttons">
-            <button data-share-target="native" type="button">Native Share</button>
-            <button data-share-target="x" type="button">Share to X</button>
-            <button data-share-target="facebook" type="button">Share to Facebook</button>
-            <button data-share-target="sms" type="button">Share via SMS</button>
-            <button data-share-target="copy" type="button" style="grid-column: 1 / -1;">Copy Text</button>
-          </div>
-          <div id="shareStatus" class="status"></div>
-        </div>
-      </article>
+        </article>
 
-      <article class="card stats-card">
-        <h2>4) Stats</h2>
-        <div class="stats-grid">
-          <div class="stat">
-            <div class="label">Total Sessions</div>
-            <div id="statSessions" class="value">0</div>
+        <article class="card stats-card">
+          <h2 class="card-title">
+            <img src="stats.png" alt="">
+            Session Stats
+          </h2>
+          <div class="stats-grid">
+            <div class="stat">
+              <div class="label">Total Sessions</div>
+              <div id="statSessions" class="value">0</div>
+            </div>
+            <div class="stat">
+              <div class="label">Total Time</div>
+              <div id="statTime" class="value">00:00:00</div>
+            </div>
+            <div class="stat">
+              <div class="label">Total Earnings</div>
+              <div id="statEarnings" class="value">$0.00</div>
+            </div>
+            <div class="stat">
+              <div class="label">Average Session</div>
+              <div id="statAvgTime" class="value">00:00:00</div>
+            </div>
+            <div class="stat">
+              <div class="label">Average Earnings</div>
+              <div id="statAvgEarnings" class="value">$0.00</div>
+            </div>
+            <div class="stat">
+              <div class="label">Today's Sessions</div>
+              <div id="statToday" class="value">0</div>
+            </div>
           </div>
-          <div class="stat">
-            <div class="label">Total Time</div>
-            <div id="statTime" class="value">00:00:00</div>
-          </div>
-          <div class="stat">
-            <div class="label">Total Earnings</div>
-            <div id="statEarnings" class="value">$0.00</div>
-          </div>
-          <div class="stat">
-            <div class="label">Average Session</div>
-            <div id="statAvgTime" class="value">00:00:00</div>
-          </div>
-          <div class="stat">
-            <div class="label">Average Earnings</div>
-            <div id="statAvgEarnings" class="value">$0.00</div>
-          </div>
-          <div class="stat">
-            <div class="label">Today's Sessions</div>
-            <div id="statToday" class="value">0</div>
-          </div>
-        </div>
-      </article>
+        </article>
 
-      <article class="card log-card">
-        <div class="log-header">
-          <h2 style="margin: 0;">5) Session Log</h2>
-          <button id="clearAllButton" class="button warn" type="button">Clear All</button>
-        </div>
-        <div id="logList" class="log-list" aria-live="polite"></div>
-      </article>
+        <article class="card log-card">
+          <div class="log-header">
+            <h2 class="card-title" style="margin: 0;">
+              <img src="calc.png" alt="">
+              Session Log
+            </h2>
+            <button id="clearAllButton" class="button warn" type="button">Clear All</button>
+          </div>
+          <div id="logList" class="log-list" aria-live="polite"></div>
+        </article>
+      </section>
+
+      <footer class="preview-footnote">
+        Core preview mode: localStorage only (data stays on this browser/device until cleared).
+      </footer>
     </section>
   </main>
 
@@ -698,6 +797,8 @@
         salaryModeButton.classList.toggle("active", !isHourly);
         hourlyInputs.hidden = !isHourly;
         salaryInputs.hidden = isHourly;
+        hourlyInputs.style.display = isHourly ? "grid" : "none";
+        salaryInputs.style.display = isHourly ? "none" : "grid";
       }
 
       function getEffectiveHourlyWage() {
