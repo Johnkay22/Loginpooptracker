@@ -571,6 +571,50 @@
       color: #dff2ff;
     }
 
+    .stats-filter-bar {
+      border: 1px solid rgba(67, 179, 255, 0.24);
+      border-radius: 12px;
+      background: rgba(6, 11, 22, 0.62);
+      padding: 10px;
+      margin-bottom: 10px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .stats-range-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .stats-range-buttons button {
+      border: 1px solid rgba(67, 179, 255, 0.3);
+      border-radius: 10px;
+      background: rgba(8, 14, 28, 0.78);
+      color: var(--muted);
+      min-height: 36px;
+      padding: 0 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .stats-range-buttons button.active {
+      color: #fff;
+      border-color: rgba(67, 179, 255, 0.7);
+      background: rgba(67, 179, 255, 0.22);
+    }
+
+    .custom-range {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 8px;
+    }
+
+    .range-summary {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
     .coming-grid {
       display: grid;
       gap: 10px;
@@ -610,7 +654,7 @@
 
     .share-buttons {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
       gap: 8px;
     }
 
@@ -632,6 +676,71 @@
     .share-buttons img {
       width: 18px;
       height: 18px;
+      object-fit: contain;
+    }
+
+    .share-picker-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(3, 8, 16, 0.76);
+      backdrop-filter: blur(4px);
+      z-index: 130;
+    }
+
+    .share-picker-modal.open {
+      display: flex;
+    }
+
+    .share-picker-panel {
+      width: min(420px, 100%);
+      border-radius: 14px;
+      border: 1px solid rgba(67, 179, 255, 0.34);
+      background: linear-gradient(180deg, rgba(18, 27, 50, 0.98), rgba(10, 15, 30, 0.98));
+      box-shadow: var(--shadow);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .share-picker-panel h3 {
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+    }
+
+    .share-picker-panel p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .share-channel-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .share-channel-grid button {
+      border: 1px solid rgba(67, 179, 255, 0.34);
+      border-radius: 12px;
+      background: rgba(8, 14, 28, 0.8);
+      color: #d9ecff;
+      min-height: 88px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .share-channel-grid button img {
+      width: 24px;
+      height: 24px;
       object-fit: contain;
     }
 
@@ -933,6 +1042,10 @@
         grid-template-columns: 1fr;
       }
 
+      .custom-range {
+        grid-template-columns: 1fr;
+      }
+
       .share-buttons {
         grid-template-columns: 1fr;
       }
@@ -1063,6 +1176,25 @@
         <div class="panel-grid">
           <article class="card" style="grid-column: span 12;">
             <h2><img src="stats.png" alt="">Statistics</h2>
+            <div class="stats-filter-bar">
+              <div class="stats-range-buttons" role="group" aria-label="Statistics date range">
+                <button id="statsRangeAllButton" data-stats-range="all" type="button" class="active">All Time</button>
+                <button id="statsRangeTodayButton" data-stats-range="today" type="button">Today</button>
+                <button id="statsRangeCustomButton" data-stats-range="custom" type="button">Custom Range</button>
+              </div>
+              <div id="customRangeWrap" class="custom-range" hidden>
+                <div>
+                  <label for="statsStartDateInput">Start date</label>
+                  <input id="statsStartDateInput" type="date">
+                </div>
+                <div>
+                  <label for="statsEndDateInput">End date</label>
+                  <input id="statsEndDateInput" type="date">
+                </div>
+                <button id="applyCustomRangeButton" class="button ghost" type="button">Apply</button>
+              </div>
+              <div id="statsRangeSummary" class="range-summary">Showing: All Time</div>
+            </div>
             <div class="stats-grid">
               <div class="stat">
                 <div class="label">Total Sessions <button class="share-stat-btn" data-stat-share="totalSessions" type="button"><span class="icon-share">↗</span>Share</button></div>
@@ -1122,11 +1254,8 @@
                 </select>
               </div>
               <div class="share-buttons">
-                <button data-share-target="native" type="button">Native Share</button>
-                <button data-share-target="x" type="button"><img src="xicon.png" alt="">Share to X</button>
-                <button data-share-target="facebook" type="button"><img src="fbicon.png" alt="">Facebook</button>
-                <button data-share-target="sms" type="button"><img src="txticon.png" alt="">SMS</button>
-                <button data-share-target="copy" type="button" style="grid-column: 1 / -1;">Copy Share Text</button>
+                <button id="openSharePickerButton" type="button"><span class="icon-share">↗</span>Share Summary</button>
+                <button id="copyShareTextButton" type="button">Copy Share Text</button>
               </div>
               <div id="shareStatus" class="status"></div>
             </div>
@@ -1204,6 +1333,28 @@
     </div>
   </div>
 
+  <div id="sharePickerModal" class="share-picker-modal" aria-hidden="true">
+    <div class="share-picker-panel" role="dialog" aria-modal="true" aria-labelledby="sharePickerTitle">
+      <h3 id="sharePickerTitle">Share your Poop Profit</h3>
+      <p id="sharePickerDescription">Choose where to share.</p>
+      <div class="share-channel-grid" aria-label="Share channels">
+        <button type="button" data-share-channel="facebook">
+          <img src="fbicon.png" alt="">
+          <span>Facebook</span>
+        </button>
+        <button type="button" data-share-channel="x">
+          <img src="xicon.png" alt="">
+          <span>X</span>
+        </button>
+        <button type="button" data-share-channel="sms">
+          <img src="txticon.png" alt="">
+          <span>Text</span>
+        </button>
+      </div>
+      <button id="closeSharePickerButton" class="button ghost full" type="button">Cancel</button>
+    </div>
+  </div>
+
   <script>
     (function () {
       "use strict";
@@ -1272,6 +1423,18 @@
       var shareScopeSelect = document.getElementById("shareScopeSelect");
       var shareStatus = document.getElementById("shareStatus");
       var statShareButtons = document.querySelectorAll("[data-stat-share]");
+      var openSharePickerButton = document.getElementById("openSharePickerButton");
+      var copyShareTextButton = document.getElementById("copyShareTextButton");
+      var sharePickerModal = document.getElementById("sharePickerModal");
+      var sharePickerDescription = document.getElementById("sharePickerDescription");
+      var closeSharePickerButton = document.getElementById("closeSharePickerButton");
+      var shareChannelButtons = sharePickerModal ? sharePickerModal.querySelectorAll("[data-share-channel]") : [];
+      var statsRangeButtons = document.querySelectorAll("[data-stats-range]");
+      var customRangeWrap = document.getElementById("customRangeWrap");
+      var statsStartDateInput = document.getElementById("statsStartDateInput");
+      var statsEndDateInput = document.getElementById("statsEndDateInput");
+      var applyCustomRangeButton = document.getElementById("applyCustomRangeButton");
+      var statsRangeSummary = document.getElementById("statsRangeSummary");
       var ratingModal = document.getElementById("ratingModal");
       var poopRatingButtonsWrap = document.getElementById("poopRatingButtons");
       var poopRatingButtons = poopRatingButtonsWrap ? poopRatingButtonsWrap.querySelectorAll("[data-rating]") : [];
@@ -1279,6 +1442,8 @@
       var skipRatingButton = document.getElementById("skipRatingButton");
       var selectedRating = 0;
       var pendingSessionRatingId = null;
+      var statsRangeMode = "all";
+      var pendingShareText = "";
 
       hydrateInputs();
       renderTabs();
@@ -1365,11 +1530,22 @@
           setStatus(statusMessage, "All sessions cleared.", "warn");
         });
 
-        document.querySelectorAll("[data-share-target]").forEach(function (button) {
-          button.addEventListener("click", function () {
-            handleShare(button.getAttribute("data-share-target"));
+        if (openSharePickerButton) {
+          openSharePickerButton.addEventListener("click", function () {
+            handleShare();
           });
-        });
+        }
+
+        if (copyShareTextButton) {
+          copyShareTextButton.addEventListener("click", function () {
+            var text = getShareText();
+            if (!text) {
+              setStatus(shareStatus, "Nothing to share yet. Log a session first.", "warn");
+              return;
+            }
+            copyToClipboard(text);
+          });
+        }
 
         statShareButtons.forEach(function (button) {
           button.addEventListener("click", function () {
@@ -1377,6 +1553,69 @@
             shareStatByKey(statKey);
           });
         });
+
+        statsRangeButtons.forEach(function (button) {
+          button.addEventListener("click", function () {
+            var mode = button.getAttribute("data-stats-range");
+            if (!mode) return;
+            statsRangeMode = mode;
+            renderStatsRangeControls();
+            renderStats();
+          });
+        });
+
+        if (applyCustomRangeButton) {
+          applyCustomRangeButton.addEventListener("click", function () {
+            if (statsRangeMode !== "custom") {
+              statsRangeMode = "custom";
+            }
+            renderStatsRangeControls();
+            renderStats();
+          });
+        }
+
+        if (statsStartDateInput) {
+          statsStartDateInput.addEventListener("change", function () {
+            if (statsRangeMode === "custom") {
+              renderStatsRangeControls();
+              renderStats();
+            }
+          });
+        }
+
+        if (statsEndDateInput) {
+          statsEndDateInput.addEventListener("change", function () {
+            if (statsRangeMode === "custom") {
+              renderStatsRangeControls();
+              renderStats();
+            }
+          });
+        }
+
+        if (shareChannelButtons && shareChannelButtons.length) {
+          shareChannelButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+              var channel = button.getAttribute("data-share-channel");
+              if (!pendingShareText || !channel) return;
+              shareText(pendingShareText, channel);
+              closeSharePicker();
+            });
+          });
+        }
+
+        if (closeSharePickerButton) {
+          closeSharePickerButton.addEventListener("click", function () {
+            closeSharePicker();
+          });
+        }
+
+        if (sharePickerModal) {
+          sharePickerModal.addEventListener("click", function (event) {
+            if (event.target === sharePickerModal) {
+              closeSharePicker();
+            }
+          });
+        }
 
         if (poopRatingButtons && poopRatingButtons.length) {
           poopRatingButtons.forEach(function (button) {
@@ -1415,7 +1654,7 @@
         window.addEventListener("resize", function () {
           if (resizeTimerId !== null) window.clearTimeout(resizeTimerId);
           resizeTimerId = window.setTimeout(function () {
-            renderTrend(state.sessions);
+            renderTrend(getFilteredSessions());
           }, 100);
         });
       }
@@ -1427,7 +1666,7 @@
         renderTabs();
         if (tabName === "stats") {
           window.setTimeout(function () {
-            renderTrend(state.sessions);
+            renderTrend(getFilteredSessions());
           }, 30);
         }
       }
@@ -1448,7 +1687,7 @@
 
         if (active === "stats") {
           window.setTimeout(function () {
-            renderTrend(state.sessions);
+            renderTrend(getFilteredSessions());
           }, 30);
         }
       }
@@ -1594,7 +1833,8 @@
       }
 
       function renderStats() {
-        var sessions = state.sessions;
+        renderStatsRangeControls();
+        var sessions = getFilteredSessions();
         var totalSessions = sessions.length;
         var totalTimeSeconds = sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
         var totalEarnings = sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
@@ -1702,23 +1942,27 @@
           setStatus(shareStatus, "Nothing to share yet. Log a session first.", "warn");
           return;
         }
-        shareText(text, target);
+        if (target === "copy") {
+          copyToClipboard(text);
+          return;
+        }
+        openSharePickerWithText(text, "Choose where to share your summary.");
       }
 
       function shareSingleLog(session) {
         var message = "I earned $" + session.earnings.toFixed(2) + " in " +
           formatDuration(session.durationSeconds) + " on Poop Profit. Check yours at poopprofit.com";
-        shareText(message, "native");
+        openSharePickerWithText(message, "Share this log entry to:");
       }
 
       function shareStatByKey(statKey) {
         var message = buildStatShareMessage(statKey);
         if (!message) return;
-        shareText(message, "native");
+        openSharePickerWithText(message, "Share this stat card to:");
       }
 
       function buildStatShareMessage(statKey) {
-        var sessions = state.sessions;
+        var sessions = getFilteredSessions();
         var totalSessions = sessions.length;
         var totalTimeSeconds = sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
         var totalEarnings = sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
@@ -1782,19 +2026,20 @@
 
       function getShareText() {
         var scope = shareScopeSelect.value;
+        var sessions = getFilteredSessions();
 
         if (scope === "latest") {
-          if (!state.sessions.length) return "";
-          var latest = state.sessions[0];
+          if (!sessions.length) return "";
+          var latest = sessions[0];
           return "I just earned $" + latest.earnings.toFixed(2) + " in " + formatDuration(latest.durationSeconds) +
             " with Poop Profit. Track your poop profits at poopprofit.com";
         }
 
-        if (!state.sessions.length) return "";
+        if (!sessions.length) return "";
 
-        var totalSessions = state.sessions.length;
-        var totalEarnings = state.sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
-        var totalTimeSeconds = state.sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
+        var totalSessions = sessions.length;
+        var totalEarnings = sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
+        var totalTimeSeconds = sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
 
         return "My Poop Profit stats: " + totalSessions + " sessions, $" + totalEarnings.toFixed(2) +
           " earned, " + formatDuration(totalTimeSeconds) + " total time. Check yours at poopprofit.com";
@@ -1837,6 +2082,88 @@
         if (mode === "ok") element.style.color = "var(--success)";
         else if (mode === "warn") element.style.color = "var(--warning)";
         else element.style.color = "var(--muted)";
+      }
+
+      function renderStatsRangeControls() {
+        statsRangeButtons.forEach(function (button) {
+          var mode = button.getAttribute("data-stats-range");
+          button.classList.toggle("active", mode === statsRangeMode);
+        });
+
+        if (customRangeWrap) {
+          customRangeWrap.hidden = statsRangeMode !== "custom";
+        }
+
+        if (statsRangeSummary) {
+          statsRangeSummary.textContent = getStatsRangeSummaryText();
+        }
+      }
+
+      function getFilteredSessions() {
+        if (!Array.isArray(state.sessions)) return [];
+        if (statsRangeMode === "all") {
+          return state.sessions.slice();
+        }
+
+        if (statsRangeMode === "today") {
+          var now = Date.now();
+          return state.sessions.filter(function (session) {
+            return isSameDay(session.endedAtMs, now);
+          });
+        }
+
+        if (statsRangeMode === "custom") {
+          var startMs = parseDateInputStart(statsStartDateInput ? statsStartDateInput.value : "");
+          var endMs = parseDateInputEnd(statsEndDateInput ? statsEndDateInput.value : "");
+          return state.sessions.filter(function (session) {
+            var endedAt = session.endedAtMs;
+            if (startMs !== null && endedAt < startMs) return false;
+            if (endMs !== null && endedAt > endMs) return false;
+            return true;
+          });
+        }
+
+        return state.sessions.slice();
+      }
+
+      function getStatsRangeSummaryText() {
+        if (statsRangeMode === "all") return "Showing: All Time";
+        if (statsRangeMode === "today") return "Showing: Today";
+        var start = statsStartDateInput && statsStartDateInput.value ? statsStartDateInput.value : "Start";
+        var end = statsEndDateInput && statsEndDateInput.value ? statsEndDateInput.value : "End";
+        return "Showing: " + start + " to " + end;
+      }
+
+      function parseDateInputStart(value) {
+        if (!value) return null;
+        var parsed = Date.parse(value + "T00:00:00");
+        return Number.isFinite(parsed) ? parsed : null;
+      }
+
+      function parseDateInputEnd(value) {
+        if (!value) return null;
+        var parsed = Date.parse(value + "T23:59:59.999");
+        return Number.isFinite(parsed) ? parsed : null;
+      }
+
+      function openSharePickerWithText(text, description) {
+        pendingShareText = text || "";
+        if (!pendingShareText) return;
+        if (sharePickerDescription) {
+          sharePickerDescription.textContent = description || "Choose where to share.";
+        }
+        if (sharePickerModal) {
+          sharePickerModal.classList.add("open");
+          sharePickerModal.setAttribute("aria-hidden", "false");
+        }
+      }
+
+      function closeSharePicker() {
+        if (sharePickerModal) {
+          sharePickerModal.classList.remove("open");
+          sharePickerModal.setAttribute("aria-hidden", "true");
+        }
+        pendingShareText = "";
       }
 
       function openRatingModal() {
