@@ -1283,8 +1283,8 @@
       hydrateInputs();
       renderTabs();
       renderWageMode();
-      renderAll();
       wireEvents();
+      renderAll();
       restoreRunningSession();
 
       function wireEvents() {
@@ -1425,6 +1425,11 @@
         state.activeTab = tabName;
         persist();
         renderTabs();
+        if (tabName === "stats") {
+          window.setTimeout(function () {
+            renderTrend(state.sessions);
+          }, 30);
+        }
       }
 
       function renderTabs() {
@@ -1444,7 +1449,7 @@
         if (active === "stats") {
           window.setTimeout(function () {
             renderTrend(state.sessions);
-          }, 0);
+          }, 30);
         }
       }
 
@@ -1520,8 +1525,8 @@
         state.activeSessionStartMs = null;
         persist();
         clearIntervalIfRunning();
-        renderAll();
         openRatingModal();
+        renderAll();
         setStatus(statusMessage, "Session saved. Rate your poop.", "ok");
       }
 
@@ -1741,8 +1746,8 @@
         if (shareTarget === "native") {
           if (navigator.share) {
             navigator.share({ title: "Poop Profit", text: text, url: url })
-              .then(function () { setStatus(shareStatus, "Shared successfully.", "ok"); })
-              .catch(function () { setStatus(shareStatus, "Share canceled.", "warn"); });
+              .then(function () { announceShareStatus("Shared successfully.", "ok"); })
+              .catch(function () { announceShareStatus("Share canceled.", "warn"); });
           } else {
             copyToClipboard(text);
           }
@@ -1751,6 +1756,7 @@
 
         if (shareTarget === "x") {
           window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text), "_blank");
+          announceShareStatus("Opening X share...", "ok");
           return;
         }
 
@@ -1759,11 +1765,13 @@
             "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url) + "&quote=" + encodeURIComponent(text),
             "_blank"
           );
+          announceShareStatus("Opening Facebook share...", "ok");
           return;
         }
 
         if (shareTarget === "sms") {
           window.open("sms:?&body=" + encodeURIComponent(text));
+          announceShareStatus("Opening SMS share...", "ok");
           return;
         }
 
@@ -1795,7 +1803,7 @@
       function copyToClipboard(text) {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(text).then(function () {
-            setStatus(shareStatus, "Copied to clipboard.", "ok");
+            announceShareStatus("Copied to clipboard.", "ok");
           }).catch(function () {
             fallbackCopy(text);
           });
@@ -1811,11 +1819,16 @@
         helper.select();
         try {
           document.execCommand("copy");
-          setStatus(shareStatus, "Copied to clipboard.", "ok");
+          announceShareStatus("Copied to clipboard.", "ok");
         } catch (error) {
-          setStatus(shareStatus, "Copy failed.", "warn");
+          announceShareStatus("Copy failed.", "warn");
         }
         helper.remove();
+      }
+
+      function announceShareStatus(message, mode) {
+        setStatus(shareStatus, message, mode);
+        setStatus(statusMessage, message, mode);
       }
 
       function setStatus(element, message, mode) {
@@ -1905,11 +1918,15 @@
       }
 
       function renderTrend(sessions) {
-        if (!trendCanvas) return;
+        if (!trendCanvas || !trendRangeLabel) return;
         var context = trendCanvas.getContext("2d");
+        if (!context) return;
         var dpr = window.devicePixelRatio || 1;
         var width = trendCanvas.clientWidth;
         var height = trendCanvas.clientHeight;
+        if (width < 2 || height < 2) {
+          return;
+        }
         trendCanvas.width = Math.max(1, Math.floor(width * dpr));
         trendCanvas.height = Math.max(1, Math.floor(height * dpr));
         context.setTransform(dpr, 0, 0, dpr, 0, 0);
