@@ -423,6 +423,13 @@
       font-size: 0.9rem;
     }
 
+    .log-rating {
+      color: #ffc76b;
+      font-size: 0.94rem;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+    }
+
     .log-actions {
       display: flex;
       justify-content: flex-end;
@@ -637,6 +644,154 @@
       display: flex;
       justify-content: space-between;
       gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .rating-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(3, 8, 16, 0.7);
+      backdrop-filter: blur(3px);
+      z-index: 120;
+    }
+
+    .rating-modal.open {
+      display: flex;
+    }
+
+    .rating-panel {
+      width: min(420px, 100%);
+      border-radius: 14px;
+      border: 1px solid rgba(67, 179, 255, 0.35);
+      background: linear-gradient(180deg, rgba(16, 25, 46, 0.98), rgba(8, 13, 25, 0.98));
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .rating-panel h3 {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+    }
+
+    .rating-panel p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .poop-rating {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .poop-rating button {
+      border: 1px solid rgba(67, 179, 255, 0.25);
+      border-radius: 10px;
+      background: rgba(8, 14, 26, 0.82);
+      color: #8f9cbc;
+      cursor: pointer;
+      width: 52px;
+      height: 52px;
+      font-size: 1.5rem;
+      opacity: 0.48;
+      filter: saturate(0.2);
+      transition: opacity 0.15s ease, filter 0.15s ease, transform 0.12s ease;
+    }
+
+    .poop-rating button:hover {
+      transform: translateY(-1px);
+    }
+
+    .poop-rating button.filled {
+      opacity: 1;
+      filter: saturate(1);
+      color: #ffb13b;
+      text-shadow: 0 0 10px rgba(255, 180, 76, 0.35);
+      border-color: rgba(255, 183, 76, 0.6);
+    }
+
+    .rating-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .rating-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 8, 16, 0.72);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 90;
+      padding: 16px;
+    }
+
+    .rating-modal.open {
+      display: flex;
+    }
+
+    .rating-panel {
+      width: min(420px, 100%);
+      border-radius: 14px;
+      border: 1px solid rgba(67, 179, 255, 0.35);
+      background: linear-gradient(180deg, rgba(18, 27, 50, 0.98), rgba(10, 15, 30, 0.98));
+      box-shadow: var(--shadow);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .rating-panel h3 {
+      margin: 0 0 8px;
+      font-size: 1.12rem;
+    }
+
+    .rating-panel p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .poop-rating {
+      display: inline-flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .poop-rating button {
+      border: none;
+      background: transparent;
+      font-size: 2rem;
+      line-height: 1;
+      cursor: pointer;
+      color: rgba(170, 190, 220, 0.42);
+      filter: grayscale(0.45);
+      transition: transform 0.1s ease, color 0.15s ease, filter 0.15s ease;
+      padding: 0;
+    }
+
+    .poop-rating button.filled {
+      color: #7f4d2a;
+      filter: none;
+      text-shadow: 0 2px 10px rgba(127, 77, 42, 0.45);
+    }
+
+    .poop-rating button:active {
+      transform: scale(0.92);
+    }
+
+    .rating-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
       flex-wrap: wrap;
     }
 
@@ -1031,6 +1186,24 @@
     <span id="fabLabel" class="fab-label">Start</span>
   </button>
 
+  <div id="ratingModal" class="rating-modal" aria-hidden="true">
+    <div class="rating-panel" role="dialog" aria-modal="true" aria-labelledby="ratingTitle">
+      <h3 id="ratingTitle">Rate Your Poop</h3>
+      <p>How would you rate that session?</p>
+      <div id="poopRatingButtons" class="poop-rating" aria-label="Poop rating">
+        <button type="button" data-rating="1" aria-label="1 poop">💩</button>
+        <button type="button" data-rating="2" aria-label="2 poops">💩</button>
+        <button type="button" data-rating="3" aria-label="3 poops">💩</button>
+        <button type="button" data-rating="4" aria-label="4 poops">💩</button>
+        <button type="button" data-rating="5" aria-label="5 poops">💩</button>
+      </div>
+      <div class="rating-actions">
+        <button id="saveRatingButton" class="button" type="button">Save Rating</button>
+        <button id="skipRatingButton" class="button ghost" type="button">Skip</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     (function () {
       "use strict";
@@ -1099,12 +1272,19 @@
       var shareScopeSelect = document.getElementById("shareScopeSelect");
       var shareStatus = document.getElementById("shareStatus");
       var statShareButtons = document.querySelectorAll("[data-stat-share]");
+      var ratingModal = document.getElementById("ratingModal");
+      var poopRatingButtonsWrap = document.getElementById("poopRatingButtons");
+      var poopRatingButtons = poopRatingButtonsWrap ? poopRatingButtonsWrap.querySelectorAll("[data-rating]") : [];
+      var saveRatingButton = document.getElementById("saveRatingButton");
+      var skipRatingButton = document.getElementById("skipRatingButton");
+      var selectedRating = 0;
+      var pendingSessionRatingId = null;
 
       hydrateInputs();
       renderTabs();
       renderWageMode();
-      renderAll();
       wireEvents();
+      renderAll();
       restoreRunningSession();
 
       function wireEvents() {
@@ -1198,6 +1378,40 @@
           });
         });
 
+        if (poopRatingButtons && poopRatingButtons.length) {
+          poopRatingButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+              var rating = Number(button.getAttribute("data-rating")) || 0;
+              selectedRating = rating;
+              applyRatingSelection(rating);
+              triggerHapticVisual(button);
+            });
+          });
+        }
+
+        if (saveRatingButton) {
+          saveRatingButton.addEventListener("click", function () {
+            if (pendingSessionRatingId) {
+              persistRatingForSession(pendingSessionRatingId, selectedRating);
+            }
+            closeRatingModal();
+          });
+        }
+
+        if (skipRatingButton) {
+          skipRatingButton.addEventListener("click", function () {
+            closeRatingModal();
+          });
+        }
+
+        if (ratingModal) {
+          ratingModal.addEventListener("click", function (event) {
+            if (event.target === ratingModal) {
+              closeRatingModal();
+            }
+          });
+        }
+
         window.addEventListener("resize", function () {
           if (resizeTimerId !== null) window.clearTimeout(resizeTimerId);
           resizeTimerId = window.setTimeout(function () {
@@ -1211,6 +1425,11 @@
         state.activeTab = tabName;
         persist();
         renderTabs();
+        if (tabName === "stats") {
+          window.setTimeout(function () {
+            renderTrend(state.sessions);
+          }, 30);
+        }
       }
 
       function renderTabs() {
@@ -1226,6 +1445,12 @@
           if (!tabPanels[key]) return;
           tabPanels[key].classList.toggle("active", key === active);
         });
+
+        if (active === "stats") {
+          window.setTimeout(function () {
+            renderTrend(state.sessions);
+          }, 30);
+        }
       }
 
       function hydrateInputs() {
@@ -1292,14 +1517,17 @@
           endedAtMs: endedAt,
           durationSeconds: durationSeconds,
           hourlyWageSnapshot: hourly,
-          earnings: roundCurrency(earnings)
+          earnings: roundCurrency(earnings),
+          rating: 0
         });
 
+        pendingSessionRatingId = state.sessions[0].id;
         state.activeSessionStartMs = null;
         persist();
         clearIntervalIfRunning();
+        openRatingModal();
         renderAll();
-        setStatus(statusMessage, "Session saved. Nice work.", "ok");
+        setStatus(statusMessage, "Session saved. Rate your poop.", "ok");
       }
 
       function restoreRunningSession() {
@@ -1428,7 +1656,9 @@
 
           var meta = document.createElement("div");
           meta.className = "log-meta";
-          meta.textContent = "Duration: " + formatDuration(session.durationSeconds) + " | Wage used: $" + session.hourlyWageSnapshot.toFixed(2) + "/hr";
+          var ratingValue = Number(session.rating) || 0;
+          var ratingPoops = ratingValue > 0 ? " | Rating: " + "💩".repeat(ratingValue) : "";
+          meta.textContent = "Duration: " + formatDuration(session.durationSeconds) + " | Wage used: $" + session.hourlyWageSnapshot.toFixed(2) + "/hr" + ratingPoops;
 
           var actions = document.createElement("div");
           actions.className = "log-actions";
@@ -1516,8 +1746,8 @@
         if (shareTarget === "native") {
           if (navigator.share) {
             navigator.share({ title: "Poop Profit", text: text, url: url })
-              .then(function () { setStatus(shareStatus, "Shared successfully.", "ok"); })
-              .catch(function () { setStatus(shareStatus, "Share canceled.", "warn"); });
+              .then(function () { announceShareStatus("Shared successfully.", "ok"); })
+              .catch(function () { announceShareStatus("Share canceled.", "warn"); });
           } else {
             copyToClipboard(text);
           }
@@ -1526,6 +1756,7 @@
 
         if (shareTarget === "x") {
           window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text), "_blank");
+          announceShareStatus("Opening X share...", "ok");
           return;
         }
 
@@ -1534,11 +1765,13 @@
             "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url) + "&quote=" + encodeURIComponent(text),
             "_blank"
           );
+          announceShareStatus("Opening Facebook share...", "ok");
           return;
         }
 
         if (shareTarget === "sms") {
           window.open("sms:?&body=" + encodeURIComponent(text));
+          announceShareStatus("Opening SMS share...", "ok");
           return;
         }
 
@@ -1570,7 +1803,7 @@
       function copyToClipboard(text) {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(text).then(function () {
-            setStatus(shareStatus, "Copied to clipboard.", "ok");
+            announceShareStatus("Copied to clipboard.", "ok");
           }).catch(function () {
             fallbackCopy(text);
           });
@@ -1586,11 +1819,16 @@
         helper.select();
         try {
           document.execCommand("copy");
-          setStatus(shareStatus, "Copied to clipboard.", "ok");
+          announceShareStatus("Copied to clipboard.", "ok");
         } catch (error) {
-          setStatus(shareStatus, "Copy failed.", "warn");
+          announceShareStatus("Copy failed.", "warn");
         }
         helper.remove();
+      }
+
+      function announceShareStatus(message, mode) {
+        setStatus(shareStatus, message, mode);
+        setStatus(statusMessage, message, mode);
       }
 
       function setStatus(element, message, mode) {
@@ -1599,6 +1837,52 @@
         if (mode === "ok") element.style.color = "var(--success)";
         else if (mode === "warn") element.style.color = "var(--warning)";
         else element.style.color = "var(--muted)";
+      }
+
+      function openRatingModal() {
+        if (!ratingModal) return;
+        selectedRating = 0;
+        applyRatingSelection(0);
+        ratingModal.classList.add("open");
+        ratingModal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeRatingModal() {
+        if (!ratingModal) return;
+        ratingModal.classList.remove("open");
+        ratingModal.setAttribute("aria-hidden", "true");
+        selectedRating = 0;
+        pendingSessionRatingId = null;
+      }
+
+      function applyRatingSelection(rating) {
+        if (!poopRatingButtons || !poopRatingButtons.length) return;
+        poopRatingButtons.forEach(function (button) {
+          var value = Number(button.getAttribute("data-rating")) || 0;
+          button.classList.toggle("filled", value <= rating);
+        });
+      }
+
+      function persistRatingForSession(sessionId, rating) {
+        var safeRating = Math.max(0, Math.min(5, Number(rating) || 0));
+        var updated = false;
+        state.sessions = state.sessions.map(function (session) {
+          if (session.id !== sessionId) return session;
+          updated = true;
+          return {
+            id: session.id,
+            startedAtMs: session.startedAtMs,
+            endedAtMs: session.endedAtMs,
+            durationSeconds: session.durationSeconds,
+            hourlyWageSnapshot: session.hourlyWageSnapshot,
+            earnings: session.earnings,
+            rating: safeRating
+          };
+        });
+        if (updated) {
+          persist();
+          renderAll();
+        }
       }
 
       function renderTimerRuntimeUI(elapsedSeconds, currentEarnings) {
@@ -1634,11 +1918,15 @@
       }
 
       function renderTrend(sessions) {
-        if (!trendCanvas) return;
+        if (!trendCanvas || !trendRangeLabel) return;
         var context = trendCanvas.getContext("2d");
+        if (!context) return;
         var dpr = window.devicePixelRatio || 1;
         var width = trendCanvas.clientWidth;
         var height = trendCanvas.clientHeight;
+        if (width < 2 || height < 2) {
+          return;
+        }
         trendCanvas.width = Math.max(1, Math.floor(width * dpr));
         trendCanvas.height = Math.max(1, Math.floor(height * dpr));
         context.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -1760,6 +2048,7 @@
               var startedAtMs = normalizeNumber(session.startedAtMs) || (endedAtMs - durationSeconds * 1000);
               var earnings = roundCurrency(normalizeNumber(session.earnings));
               var hourlyWageSnapshot = roundCurrency(normalizeNumber(session.hourlyWageSnapshot));
+              var rating = Math.max(0, Math.min(5, Math.floor(normalizeNumber(session.rating))));
               if (!isFiniteNumber(endedAtMs) || endedAtMs <= 0) return null;
               return {
                 id: String(session.id || Date.now() + Math.random()),
@@ -1767,7 +2056,8 @@
                 endedAtMs: endedAtMs,
                 durationSeconds: durationSeconds,
                 hourlyWageSnapshot: hourlyWageSnapshot,
-                earnings: earnings
+                earnings: earnings,
+                rating: rating
               };
             })
             .filter(Boolean);
