@@ -182,9 +182,8 @@
     }
 
     @media (min-width: 980px) {
-      .wage-card,
       .timer-card {
-        grid-column: span 6;
+        grid-column: span 12;
       }
 
       .log-card {
@@ -298,6 +297,64 @@
       color: #fff;
     }
 
+    .wage-strip {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .wage-strip-toggle {
+      width: 100%;
+      border: 0;
+      border-radius: 0;
+      background: linear-gradient(180deg, rgba(67, 179, 255, 0.18), rgba(26, 88, 140, 0.24));
+      color: #ecf6ff;
+      min-height: 54px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .wage-strip-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    .wage-strip-title img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+    }
+
+    .wage-strip-summary {
+      color: #d8ecff;
+      font-size: 0.83rem;
+      font-weight: 600;
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .wage-strip-chevron {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      transition: transform 0.16s ease;
+    }
+
+    .wage-strip-toggle[aria-expanded="true"] .wage-strip-chevron {
+      transform: rotate(180deg);
+    }
+
+    .wage-strip-body {
+      padding: 12px 14px 14px;
+      border-top: 1px solid rgba(67, 179, 255, 0.2);
+      background: rgba(6, 11, 22, 0.58);
+    }
+
     .hourly-display {
       border-radius: 10px;
       border: 1px solid rgba(67, 179, 255, 0.34);
@@ -309,6 +366,12 @@
 
     .timer {
       text-align: center;
+    }
+
+    .timer-card {
+      max-width: 760px;
+      width: 100%;
+      justify-self: center;
     }
 
     .timer .emoji {
@@ -1218,34 +1281,41 @@
       <section id="panel-calculator" class="tab-panel active" aria-label="Calculator tab">
         <div class="panel-grid">
           <article class="card wage-card">
-            <h2><img src="calc.png" alt="">Wage Calculator</h2>
-            <div class="segmented" role="group" aria-label="Wage input mode">
-              <button id="hourlyModeButton" type="button">Hourly Wage</button>
-              <button id="salaryModeButton" type="button">Salary + Weekly Hours</button>
-            </div>
+            <button id="wageStripToggleButton" class="wage-strip-toggle" type="button" aria-expanded="false" aria-controls="wageStripBody">
+              <span class="wage-strip-title"><img src="calc.png" alt="">Wage Settings</span>
+              <span id="wageStripSummary" class="wage-strip-summary">Hourly mode - $0.00/hr</span>
+              <span id="wageStripChevron" class="wage-strip-chevron" aria-hidden="true">⌃</span>
+            </button>
 
-            <div id="hourlyInputs" class="row">
-              <div>
-                <label for="hourlyWageInput">Hourly Wage (USD)</label>
-                <input id="hourlyWageInput" type="number" min="0" step="0.01" placeholder="e.g. 25">
+            <div id="wageStripBody" class="wage-strip-body" hidden>
+              <div class="segmented" role="group" aria-label="Wage input mode">
+                <button id="hourlyModeButton" type="button">Hourly Wage</button>
+                <button id="salaryModeButton" type="button">Salary + Weekly Hours</button>
               </div>
-            </div>
 
-            <div id="salaryInputs" class="row two" hidden>
-              <div>
-                <label for="annualSalaryInput">Annual Salary (USD)</label>
-                <input id="annualSalaryInput" type="number" min="0" step="0.01" placeholder="e.g. 65000">
+              <div id="hourlyInputs" class="row">
+                <div>
+                  <label for="hourlyWageInput">Hourly Wage (USD)</label>
+                  <input id="hourlyWageInput" type="number" min="0" step="0.01" placeholder="e.g. 25">
+                </div>
               </div>
-              <div>
-                <label for="weeklyHoursInput">Weekly Hours</label>
-                <input id="weeklyHoursInput" type="number" min="0" step="0.1" placeholder="e.g. 40">
-              </div>
-            </div>
 
-            <div id="hourlyWageDisplay" class="hourly-display">Effective hourly wage: $0.00</div>
+              <div id="salaryInputs" class="row two" hidden>
+                <div>
+                  <label for="annualSalaryInput">Annual Salary (USD)</label>
+                  <input id="annualSalaryInput" type="number" min="0" step="0.01" placeholder="e.g. 65000">
+                </div>
+                <div>
+                  <label for="weeklyHoursInput">Weekly Hours</label>
+                  <input id="weeklyHoursInput" type="number" min="0" step="0.1" placeholder="e.g. 40">
+                </div>
+              </div>
+
+              <div id="hourlyWageDisplay" class="hourly-display">Effective hourly wage: $0.00</div>
+            </div>
           </article>
 
-          <article class="card timer-card">
+          <article class="card timer-card timer-hero">
             <h2><img src="poopemojifinal.jpeg" alt="">Session Timer</h2>
             <div class="timer">
               <div class="emoji" aria-hidden="true">💩</div>
@@ -1256,7 +1326,7 @@
                 <div id="timerProgressBar"></div>
               </div>
               <div id="timerMilestone" class="timer-subline"></div>
-              <button id="timerButton" class="button full" type="button">Start Session</button>
+              <button id="timerButton" class="button full" type="button">Start Poop!</button>
               <div id="statusMessage" class="status"></div>
             </div>
           </article>
@@ -1473,6 +1543,7 @@
       var DEFAULT_STATE = {
         activeTab: "calculator",
         wageMode: "hourly",
+        wageModeCollapsed: true,
         hourlyWage: "",
         annualSalary: "",
         weeklyHours: "",
@@ -1500,6 +1571,9 @@
       var annualSalaryInput = document.getElementById("annualSalaryInput");
       var weeklyHoursInput = document.getElementById("weeklyHoursInput");
       var hourlyWageDisplay = document.getElementById("hourlyWageDisplay");
+      var wageStripToggleButton = document.getElementById("wageStripToggleButton");
+      var wageStripBody = document.getElementById("wageStripBody");
+      var wageStripSummary = document.getElementById("wageStripSummary");
 
       var timerDisplay = document.getElementById("timerDisplay");
       var liveEarnings = document.getElementById("liveEarnings");
@@ -1556,6 +1630,7 @@
       var skipRatingButton = document.getElementById("skipRatingButton");
       var selectedRating = 0;
       var pendingSessionRatingId = null;
+      var wageModeCollapsed = state.wageModeCollapsed === false ? false : true;
       var statsRangeMode = "all";
       var QUICK_RANGE_DAY_COUNTS = {
         last7: 7,
@@ -1647,6 +1722,15 @@
           renderAll();
           setStatus(statusMessage, "All sessions cleared.", "warn");
         });
+
+        if (wageStripToggleButton) {
+          wageStripToggleButton.addEventListener("click", function () {
+            wageModeCollapsed = !wageModeCollapsed;
+            state.wageModeCollapsed = wageModeCollapsed;
+            persist();
+            renderWageStrip();
+          });
+        }
 
         if (openSharePickerButton) {
           openSharePickerButton.addEventListener("click", function () {
@@ -1827,6 +1911,21 @@
         salaryInputs.hidden = isHourly;
         hourlyInputs.style.display = isHourly ? "grid" : "none";
         salaryInputs.style.display = isHourly ? "none" : "grid";
+        renderWageStrip();
+      }
+
+      function renderWageStrip() {
+        var effectiveHourly = getEffectiveHourlyWage();
+        var summaryPrefix = state.wageMode === "hourly" ? "Hourly mode" : "Salary mode";
+        if (wageStripSummary) {
+          wageStripSummary.textContent = summaryPrefix + " - $" + effectiveHourly.toFixed(2) + "/hr";
+        }
+        if (wageStripToggleButton) {
+          wageStripToggleButton.setAttribute("aria-expanded", wageModeCollapsed ? "false" : "true");
+        }
+        if (wageStripBody) {
+          wageStripBody.hidden = wageModeCollapsed;
+        }
       }
 
       function getEffectiveHourlyWage() {
@@ -1921,7 +2020,7 @@
 
       function renderTimerButton() {
         var running = Boolean(state.activeSessionStartMs);
-        timerButton.textContent = running ? "Stop + Save Session" : "Start Session";
+        timerButton.textContent = running ? "Stop + Save Session" : "Start Poop!";
         timerButton.style.background = running
           ? "linear-gradient(180deg, #ff8a8a, #ff6f6f)"
           : "linear-gradient(180deg, var(--primary), var(--primary-strong))";
@@ -1941,6 +2040,8 @@
       function renderAll() {
         var hourly = getEffectiveHourlyWage();
         hourlyWageDisplay.textContent = "Effective hourly wage: $" + hourly.toFixed(2);
+        state.wageModeCollapsed = wageModeCollapsed;
+        renderWageStrip();
 
         if (!state.activeSessionStartMs) {
           timerDisplay.textContent = "00:00:00";
@@ -2650,6 +2751,7 @@
 
         safe.activeTab = ["calculator", "stats", "coming"].includes(candidate.activeTab) ? candidate.activeTab : "calculator";
         safe.wageMode = candidate.wageMode === "salary" ? "salary" : "hourly";
+        safe.wageModeCollapsed = candidate.wageModeCollapsed === false ? false : true;
         safe.hourlyWage = toInputString(candidate.hourlyWage);
         safe.annualSalary = toInputString(candidate.annualSalary);
         safe.weeklyHours = toInputString(candidate.weeklyHours);
