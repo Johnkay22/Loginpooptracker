@@ -574,11 +574,12 @@
     .stats-filter-bar {
       border: 1px solid rgba(67, 179, 255, 0.24);
       border-radius: 12px;
-      background: rgba(6, 11, 22, 0.62);
-      padding: 10px;
-      margin-bottom: 10px;
+      background: linear-gradient(180deg, rgba(11, 19, 35, 0.82), rgba(7, 12, 24, 0.9));
+      padding: 11px;
+      margin-bottom: 11px;
       display: grid;
-      gap: 10px;
+      gap: 9px;
+      box-shadow: inset 0 0 0 1px rgba(67, 179, 255, 0.08);
     }
 
     .stats-range-buttons {
@@ -589,30 +590,44 @@
 
     .stats-range-buttons button {
       border: 1px solid rgba(67, 179, 255, 0.3);
-      border-radius: 10px;
-      background: rgba(8, 14, 28, 0.78);
+      border-radius: 999px;
+      background: rgba(8, 14, 28, 0.84);
       color: var(--muted);
       min-height: 36px;
-      padding: 0 12px;
+      padding: 0 13px;
       cursor: pointer;
       font-weight: 700;
+      letter-spacing: 0.01em;
+      transition: transform 0.14s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+    }
+
+    .stats-range-buttons button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(67, 179, 255, 0.5);
+      color: #e8f5ff;
     }
 
     .stats-range-buttons button.active {
       color: #fff;
       border-color: rgba(67, 179, 255, 0.7);
-      background: rgba(67, 179, 255, 0.22);
+      background: linear-gradient(180deg, rgba(67, 179, 255, 0.24), rgba(26, 93, 151, 0.36));
+      box-shadow: 0 0 0 1px rgba(67, 179, 255, 0.2);
     }
 
     .custom-range {
       display: grid;
       grid-template-columns: 1fr 1fr auto;
       gap: 8px;
+      align-items: end;
     }
 
     .range-summary {
       color: var(--muted);
       font-size: 0.82rem;
+      background: rgba(67, 179, 255, 0.08);
+      border: 1px solid rgba(67, 179, 255, 0.16);
+      border-radius: 10px;
+      padding: 8px 9px;
     }
 
     .coming-grid {
@@ -1034,6 +1049,10 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .custom-range {
+        grid-template-columns: 1fr;
+      }
+
       #trendCanvas {
         height: 120px;
       }
@@ -1180,6 +1199,8 @@
               <div class="stats-range-buttons" role="group" aria-label="Statistics date range">
                 <button id="statsRangeAllButton" data-stats-range="all" type="button" class="active">All Time</button>
                 <button id="statsRangeTodayButton" data-stats-range="today" type="button">Today</button>
+                <button id="statsRangeLast7Button" data-stats-range="last7" type="button">Last 7 Days</button>
+                <button id="statsRangeLast30Button" data-stats-range="last30" type="button">Last 30 Days</button>
                 <button id="statsRangeCustomButton" data-stats-range="custom" type="button">Custom Range</button>
               </div>
               <div id="customRangeWrap" class="custom-range" hidden>
@@ -1443,6 +1464,10 @@
       var selectedRating = 0;
       var pendingSessionRatingId = null;
       var statsRangeMode = "all";
+      var QUICK_RANGE_DAY_COUNTS = {
+        last7: 7,
+        last30: 30
+      };
       var pendingShareText = "";
 
       hydrateInputs();
@@ -1559,6 +1584,9 @@
             var mode = button.getAttribute("data-stats-range");
             if (!mode) return;
             statsRangeMode = mode;
+            if (mode === "custom") {
+              ensureCustomRangeDefaults();
+            }
             renderStatsRangeControls();
             renderStats();
           });
@@ -2112,13 +2140,21 @@
           });
         }
 
+        if (Object.prototype.hasOwnProperty.call(QUICK_RANGE_DAY_COUNTS, statsRangeMode)) {
+          var quickBounds = getQuickRangeBounds(QUICK_RANGE_DAY_COUNTS[statsRangeMode]);
+          return state.sessions.filter(function (session) {
+            return session.endedAtMs >= quickBounds.startMs && session.endedAtMs <= quickBounds.endMs;
+          });
+        }
+
         if (statsRangeMode === "custom") {
           var startMs = parseDateInputStart(statsStartDateInput ? statsStartDateInput.value : "");
           var endMs = parseDateInputEnd(statsEndDateInput ? statsEndDateInput.value : "");
+          var normalizedBounds = normalizeRangeBounds(startMs, endMs);
           return state.sessions.filter(function (session) {
             var endedAt = session.endedAtMs;
-            if (startMs !== null && endedAt < startMs) return false;
-            if (endMs !== null && endedAt > endMs) return false;
+            if (normalizedBounds.startMs !== null && endedAt < normalizedBounds.startMs) return false;
+            if (normalizedBounds.endMs !== null && endedAt > normalizedBounds.endMs) return false;
             return true;
           });
         }
@@ -2128,10 +2164,31 @@
 
       function getStatsRangeSummaryText() {
         if (statsRangeMode === "all") return "Showing: All Time";
-        if (statsRangeMode === "today") return "Showing: Today";
-        var start = statsStartDateInput && statsStartDateInput.value ? statsStartDateInput.value : "Start";
-        var end = statsEndDateInput && statsEndDateInput.value ? statsEndDateInput.value : "End";
-        return "Showing: " + start + " to " + end;
+        if (statsRangeMode === "today") {
+          return "Showing: Today (" + formatDateForSummary(Date.now()) + ")";
+        }
+        if (statsRangeMode === "last7" || statsRangeMode === "last30") {
+          var days = QUICK_RANGE_DAY_COUNTS[statsRangeMode];
+          var quickBounds = getQuickRangeBounds(days);
+          return "Showing: Last " + days + " Days (" +
+            formatDateForSummary(quickBounds.startMs) + " - " +
+            formatDateForSummary(quickBounds.endMs) + ")";
+        }
+
+        var startMs = parseDateInputStart(statsStartDateInput ? statsStartDateInput.value : "");
+        var endMs = parseDateInputEnd(statsEndDateInput ? statsEndDateInput.value : "");
+        var normalizedBounds = normalizeRangeBounds(startMs, endMs);
+        if (normalizedBounds.startMs !== null && normalizedBounds.endMs !== null) {
+          return "Showing: " + formatDateForSummary(normalizedBounds.startMs) +
+            " - " + formatDateForSummary(normalizedBounds.endMs);
+        }
+        if (normalizedBounds.startMs !== null) {
+          return "Showing: From " + formatDateForSummary(normalizedBounds.startMs);
+        }
+        if (normalizedBounds.endMs !== null) {
+          return "Showing: Up to " + formatDateForSummary(normalizedBounds.endMs);
+        }
+        return "Showing: Custom Range (select dates)";
       }
 
       function parseDateInputStart(value) {
@@ -2144,6 +2201,55 @@
         if (!value) return null;
         var parsed = Date.parse(value + "T23:59:59.999");
         return Number.isFinite(parsed) ? parsed : null;
+      }
+
+      function normalizeRangeBounds(startMs, endMs) {
+        if (startMs !== null && endMs !== null && startMs > endMs) {
+          return {
+            startMs: endMs,
+            endMs: startMs
+          };
+        }
+        return {
+          startMs: startMs,
+          endMs: endMs
+        };
+      }
+
+      function getQuickRangeBounds(days) {
+        var endDate = new Date();
+        endDate.setHours(23, 59, 59, 999);
+        var startDate = new Date(endDate.getTime());
+        startDate.setHours(0, 0, 0, 0);
+        startDate.setDate(startDate.getDate() - (Math.max(1, days) - 1));
+        return {
+          startMs: startDate.getTime(),
+          endMs: endDate.getTime()
+        };
+      }
+
+      function ensureCustomRangeDefaults() {
+        if (!statsStartDateInput || !statsEndDateInput) return;
+        if (statsStartDateInput.value || statsEndDateInput.value) return;
+        var quickBounds = getQuickRangeBounds(7);
+        statsStartDateInput.value = toDateInputValue(quickBounds.startMs);
+        statsEndDateInput.value = toDateInputValue(quickBounds.endMs);
+      }
+
+      function toDateInputValue(timestamp) {
+        var date = new Date(timestamp);
+        var year = date.getFullYear();
+        var month = String(date.getMonth() + 1).padStart(2, "0");
+        var day = String(date.getDate()).padStart(2, "0");
+        return year + "-" + month + "-" + day;
+      }
+
+      function formatDateForSummary(timestamp) {
+        return new Date(timestamp).toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+          year: "numeric"
+        });
       }
 
       function openSharePickerWithText(text, description) {
