@@ -519,29 +519,101 @@
 
     .trend-panel {
       border: 1px solid rgba(67, 179, 255, 0.24);
-      border-radius: 12px;
-      background: rgba(6, 11, 22, 0.65);
-      padding: 10px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(8, 15, 30, 0.82), rgba(6, 11, 22, 0.9));
+      padding: 11px;
       margin-bottom: 10px;
+      box-shadow: inset 0 0 0 1px rgba(67, 179, 255, 0.08);
     }
 
     .trend-head {
       display: flex;
       justify-content: space-between;
       gap: 8px;
-      color: var(--muted);
-      font-size: 0.82rem;
       margin-bottom: 8px;
       flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .trend-title-wrap {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .trend-title {
+      color: #e6f4ff;
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .trend-subtitle {
+      color: var(--muted);
+      font-size: 0.76rem;
+    }
+
+    .trend-range-badge {
+      border: 1px solid rgba(67, 179, 255, 0.36);
+      border-radius: 999px;
+      background: rgba(67, 179, 255, 0.16);
+      color: #dff2ff;
+      padding: 3px 9px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .trend-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .trend-legend {
+      color: var(--muted);
+      font-size: 0.74rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-right: auto;
+    }
+
+    .trend-legend-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: #50bdff;
+      box-shadow: 0 0 8px rgba(80, 189, 255, 0.48);
+    }
+
+    .trend-metric-pill {
+      border: 1px solid rgba(67, 179, 255, 0.25);
+      border-radius: 999px;
+      background: rgba(67, 179, 255, 0.12);
+      color: #d8ecff;
+      padding: 3px 8px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      white-space: nowrap;
     }
 
     #trendCanvas {
       width: 100%;
-      height: 136px;
+      height: 164px;
       display: block;
-      border-radius: 8px;
-      background: linear-gradient(180deg, rgba(11, 17, 33, 0.8), rgba(8, 13, 24, 0.9));
-      border: 1px solid rgba(67, 179, 255, 0.17);
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(12, 18, 36, 0.88), rgba(8, 13, 24, 0.95));
+      border: 1px solid rgba(67, 179, 255, 0.2);
+    }
+
+    .trend-footnote {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 0.74rem;
+      letter-spacing: 0.01em;
     }
 
     .insights-grid {
@@ -1054,7 +1126,15 @@
       }
 
       #trendCanvas {
-        height: 120px;
+        height: 146px;
+      }
+
+      .trend-meta-row {
+        gap: 5px;
+      }
+
+      .trend-metric-pill {
+        font-size: 0.72rem;
       }
 
       .insights-grid {
@@ -1245,10 +1325,19 @@
 
             <div class="trend-panel">
               <div class="trend-head">
-                <span>Recent Earnings Trend</span>
-                <span id="trendRangeLabel">Last 14 sessions</span>
+                <div class="trend-title-wrap">
+                  <span class="trend-title">Recent Earnings Trend</span>
+                  <span id="trendSubtitle" class="trend-subtitle">Last 14 sessions plotted by session profit</span>
+                </div>
+                <span id="trendRangeLabel" class="trend-range-badge">Last 14 sessions</span>
+              </div>
+              <div class="trend-meta-row">
+                <span class="trend-legend"><span class="trend-legend-dot" aria-hidden="true"></span>Earnings per session</span>
+                <span id="trendPeakLabel" class="trend-metric-pill">Peak: $0.00</span>
+                <span id="trendAverageLabel" class="trend-metric-pill">Avg: $0.00</span>
               </div>
               <canvas id="trendCanvas"></canvas>
+              <div id="trendFootnote" class="trend-footnote">Hover-like detail is shown via chart point highlights.</div>
             </div>
 
             <div class="insights-grid">
@@ -1434,6 +1523,10 @@
 
       var trendCanvas = document.getElementById("trendCanvas");
       var trendRangeLabel = document.getElementById("trendRangeLabel");
+      var trendSubtitle = document.getElementById("trendSubtitle");
+      var trendPeakLabel = document.getElementById("trendPeakLabel");
+      var trendAverageLabel = document.getElementById("trendAverageLabel");
+      var trendFootnote = document.getElementById("trendFootnote");
       var insightLongest = document.getElementById("insightLongest");
       var insightBestDay = document.getElementById("insightBestDay");
       var insightProfitRate = document.getElementById("insightProfitRate");
@@ -2367,59 +2460,149 @@
 
         var plotted = sessions.slice(0, 14).reverse();
         trendRangeLabel.textContent = plotted.length
-          ? "Last " + plotted.length + " session" + (plotted.length === 1 ? "" : "s")
-          : "No sessions yet";
+          ? plotted.length + " data point" + (plotted.length === 1 ? "" : "s")
+          : "No data";
+        if (trendSubtitle) {
+          trendSubtitle.textContent = plotted.length
+            ? "Filtered session profit trend"
+            : "Log sessions to unlock trend analytics";
+        }
+        if (trendPeakLabel) trendPeakLabel.textContent = "Peak: $0.00";
+        if (trendAverageLabel) trendAverageLabel.textContent = "Avg: $0.00";
+        if (trendFootnote) trendFootnote.textContent = "Trend updates with your selected date range.";
 
         if (!plotted.length) {
           context.fillStyle = "rgba(180, 198, 229, 0.8)";
           context.font = "12px Inter, sans-serif";
-          context.fillText("Log sessions to unlock your earnings trend.", 14, height / 2);
+          context.textAlign = "center";
+          context.fillText("Log sessions to unlock your earnings trend.", width / 2, height / 2);
+          context.textAlign = "left";
           return;
         }
 
-        var padding = { top: 14, right: 12, bottom: 18, left: 12 };
+        var values = plotted.map(function (session) { return Number(session.earnings) || 0; });
+        var totalValue = values.reduce(function (sum, value) { return sum + value; }, 0);
+        var maxValue = Math.max.apply(null, values);
+        var minValue = Math.min.apply(null, values);
+        var avgValue = totalValue / Math.max(1, values.length);
+        var latestSession = plotted[plotted.length - 1];
+        if (trendPeakLabel) trendPeakLabel.textContent = "Peak: $" + maxValue.toFixed(2);
+        if (trendAverageLabel) trendAverageLabel.textContent = "Avg: $" + avgValue.toFixed(2);
+        if (trendFootnote && latestSession) {
+          trendFootnote.textContent = "Latest: $" + latestSession.earnings.toFixed(2) + " on " +
+            formatDateForSummary(latestSession.endedAtMs);
+        }
+
+        var paddedMin = Math.min(0, minValue * 0.9);
+        var paddedMax = Math.max(maxValue * 1.12, 1);
+        if (paddedMax - paddedMin < 0.5) {
+          paddedMax = paddedMin + 0.5;
+        }
+
+        var padding = { top: 14, right: 48, bottom: 28, left: 12 };
         var chartWidth = width - padding.left - padding.right;
         var chartHeight = height - padding.top - padding.bottom;
-        var maxValue = Math.max.apply(null, plotted.map(function (s) { return s.earnings; }));
-        maxValue = maxValue <= 0 ? 1 : maxValue;
+        if (chartWidth < 20 || chartHeight < 20) return;
 
-        context.strokeStyle = "rgba(67, 172, 255, 0.16)";
+        var yTicks = [paddedMax, paddedMin + ((paddedMax - paddedMin) / 2), paddedMin];
+        context.strokeStyle = "rgba(67, 172, 255, 0.18)";
         context.lineWidth = 1;
-        for (var row = 0; row <= 3; row++) {
-          var yGrid = padding.top + (chartHeight / 3) * row;
+        context.font = "11px Inter, sans-serif";
+        context.fillStyle = "rgba(180, 198, 229, 0.78)";
+        context.textAlign = "right";
+        yTicks.forEach(function (tickValue, tickIndex) {
+          var y = padding.top + (chartHeight * tickIndex / (yTicks.length - 1));
           context.beginPath();
-          context.moveTo(padding.left, yGrid);
-          context.lineTo(width - padding.right, yGrid);
+          context.moveTo(padding.left, y);
+          context.lineTo(width - padding.right, y);
           context.stroke();
+          context.fillText("$" + tickValue.toFixed(2), width - 6, y + 3);
+        });
+        context.textAlign = "left";
+
+        var firstSession = plotted[0];
+        var lastSession = plotted[plotted.length - 1];
+        context.fillStyle = "rgba(170, 191, 224, 0.78)";
+        context.font = "11px Inter, sans-serif";
+        context.fillText(formatTrendDate(firstSession.endedAtMs), padding.left, height - 8);
+        var lastLabel = formatTrendDate(lastSession.endedAtMs);
+        var lastLabelWidth = context.measureText(lastLabel).width;
+        context.fillText(lastLabel, Math.max(padding.left, width - padding.right - lastLabelWidth), height - 8);
+
+        function toY(value) {
+          var ratio = (value - paddedMin) / Math.max(0.0001, (paddedMax - paddedMin));
+          return padding.top + chartHeight - (ratio * chartHeight);
         }
 
         var points = plotted.map(function (session, index) {
           var x = plotted.length === 1
             ? padding.left + chartWidth / 2
             : padding.left + (chartWidth * index / (plotted.length - 1));
-          var y = padding.top + chartHeight - ((session.earnings / maxValue) * chartHeight);
+          var y = toY(session.earnings);
           return { x: x, y: y };
         });
 
         context.beginPath();
-        points.forEach(function (point, index) {
-          if (index === 0) context.moveTo(point.x, point.y);
-          else context.lineTo(point.x, point.y);
-        });
-        context.strokeStyle = "rgba(67, 179, 255, 0.98)";
-        context.lineWidth = 2.4;
+        context.moveTo(points[0].x, points[0].y);
+        for (var curveIndex = 1; curveIndex < points.length; curveIndex++) {
+          var previous = points[curveIndex - 1];
+          var current = points[curveIndex];
+          var controlX = (previous.x + current.x) / 2;
+          context.quadraticCurveTo(controlX, previous.y, current.x, current.y);
+        }
+        context.lineTo(points[points.length - 1].x, padding.top + chartHeight);
+        context.lineTo(points[0].x, padding.top + chartHeight);
+        context.closePath();
+        var areaGradient = context.createLinearGradient(0, padding.top, 0, padding.top + chartHeight);
+        areaGradient.addColorStop(0, "rgba(67, 179, 255, 0.34)");
+        areaGradient.addColorStop(1, "rgba(67, 179, 255, 0.02)");
+        context.fillStyle = areaGradient;
+        context.fill();
+
+        context.beginPath();
+        context.moveTo(points[0].x, points[0].y);
+        for (var lineIndex = 1; lineIndex < points.length; lineIndex++) {
+          var prevLine = points[lineIndex - 1];
+          var currentLine = points[lineIndex];
+          var lineControlX = (prevLine.x + currentLine.x) / 2;
+          context.quadraticCurveTo(lineControlX, prevLine.y, currentLine.x, currentLine.y);
+        }
+        context.strokeStyle = "rgba(84, 197, 255, 0.42)";
+        context.lineWidth = 5.6;
         context.stroke();
 
         context.beginPath();
-        context.moveTo(points[0].x, padding.top + chartHeight);
-        points.forEach(function (point) { context.lineTo(point.x, point.y); });
-        context.lineTo(points[points.length - 1].x, padding.top + chartHeight);
-        context.closePath();
-        var gradient = context.createLinearGradient(0, padding.top, 0, padding.top + chartHeight);
-        gradient.addColorStop(0, "rgba(67, 179, 255, 0.35)");
-        gradient.addColorStop(1, "rgba(67, 179, 255, 0.04)");
-        context.fillStyle = gradient;
-        context.fill();
+        context.moveTo(points[0].x, points[0].y);
+        for (var sharpIndex = 1; sharpIndex < points.length; sharpIndex++) {
+          var prevSharp = points[sharpIndex - 1];
+          var currentSharp = points[sharpIndex];
+          var sharpControlX = (prevSharp.x + currentSharp.x) / 2;
+          context.quadraticCurveTo(sharpControlX, prevSharp.y, currentSharp.x, currentSharp.y);
+        }
+        context.strokeStyle = "rgba(86, 205, 255, 0.98)";
+        context.lineWidth = 2.4;
+        context.stroke();
+
+        points.forEach(function (point, index) {
+          context.beginPath();
+          context.fillStyle = index === points.length - 1 ? "#8fe3ff" : "#53c1ff";
+          context.arc(point.x, point.y, index === points.length - 1 ? 3.4 : 2.4, 0, Math.PI * 2);
+          context.fill();
+        });
+
+        var lastPoint = points[points.length - 1];
+        context.beginPath();
+        context.strokeStyle = "rgba(152, 230, 255, 0.95)";
+        context.lineWidth = 2;
+        context.arc(lastPoint.x, lastPoint.y, 6, 0, Math.PI * 2);
+        context.stroke();
+      }
+
+      function formatTrendDate(timestamp) {
+        return new Date(timestamp).toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric"
+        });
       }
 
       function getBestDayEarnings(sessions) {
