@@ -1,451 +1,196 @@
-<html><head>
-    <title>PoopProfit.com: Find Out How Much You Make to Poop! At Work!</title>
-    <meta name="description" content="Discover how much you get paid to poop at work! Calculate, log, and share your poop break earnings, see your stats, earn Turd Tokens, and enjoy degenerate bathroom games." />
-    <meta name="keywords" content="poop profit, get paid to poop, earnings calculator, work poop, calculate poop earnings, log bathroom breaks, profit calculator, Turd Tokens, bathroom games, degenerate, wager, earnings estimation, statistics, share on social media">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-    <meta property="og:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?" />
-    <meta property="og:description" content="Calculate, log, and share your poop break earnings with PoopProfit.com. Earn Turd Tokens daily and enjoy degenerate bathroom games while you're pooping at work!" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.poopprofit.com" />
-    <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg" /> <meta property="og:site_name" content="PoopProfit.com" />
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="PoopProfit.com: How Much Do You Get Paid to Poop at Work?">
-    <meta name="twitter:description" content="Find out how much you make to poop at work! Calculate, log, and share your stats! Plus, earn Turd Tokens and play degenerate bathroom games!" />
-    <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg"> <link rel="canonical" href="https://www.poopprofit.com" />
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PoopProfit.com — Get Paid to Poop</title>
+    <meta
+      name="description"
+      content="Find out how much you get paid to poop at work with PoopProfit's revolutionary bathroom financial technology."
+    />
+    <link rel="icon" href="favicon.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-R1E17DCKNC');
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              display: ['Inter', 'system-ui', 'sans-serif'],
+            },
+            animation: {
+              float: 'float 12s ease-in-out infinite',
+              drift: 'drift 20s linear infinite',
+              pulseGlow: 'pulseGlow 2.6s ease-in-out infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-12px)' },
+              },
+              drift: {
+                '0%': { transform: 'translate3d(-12px, -4px, 0) rotate(-3deg)' },
+                '50%': { transform: 'translate3d(10px, 8px, 0) rotate(3deg)' },
+                '100%': { transform: 'translate3d(-12px, -4px, 0) rotate(-3deg)' },
+              },
+              pulseGlow: {
+                '0%,100%': { boxShadow: '0 0 0 rgba(56,189,248,.15), 0 0 24px rgba(56,189,248,.35)' },
+                '50%': { boxShadow: '0 0 0 rgba(56,189,248,.35), 0 0 36px rgba(56,189,248,.6)' },
+              },
+            },
+          },
+        },
+      };
     </script>
+    <style>
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: #e8f6ff;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: #010818;
+      }
+      .space-bg {
+        background-image:
+          linear-gradient(to bottom, rgba(2, 12, 35, 0.86), rgba(2, 10, 28, 0.84), rgba(3, 15, 36, 0.92)),
+          url('MAINDESKTOPBG.jpeg');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+      .glass {
+        backdrop-filter: blur(7px);
+        -webkit-backdrop-filter: blur(7px);
+      }
+      .glow-line {
+        background: linear-gradient(90deg, transparent, rgba(125,211,252,0.7), transparent);
+      }
+      .money {
+        position: absolute;
+        pointer-events: none;
+        opacity: .65;
+        width: min(20vw, 140px);
+        filter: drop-shadow(0 0 8px rgba(134,239,172,0.2));
+        animation: drift var(--dur, 18s) linear infinite;
+        transform-origin: center;
+      }
+      .hero-title {
+        text-shadow: 0 4px 24px rgba(8, 47, 73, 0.9);
+      }
+      .metric-card {
+        border: 1px solid rgba(125, 211, 252, 0.35);
+        box-shadow: inset 0 0 40px rgba(15, 23, 42, 0.55), 0 6px 28px rgba(14, 116, 144, 0.25);
+      }
+      .hero-mascot {
+        filter: drop-shadow(0 25px 42px rgba(0, 191, 255, 0.3));
+      }
+    </style>
+  </head>
 
-    <base href="https://www.poopprofit.com/">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "PoopProfit",
-  "operatingSystem": "All",
-  "applicationCategory": "WebApplication",
-  "url": "https://www.poopprofit.com",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  },
-  "featureList": [
-    "Poop Earnings Calculator",
-    "View and Share Statistics",
-    "Turd Token Rewards",
-    "Degenerate Bathroom Games"
-  ],
-  "description": "PoopProfit is a unique web app where you can calculate your earnings from bathroom breaks at work, see your statistics, share your results, earn rewards, and play games.",
-  "softwareVersion": "1.0.0"
-}
-</script>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "PoopProfit.com",
-  "url": "https://www.poopprofit.com",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://www.poopprofit.com/?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
-}
-</script>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Poop Profit - Calculate Your Earnings on Poop Breaks at Work.",
-  "description": "Calculate how much you make to poop at work, view and share statistics, earn rewards, and play degenerate fun games at PoopProfit.com.",
-  "url": "https://www.poopprofit.com",
-  "inLanguage": "en",
-  "isPartOf": {
-    "@type": "WebSite",
-    "url": "https://www.poopprofit.com"
-  }
-}
-</script>
-<style>
-body, html {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    color: #00ffff;
-    overflow: hidden;
-    background-color: #000;
-}
-#background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('https://www.poopprofit.com/WelcomeMobile_20241025_072029_0000.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0;
-    transition: opacity 2s ease-in-out;
-    will-change: opacity;
-}
-@media (min-width: 768px) {
-    #background {
-        background-image: url('https://www.poopprofit.com/WelcomeDesktop (1).png');
-        background-size: cover; /* This prevents stretching */
-        background-position: center; /* Centers the image */
-    }
-}
-.container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-}
-.box {
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 30px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 0 15px #00ffff;
-    border: 1px solid #00ffff;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
-    will-change: opacity, visibility;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-@media (max-width: 767px) {
-    .box {
-        width: 85%;
-        max-width: none;
-        padding: 20px;
-    }
-}
-h2 {
-    color: #00ffff;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-top: 0;
-    font-size: 1.5em;
-    margin-bottom: 20px;
-    text-align: center;
-}
-button {
-    background-color: #00ffff;
-    color: black;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin: 10px 0;
-    text-transform: uppercase;
-    font-weight: bold;
-    letter-spacing: 1px;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-    width: 100%;
-}
-button:hover {
-    background-color: #66ffff;
-}
-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-input {
-    margin: 10px 0;
-    padding: 10px;
-    width: 100%;
-    border: 1px solid #00ffff;
-    border-radius: 4px;
-    background-color: rgba(0, 255, 255, 0.1);
-    color: #00ffff;
-    font-size: 1em;
-    box-sizing: border-box;
-}
-input::placeholder {
-    color: #00ffff;
-    opacity: 0.7;
-}
-.error-message {
-    color: #ff4444;
-    margin: 10px 0;
-    text-align: center;
-    font-size: 0.9em;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-.success-message {
-    color: #00ff00;
-    margin: 10px 0;
-    text-align: center;
-    font-size: 0.9em;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-.lens-flare-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 5;
-}
-.lens-flare {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(0,255,255,0.9) 0%, rgba(0,255,255,0) 70%);
-    filter: blur(8px);
-    opacity: 0;
-    animation: flare-animation 12s infinite;
-    will-change: transform, opacity;
-}
-@keyframes flare-animation {
-    0% { opacity: 0; transform: scale(0.1) translate(-50%, -50%); }
-    50% { opacity: 0.5; transform: scale(1) translate(-50%, -50%); }
-    100% { opacity: 0; transform: scale(0.1) translate(-50%, -50%); }
-}
-.back-arrow {
-    color: #00ffff;
-    font-size: 2em;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: transform 0.3s ease;
-    text-align: center;
-}
-.back-arrow:hover {
-    transform: scale(1.1);
-}
-.contact-link {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #00ffff;
-    text-decoration: none;
-    font-size: 0.9em;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
-    z-index: 20;
-}
-.contact-link:hover {
-    opacity: 1;
-}
-</style>
-</head>
-<body>
-    <div id="background"></div>
-    <div class="lens-flare-container"></div>
-    <div class="container">
-        <div id="intro" class="box">
-            <h2>Are you ready for the single greatest advancement of bathroom technology in history?</h2>
-            <button onclick="showOptions()">Yes</button>
-        </div>
-        <div id="options" class="box">
-            <button onclick="showRegistration()">Create an account</button>
-            <button onclick="showLogin()">Sign in</button>
-        </div>
-        <div id="registration" class="box">
-            <h2>Create an account</h2>
-            <form id="registerForm">
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
-                <div class="error-message" id="registerError"></div>
-                <div class="success-message" id="registerSuccess"></div>
-                <button type="submit">Register</button>
-            </form>
-            <div class="back-arrow" onclick="showOptions()">&#8592;</div>
-        </div>
-        <div id="login" class="box">
-            <h2>Welcome Back</h2>
-            <form id="loginForm">
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <div class="error-message" id="loginError"></div>
-                <div class="success-message" id="loginSuccess"></div>
-                <button type="submit">Sign In</button>
-            </form>
-            <div class="back-arrow" onclick="showOptions()">&#8592;</div>
-        </div>
+  <body class="space-bg overflow-x-hidden">
+    <div class="fixed inset-0 pointer-events-none">
+      <img src="20241017_071034_0000.jpg" alt="" class="money top-[8%] left-[-2%] [--dur:22s]" />
+      <img src="20241017_071034_0000.jpg" alt="" class="money top-[15%] right-[-3%] [--dur:19s]" />
+      <img src="20241017_071034_0000.jpg" alt="" class="money top-[50%] left-[3%] [--dur:24s]" />
+      <img src="20241017_071034_0000.jpg" alt="" class="money top-[72%] right-[4%] [--dur:20s]" />
     </div>
 
- <a href="mailto:poopprofit@gmail.com?subject=Inquiry&body=Hello%20PoopProfit.com%20Team," class="contact-link">Get in Touch</a>
+    <header class="relative z-20">
+      <nav class="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6">
+        <div class="glass flex items-center justify-between rounded-2xl border border-sky-300/30 bg-slate-950/45 px-3 py-2 sm:px-5">
+          <a href="#top" class="flex items-center gap-2 sm:gap-3">
+            <img src="favicon.png" alt="PoopProfit logo mark" class="h-10 w-10 rounded-full ring-2 ring-sky-300/45 sm:h-12 sm:w-12" />
+            <img src="WelcomeDesktop (1).png" alt="PoopProfit logo" class="hidden h-10 w-auto max-w-[190px] sm:block" />
+            <span class="sm:hidden text-xl font-bold tracking-tight text-sky-100">PoopProfit</span>
+          </a>
+          <div class="flex items-center gap-2 text-sm font-medium sm:gap-3">
+            <a href="#features" class="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sky-100 transition hover:border-sky-200/60 hover:bg-sky-100/10">Features</a>
+            <a href="#stats" class="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sky-100 transition hover:border-sky-200/60 hover:bg-sky-100/10">Stats</a>
+            <a href="https://www.poopprofit.com/core-preview.html" class="animate-pulseGlow rounded-lg border border-sky-300/60 bg-gradient-to-r from-sky-400 to-blue-500 px-3 py-2 font-semibold text-white shadow-md transition hover:brightness-110">Start Pooping!</a>
+          </div>
+        </div>
+      </nav>
+    </header>
 
-    <script>
-        function fadeIn(elementId) {
-            const element = document.getElementById(elementId);
-            element.style.visibility = 'visible';
-            requestAnimationFrame(() => {
-                element.style.opacity = 1;
-            });
-        }
+    <main id="top" class="relative z-10 pb-20">
+      <section class="mx-auto max-w-6xl px-4 pt-8 text-center sm:px-6 sm:pt-12">
+        <h1 class="hero-title mx-auto max-w-4xl text-4xl font-black leading-tight tracking-tight text-slate-100 sm:text-6xl">
+          How Much Do You
+          <span class="bg-gradient-to-r from-cyan-100 via-emerald-200 to-cyan-300 bg-clip-text text-transparent">Get Paid to Poop?</span>
+        </h1>
+        <p class="mx-auto mt-5 max-w-3xl text-base leading-relaxed text-slate-200 sm:text-xl">
+          Have you ever realized that when you poop at work you're actually getting <strong>PAID to POOP?</strong>
+          Find out just how much with this revolutionary new bathroom financial technology!
+        </p>
+        <div id="features" class="mx-auto mt-7 grid max-w-3xl grid-cols-2 gap-3 text-left text-sm sm:grid-cols-4 sm:text-base">
+          <div class="rounded-xl border border-sky-200/20 bg-slate-950/40 p-3 text-cyan-100">Track Your Poops</div>
+          <div class="rounded-xl border border-sky-200/20 bg-slate-950/40 p-3 text-cyan-100">Save Your Logs</div>
+          <div class="rounded-xl border border-sky-200/20 bg-slate-950/40 p-3 text-cyan-100">Review Detailed Analytics</div>
+          <div class="rounded-xl border border-sky-200/20 bg-slate-950/40 p-3 text-cyan-100">Share Your Earnings!</div>
+        </div>
+        <a
+          href="https://www.poopprofit.com/core-preview.html"
+          class="mt-8 inline-flex items-center justify-center rounded-xl border border-cyan-300/80 bg-gradient-to-b from-sky-300 via-blue-500 to-blue-700 px-10 py-4 text-2xl font-extrabold text-white shadow-[0_0_30px_rgba(56,189,248,.55)] transition hover:-translate-y-0.5 hover:brightness-110"
+        >
+          Start Pooping!
+        </a>
 
-        function fadeOut(elementId) {
-            const element = document.getElementById(elementId);
-            element.style.opacity = 0;
-            setTimeout(() => {
-                element.style.visibility = 'hidden';
-            }, 1000);
-        }
+        <div class="mt-10 flex justify-center sm:mt-14">
+          <img src="POOPPROFITMASCOT.png" alt="PoopProfit mascot holding cash" class="hero-mascot h-auto w-full max-w-[330px] animate-float sm:max-w-[430px]" />
+        </div>
+      </section>
 
-        function showOptions() {
-            fadeOut('intro');
-            fadeOut('registration');
-            fadeOut('login');
-            setTimeout(() => {
-                fadeIn('options');
-            }, 1000);
-        }
+      <div class="mx-auto mt-16 h-px w-[92%] max-w-6xl glow-line"></div>
 
-        function showRegistration() {
-            fadeOut('options');
-            setTimeout(() => {
-                fadeIn('registration');
-                document.getElementById('background').style.opacity = 1;
-            }, 1000);
-        }
+      <section id="stats" class="mx-auto mt-12 max-w-4xl px-4 sm:px-6">
+        <h2 class="text-center text-4xl font-extrabold tracking-tight text-sky-100 sm:text-5xl">Poop Profit Stats</h2>
+        <p class="mx-auto mt-3 max-w-2xl text-center text-lg text-slate-200">
+          Track your poop earnings and milestones.
+        </p>
 
-        function showLogin() {
-            fadeOut('options');
-            setTimeout(() => {
-                fadeIn('login');
-                document.getElementById('background').style.opacity = 1;
-            }, 1000);
-        }
-
-        const lensFlareContainer = document.querySelector('.lens-flare-container');
-        function createLensFlare() {
-            const flare = document.createElement('div');
-            flare.className = 'lens-flare';
-            flare.style.left = Math.random() * window.innerWidth + 'px';
-            flare.style.top = Math.random() * window.innerHeight + 'px';
-            flare.style.animationDelay = Math.random() * 12 + 's';
-            lensFlareContainer.appendChild(flare);
-
-            flare.addEventListener('animationend', () => {
-                flare.remove();
-            });
-        }
-
-        createLensFlare();
-        createLensFlare();
-        setInterval(createLensFlare, 3000);
-
-        window.onload = function() {
-            setTimeout(() => {
-                fadeIn('intro');
-            }, 1000);
-        };
-
-// Register form submission
-document.getElementById('registerForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const email = this.email.value;
-    const password = this.password.value;
-    const confirmPassword = this.confirmPassword.value;
-    const registerError = document.getElementById('registerError');
-    const registerSuccess = document.getElementById('registerSuccess');
-
-    registerError.style.opacity = '0';
-    registerSuccess.style.opacity = '0';
-
-    if (password !== confirmPassword) {
-        registerError.textContent = 'Passwords do not match';
-        registerError.style.opacity = '1';
-        return;
-    }
-
-    const users = JSON.parse(localStorage.getItem('users') || '{}');
-
-    if (users[email]) {
-        registerError.textContent = 'Email already registered';
-        registerError.style.opacity = '1';
-        return;
-    }
-
-    // --- UPDATED SECTION: Initializing poopLogData ---
-    users[email] = {
-        password: password,
-        data: {
-            hourlyWage: 0,
-            annualSalary: '',
-            weeklyHours: '',
-            hourlyWageInput: '',
-            wageToggle: false,
-            stats: { totalSessions: 0, totalPoopTime: 0, totalEarnings: 0 },
-            turdTokens: 0,
-            lastAwardDate: null,
-            poopLogs: [],      // Kept for backward compatibility logic
-            poopLogData: []    // NEW: Initialize structured data for the new dashboard
-        }
-    };
-    // ------------------------------------------------
-
-    localStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem('currentUser', JSON.stringify(users[email]));
-    
-    registerSuccess.textContent = 'Registration successful! Redirecting...';
-    registerSuccess.style.opacity = '1';
-    setTimeout(() => window.location.href = '/interface.html', 1500);
-});
-
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const email = this.email.value;
-    const password = this.password.value;
-    const loginError = document.getElementById('loginError');
-    const loginSuccess = document.getElementById('loginSuccess');
-
-    loginError.style.opacity = '0';
-    loginSuccess.style.opacity = '0';
-
-    const users = JSON.parse(localStorage.getItem('users') || '{}');
-
-    // Validate login credentials
-    if (!users[email] || users[email].password !== password) {
-        loginError.textContent = 'Invalid email or password';
-        loginError.style.opacity = '1';
-        return;
-    }
-
-    // Set `currentUser` to full data object
-    localStorage.setItem('currentUser', JSON.stringify({
-        email: email,
-        data: users[email].data
-    }));
-    
-    loginSuccess.textContent = 'Login successful! Redirecting...';
-    loginSuccess.style.opacity = '1';
-    setTimeout(() => window.location.href = '/interface.html', 1500);
-});
-    </script>
-</body>
+        <div class="metric-card mt-6 overflow-hidden rounded-2xl bg-slate-950/60">
+          <div class="flex items-center justify-between gap-3 border-b border-sky-200/20 px-4 py-3 sm:px-6">
+            <p class="text-sm text-slate-200 sm:text-xl">Total Earnings <span class="mx-2 text-sky-200">|</span> <span class="font-bold text-emerald-300">$12.67</span> / <span class="text-slate-300">2 Sessions</span></p>
+            <button class="rounded-lg border border-sky-200/35 bg-slate-900/60 px-3 py-1 text-xs font-semibold text-sky-100 hover:bg-slate-800/70">Share</button>
+          </div>
+          <div class="p-4 sm:p-6">
+            <div class="relative h-52 w-full overflow-hidden rounded-xl border border-sky-200/20 bg-gradient-to-b from-slate-900/75 to-slate-950/70 sm:h-64">
+              <div class="absolute inset-x-0 top-1/2 h-px bg-sky-100/10"></div>
+              <div class="absolute inset-x-0 top-1/4 h-px bg-sky-100/10"></div>
+              <div class="absolute inset-x-0 bottom-1/4 h-px bg-sky-100/10"></div>
+              <svg viewBox="0 0 100 45" class="absolute inset-0 h-full w-full">
+                <defs>
+                  <linearGradient id="lineGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+                    <stop offset="0%" stop-color="#38bdf8" />
+                    <stop offset="100%" stop-color="#86efac" />
+                  </linearGradient>
+                </defs>
+                <polyline
+                  fill="rgba(56,189,248,.12)"
+                  stroke="none"
+                  points="0,39 10,37 20,34 30,28 40,26 50,28 60,27 70,23 80,16 90,12 100,9 100,45 0,45"
+                />
+                <polyline
+                  fill="none"
+                  stroke="url(#lineGradient)"
+                  stroke-width="1.2"
+                  points="0,39 10,37 20,34 30,28 40,26 50,28 60,27 70,23 80,16 90,12 100,9"
+                />
+                <circle cx="90" cy="12" r="1.3" fill="#86efac" />
+              </svg>
+              <div class="absolute right-3 top-3 rounded-md bg-emerald-300/15 px-2 py-1 text-xs font-semibold text-emerald-300 sm:text-lg">+$68.40</div>
+              <div class="absolute bottom-2 left-0 right-0 flex justify-around text-[10px] text-slate-300 sm:text-xs">
+                <span>Sat</span><span>Sun</span><span>Mon</span><span>Tue</span><span>Fri</span><span>Today</span>
+              </div>
+            </div>
+            <div class="mt-3 flex justify-end gap-2">
+              <button class="rounded-lg border border-sky-200/30 bg-slate-800/50 px-3 py-1 text-xs text-slate-100">1 Day</button>
+              <button class="rounded-lg border border-sky-300/50 bg-sky-500/30 px-3 py-1 text-xs font-semibold text-cyan-100">7 Days</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
 </html>
