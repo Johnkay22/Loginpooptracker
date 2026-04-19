@@ -956,6 +956,12 @@
       flex-wrap: wrap;
     }
 
+    .preview-footnote .button {
+      padding: 7px 12px;
+      min-height: 34px;
+      font-size: 0.8rem;
+    }
+
     .rating-modal {
       position: fixed;
       inset: 0;
@@ -1103,6 +1109,172 @@
       justify-content: center;
       flex-wrap: wrap;
     }
+
+    .tutorial-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      z-index: 220;
+    }
+
+    .tutorial-overlay.open {
+      display: block;
+    }
+
+    .tutorial-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 8, 16, 0.78);
+      backdrop-filter: blur(4px);
+    }
+
+    .tutorial-highlight {
+      position: fixed;
+      border-radius: 14px;
+      border: 1px solid rgba(107, 206, 255, 0.9);
+      box-shadow:
+        0 0 0 2px rgba(111, 212, 255, 0.28),
+        0 0 0 9999px rgba(2, 8, 16, 0.62),
+        0 0 24px rgba(89, 198, 255, 0.35);
+      pointer-events: none;
+      transition: all 0.24s ease;
+      z-index: 1;
+    }
+
+    .tutorial-arrow {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      display: none;
+    }
+
+    .tutorial-arrow-line {
+      position: fixed;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(150, 225, 255, 0.95), rgba(60, 185, 245, 0.95));
+      transform-origin: 0 50%;
+      box-shadow: 0 0 10px rgba(105, 204, 255, 0.4);
+    }
+
+    .tutorial-arrow-head {
+      position: fixed;
+      width: 0;
+      height: 0;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-left: 11px solid #9adfff;
+      filter: drop-shadow(0 0 6px rgba(111, 211, 255, 0.52));
+      transform-origin: 50% 50%;
+    }
+
+    .tutorial-card {
+      position: fixed;
+      width: min(380px, calc(100vw - 20px));
+      border-radius: 16px;
+      border: 1px solid rgba(101, 202, 255, 0.38);
+      background: linear-gradient(180deg, rgba(17, 28, 52, 0.98), rgba(9, 14, 28, 0.98));
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.55);
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+      z-index: 3;
+      transition: left 0.2s ease, top 0.2s ease;
+    }
+
+    .tutorial-step-pill {
+      justify-self: flex-start;
+      border-radius: 999px;
+      border: 1px solid rgba(113, 206, 255, 0.45);
+      background: rgba(25, 44, 77, 0.72);
+      color: #d9efff;
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .tutorial-body {
+      display: grid;
+      grid-template-columns: 94px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .tutorial-mascot-wrap {
+      border-radius: 12px;
+      border: 1px solid rgba(109, 205, 255, 0.35);
+      background: radial-gradient(circle at 35% 25%, rgba(121, 217, 255, 0.35), rgba(12, 22, 41, 0.9));
+      padding: 7px;
+      text-align: center;
+    }
+
+    .tutorial-mascot-image {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+      border-radius: 10px;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .tutorial-mascot-label {
+      margin-top: 5px;
+      font-size: 0.65rem;
+      color: #bee2ff;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .tutorial-copy h3 {
+      margin: 0 0 6px;
+      font-size: 1.03rem;
+      line-height: 1.2;
+      color: #ecf7ff;
+    }
+
+    .tutorial-copy p {
+      margin: 0;
+      color: #c4d8f5;
+      font-size: 0.91rem;
+      line-height: 1.45;
+    }
+
+    .tutorial-progress {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .tutorial-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(105, 201, 255, 0.6);
+      background: rgba(71, 124, 171, 0.28);
+    }
+
+    .tutorial-dot.active {
+      background: #65cbff;
+      box-shadow: 0 0 10px rgba(101, 203, 255, 0.8);
+    }
+
+    .tutorial-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.3fr;
+      gap: 8px;
+    }
+
+    .tutorial-card[data-pose="1"] .tutorial-mascot-image { transform: rotate(-5deg) scale(1.02); filter: hue-rotate(0deg) saturate(1.05); }
+    .tutorial-card[data-pose="2"] .tutorial-mascot-image { transform: rotate(4deg) scale(0.98); filter: hue-rotate(28deg) saturate(1.15); }
+    .tutorial-card[data-pose="3"] .tutorial-mascot-image { transform: rotate(-10deg) scale(1.06); filter: hue-rotate(52deg) saturate(1.2); }
+    .tutorial-card[data-pose="4"] .tutorial-mascot-image { transform: rotate(8deg) scale(0.97); filter: hue-rotate(90deg) saturate(1.15); }
+    .tutorial-card[data-pose="5"] .tutorial-mascot-image { transform: rotate(-3deg) scale(1.05); filter: hue-rotate(130deg) saturate(1.2); }
+    .tutorial-card[data-pose="6"] .tutorial-mascot-image { transform: rotate(11deg) scale(0.98); filter: hue-rotate(172deg) saturate(1.15); }
+    .tutorial-card[data-pose="7"] .tutorial-mascot-image { transform: rotate(-8deg) scale(1.04); filter: hue-rotate(214deg) saturate(1.18); }
 
     .mobile-nav {
       position: fixed;
@@ -1266,6 +1438,18 @@
         min-height: 48px;
         justify-content: flex-start;
         padding-left: 12px;
+      }
+
+      .tutorial-body {
+        grid-template-columns: 82px 1fr;
+      }
+
+      .tutorial-controls {
+        grid-template-columns: 1fr;
+      }
+
+      .tutorial-card .button {
+        width: 100%;
       }
 
       .log-list {
@@ -1530,6 +1714,7 @@
       <footer class="preview-footnote">
         <span>Data is stored locally on this browser/device until cleared.</span>
         <span>Built for smooth live usage while the full platform evolves.</span>
+        <button id="replayTutorialButton" class="button ghost" type="button">Replay Quick Tour</button>
       </footer>
     </section>
   </main>
@@ -1582,6 +1767,34 @@
         </button>
       </div>
       <button id="closeSharePickerButton" class="button ghost full" type="button">Cancel</button>
+    </div>
+  </div>
+
+  <div id="tutorialOverlay" class="tutorial-overlay" aria-hidden="true">
+    <div class="tutorial-backdrop"></div>
+    <div id="tutorialHighlight" class="tutorial-highlight"></div>
+    <div id="tutorialArrow" class="tutorial-arrow" aria-hidden="true">
+      <span id="tutorialArrowLine" class="tutorial-arrow-line"></span>
+      <span id="tutorialArrowHead" class="tutorial-arrow-head"></span>
+    </div>
+    <div id="tutorialCard" class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle" data-pose="1">
+      <div id="tutorialStepPill" class="tutorial-step-pill">Step 1 of 7</div>
+      <div class="tutorial-body">
+        <div class="tutorial-mascot-wrap">
+          <img id="tutorialMascotImage" class="tutorial-mascot-image" src="poopemojifinal.jpeg" alt="Poop Profit mascot placeholder pose">
+          <div id="tutorialMascotLabel" class="tutorial-mascot-label">Placeholder Pose 1</div>
+        </div>
+        <div class="tutorial-copy">
+          <h3 id="tutorialTitle">Welcome to Poop Profit</h3>
+          <p id="tutorialBody">Quick Tour: Learn how to track how much you get paid to poop at work!</p>
+        </div>
+      </div>
+      <div id="tutorialProgress" class="tutorial-progress" aria-hidden="true"></div>
+      <div class="tutorial-controls">
+        <button id="tutorialBackButton" class="button ghost" type="button">Back</button>
+        <button id="tutorialSkipButton" class="button ghost warn" type="button">Skip</button>
+        <button id="tutorialNextButton" class="button" type="button">Next</button>
+      </div>
     </div>
   </div>
 
@@ -1687,6 +1900,79 @@
         last30: 30
       };
       var pendingShareText = "";
+      var replayTutorialButton = document.getElementById("replayTutorialButton");
+      var tutorialOverlay = document.getElementById("tutorialOverlay");
+      var tutorialHighlight = document.getElementById("tutorialHighlight");
+      var tutorialArrow = document.getElementById("tutorialArrow");
+      var tutorialArrowLine = document.getElementById("tutorialArrowLine");
+      var tutorialArrowHead = document.getElementById("tutorialArrowHead");
+      var tutorialCard = document.getElementById("tutorialCard");
+      var tutorialStepPill = document.getElementById("tutorialStepPill");
+      var tutorialTitle = document.getElementById("tutorialTitle");
+      var tutorialBody = document.getElementById("tutorialBody");
+      var tutorialMascotLabel = document.getElementById("tutorialMascotLabel");
+      var tutorialProgress = document.getElementById("tutorialProgress");
+      var tutorialBackButton = document.getElementById("tutorialBackButton");
+      var tutorialSkipButton = document.getElementById("tutorialSkipButton");
+      var tutorialNextButton = document.getElementById("tutorialNextButton");
+      var TUTORIAL_SEEN_KEY = "pp_core_tutorial_seen_v1";
+      var TUTORIAL_STEPS = [
+        {
+          title: "Welcome to Poop Profit",
+          body: "Quick Tour: Learn how to track how much you get paid to poop at work!",
+          target: ".top-banner",
+          tab: "calculator",
+          mascotLabel: "Placeholder Pose 1"
+        },
+        {
+          title: "Set Your Pay",
+          body: "Input how much your job pays you per hour, or if you're on salary, enter your annual salary and how many hours a week you work.",
+          target: "#wageStripToggleButton",
+          tab: "calculator",
+          expandWage: true,
+          mascotLabel: "Placeholder Pose 2"
+        },
+        {
+          title: "Start Your Session",
+          body: "Tap Start Poop! to begin your session timer, then tap again when you're done so it saves to your log.",
+          target: "#timerButton",
+          tab: "calculator",
+          mascotLabel: "Placeholder Pose 3"
+        },
+        {
+          title: "Live Session Dashboard",
+          body: "This will display your session timer, current earnings, projections, and milestone progress.",
+          target: ".timer-card",
+          tab: "calculator",
+          mascotLabel: "Placeholder Pose 4"
+        },
+        {
+          title: "Navigate Tabs",
+          body: "Use these tabs to switch between Calculator, Stats, and Coming Soon whenever you want.",
+          target: ".tabs",
+          tab: "calculator",
+          mascotLabel: "Placeholder Pose 5"
+        },
+        {
+          title: "Save Your Log!",
+          body: "When you finish pooping, your poop logs saves here. You can rate it, share it, or delete it anytime.",
+          target: "#logList",
+          tab: "calculator",
+          mascotLabel: "Placeholder Pose 6"
+        },
+        {
+          title: "See Your Detailed Stats!",
+          body: "Use Stats to filter by date range, view trends, and share your results. You're all set! Happy pooping",
+          target: "#panel-stats .stats-filter-bar",
+          tab: "stats",
+          mascotLabel: "Placeholder Pose 7"
+        }
+      ];
+      var tutorialState = {
+        open: false,
+        stepIndex: 0,
+        rafId: null
+      };
 
       hydrateInputs();
       renderTabs();
@@ -1694,6 +1980,7 @@
       wireEvents();
       renderAll();
       restoreRunningSession();
+      setupTutorial();
 
       function wireEvents() {
         tabButtons.forEach(function (button) {
@@ -1906,12 +2193,54 @@
           });
         }
 
+        if (replayTutorialButton) {
+          replayTutorialButton.addEventListener("click", function () {
+            startTutorial(true);
+          });
+        }
+
+        if (tutorialBackButton) {
+          tutorialBackButton.addEventListener("click", function () {
+            moveTutorialStep(-1);
+          });
+        }
+
+        if (tutorialNextButton) {
+          tutorialNextButton.addEventListener("click", function () {
+            moveTutorialStep(1);
+          });
+        }
+
+        if (tutorialSkipButton) {
+          tutorialSkipButton.addEventListener("click", function () {
+            var approved = window.confirm("Skip quick tour? You can replay it anytime from the footer button.");
+            if (!approved) return;
+            closeTutorial(true);
+          });
+        }
+
+        window.addEventListener("keydown", function (event) {
+          if (!tutorialState.open) return;
+          if (event.key === "Escape") {
+            closeTutorial(true);
+          } else if (event.key === "ArrowRight" || event.key === "Enter") {
+            moveTutorialStep(1);
+          } else if (event.key === "ArrowLeft") {
+            moveTutorialStep(-1);
+          }
+        });
+
         window.addEventListener("resize", function () {
           if (resizeTimerId !== null) window.clearTimeout(resizeTimerId);
           resizeTimerId = window.setTimeout(function () {
             renderTrend(getFilteredSessions());
           }, 100);
+          queueTutorialPositionUpdate();
         });
+
+        window.addEventListener("scroll", function () {
+          queueTutorialPositionUpdate();
+        }, true);
       }
 
       function setActiveTab(tabName) {
@@ -2782,6 +3111,202 @@
           element.classList.remove("haptic");
         }, 140);
         if (navigator.vibrate) navigator.vibrate(12);
+      }
+
+      function setupTutorial() {
+        if (!tutorialOverlay || !tutorialCard || !tutorialStepPill || !tutorialTitle || !tutorialBody) return;
+        buildTutorialProgressDots();
+        var seen = localStorage.getItem(TUTORIAL_SEEN_KEY) === "1";
+        if (seen) return;
+        window.setTimeout(function () {
+          if (!tutorialState.open) {
+            startTutorial(false);
+          }
+        }, 480);
+      }
+
+      function buildTutorialProgressDots() {
+        if (!tutorialProgress) return;
+        tutorialProgress.innerHTML = "";
+        TUTORIAL_STEPS.forEach(function (_step, index) {
+          var dot = document.createElement("span");
+          dot.className = "tutorial-dot";
+          dot.setAttribute("data-tutorial-dot", String(index));
+          tutorialProgress.appendChild(dot);
+        });
+      }
+
+      function startTutorial(fromReplay) {
+        if (!tutorialOverlay) return;
+        tutorialState.open = true;
+        tutorialState.stepIndex = 0;
+        tutorialOverlay.classList.add("open");
+        tutorialOverlay.setAttribute("aria-hidden", "false");
+        if (!fromReplay) {
+          localStorage.setItem(TUTORIAL_SEEN_KEY, "1");
+        }
+        showTutorialStep(0);
+      }
+
+      function closeTutorial(markSeen) {
+        tutorialState.open = false;
+        if (markSeen) {
+          localStorage.setItem(TUTORIAL_SEEN_KEY, "1");
+        }
+        if (tutorialOverlay) {
+          tutorialOverlay.classList.remove("open");
+          tutorialOverlay.setAttribute("aria-hidden", "true");
+        }
+        if (tutorialHighlight) {
+          tutorialHighlight.style.width = "0px";
+          tutorialHighlight.style.height = "0px";
+        }
+        if (tutorialArrow) {
+          tutorialArrow.style.display = "none";
+        }
+      }
+
+      function moveTutorialStep(direction) {
+        if (!tutorialState.open) return;
+        var nextIndex = tutorialState.stepIndex + direction;
+        if (nextIndex < 0) {
+          nextIndex = 0;
+        }
+        if (nextIndex >= TUTORIAL_STEPS.length) {
+          closeTutorial(true);
+          setStatus(statusMessage, "Quick tour complete. Happy pooping.", "ok");
+          return;
+        }
+        showTutorialStep(nextIndex);
+      }
+
+      function showTutorialStep(index) {
+        if (!tutorialState.open) return;
+        var safeIndex = Math.max(0, Math.min(TUTORIAL_STEPS.length - 1, index));
+        tutorialState.stepIndex = safeIndex;
+        var step = TUTORIAL_STEPS[safeIndex];
+
+        if (step.tab && state.activeTab !== step.tab) {
+          setActiveTab(step.tab);
+        }
+        if (step.expandWage && wageModeCollapsed) {
+          wageModeCollapsed = false;
+          state.wageModeCollapsed = false;
+          persist();
+          renderWageStrip();
+        }
+
+        tutorialStepPill.textContent = "Step " + String(safeIndex + 1) + " of " + String(TUTORIAL_STEPS.length);
+        tutorialTitle.textContent = step.title;
+        tutorialBody.textContent = step.body;
+        if (tutorialMascotLabel) {
+          tutorialMascotLabel.textContent = step.mascotLabel || ("Placeholder Pose " + String(safeIndex + 1));
+        }
+        if (tutorialCard) {
+          tutorialCard.setAttribute("data-pose", String(safeIndex + 1));
+        }
+        if (tutorialBackButton) {
+          tutorialBackButton.disabled = safeIndex === 0;
+        }
+        if (tutorialNextButton) {
+          tutorialNextButton.textContent = safeIndex === TUTORIAL_STEPS.length - 1 ? "Finish Tour" : "Next";
+        }
+
+        if (tutorialProgress) {
+          var dots = tutorialProgress.querySelectorAll("[data-tutorial-dot]");
+          dots.forEach(function (dot) {
+            var dotIndex = Number(dot.getAttribute("data-tutorial-dot")) || 0;
+            dot.classList.toggle("active", dotIndex === safeIndex);
+          });
+        }
+
+        window.setTimeout(function () {
+          scrollToStepTarget(step);
+          queueTutorialPositionUpdate();
+        }, 40);
+      }
+
+      function scrollToStepTarget(step) {
+        if (!step || !step.target) return;
+        var target = document.querySelector(step.target);
+        if (!target) return;
+        target.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+      }
+
+      function queueTutorialPositionUpdate() {
+        if (!tutorialState.open) return;
+        if (tutorialState.rafId !== null) {
+          window.cancelAnimationFrame(tutorialState.rafId);
+        }
+        tutorialState.rafId = window.requestAnimationFrame(function () {
+          tutorialState.rafId = null;
+          positionTutorialToTarget();
+        });
+      }
+
+      function positionTutorialToTarget() {
+        if (!tutorialState.open || !tutorialCard || !tutorialHighlight) return;
+        var step = TUTORIAL_STEPS[tutorialState.stepIndex];
+        var target = step && step.target ? document.querySelector(step.target) : null;
+        var viewportWidth = window.innerWidth;
+        var viewportHeight = window.innerHeight;
+
+        if (!target) {
+          tutorialCard.style.left = Math.max(10, (viewportWidth - tutorialCard.offsetWidth) / 2) + "px";
+          tutorialCard.style.top = Math.max(18, (viewportHeight - tutorialCard.offsetHeight) / 2) + "px";
+          tutorialHighlight.style.width = "0px";
+          tutorialHighlight.style.height = "0px";
+          if (tutorialArrow) tutorialArrow.style.display = "none";
+          return;
+        }
+
+        var targetRect = target.getBoundingClientRect();
+        var targetPadding = 8;
+        tutorialHighlight.style.left = Math.max(6, targetRect.left - targetPadding) + "px";
+        tutorialHighlight.style.top = Math.max(6, targetRect.top - targetPadding) + "px";
+        tutorialHighlight.style.width = Math.max(0, targetRect.width + targetPadding * 2) + "px";
+        tutorialHighlight.style.height = Math.max(0, targetRect.height + targetPadding * 2) + "px";
+
+        var cardWidth = tutorialCard.offsetWidth;
+        var cardHeight = tutorialCard.offsetHeight;
+        var placeBelow = (viewportHeight - targetRect.bottom) >= (cardHeight + 22) || targetRect.top < cardHeight + 20;
+        var centerX = targetRect.left + targetRect.width / 2;
+        var top = placeBelow
+          ? Math.min(viewportHeight - cardHeight - 10, targetRect.bottom + 16)
+          : Math.max(10, targetRect.top - cardHeight - 16);
+        var left = Math.min(viewportWidth - cardWidth - 10, Math.max(10, centerX - cardWidth / 2));
+
+        tutorialCard.style.left = left + "px";
+        tutorialCard.style.top = top + "px";
+
+        drawTutorialArrow(centerX, placeBelow ? targetRect.bottom : targetRect.top, placeBelow);
+      }
+
+      function drawTutorialArrow(targetCenterX, targetEdgeY, cardPlacedBelow) {
+        if (!tutorialArrow || !tutorialArrowLine || !tutorialArrowHead || !tutorialCard) return;
+        var cardRect = tutorialCard.getBoundingClientRect();
+        var startX = Math.max(cardRect.left + 18, Math.min(cardRect.right - 18, targetCenterX));
+        var startY = cardPlacedBelow ? cardRect.top : cardRect.bottom;
+        var endX = targetCenterX;
+        var endY = cardPlacedBelow ? targetEdgeY : targetEdgeY;
+        var dx = endX - startX;
+        var dy = endY - startY;
+        var length = Math.sqrt((dx * dx) + (dy * dy));
+        if (length < 12) {
+          tutorialArrow.style.display = "none";
+          return;
+        }
+        var angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+        tutorialArrow.style.display = "block";
+
+        tutorialArrowLine.style.left = startX + "px";
+        tutorialArrowLine.style.top = startY + "px";
+        tutorialArrowLine.style.width = Math.max(8, length - 12) + "px";
+        tutorialArrowLine.style.transform = "rotate(" + angle + "deg)";
+
+        tutorialArrowHead.style.left = endX + "px";
+        tutorialArrowHead.style.top = endY + "px";
+        tutorialArrowHead.style.transform = "translate(-50%, -50%) rotate(" + angle + "deg)";
       }
 
       function loadState() {
