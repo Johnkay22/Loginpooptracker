@@ -1292,13 +1292,10 @@
       gap: 8px;
     }
 
-    .tutorial-card[data-pose="1"] .tutorial-mascot-image { transform: rotate(-5deg) scale(1.02); filter: hue-rotate(0deg) saturate(1.05); }
-    .tutorial-card[data-pose="2"] .tutorial-mascot-image { transform: rotate(4deg) scale(0.98); filter: hue-rotate(28deg) saturate(1.15); }
-    .tutorial-card[data-pose="3"] .tutorial-mascot-image { transform: rotate(-10deg) scale(1.06); filter: hue-rotate(52deg) saturate(1.2); }
-    .tutorial-card[data-pose="4"] .tutorial-mascot-image { transform: rotate(8deg) scale(0.97); filter: hue-rotate(90deg) saturate(1.15); }
-    .tutorial-card[data-pose="5"] .tutorial-mascot-image { transform: rotate(-3deg) scale(1.05); filter: hue-rotate(130deg) saturate(1.2); }
-    .tutorial-card[data-pose="6"] .tutorial-mascot-image { transform: rotate(11deg) scale(0.98); filter: hue-rotate(172deg) saturate(1.15); }
-    .tutorial-card[data-pose="7"] .tutorial-mascot-image { transform: rotate(-8deg) scale(1.04); filter: hue-rotate(214deg) saturate(1.18); }
+    .tutorial-card[data-pose] .tutorial-mascot-image {
+      transform: none;
+      filter: none;
+    }
 
     .mobile-nav {
       position: fixed;
@@ -1811,11 +1808,11 @@
       <span id="tutorialArrowHead" class="tutorial-arrow-head"></span>
     </div>
     <div id="tutorialCard" class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle" data-pose="1">
-      <div id="tutorialStepPill" class="tutorial-step-pill">Step 1 of 7</div>
+      <div id="tutorialStepPill" class="tutorial-step-pill">Step 1 of 8</div>
       <div class="tutorial-body">
         <div class="tutorial-mascot-wrap">
-          <img id="tutorialMascotImage" class="tutorial-mascot-image" src="poopemojifinal.jpeg" alt="Poop Profit mascot placeholder pose">
-          <div id="tutorialMascotLabel" class="tutorial-mascot-label">Placeholder Pose 1</div>
+          <img id="tutorialMascotImage" class="tutorial-mascot-image" src="OnboardingMascot_20260419_094405_00000.jpg" alt="Onboarding mascot pose 1">
+          <div id="tutorialMascotLabel" class="tutorial-mascot-label">Mascot Pose 1</div>
         </div>
         <div class="tutorial-copy">
           <h3 id="tutorialTitle">Welcome to Poop Profit</h3>
@@ -1944,6 +1941,7 @@
       var tutorialStepPill = document.getElementById("tutorialStepPill");
       var tutorialTitle = document.getElementById("tutorialTitle");
       var tutorialBody = document.getElementById("tutorialBody");
+      var tutorialMascotImage = document.getElementById("tutorialMascotImage");
       var tutorialMascotLabel = document.getElementById("tutorialMascotLabel");
       var tutorialProgress = document.getElementById("tutorialProgress");
       var tutorialBackButton = document.getElementById("tutorialBackButton");
@@ -1956,7 +1954,8 @@
           body: "Quick Tour: Learn how to track how much you get paid to poop at work!",
           target: ".top-banner",
           tab: "calculator",
-          mascotLabel: "Placeholder Pose 1"
+          mascotLabel: "Mascot Pose 1",
+          mascotSrc: "OnboardingMascot_20260419_094405_00000.jpg"
         },
         {
           title: "Set Your Pay",
@@ -1964,42 +1963,56 @@
           target: "#wageStripToggleButton",
           tab: "calculator",
           expandWage: true,
-          mascotLabel: "Placeholder Pose 2"
+          mascotLabel: "Mascot Pose 2",
+          mascotSrc: "OnboardingMascot_20260419_094405_0000.jpg"
         },
         {
           title: "Start Your Session",
           body: "Tap Start Poop! to begin your session timer, then tap again when you're done so it saves to your log.",
           target: "#timerButton",
           tab: "calculator",
-          mascotLabel: "Placeholder Pose 3"
+          mascotLabel: "Mascot Pose 3",
+          mascotSrc: "OnboardingMascot_20260419_094405_0001.jpg"
         },
         {
           title: "Live Session Dashboard",
           body: "This will display your session timer, current earnings, projections, and milestone progress.",
           target: ".timer-card",
           tab: "calculator",
-          mascotLabel: "Placeholder Pose 4"
+          mascotLabel: "Mascot Pose 4",
+          mascotSrc: "OnboardingMascot_20260419_094405_0002.jpg"
         },
         {
           title: "Navigate Tabs",
           body: "Use these tabs to switch between Calculator, Stats, and Coming Soon whenever you want.",
           target: ".tabs",
           tab: "calculator",
-          mascotLabel: "Placeholder Pose 5"
+          mascotLabel: "Mascot Pose 5",
+          mascotSrc: "OnboardingMascot_20260419_094405_0003.jpg"
         },
         {
           title: "Save Your Log!",
           body: "When you finish pooping, your poop logs saves here. You can rate it, share it, or delete it anytime.",
           target: "#logList",
           tab: "calculator",
-          mascotLabel: "Placeholder Pose 6"
+          mascotLabel: "Mascot Pose 6",
+          mascotSrc: "OnboardingMascot_20260419_094405_0004.jpg"
         },
         {
           title: "See Your Detailed Stats!",
           body: "Use Stats to filter by date range, view trends, and share your results. You're all set! Happy pooping",
           target: "#panel-stats .stats-filter-bar",
           tab: "stats",
-          mascotLabel: "Placeholder Pose 7"
+          mascotLabel: "Mascot Pose 7",
+          mascotSrc: "OnboardingMascot_20260419_094405_0005.jpg"
+        },
+        {
+          title: "Need Help Later?",
+          body: "Tap the ? button anytime if you'd like to run the tutorial again.",
+          target: "#tutorialHelpButton",
+          tab: "calculator",
+          mascotLabel: "Mascot Pose 8",
+          mascotSrc: "OnboardingMascot_20260419_094405_0006.jpg"
         }
       ];
       var tutorialState = {
@@ -3158,6 +3171,11 @@
 
       function setupTutorial() {
         if (!tutorialOverlay || !tutorialCard || !tutorialStepPill || !tutorialTitle || !tutorialBody) return;
+        if (tutorialMascotImage) {
+          tutorialMascotImage.addEventListener("error", function () {
+            tutorialMascotImage.src = "poopemojifinal.jpeg";
+          });
+        }
         buildTutorialProgressDots();
         var seen = localStorage.getItem(TUTORIAL_SEEN_KEY) === "1";
         if (seen) return;
@@ -3242,8 +3260,16 @@
         tutorialStepPill.textContent = "Step " + String(safeIndex + 1) + " of " + String(TUTORIAL_STEPS.length);
         tutorialTitle.textContent = step.title;
         tutorialBody.textContent = step.body;
+        if (tutorialMascotImage) {
+          tutorialMascotImage.onerror = function () {
+            this.onerror = null;
+            this.src = "poopemojifinal.jpeg";
+          };
+          tutorialMascotImage.src = step.mascotSrc || "poopemojifinal.jpeg";
+          tutorialMascotImage.alt = "Onboarding mascot pose " + String(safeIndex + 1);
+        }
         if (tutorialMascotLabel) {
-          tutorialMascotLabel.textContent = step.mascotLabel || ("Placeholder Pose " + String(safeIndex + 1));
+          tutorialMascotLabel.textContent = step.mascotLabel || ("Mascot Pose " + String(safeIndex + 1));
         }
         if (tutorialCard) {
           tutorialCard.setAttribute("data-pose", String(safeIndex + 1));
