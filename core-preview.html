@@ -1165,33 +1165,6 @@
       z-index: 1;
     }
 
-    .tutorial-arrow {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 2;
-      display: none;
-    }
-
-    .tutorial-arrow-line {
-      position: fixed;
-      height: 2px;
-      background: linear-gradient(90deg, rgba(150, 225, 255, 0.95), rgba(60, 185, 245, 0.95));
-      transform-origin: 0 50%;
-      box-shadow: 0 0 10px rgba(105, 204, 255, 0.4);
-    }
-
-    .tutorial-arrow-head {
-      position: fixed;
-      width: 0;
-      height: 0;
-      border-top: 7px solid transparent;
-      border-bottom: 7px solid transparent;
-      border-left: 11px solid #9adfff;
-      filter: drop-shadow(0 0 6px rgba(111, 211, 255, 0.52));
-      transform-origin: 50% 50%;
-    }
-
     .tutorial-card {
       position: fixed;
       width: min(380px, calc(100vw - 20px));
@@ -1221,7 +1194,7 @@
 
     .tutorial-body {
       display: grid;
-      grid-template-columns: 94px 1fr;
+      grid-template-columns: 116px 1fr;
       gap: 12px;
       align-items: center;
     }
@@ -1240,15 +1213,6 @@
       object-fit: contain;
       border-radius: 10px;
       transition: transform 0.2s ease, filter 0.2s ease;
-    }
-
-    .tutorial-mascot-label {
-      margin-top: 5px;
-      font-size: 0.65rem;
-      color: #bee2ff;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      font-weight: 700;
     }
 
     .tutorial-copy h3 {
@@ -1289,6 +1253,50 @@
     .tutorial-controls {
       display: grid;
       grid-template-columns: 1fr 1fr 1.3fr;
+      gap: 8px;
+    }
+
+    .tutorial-confirm-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(3, 8, 16, 0.72);
+      backdrop-filter: blur(2px);
+      z-index: 260;
+    }
+
+    .tutorial-confirm-modal.open {
+      display: flex;
+    }
+
+    .tutorial-confirm-panel {
+      width: min(420px, 100%);
+      border-radius: 14px;
+      border: 1px solid rgba(101, 202, 255, 0.4);
+      background: linear-gradient(180deg, rgba(17, 28, 52, 0.98), rgba(9, 14, 28, 0.98));
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .tutorial-confirm-panel h3 {
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+      color: #eaf6ff;
+    }
+
+    .tutorial-confirm-panel p {
+      margin: 0 0 12px;
+      color: #c6daf6;
+      line-height: 1.45;
+      font-size: 0.93rem;
+    }
+
+    .tutorial-confirm-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
 
@@ -1470,7 +1478,7 @@
       }
 
       .tutorial-body {
-        grid-template-columns: 82px 1fr;
+        grid-template-columns: 96px 1fr;
       }
 
       .tutorial-controls {
@@ -1803,16 +1811,11 @@
   <div id="tutorialOverlay" class="tutorial-overlay" aria-hidden="true">
     <div class="tutorial-backdrop"></div>
     <div id="tutorialHighlight" class="tutorial-highlight"></div>
-    <div id="tutorialArrow" class="tutorial-arrow" aria-hidden="true">
-      <span id="tutorialArrowLine" class="tutorial-arrow-line"></span>
-      <span id="tutorialArrowHead" class="tutorial-arrow-head"></span>
-    </div>
     <div id="tutorialCard" class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle" data-pose="1">
       <div id="tutorialStepPill" class="tutorial-step-pill">Step 1 of 8</div>
       <div class="tutorial-body">
         <div class="tutorial-mascot-wrap">
           <img id="tutorialMascotImage" class="tutorial-mascot-image" src="OnboardingMascot_20260419_094405_00000.jpg" alt="Onboarding mascot pose 1">
-          <div id="tutorialMascotLabel" class="tutorial-mascot-label">Mascot Pose 1</div>
         </div>
         <div class="tutorial-copy">
           <h3 id="tutorialTitle">Welcome to Poop Profit</h3>
@@ -1824,6 +1827,27 @@
         <button id="tutorialBackButton" class="button ghost" type="button">Back</button>
         <button id="tutorialSkipButton" class="button ghost warn" type="button">Skip</button>
         <button id="tutorialNextButton" class="button" type="button">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tutorialStartModal" class="tutorial-confirm-modal" aria-hidden="true">
+    <div class="tutorial-confirm-panel" role="dialog" aria-modal="true" aria-labelledby="tutorialStartTitle">
+      <h3 id="tutorialStartTitle">Run Quick Tour?</h3>
+      <p>Would you like to run the quick tour now?</p>
+      <div class="tutorial-confirm-actions">
+        <button id="tutorialStartCancelButton" class="button ghost" type="button">Not Now</button>
+        <button id="tutorialStartConfirmButton" class="button" type="button">Start Tour</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tutorialCompleteModal" class="tutorial-confirm-modal" aria-hidden="true">
+    <div class="tutorial-confirm-panel" role="dialog" aria-modal="true" aria-labelledby="tutorialCompleteTitle">
+      <h3 id="tutorialCompleteTitle">Tutorial Complete</h3>
+      <p>You are all set. Happy pooping.</p>
+      <div class="tutorial-confirm-actions">
+        <button id="tutorialCompleteCloseButton" class="button full" type="button">Awesome</button>
       </div>
     </div>
   </div>
@@ -1934,19 +1958,20 @@
       var replayTutorialButton = document.getElementById("replayTutorialButton");
       var tutorialOverlay = document.getElementById("tutorialOverlay");
       var tutorialHighlight = document.getElementById("tutorialHighlight");
-      var tutorialArrow = document.getElementById("tutorialArrow");
-      var tutorialArrowLine = document.getElementById("tutorialArrowLine");
-      var tutorialArrowHead = document.getElementById("tutorialArrowHead");
       var tutorialCard = document.getElementById("tutorialCard");
       var tutorialStepPill = document.getElementById("tutorialStepPill");
       var tutorialTitle = document.getElementById("tutorialTitle");
       var tutorialBody = document.getElementById("tutorialBody");
       var tutorialMascotImage = document.getElementById("tutorialMascotImage");
-      var tutorialMascotLabel = document.getElementById("tutorialMascotLabel");
       var tutorialProgress = document.getElementById("tutorialProgress");
       var tutorialBackButton = document.getElementById("tutorialBackButton");
       var tutorialSkipButton = document.getElementById("tutorialSkipButton");
       var tutorialNextButton = document.getElementById("tutorialNextButton");
+      var tutorialStartModal = document.getElementById("tutorialStartModal");
+      var tutorialStartConfirmButton = document.getElementById("tutorialStartConfirmButton");
+      var tutorialStartCancelButton = document.getElementById("tutorialStartCancelButton");
+      var tutorialCompleteModal = document.getElementById("tutorialCompleteModal");
+      var tutorialCompleteCloseButton = document.getElementById("tutorialCompleteCloseButton");
       var TUTORIAL_SEEN_KEY = "pp_core_tutorial_seen_v1";
       var TUTORIAL_STEPS = [
         {
@@ -1954,7 +1979,6 @@
           body: "Quick Tour: Learn how to track how much you get paid to poop at work!",
           target: ".top-banner",
           tab: "calculator",
-          mascotLabel: "Mascot Pose 1",
           mascotSrc: "OnboardingMascot_20260419_094405_00000.jpg"
         },
         {
@@ -1963,7 +1987,6 @@
           target: "#wageStripToggleButton",
           tab: "calculator",
           expandWage: true,
-          mascotLabel: "Mascot Pose 2",
           mascotSrc: "OnboardingMascot_20260419_094405_0000.jpg"
         },
         {
@@ -1971,7 +1994,6 @@
           body: "Tap Start Poop! to begin your session timer, then tap again when you're done so it saves to your log.",
           target: "#timerButton",
           tab: "calculator",
-          mascotLabel: "Mascot Pose 3",
           mascotSrc: "OnboardingMascot_20260419_094405_0001.jpg"
         },
         {
@@ -1979,7 +2001,6 @@
           body: "This will display your session timer, current earnings, projections, and milestone progress.",
           target: ".timer-card",
           tab: "calculator",
-          mascotLabel: "Mascot Pose 4",
           mascotSrc: "OnboardingMascot_20260419_094405_0002.jpg"
         },
         {
@@ -1987,7 +2008,6 @@
           body: "Use these tabs to switch between Calculator, Stats, and Coming Soon whenever you want.",
           target: ".tabs",
           tab: "calculator",
-          mascotLabel: "Mascot Pose 5",
           mascotSrc: "OnboardingMascot_20260419_094405_0003.jpg"
         },
         {
@@ -1995,7 +2015,6 @@
           body: "When you finish pooping, your poop logs saves here. You can rate it, share it, or delete it anytime.",
           target: "#logList",
           tab: "calculator",
-          mascotLabel: "Mascot Pose 6",
           mascotSrc: "OnboardingMascot_20260419_094405_0004.jpg"
         },
         {
@@ -2003,7 +2022,6 @@
           body: "Use Stats to filter by date range, view trends, and share your results. You're all set! Happy pooping",
           target: "#panel-stats .stats-filter-bar",
           tab: "stats",
-          mascotLabel: "Mascot Pose 7",
           mascotSrc: "OnboardingMascot_20260419_094405_0005.jpg"
         },
         {
@@ -2011,8 +2029,7 @@
           body: "Tap the ? button anytime if you'd like to run the tutorial again.",
           target: "#tutorialHelpButton",
           tab: "calculator",
-          mascotLabel: "Mascot Pose 8",
-          mascotSrc: "OnboardingMascot_20260419_094405_0006.jpg"
+          mascotSrc: "OnboardingMascot_20260419_094405_00000.jpg"
         }
       ];
       var tutorialState = {
@@ -2249,9 +2266,7 @@
         if (tutorialHelpButton) {
           tutorialHelpButton.addEventListener("click", function () {
             triggerHapticVisual(tutorialHelpButton);
-            var approved = window.confirm("Would you like to run the quick tour now?");
-            if (!approved) return;
-            startTutorial(true);
+            openTutorialStartModal();
           });
         }
 
@@ -2269,9 +2284,42 @@
 
         if (tutorialSkipButton) {
           tutorialSkipButton.addEventListener("click", function () {
-            var approved = window.confirm("Skip quick tour? You can replay it anytime from the footer button.");
-            if (!approved) return;
             closeTutorial(true);
+          });
+        }
+
+        if (tutorialStartConfirmButton) {
+          tutorialStartConfirmButton.addEventListener("click", function () {
+            closeTutorialStartModal();
+            startTutorial(true);
+          });
+        }
+
+        if (tutorialStartCancelButton) {
+          tutorialStartCancelButton.addEventListener("click", function () {
+            closeTutorialStartModal();
+          });
+        }
+
+        if (tutorialCompleteCloseButton) {
+          tutorialCompleteCloseButton.addEventListener("click", function () {
+            closeTutorialCompleteModal();
+          });
+        }
+
+        if (tutorialStartModal) {
+          tutorialStartModal.addEventListener("click", function (event) {
+            if (event.target === tutorialStartModal) {
+              closeTutorialStartModal();
+            }
+          });
+        }
+
+        if (tutorialCompleteModal) {
+          tutorialCompleteModal.addEventListener("click", function (event) {
+            if (event.target === tutorialCompleteModal) {
+              closeTutorialCompleteModal();
+            }
           });
         }
 
@@ -3222,9 +3270,6 @@
           tutorialHighlight.style.width = "0px";
           tutorialHighlight.style.height = "0px";
         }
-        if (tutorialArrow) {
-          tutorialArrow.style.display = "none";
-        }
       }
 
       function moveTutorialStep(direction) {
@@ -3235,6 +3280,7 @@
         }
         if (nextIndex >= TUTORIAL_STEPS.length) {
           closeTutorial(true);
+          openTutorialCompleteModal();
           setStatus(statusMessage, "Quick tour complete. Happy pooping.", "ok");
           return;
         }
@@ -3268,9 +3314,6 @@
           tutorialMascotImage.src = step.mascotSrc || "poopemojifinal.jpeg";
           tutorialMascotImage.alt = "Onboarding mascot pose " + String(safeIndex + 1);
         }
-        if (tutorialMascotLabel) {
-          tutorialMascotLabel.textContent = step.mascotLabel || ("Mascot Pose " + String(safeIndex + 1));
-        }
         if (tutorialCard) {
           tutorialCard.setAttribute("data-pose", String(safeIndex + 1));
         }
@@ -3289,17 +3332,25 @@
           });
         }
 
+        ensureTutorialTargetVisibility(step);
         window.setTimeout(function () {
-          scrollToStepTarget(step);
           queueTutorialPositionUpdate();
-        }, 40);
+        }, 80);
       }
 
-      function scrollToStepTarget(step) {
+      function ensureTutorialTargetVisibility(step) {
         if (!step || !step.target) return;
         var target = document.querySelector(step.target);
         if (!target) return;
-        target.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        var rect = target.getBoundingClientRect();
+        var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+        var margin = 18;
+        var needsVerticalAdjust = rect.top < margin || rect.bottom > (viewportHeight - margin);
+        var needsHorizontalAdjust = rect.left < margin || rect.right > (viewportWidth - margin);
+        if (needsVerticalAdjust || needsHorizontalAdjust) {
+          target.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        }
       }
 
       function queueTutorialPositionUpdate() {
@@ -3325,7 +3376,6 @@
           tutorialCard.style.top = Math.max(18, (viewportHeight - tutorialCard.offsetHeight) / 2) + "px";
           tutorialHighlight.style.width = "0px";
           tutorialHighlight.style.height = "0px";
-          if (tutorialArrow) tutorialArrow.style.display = "none";
           return;
         }
 
@@ -3347,35 +3397,30 @@
 
         tutorialCard.style.left = left + "px";
         tutorialCard.style.top = top + "px";
-
-        drawTutorialArrow(centerX, placeBelow ? targetRect.bottom : targetRect.top, placeBelow);
       }
 
-      function drawTutorialArrow(targetCenterX, targetEdgeY, cardPlacedBelow) {
-        if (!tutorialArrow || !tutorialArrowLine || !tutorialArrowHead || !tutorialCard) return;
-        var cardRect = tutorialCard.getBoundingClientRect();
-        var startX = Math.max(cardRect.left + 18, Math.min(cardRect.right - 18, targetCenterX));
-        var startY = cardPlacedBelow ? cardRect.top : cardRect.bottom;
-        var endX = targetCenterX;
-        var endY = cardPlacedBelow ? targetEdgeY : targetEdgeY;
-        var dx = endX - startX;
-        var dy = endY - startY;
-        var length = Math.sqrt((dx * dx) + (dy * dy));
-        if (length < 12) {
-          tutorialArrow.style.display = "none";
-          return;
-        }
-        var angle = (Math.atan2(dy, dx) * 180) / Math.PI;
-        tutorialArrow.style.display = "block";
+      function openTutorialStartModal() {
+        if (!tutorialStartModal) return;
+        tutorialStartModal.classList.add("open");
+        tutorialStartModal.setAttribute("aria-hidden", "false");
+      }
 
-        tutorialArrowLine.style.left = startX + "px";
-        tutorialArrowLine.style.top = startY + "px";
-        tutorialArrowLine.style.width = Math.max(8, length - 12) + "px";
-        tutorialArrowLine.style.transform = "rotate(" + angle + "deg)";
+      function closeTutorialStartModal() {
+        if (!tutorialStartModal) return;
+        tutorialStartModal.classList.remove("open");
+        tutorialStartModal.setAttribute("aria-hidden", "true");
+      }
 
-        tutorialArrowHead.style.left = endX + "px";
-        tutorialArrowHead.style.top = endY + "px";
-        tutorialArrowHead.style.transform = "translate(-50%, -50%) rotate(" + angle + "deg)";
+      function openTutorialCompleteModal() {
+        if (!tutorialCompleteModal) return;
+        tutorialCompleteModal.classList.add("open");
+        tutorialCompleteModal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeTutorialCompleteModal() {
+        if (!tutorialCompleteModal) return;
+        tutorialCompleteModal.classList.remove("open");
+        tutorialCompleteModal.setAttribute("aria-hidden", "true");
       }
 
       function loadState() {
