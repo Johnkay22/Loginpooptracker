@@ -99,14 +99,6 @@
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "How does the paid to poop calculator work?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Enter your hourly wage or salary details, start a session timer, and PoopProfit calculates earnings based on your session duration."
-            }
-          },
-          {
-            "@type": "Question",
             "name": "Can I use PoopProfit without creating an account?",
             "acceptedAnswer": {
               "@type": "Answer",
@@ -219,7 +211,7 @@
         position: relative;
         overflow: hidden;
         border: 1px solid rgba(125, 211, 252, 0.32);
-        border-radius: 14px;
+        border-radius: 16px;
         background: rgba(2, 12, 35, 0.56);
         box-shadow: inset 0 0 28px rgba(2, 132, 199, 0.12);
       }
@@ -246,7 +238,7 @@
         gap: 10px;
         width: max-content;
         min-width: 100%;
-        padding: 10px 0;
+        padding: 14px 0;
         animation: marqueeScroll 34s linear infinite;
       }
       .review-marquee:hover .review-marquee-track {
@@ -258,9 +250,10 @@
         border-radius: 999px;
         background: rgba(15, 23, 42, 0.72);
         color: #e0f2fe;
-        padding: 8px 12px;
-        font-size: 0.81rem;
-        line-height: 1;
+        padding: 13px 18px;
+        font-size: 0.97rem;
+        line-height: 1.25;
+        font-weight: 600;
       }
       @keyframes marqueeScroll {
         from { transform: translateX(0); }
@@ -313,20 +306,20 @@
           No account required. Your sessions save locally on your device.
           <a href="https://www.poopprofit.com/core-preview.html" data-analytics-event="hero_secondary_cta_click" class="font-semibold text-cyan-200 underline decoration-cyan-300/60 underline-offset-2 hover:text-cyan-100">Try the live poop earnings calculator</a>.
         </p>
-        <section class="mx-auto mt-5 max-w-4xl" aria-label="Community earnings highlights">
-          <p class="mb-2 text-center text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200/80">Community Toilet Ticker</p>
+        <section class="mx-auto mt-5 max-w-5xl" aria-label="Community earnings highlights">
+          <p class="mb-2 text-center text-sm font-semibold uppercase tracking-[0.2em] text-cyan-200/90 sm:text-base">Live Toilet Ticker</p>
           <div class="review-marquee">
             <div class="review-marquee-track">
-              <span class="review-pill">"A mid-level manager just made $42 this week on the toilet."</span>
-              <span class="review-pill">"An operations lead tracked 9 sessions before Thursday lunch."</span>
-              <span class="review-pill">"A remote designer hit a new personal best of $18.60 in one morning."</span>
-              <span class="review-pill">"A warehouse supervisor says PoopProfit made bathroom breaks elite."</span>
-              <span class="review-pill">"A customer support rep shared stats and started a team leaderboard."</span>
-              <span class="review-pill">"A mid-level manager just made $42 this week on the toilet."</span>
-              <span class="review-pill">"An operations lead tracked 9 sessions before Thursday lunch."</span>
-              <span class="review-pill">"A remote designer hit a new personal best of $18.60 in one morning."</span>
-              <span class="review-pill">"A warehouse supervisor says PoopProfit made bathroom breaks elite."</span>
-              <span class="review-pill">"A customer support rep shared stats and started a team leaderboard."</span>
+              <span class="review-pill">"Leading gastroenterologist begins prescribing double espressos and bran muffins to patients, citing 'unprecedented financial upside.'"</span>
+              <span class="review-pill">"Wall Street panics as rogue trader liquidates a $40M portfolio to invest exclusively in 'paid-to-poop' behavioral futures."</span>
+              <span class="review-pill">"Fortune 500 company files for Chapter 11 bankruptcy after the entire C-suite discovers the app and refuses to leave the executive washroom."</span>
+              <span class="review-pill">"Silicon Valley venture capitalists secure $200M in Series B funding for a startup that replaces ergonomic desk chairs with high-yield porcelain bowls."</span>
+              <span class="review-pill">"National labor union successfully averts a strike by negotiating a groundbreaking contract that guarantees time-and-a-half for cafeteria-induced digestive distress."</span>
+              <span class="review-pill">"Leading gastroenterologist begins prescribing double espressos and bran muffins to patients, citing 'unprecedented financial upside.'"</span>
+              <span class="review-pill">"Wall Street panics as rogue trader liquidates a $40M portfolio to invest exclusively in 'paid-to-poop' behavioral futures."</span>
+              <span class="review-pill">"Fortune 500 company files for Chapter 11 bankruptcy after the entire C-suite discovers the app and refuses to leave the executive washroom."</span>
+              <span class="review-pill">"Silicon Valley venture capitalists secure $200M in Series B funding for a startup that replaces ergonomic desk chairs with high-yield porcelain bowls."</span>
+              <span class="review-pill">"National labor union successfully averts a strike by negotiating a groundbreaking contract that guarantees time-and-a-half for cafeteria-induced digestive distress."</span>
             </div>
           </div>
         </section>
@@ -411,10 +404,6 @@
       <section id="faq" class="mx-auto mt-12 max-w-5xl px-4 sm:px-6">
         <h2 class="text-center text-3xl font-extrabold tracking-tight text-sky-100 sm:text-4xl">Frequently Asked Questions</h2>
         <div class="mt-6 space-y-3">
-          <details data-faq-id="calculator" class="rounded-xl border border-sky-200/25 bg-slate-950/50 p-4">
-            <summary class="cursor-pointer list-none font-semibold text-cyan-100">How does the paid to poop calculator work?</summary>
-            <p class="mt-2 text-sm leading-relaxed text-slate-300">Enter your wage details, start a timer, and PoopProfit estimates your earnings based on real session duration.</p>
-          </details>
           <details data-faq-id="account" class="rounded-xl border border-sky-200/25 bg-slate-950/50 p-4">
             <summary class="cursor-pointer list-none font-semibold text-cyan-100">Can I use PoopProfit without creating an account?</summary>
             <p class="mt-2 text-sm leading-relaxed text-slate-300">Yes. The core preview is account-free and stores your data locally in your current browser.</p>
@@ -429,7 +418,7 @@
           </details>
           <details data-faq-id="live-preview" class="rounded-xl border border-sky-200/25 bg-slate-950/50 p-4">
             <summary class="cursor-pointer list-none font-semibold text-cyan-100">Where can I try the live preview?</summary>
-            <p class="mt-2 text-sm leading-relaxed text-slate-300">Open the core preview at <a href="https://www.poopprofit.com/core-preview.html" data-analytics-event="faq_core_preview_link_click" class="font-semibold text-cyan-200 underline decoration-cyan-300/60 underline-offset-2 hover:text-cyan-100">poopprofit.com/core-preview.html</a>.</p>
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">Open the live preview <a href="https://www.poopprofit.com/core-preview.html" data-analytics-event="faq_core_preview_link_click" class="font-semibold text-cyan-200 underline decoration-cyan-300/60 underline-offset-2 hover:text-cyan-100">HERE</a>.</p>
           </details>
         </div>
       </section>
