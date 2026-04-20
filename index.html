@@ -215,6 +215,63 @@
       .hero-mascot {
         filter: drop-shadow(0 25px 42px rgba(0, 191, 255, 0.3));
       }
+      .review-marquee {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(125, 211, 252, 0.32);
+        border-radius: 14px;
+        background: rgba(2, 12, 35, 0.56);
+        box-shadow: inset 0 0 28px rgba(2, 132, 199, 0.12);
+      }
+      .review-marquee::before,
+      .review-marquee::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 54px;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .review-marquee::before {
+        left: 0;
+        background: linear-gradient(90deg, rgba(2, 12, 35, 0.92), transparent);
+      }
+      .review-marquee::after {
+        right: 0;
+        background: linear-gradient(270deg, rgba(2, 12, 35, 0.92), transparent);
+      }
+      .review-marquee-track {
+        display: flex;
+        gap: 10px;
+        width: max-content;
+        min-width: 100%;
+        padding: 10px 0;
+        animation: marqueeScroll 34s linear infinite;
+      }
+      .review-marquee:hover .review-marquee-track {
+        animation-play-state: paused;
+      }
+      .review-pill {
+        white-space: nowrap;
+        border: 1px solid rgba(125, 211, 252, 0.36);
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.72);
+        color: #e0f2fe;
+        padding: 8px 12px;
+        font-size: 0.81rem;
+        line-height: 1;
+      }
+      @keyframes marqueeScroll {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .review-marquee-track {
+          animation: none;
+          transform: translateX(0);
+        }
+      }
     </style>
   </head>
 
@@ -256,6 +313,23 @@
           No account required. Your sessions save locally on your device.
           <a href="https://www.poopprofit.com/core-preview.html" data-analytics-event="hero_secondary_cta_click" class="font-semibold text-cyan-200 underline decoration-cyan-300/60 underline-offset-2 hover:text-cyan-100">Try the live poop earnings calculator</a>.
         </p>
+        <section class="mx-auto mt-5 max-w-4xl" aria-label="Community earnings highlights">
+          <p class="mb-2 text-center text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200/80">Community Toilet Ticker</p>
+          <div class="review-marquee">
+            <div class="review-marquee-track">
+              <span class="review-pill">"A mid-level manager just made $42 this week on the toilet."</span>
+              <span class="review-pill">"An operations lead tracked 9 sessions before Thursday lunch."</span>
+              <span class="review-pill">"A remote designer hit a new personal best of $18.60 in one morning."</span>
+              <span class="review-pill">"A warehouse supervisor says PoopProfit made bathroom breaks elite."</span>
+              <span class="review-pill">"A customer support rep shared stats and started a team leaderboard."</span>
+              <span class="review-pill">"A mid-level manager just made $42 this week on the toilet."</span>
+              <span class="review-pill">"An operations lead tracked 9 sessions before Thursday lunch."</span>
+              <span class="review-pill">"A remote designer hit a new personal best of $18.60 in one morning."</span>
+              <span class="review-pill">"A warehouse supervisor says PoopProfit made bathroom breaks elite."</span>
+              <span class="review-pill">"A customer support rep shared stats and started a team leaderboard."</span>
+            </div>
+          </div>
+        </section>
 
         <div class="mt-10 flex justify-center sm:mt-14">
           <img src="POOPPROFITMASCOT.png" alt="PoopProfit mascot holding cash" class="hero-mascot h-auto w-full max-w-[330px] animate-float sm:max-w-[430px]" />
