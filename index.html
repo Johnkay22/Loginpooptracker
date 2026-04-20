@@ -3,18 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PoopProfit.com — Get Paid to Poop at Work</title>
+    <title>Paid to Poop at Work Calculator | PoopProfit.com</title>
     <meta
       name="description"
-      content="Calculate how much you get paid to poop at work, track sessions, and share your bathroom break earnings with PoopProfit."
+      content="Use the PoopProfit paid-to-poop calculator to estimate bathroom break earnings, track sessions, and share progress with no account required."
     />
     <link rel="canonical" href="https://www.poopprofit.com/" />
     <meta name="robots" content="index,follow,max-image-preview:large" />
 
-    <meta property="og:title" content="PoopProfit.com — Get Paid to Poop at Work" />
+    <meta property="og:title" content="Paid to Poop at Work Calculator | PoopProfit.com" />
     <meta
       property="og:description"
-      content="Calculate how much you get paid to poop at work, track sessions, and share your bathroom break earnings."
+      content="Calculate bathroom break earnings, track sessions, and preview the PoopProfit dashboard experience."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.poopprofit.com/" />
@@ -23,10 +23,10 @@
     <meta property="og:site_name" content="PoopProfit.com" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="PoopProfit.com — Get Paid to Poop at Work" />
+    <meta name="twitter:title" content="Paid to Poop at Work Calculator | PoopProfit.com" />
     <meta
       name="twitter:description"
-      content="Calculate how much you get paid to poop at work, track sessions, and share your bathroom break earnings."
+      content="Calculate bathroom break earnings, track sessions, and preview the PoopProfit dashboard experience."
     />
     <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg" />
 
@@ -66,12 +66,16 @@
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "PoopProfit.com",
+        "url": "https://www.poopprofit.com/"
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "PoopProfit",
         "url": "https://www.poopprofit.com/",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://www.poopprofit.com/?q={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
+        "logo": "https://www.poopprofit.com/newpplogo.png"
       }
     </script>
     <script type="application/ld+json">
@@ -86,6 +90,54 @@
           "@type": "WebSite",
           "url": "https://www.poopprofit.com/"
         }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does the paid to poop calculator work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Enter your hourly wage or salary details, start a session timer, and PoopProfit calculates earnings based on your session duration."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I use PoopProfit without creating an account?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. The core preview works without sign-up and stores your data locally on your device."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does PoopProfit support salary-based workers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. You can switch to salary mode and enter annual salary plus weekly hours to get an effective hourly rate."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I share my poop earnings stats?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. You can share session highlights and stat summaries directly from the core preview dashboard."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Where do I try the live PoopProfit preview?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Use the Start Pooping button on this page, or go directly to https://www.poopprofit.com/core-preview.html."
+            }
+          }
+        ]
       }
     </script>
     <script>
@@ -177,7 +229,7 @@
     <main id="top" class="relative z-10 pb-20">
       <section class="mx-auto max-w-6xl px-4 pt-8 text-center sm:px-6 sm:pt-10">
         <div class="mx-auto mb-6 flex justify-center sm:mb-8">
-          <img src="newpplogo.png" alt="PoopProfit.com logo" class="h-auto w-full max-w-[230px] sm:max-w-[340px]" />
+          <img src="newpplogo.png" alt="PoopProfit.com logo" class="h-auto w-full max-w-[170px] sm:max-w-[260px]" />
         </div>
         <h1 class="hero-title mx-auto max-w-4xl text-4xl font-black leading-tight tracking-tight text-slate-100 sm:text-6xl">
           How Much Do You
@@ -195,10 +247,15 @@
         </div>
         <a
           href="https://www.poopprofit.com/core-preview.html"
+          data-analytics-event="hero_primary_cta_click"
           class="mt-8 inline-flex items-center justify-center rounded-xl border border-cyan-300/80 bg-gradient-to-b from-sky-300 via-blue-500 to-blue-700 px-10 py-4 text-2xl font-extrabold text-white shadow-[0_0_30px_rgba(56,189,248,.55)] transition hover:-translate-y-0.5 hover:brightness-110"
         >
           Start Pooping!
         </a>
+        <p class="mx-auto mt-3 max-w-2xl text-sm text-slate-300 sm:text-base">
+          No account required. Your sessions save locally on your device.
+          <a href="https://www.poopprofit.com/core-preview.html" data-analytics-event="hero_secondary_cta_click" class="font-semibold text-cyan-200 underline decoration-cyan-300/60 underline-offset-2 hover:text-cyan-100">Try the live poop earnings calculator</a>.
+        </p>
 
         <div class="mt-10 flex justify-center sm:mt-14">
           <img src="POOPPROFITMASCOT.png" alt="PoopProfit mascot holding cash" class="hero-mascot h-auto w-full max-w-[330px] animate-float sm:max-w-[430px]" />
@@ -206,6 +263,27 @@
       </section>
 
       <div class="mx-auto mt-16 h-px w-[92%] max-w-6xl glow-line"></div>
+
+      <section id="how-it-works" class="mx-auto mt-12 max-w-5xl px-4 sm:px-6">
+        <h2 class="text-center text-3xl font-extrabold tracking-tight text-sky-100 sm:text-4xl">How It Works</h2>
+        <p class="mx-auto mt-3 max-w-3xl text-center text-slate-200 sm:text-lg">
+          PoopProfit turns your bathroom breaks into trackable earnings in under a minute.
+        </p>
+        <div class="mt-6 grid gap-3 sm:grid-cols-3">
+          <article class="rounded-2xl border border-sky-200/25 bg-slate-950/45 p-4 glass">
+            <h3 class="text-base font-bold text-cyan-100 sm:text-lg">1. Enter your pay rate</h3>
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">Use hourly wage or salary + weekly hours to calculate an accurate per-hour rate.</p>
+          </article>
+          <article class="rounded-2xl border border-sky-200/25 bg-slate-950/45 p-4 glass">
+            <h3 class="text-base font-bold text-cyan-100 sm:text-lg">2. Start and stop your session</h3>
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">Run the timer during your break and instantly see live session earnings.</p>
+          </article>
+          <article class="rounded-2xl border border-sky-200/25 bg-slate-950/45 p-4 glass">
+            <h3 class="text-base font-bold text-cyan-100 sm:text-lg">3. Review, filter, and share</h3>
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">Save logs, explore trends by date range, and share highlights in one tap.</p>
+          </article>
+        </div>
+      </section>
 
       <section id="stats" class="mx-auto mt-12 max-w-4xl px-4 sm:px-6">
         <h2 class="text-center text-4xl font-extrabold tracking-tight text-sky-100 sm:text-5xl">Poop Profit Stats</h2>
@@ -255,6 +333,61 @@
           </div>
         </div>
       </section>
+
+      <section id="faq" class="mx-auto mt-12 max-w-5xl px-4 sm:px-6">
+        <h2 class="text-center text-3xl font-extrabold tracking-tight text-sky-100 sm:text-4xl">Frequently Asked Questions</h2>
+        <div class="mt-6 space-y-3">
+          <details data-faq-id="calculator" class="rounded-xl border border-sky-200/25 bg-slate-950/50 p-4">
+            <summary class="cursor-pointer list-none font-semibold text-cyan-100">How does the paid to poop calculator work?</summary>
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">Enter your wage details, start a timer, and PoopProfit estimates your earnings based on real session duration.</p>
+          </details>
+          <details data-faq-id="account" class="rounded-xl border border-sky-200/25 bg-slate-950/50 p-4">
+            <summary class="cursor-pointer list-none font-semibold text-cyan-100">Can I use PoopProfit without creating an account?</summary>
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">Yes. The core preview is account-free and stores your data locally in your current browser.</p>
+          </details>
+          <details data-faq-id="salary-mode" class="rounded-xl border border-sky-200/25 bg-slate-950/50 p-4">
+            <summary class="cursor-pointer list-none font-semibold text-cyan-100">Does PoopProfit work for salary-based jobs?</summary>
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">Yes. Switch to salary mode and enter annual salary plus weekly hours for an effective hourly rate.</p>
+          </details>
+          <details data-faq-id="sharing" class="rounded-xl border border-sky-200/25 bg-slate-950/50 p-4">
+            <summary class="cursor-pointer list-none font-semibold text-cyan-100">Can I share my session earnings and stats?</summary>
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">Yes. You can share logs and stat highlights from the preview dashboard to social and messages.</p>
+          </details>
+          <details data-faq-id="live-preview" class="rounded-xl border border-sky-200/25 bg-slate-950/50 p-4">
+            <summary class="cursor-pointer list-none font-semibold text-cyan-100">Where can I try the live preview?</summary>
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">Open the core preview at <a href="https://www.poopprofit.com/core-preview.html" data-analytics-event="faq_core_preview_link_click" class="font-semibold text-cyan-200 underline decoration-cyan-300/60 underline-offset-2 hover:text-cyan-100">poopprofit.com/core-preview.html</a>.</p>
+          </details>
+        </div>
+      </section>
     </main>
+    <script>
+      (function () {
+        function trackEvent(eventName, params) {
+          if (typeof gtag !== "function") return;
+          gtag("event", eventName, params || {});
+        }
+
+        var trackedLinks = document.querySelectorAll("[data-analytics-event]");
+        trackedLinks.forEach(function (element) {
+          element.addEventListener("click", function () {
+            var eventName = element.getAttribute("data-analytics-event");
+            if (!eventName) return;
+            trackEvent(eventName, {
+              page_section: element.closest("section") ? element.closest("section").id || "unknown" : "unknown"
+            });
+          });
+        });
+
+        var faqItems = document.querySelectorAll("details[data-faq-id]");
+        faqItems.forEach(function (item) {
+          item.addEventListener("toggle", function () {
+            if (!item.open) return;
+            trackEvent("faq_open", {
+              faq_id: item.getAttribute("data-faq-id") || "unknown"
+            });
+          });
+        });
+      })();
+    </script>
   </body>
 </html>
