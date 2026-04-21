@@ -188,15 +188,6 @@
       .glow-line {
         background: linear-gradient(90deg, transparent, rgba(125,211,252,0.7), transparent);
       }
-      .money {
-        position: absolute;
-        pointer-events: none;
-        opacity: .65;
-        width: min(20vw, 140px);
-        filter: drop-shadow(0 0 8px rgba(134,239,172,0.2));
-        animation: drift var(--dur, 18s) linear infinite;
-        transform-origin: center;
-      }
       .hero-title {
         text-shadow: 0 4px 24px rgba(8, 47, 73, 0.9);
       }
@@ -343,13 +334,6 @@
   </head>
 
   <body class="space-bg overflow-x-hidden">
-    <div class="fixed inset-0 pointer-events-none">
-      <img src="20241017_071034_0000.jpg" alt="Floating dollar bill decoration" class="money top-[8%] left-[-2%] [--dur:22s]" />
-      <img src="20241017_071034_0000.jpg" alt="Floating dollar bill decoration" class="money top-[15%] right-[-3%] [--dur:19s]" />
-      <img src="20241017_071034_0000.jpg" alt="Floating dollar bill decoration" class="money top-[50%] left-[3%] [--dur:24s]" />
-      <img src="20241017_071034_0000.jpg" alt="Floating dollar bill decoration" class="money top-[72%] right-[4%] [--dur:20s]" />
-    </div>
-
     <main id="top" class="relative z-10 pb-20">
       <section class="mx-auto max-w-6xl px-4 pt-8 text-center sm:px-6 sm:pt-10">
         <div class="mx-auto mb-6 flex justify-center sm:mb-8">
