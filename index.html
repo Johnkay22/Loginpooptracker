@@ -222,32 +222,44 @@
       .ticker-shell {
         display: grid;
         grid-template-columns: auto 1fr;
-        border: 1px solid rgba(125, 211, 252, 0.36);
+        border: 1px solid rgba(147, 220, 255, 0.48);
         border-radius: 14px;
         overflow: hidden;
-        background: rgba(3, 13, 34, 0.85);
-        box-shadow: inset 0 0 24px rgba(2, 132, 199, 0.16);
+        background: linear-gradient(180deg, rgba(3, 14, 37, 0.96), rgba(1, 9, 24, 0.96));
+        box-shadow: inset 0 0 34px rgba(2, 132, 199, 0.2), 0 8px 26px rgba(1, 8, 22, 0.55);
       }
       .ticker-live-tag {
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        gap: 8px;
         padding: 0 14px;
-        min-height: 76px;
-        letter-spacing: 0.12em;
+        min-height: 82px;
+        letter-spacing: 0.11em;
         font-size: 0.72rem;
         font-weight: 800;
         text-transform: uppercase;
         color: #d8f6ff;
-        background: linear-gradient(180deg, rgba(12, 28, 58, 0.96), rgba(5, 14, 30, 0.96));
-        border-right: 1px solid rgba(125, 211, 252, 0.28);
+        background: linear-gradient(180deg, rgba(13, 31, 63, 0.98), rgba(5, 14, 30, 0.98));
+        border-right: 1px solid rgba(125, 211, 252, 0.32);
+      }
+      .ticker-live-tag::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: #34d399;
+        box-shadow: 0 0 0 5px rgba(52, 211, 153, 0.15);
+        animation: tickerPulse 1.35s ease-in-out infinite;
       }
       .review-marquee {
         position: relative;
         overflow: hidden;
-        min-height: 76px;
+        min-height: 88px;
         display: flex;
         align-items: center;
+        border-top: 1px solid rgba(125, 211, 252, 0.16);
+        border-bottom: 1px solid rgba(125, 211, 252, 0.16);
       }
       .review-marquee::before,
       .review-marquee::after {
@@ -270,56 +282,61 @@
       .review-marquee-track {
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 28px;
         width: max-content;
-        min-width: 100%;
-        padding: 0 12px;
-        animation: marqueeScroll 92s linear infinite;
+        padding: 0 18px;
+        will-change: transform;
+        animation: marqueeScroll var(--ticker-duration, 56s) linear infinite;
+      }
+      .review-marquee-group {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-shrink: 0;
       }
       .review-marquee:hover .review-marquee-track {
         animation-play-state: paused;
       }
       .review-item {
         white-space: nowrap;
-        color: #d6f4ff;
-        font-size: 1.02rem;
+        color: #ddf4ff;
+        font-size: 1.08rem;
         line-height: 1.2;
-        font-weight: 600;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        text-shadow: 0 0 14px rgba(14, 165, 233, 0.2);
       }
       .ticker-separator {
-        color: rgba(125, 211, 252, 0.7);
+        color: rgba(125, 211, 252, 0.78);
         font-size: 1rem;
         line-height: 1;
         font-weight: 700;
       }
       @keyframes marqueeScroll {
-        from { transform: translateX(0); }
-        to { transform: translateX(-50%); }
+        from { transform: translate3d(0, 0, 0); }
+        to { transform: translate3d(calc(-1 * var(--ticker-distance, 50%)), 0, 0); }
+      }
+      @keyframes tickerPulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(0.84); opacity: 0.7; }
       }
       @media (max-width: 767px) {
         .ticker-shell {
           grid-template-columns: 1fr;
         }
         .ticker-live-tag {
-          min-height: 38px;
+          min-height: 42px;
           border-right: none;
           border-bottom: 1px solid rgba(125, 211, 252, 0.28);
         }
-        .review-marquee,
-        .review-marquee-track {
-          min-height: 66px;
+        .review-marquee {
+          min-height: 72px;
         }
         .review-marquee-track {
-          animation-duration: 68s;
+          padding: 0 14px;
         }
         .review-item {
-          font-size: 0.93rem;
-        }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .review-marquee-track {
-          animation: none;
-          transform: translateX(0);
+          font-size: 0.94rem;
         }
       }
     </style>
@@ -367,27 +384,30 @@
           <p class="mb-2 text-center text-sm font-semibold uppercase tracking-[0.2em] text-cyan-200/90 sm:text-base">Live Toilet Ticker</p>
           <div class="ticker-shell">
             <span class="ticker-live-tag">Live</span>
-            <div class="review-marquee">
+            <div class="review-marquee review-marquee-row">
               <div class="review-marquee-track">
-                <span class="review-item">"Leading gastroenterologist begins prescribing double espressos and bran muffins to patients, citing 'unprecedented financial upside.'"</span>
-                <span class="ticker-separator" aria-hidden="true">|</span>
-                <span class="review-item">"Wall Street panics as rogue trader liquidates a $40M portfolio to invest exclusively in 'paid-to-poop' behavioral futures."</span>
-                <span class="ticker-separator" aria-hidden="true">|</span>
-                <span class="review-item">"Fortune 500 company files for Chapter 11 bankruptcy after the entire C-suite discovers the app and refuses to leave the executive washroom."</span>
-                <span class="ticker-separator" aria-hidden="true">|</span>
-                <span class="review-item">"Silicon Valley venture capitalists secure $200M in Series B funding for a startup that replaces ergonomic desk chairs with high-yield porcelain bowls."</span>
-                <span class="ticker-separator" aria-hidden="true">|</span>
-                <span class="review-item">"National labor union successfully averts a strike by negotiating a groundbreaking contract that guarantees time-and-a-half for cafeteria-induced digestive distress."</span>
-                <span class="ticker-separator" aria-hidden="true">|</span>
-                <span class="review-item">"Leading gastroenterologist begins prescribing double espressos and bran muffins to patients, citing 'unprecedented financial upside.'"</span>
-                <span class="ticker-separator" aria-hidden="true">|</span>
-                <span class="review-item">"Wall Street panics as rogue trader liquidates a $40M portfolio to invest exclusively in 'paid-to-poop' behavioral futures."</span>
-                <span class="ticker-separator" aria-hidden="true">|</span>
-                <span class="review-item">"Fortune 500 company files for Chapter 11 bankruptcy after the entire C-suite discovers the app and refuses to leave the executive washroom."</span>
-                <span class="ticker-separator" aria-hidden="true">|</span>
-                <span class="review-item">"Silicon Valley venture capitalists secure $200M in Series B funding for a startup that replaces ergonomic desk chairs with high-yield porcelain bowls."</span>
-                <span class="ticker-separator" aria-hidden="true">|</span>
-                <span class="review-item">"National labor union successfully averts a strike by negotiating a groundbreaking contract that guarantees time-and-a-half for cafeteria-induced digestive distress."</span>
+                <div class="review-marquee-group">
+                  <span class="review-item">"Leading gastroenterologist begins prescribing double espressos and bran muffins to patients, citing 'unprecedented financial upside.'"</span>
+                  <span class="ticker-separator" aria-hidden="true">|</span>
+                  <span class="review-item">"Wall Street panics as rogue trader liquidates a $40M portfolio to invest exclusively in 'paid-to-poop' behavioral futures."</span>
+                  <span class="ticker-separator" aria-hidden="true">|</span>
+                  <span class="review-item">"Fortune 500 company files for Chapter 11 bankruptcy after the entire C-suite discovers the app and refuses to leave the executive washroom."</span>
+                  <span class="ticker-separator" aria-hidden="true">|</span>
+                  <span class="review-item">"Silicon Valley venture capitalists secure $200M in Series B funding for a startup that replaces ergonomic desk chairs with high-yield porcelain bowls."</span>
+                  <span class="ticker-separator" aria-hidden="true">|</span>
+                  <span class="review-item">"National labor union successfully averts a strike by negotiating a groundbreaking contract that guarantees time-and-a-half for cafeteria-induced digestive distress."</span>
+                </div>
+                <div class="review-marquee-group" aria-hidden="true">
+                  <span class="review-item">"Leading gastroenterologist begins prescribing double espressos and bran muffins to patients, citing 'unprecedented financial upside.'"</span>
+                  <span class="ticker-separator" aria-hidden="true">|</span>
+                  <span class="review-item">"Wall Street panics as rogue trader liquidates a $40M portfolio to invest exclusively in 'paid-to-poop' behavioral futures."</span>
+                  <span class="ticker-separator" aria-hidden="true">|</span>
+                  <span class="review-item">"Fortune 500 company files for Chapter 11 bankruptcy after the entire C-suite discovers the app and refuses to leave the executive washroom."</span>
+                  <span class="ticker-separator" aria-hidden="true">|</span>
+                  <span class="review-item">"Silicon Valley venture capitalists secure $200M in Series B funding for a startup that replaces ergonomic desk chairs with high-yield porcelain bowls."</span>
+                  <span class="ticker-separator" aria-hidden="true">|</span>
+                  <span class="review-item">"National labor union successfully averts a strike by negotiating a groundbreaking contract that guarantees time-and-a-half for cafeteria-induced digestive distress."</span>
+                </div>
               </div>
             </div>
           </div>
@@ -499,6 +519,20 @@
           gtag("event", eventName, params || {});
         }
 
+        function setupTickerMotion() {
+          var rows = document.querySelectorAll(".review-marquee-row");
+          rows.forEach(function (row) {
+            var track = row.querySelector(".review-marquee-track");
+            if (!track) return;
+            var contentWidth = track.scrollWidth / 2;
+            if (!contentWidth || !Number.isFinite(contentWidth)) return;
+            row.style.setProperty("--ticker-distance", contentWidth + "px");
+            var speed = row.classList.contains("slow") ? 44 : 58;
+            var duration = Math.max(22, contentWidth / speed);
+            row.style.setProperty("--ticker-duration", duration.toFixed(1) + "s");
+          });
+        }
+
         var trackedLinks = document.querySelectorAll("[data-analytics-event]");
         trackedLinks.forEach(function (element) {
           element.addEventListener("click", function () {
@@ -519,6 +553,9 @@
             });
           });
         });
+
+        setupTickerMotion();
+        window.addEventListener("resize", setupTickerMotion);
       })();
     </script>
   </body>
