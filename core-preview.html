@@ -20,6 +20,8 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.poopprofit.com/core-preview.html">
   <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="PoopProfit core preview dashboard">
   <meta property="og:site_name" content="PoopProfit.com">
 
@@ -30,6 +32,7 @@
     content="Track poop sessions, calculate earnings, and review trends in the PoopProfit Core Preview."
   >
   <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg">
+  <meta name="twitter:image:alt" content="PoopProfit core preview dashboard">
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
   <script>
@@ -142,6 +145,18 @@
       width: 100%;
       display: block;
       height: auto;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     .tutorial-help-button {
@@ -1645,6 +1660,7 @@
 <body>
   <main class="page">
     <section class="shell">
+      <h1 class="sr-only">PoopProfit Core Preview Calculator, Session Timer, and Stats</h1>
       <button id="tutorialHelpButton" class="tutorial-help-button" type="button" aria-label="Open quick tour">?</button>
       <header class="top-banner">
         <img src="BANNER.jpeg" alt="Poop Profit banner">
@@ -2170,6 +2186,11 @@
         rafId: null
       };
 
+      function trackCoreEvent(eventName, params) {
+        if (typeof gtag !== "function" || !eventName) return;
+        gtag("event", eventName, params || {});
+      }
+
       hydrateInputs();
       renderTabs();
       renderWageMode();
@@ -2306,6 +2327,7 @@
             var mode = button.getAttribute("data-stats-range");
             if (!mode) return;
             statsRangeMode = mode;
+            trackCoreEvent("core_stats_range_change", { range_mode: mode });
             if (mode === "custom") {
               ensureCustomRangeDefaults();
             }
@@ -2585,6 +2607,10 @@
         lastMilestoneAnnounced = 0;
         hideMilestoneCelebration();
         persist();
+        trackCoreEvent("core_session_start", {
+          wage_mode: state.wageMode,
+          hourly_rate: Number(hourly.toFixed(2))
+        });
         setStatus(statusMessage, "Session started. Let the profits flow.", "ok");
         renderTimerButton();
         renderFirstSessionCoach();
@@ -2615,6 +2641,10 @@
         lastMilestoneAnnounced = 0;
         hideMilestoneCelebration();
         persist();
+        trackCoreEvent("core_session_stop", {
+          duration_seconds: durationSeconds,
+          earnings: Number(roundCurrency(earnings).toFixed(2))
+        });
         clearIntervalIfRunning();
         openRatingModal();
         renderAll();
@@ -2864,6 +2894,7 @@
       function shareText(text, target) {
         var shareTarget = target || "native";
         var url = "https://www.poopprofit.com";
+        trackCoreEvent("core_share_channel", { channel: shareTarget });
 
         if (shareTarget === "native") {
           if (navigator.share) {
@@ -3164,6 +3195,7 @@
         });
         if (updated) {
           persist();
+          trackCoreEvent("core_rating_saved", { rating: safeRating });
           renderAll();
         }
       }
@@ -3512,6 +3544,9 @@
         tutorialState.stepIndex = 0;
         tutorialOverlay.classList.add("open");
         tutorialOverlay.setAttribute("aria-hidden", "false");
+        trackCoreEvent("core_tutorial_start", {
+          source: fromReplay ? "manual_replay" : "auto_prompt"
+        });
         if (!fromReplay) {
           localStorage.setItem(TUTORIAL_SEEN_KEY, "1");
         }
@@ -3542,6 +3577,7 @@
         if (nextIndex >= TUTORIAL_STEPS.length) {
           closeTutorial(true);
           openTutorialCompleteModal();
+          trackCoreEvent("core_tutorial_complete", { steps_completed: TUTORIAL_STEPS.length });
           setStatus(statusMessage, "Quick tour complete. Happy pooping.", "ok");
           return;
         }
