@@ -19,6 +19,8 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.poopprofit.com/" />
     <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="PoopProfit earnings dashboard preview" />
     <meta property="og:site_name" content="PoopProfit.com" />
 
@@ -29,6 +31,7 @@
       content="Calculate bathroom break earnings, track sessions, and preview the PoopProfit dashboard experience."
     />
     <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg" />
+    <meta name="twitter:image:alt" content="PoopProfit earnings dashboard preview" />
 
     <link rel="icon" href="favicon.png" />
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
@@ -102,31 +105,31 @@
             "name": "Can I use PoopProfit without creating an account?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Yes. The core preview works without sign-up and stores your data locally on your device."
+              "text": "Yes. The core preview is account-free and stores your data locally in your current browser."
             }
           },
           {
             "@type": "Question",
-            "name": "Does PoopProfit support salary-based workers?",
+            "name": "Does PoopProfit work for salary-based jobs?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Yes. You can switch to salary mode and enter annual salary plus weekly hours to get an effective hourly rate."
+              "text": "Yes. Switch to salary mode and enter annual salary plus weekly hours for an effective hourly rate."
             }
           },
           {
             "@type": "Question",
-            "name": "Can I share my poop earnings stats?",
+            "name": "Can I share my session earnings and stats?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Yes. You can share session highlights and stat summaries directly from the core preview dashboard."
+              "text": "Yes. You can share logs and stat highlights from the preview dashboard to social and messages."
             }
           },
           {
             "@type": "Question",
-            "name": "Where do I try the live PoopProfit preview?",
+            "name": "Where can I try the live preview?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Use the Start Pooping button on this page, or go directly to https://www.poopprofit.com/core-preview.html."
+              "text": "Open the live preview at https://www.poopprofit.com/core-preview.html."
             }
           }
         ]
@@ -269,6 +272,23 @@
       .hero-cta-row a {
         min-height: 56px;
         min-width: 210px;
+      }
+      .faq-cta-wrap {
+        margin: 14px auto 0;
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+      }
+      .faq-cta-wrap a {
+        min-height: 52px;
+        min-width: 220px;
+      }
+      .faq-cta-note {
+        margin: 0;
+        max-width: 44ch;
+        color: #cce7ff;
+        font-size: 0.9rem;
+        line-height: 1.4;
       }
       .trust-row {
         margin: 12px auto 0;
@@ -443,6 +463,10 @@
           max-width: 360px;
           min-height: 50px;
         }
+        .faq-cta-wrap a {
+          width: 100%;
+          max-width: 360px;
+        }
       }
       .mobile-sticky-cta {
         position: fixed;
@@ -489,7 +513,7 @@
 
   <body class="space-bg overflow-x-hidden">
     <main id="top" class="relative z-10 pb-20">
-      <section class="mx-auto max-w-6xl px-4 pt-8 text-center sm:px-6 sm:pt-10">
+      <section id="hero" class="mx-auto max-w-6xl px-4 pt-8 text-center sm:px-6 sm:pt-10">
         <div class="mx-auto mb-6 flex justify-center sm:mb-8">
           <img src="newpplogo.png" alt="PoopProfit.com logo" class="h-auto w-full max-w-[170px] sm:max-w-[260px]" />
         </div>
@@ -517,13 +541,6 @@
             class="ui-primary-cta inline-flex items-center justify-center px-10 py-4 text-xl font-extrabold transition hover:-translate-y-0.5 hover:brightness-110"
           >
             Start Pooping!
-          </a>
-          <a
-            href="https://www.poopprofit.com/core-preview.html"
-            data-analytics-event="hero_secondary_cta_click"
-            class="ui-secondary-cta inline-flex items-center justify-center px-10 py-4 text-lg font-bold transition hover:-translate-y-0.5 hover:brightness-110"
-          >
-            View Live Core Preview
           </a>
         </div>
         <div class="trust-row" aria-label="Trust indicators">
@@ -643,6 +660,16 @@
       </section>
 
       <section id="faq" class="mx-auto mt-12 max-w-5xl px-4 sm:px-6">
+        <div class="faq-cta-wrap">
+          <a
+            href="https://www.poopprofit.com/core-preview.html"
+            data-analytics-event="faq_preview_cta_click"
+            class="ui-secondary-cta inline-flex items-center justify-center px-10 py-4 text-lg font-bold transition hover:-translate-y-0.5 hover:brightness-110"
+          >
+            Gotta Poop?
+          </a>
+          <p class="faq-cta-note">100% Free. No Sign Up Required!</p>
+        </div>
         <h2 class="section-heading text-center text-3xl font-extrabold tracking-tight text-sky-100 sm:text-4xl">Frequently Asked Questions</h2>
         <div class="mt-6 space-y-3">
           <details data-faq-id="account" class="ui-content-card p-4">
