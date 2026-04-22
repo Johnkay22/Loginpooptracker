@@ -204,6 +204,35 @@
       .hero-title {
         text-shadow: 0 4px 24px rgba(8, 47, 73, 0.9);
       }
+      .hero-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid rgba(148, 220, 255, 0.34);
+        border-radius: 999px;
+        padding: 6px 12px;
+        background: rgba(8, 25, 58, 0.7);
+        color: #d8f6ff;
+        font-size: 0.74rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+      .hero-kicker::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: #34d399;
+        box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.14);
+      }
+      .hero-value-note {
+        max-width: 52ch;
+        margin: 14px auto 0;
+        color: #cce7ff;
+        font-size: 0.96rem;
+        line-height: 1.45;
+      }
       .metric-card {
         border: 1px solid var(--ui-border);
         border-radius: var(--ui-radius-xl);
@@ -223,11 +252,50 @@
           0 10px 24px rgba(2, 10, 27, 0.45);
         color: #f5fbff;
       }
+      .ui-secondary-cta {
+        border-radius: var(--ui-radius-md);
+        border: 1px solid rgba(158, 229, 255, 0.45);
+        background: rgba(8, 24, 55, 0.76);
+        color: #def4ff;
+        box-shadow: var(--ui-shadow-soft);
+      }
+      .hero-cta-row {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 22px;
+      }
+      .hero-cta-row a {
+        min-height: 56px;
+        min-width: 210px;
+      }
+      .trust-row {
+        margin: 12px auto 0;
+        max-width: 760px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+      }
+      .trust-pill {
+        border: 1px solid rgba(148, 220, 255, 0.34);
+        border-radius: 999px;
+        padding: 6px 11px;
+        background: rgba(8, 20, 45, 0.68);
+        color: #d8ecff;
+        font-size: 0.77rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+      }
       .ui-content-card {
         border: 1px solid var(--ui-border);
         border-radius: var(--ui-radius-lg);
         background: var(--ui-surface-soft);
         box-shadow: var(--ui-shadow-soft);
+      }
+      .section-heading {
+        letter-spacing: -0.01em;
       }
       .feature-showcase {
         border-radius: var(--ui-radius-xl);
@@ -364,6 +432,57 @@
         .review-item {
           font-size: 0.94rem;
         }
+        .hero-value-note {
+          font-size: 0.9rem;
+        }
+        .hero-cta-row {
+          gap: 8px;
+        }
+        .hero-cta-row a {
+          width: 100%;
+          max-width: 360px;
+          min-height: 50px;
+        }
+      }
+      .mobile-sticky-cta {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 120;
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+        border-top: 1px solid rgba(148, 220, 255, 0.3);
+        background: linear-gradient(180deg, rgba(7, 17, 40, 0.97), rgba(5, 12, 30, 0.98));
+        box-shadow: 0 -12px 28px rgba(1, 8, 22, 0.5);
+        backdrop-filter: blur(8px);
+      }
+      .mobile-sticky-cta span {
+        color: #d6efff;
+        font-size: 0.77rem;
+        font-weight: 600;
+        line-height: 1.2;
+      }
+      .mobile-sticky-cta a {
+        min-height: 44px;
+        min-width: 148px;
+        font-size: 0.9rem;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+      }
+      @media (max-width: 767px) {
+        #top {
+          padding-bottom: calc(128px + env(safe-area-inset-bottom));
+        }
+        .mobile-sticky-cta {
+          display: flex;
+        }
       }
     </style>
   </head>
@@ -374,13 +493,16 @@
         <div class="mx-auto mb-6 flex justify-center sm:mb-8">
           <img src="newpplogo.png" alt="PoopProfit.com logo" class="h-auto w-full max-w-[170px] sm:max-w-[260px]" />
         </div>
-        <h1 class="hero-title mx-auto max-w-4xl text-4xl font-black leading-tight tracking-tight text-slate-100 sm:text-6xl">
-          How Much Do You
-          <span class="bg-gradient-to-r from-cyan-100 via-emerald-200 to-cyan-300 bg-clip-text text-transparent">Get Paid to Poop?</span>
+        <span class="hero-kicker">No account required</span>
+        <h1 class="hero-title mx-auto mt-4 max-w-4xl text-4xl font-black leading-tight tracking-tight text-slate-100 sm:text-6xl">
+          Find Out What You're
+          <span class="bg-gradient-to-r from-cyan-100 via-emerald-200 to-cyan-300 bg-clip-text text-transparent">Paid to Poop</span>
         </h1>
         <p class="mx-auto mt-5 max-w-3xl text-base leading-relaxed text-slate-200 sm:text-xl">
-          Have you ever realized that when you poop at work you're actually getting <strong>PAID to POOP?</strong>
-          Find out just how much with this revolutionary new bathroom financial technology!
+          Track session time, live earnings, and trends in seconds with the PoopProfit calculator.
+        </p>
+        <p class="hero-value-note">
+          Most people underestimate what bathroom breaks are worth across a full week.
         </p>
         <section id="features" class="mx-auto mt-7 max-w-5xl" aria-label="PoopProfit feature highlights">
           <picture class="feature-showcase">
@@ -388,17 +510,28 @@
             <img src="featuresmobile.png" alt="PoopProfit feature highlights preview image" loading="eager" decoding="async" />
           </picture>
         </section>
-        <a
-          href="https://www.poopprofit.com/core-preview.html"
-          data-analytics-event="hero_primary_cta_click"
-          class="ui-primary-cta mt-8 inline-flex items-center justify-center px-10 py-4 text-2xl font-extrabold transition hover:-translate-y-0.5 hover:brightness-110"
-        >
-          Start Pooping!
-        </a>
-        <p class="mx-auto mt-3 max-w-2xl text-sm text-slate-300 sm:text-base">
-          No account required. Your sessions save locally on your device.
-          <a href="https://www.poopprofit.com/core-preview.html" data-analytics-event="hero_secondary_cta_click" class="font-semibold text-cyan-200 underline decoration-cyan-300/60 underline-offset-2 hover:text-cyan-100">Try the live poop earnings calculator</a>.
-        </p>
+        <div class="hero-cta-row">
+          <a
+            href="https://www.poopprofit.com/core-preview.html"
+            data-analytics-event="hero_primary_cta_click"
+            class="ui-primary-cta inline-flex items-center justify-center px-10 py-4 text-xl font-extrabold transition hover:-translate-y-0.5 hover:brightness-110"
+          >
+            Start Pooping!
+          </a>
+          <a
+            href="https://www.poopprofit.com/core-preview.html"
+            data-analytics-event="hero_secondary_cta_click"
+            class="ui-secondary-cta inline-flex items-center justify-center px-10 py-4 text-lg font-bold transition hover:-translate-y-0.5 hover:brightness-110"
+          >
+            View Live Core Preview
+          </a>
+        </div>
+        <div class="trust-row" aria-label="Trust indicators">
+          <span class="trust-pill">No login needed</span>
+          <span class="trust-pill">Local data only</span>
+          <span class="trust-pill">Mobile-friendly</span>
+          <span class="trust-pill">Shareable stats</span>
+        </div>
         <section class="mx-auto mt-5 max-w-5xl" aria-label="Community earnings highlights">
           <p class="mb-2 text-center text-sm font-semibold uppercase tracking-[0.2em] text-cyan-200/90 sm:text-base">Live Toilet Ticker</p>
           <div class="ticker-shell">
@@ -440,7 +573,7 @@
       <div class="mx-auto mt-16 h-px w-[92%] max-w-6xl glow-line"></div>
 
       <section id="how-it-works" class="mx-auto mt-12 max-w-5xl px-4 sm:px-6">
-        <h2 class="text-center text-3xl font-extrabold tracking-tight text-sky-100 sm:text-4xl">How It Works</h2>
+        <h2 class="section-heading text-center text-3xl font-extrabold tracking-tight text-sky-100 sm:text-4xl">How It Works</h2>
         <p class="mx-auto mt-3 max-w-3xl text-center text-slate-200 sm:text-lg">
           PoopProfit turns your bathroom breaks into trackable earnings in under a minute.
         </p>
@@ -461,7 +594,7 @@
       </section>
 
       <section id="stats" class="mx-auto mt-12 max-w-4xl px-4 sm:px-6">
-        <h2 class="text-center text-4xl font-extrabold tracking-tight text-sky-100 sm:text-5xl">Poop Profit Stats</h2>
+        <h2 class="section-heading text-center text-4xl font-extrabold tracking-tight text-sky-100 sm:text-5xl">Poop Profit Stats</h2>
         <p class="mx-auto mt-3 max-w-2xl text-center text-lg text-slate-200">
           Track your poop earnings and milestones.
         </p>
@@ -469,7 +602,7 @@
         <div class="metric-card mt-6 overflow-hidden">
           <div class="flex items-center justify-between gap-3 border-b border-sky-200/20 px-4 py-3 sm:px-6">
             <p class="text-sm text-slate-200 sm:text-xl">Total Earnings <span class="mx-2 text-sky-200">|</span> <span class="font-bold text-emerald-300">$12.67</span> / <span class="text-slate-300">2 Sessions</span></p>
-            <button class="rounded-lg border border-sky-200/35 bg-slate-900/60 px-3 py-1 text-xs font-semibold text-sky-100 hover:bg-slate-800/70">Share</button>
+            <button class="ui-secondary-cta rounded-lg px-3 py-1 text-xs font-semibold">Share</button>
           </div>
           <div class="p-4 sm:p-6">
             <div class="relative h-52 w-full overflow-hidden rounded-xl border border-sky-200/20 bg-gradient-to-b from-slate-900/75 to-slate-950/70 sm:h-64">
@@ -502,15 +635,15 @@
               </div>
             </div>
             <div class="mt-3 flex justify-end gap-2">
-              <button class="rounded-lg border border-sky-200/30 bg-slate-800/50 px-3 py-1 text-xs text-slate-100">1 Day</button>
-              <button class="rounded-lg border border-sky-300/50 bg-sky-500/30 px-3 py-1 text-xs font-semibold text-cyan-100">7 Days</button>
+              <button class="ui-secondary-cta rounded-lg px-3 py-1 text-xs font-semibold">1 Day</button>
+              <button class="ui-primary-cta rounded-lg px-3 py-1 text-xs font-semibold">7 Days</button>
             </div>
           </div>
         </div>
       </section>
 
       <section id="faq" class="mx-auto mt-12 max-w-5xl px-4 sm:px-6">
-        <h2 class="text-center text-3xl font-extrabold tracking-tight text-sky-100 sm:text-4xl">Frequently Asked Questions</h2>
+        <h2 class="section-heading text-center text-3xl font-extrabold tracking-tight text-sky-100 sm:text-4xl">Frequently Asked Questions</h2>
         <div class="mt-6 space-y-3">
           <details data-faq-id="account" class="ui-content-card p-4">
             <summary class="cursor-pointer list-none font-semibold text-cyan-100">Can I use PoopProfit without creating an account?</summary>
@@ -531,6 +664,16 @@
         </div>
       </section>
     </main>
+    <div class="mobile-sticky-cta" role="complementary" aria-label="Quick start calculator">
+      <span>See what your bathroom breaks are worth.</span>
+      <a
+        href="https://www.poopprofit.com/core-preview.html"
+        data-analytics-event="sticky_cta_click"
+        class="ui-primary-cta px-4 py-2"
+      >
+        Start Pooping
+      </a>
+    </div>
     <script>
       (function () {
         function trackEvent(eventName, params) {
