@@ -322,6 +322,14 @@
       width: 100%;
     }
 
+    .button:disabled {
+      opacity: 0.58;
+      cursor: not-allowed;
+      transform: none;
+      filter: none;
+      box-shadow: var(--ui-shadow-soft);
+    }
+
     .row {
       display: grid;
       grid-template-columns: 1fr;
@@ -513,12 +521,47 @@
       margin-top: 8px;
     }
 
+    .first-session-coach {
+      margin-top: 10px;
+      border: 1px solid rgba(99, 205, 255, 0.28);
+      border-radius: var(--ui-radius-md);
+      background: rgba(12, 24, 46, 0.72);
+      padding: 10px;
+      text-align: left;
+      animation: fadeUp 0.22s ease;
+    }
+
+    .first-session-coach p {
+      margin: 0;
+      font-size: 0.86rem;
+      color: #d6e9ff;
+      line-height: 1.4;
+    }
+
+    .coach-actions {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .coach-actions .button {
+      flex: 1 1 160px;
+      min-height: 38px;
+      padding: 8px 10px;
+      font-size: 0.84rem;
+    }
+
     .timer-card.running {
       border-color: rgba(46, 219, 156, 0.58);
       box-shadow:
         0 18px 42px rgba(0, 0, 0, 0.35),
         0 0 0 1px rgba(46, 219, 156, 0.25),
         0 0 32px rgba(46, 219, 156, 0.35);
+    }
+
+    .timer-card.milestone-pop {
+      animation: milestoneFlash 0.6s ease;
     }
 
     .timer-card.running .emoji {
@@ -624,6 +667,27 @@
       text-align: center;
       color: var(--muted);
       padding: 22px 14px;
+    }
+
+    .empty-state strong {
+      display: block;
+      color: #eff8ff;
+      font-size: 0.98rem;
+      margin-bottom: 4px;
+    }
+
+    .empty-state p {
+      margin: 0;
+      color: #bdd4ef;
+      font-size: 0.86rem;
+    }
+
+    .empty-actions {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 7px;
     }
 
     .stats-grid {
@@ -1323,6 +1387,33 @@
       filter: none;
     }
 
+    .milestone-toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(88px + env(safe-area-inset-bottom));
+      transform: translateX(-50%) translateY(22px);
+      opacity: 0;
+      pointer-events: none;
+      width: min(92vw, 420px);
+      border: 1px solid rgba(46, 219, 156, 0.45);
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(17, 42, 35, 0.95), rgba(9, 22, 20, 0.95));
+      color: #d9fff1;
+      font-size: 0.86rem;
+      font-weight: 700;
+      line-height: 1.25;
+      text-align: center;
+      padding: 10px 14px;
+      z-index: 300;
+      box-shadow: 0 0 0 1px rgba(78, 255, 174, 0.25), 0 14px 30px rgba(0, 0, 0, 0.45);
+      transition: transform 0.26s ease, opacity 0.26s ease;
+    }
+
+    .milestone-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
     .mobile-nav {
       position: fixed;
       left: 0;
@@ -1543,6 +1634,12 @@
         transform: translateY(0);
       }
     }
+
+    @keyframes milestoneFlash {
+      0% { box-shadow: 0 0 0 1px rgba(46, 219, 156, 0), 0 0 0 rgba(46, 219, 156, 0); }
+      35% { box-shadow: 0 0 0 1px rgba(46, 219, 156, 0.6), 0 0 28px rgba(46, 219, 156, 0.55); }
+      100% { box-shadow: 0 0 0 1px rgba(46, 219, 156, 0), 0 0 0 rgba(46, 219, 156, 0); }
+    }
   </style>
 </head>
 <body>
@@ -1618,6 +1715,13 @@
               <div id="timerMilestone" class="timer-subline"></div>
               <button id="timerButton" class="button full" type="button">Start Poop!</button>
               <div id="statusMessage" class="status"></div>
+              <div id="firstSessionCoach" class="first-session-coach" hidden>
+                <p id="firstSessionCoachBody">Step 1: add your wage so your earnings are calculated correctly.</p>
+                <div class="coach-actions">
+                  <button id="coachSetWageButton" class="button ghost" type="button">Set Wage</button>
+                  <button id="coachStartButton" class="button" type="button">Start First Session</button>
+                </div>
+              </div>
             </div>
           </article>
 
@@ -1870,6 +1974,8 @@
     </div>
   </div>
 
+  <div id="milestoneToast" class="milestone-toast" role="status" aria-live="polite"></div>
+
   <script>
     (function () {
       "use strict";
@@ -1918,6 +2024,11 @@
       var sessionProjection = document.getElementById("sessionProjection");
       var timerProgressBar = document.getElementById("timerProgressBar");
       var timerMilestone = document.getElementById("timerMilestone");
+      var firstSessionCoach = document.getElementById("firstSessionCoach");
+      var firstSessionCoachBody = document.getElementById("firstSessionCoachBody");
+      var coachSetWageButton = document.getElementById("coachSetWageButton");
+      var coachStartButton = document.getElementById("coachStartButton");
+      var milestoneToast = document.getElementById("milestoneToast");
 
       var mobileFabButton = document.getElementById("fabTimerButton");
       var mobileFabEmoji = document.getElementById("fabEmoji");
@@ -1965,6 +2076,9 @@
       var skipRatingButton = document.getElementById("skipRatingButton");
       var selectedRating = 0;
       var pendingSessionRatingId = null;
+      var milestoneToastTimerId = null;
+      var lastMilestoneAnnounced = 0;
+      var MILESTONE_SECONDS = [60, 180, 300, 600, 900];
       var wageModeCollapsed = state.wageModeCollapsed === false ? false : true;
       var statsRangeMode = "all";
       var QUICK_RANGE_DAY_COUNTS = {
@@ -2116,6 +2230,18 @@
         timerButton.addEventListener("click", function () {
           toggleSession();
         });
+
+        if (coachSetWageButton) {
+          coachSetWageButton.addEventListener("click", function () {
+            handleCoachSetWage();
+          });
+        }
+
+        if (coachStartButton) {
+          coachStartButton.addEventListener("click", function () {
+            handleCoachStartSession();
+          });
+        }
 
         if (mobileFabButton) {
           mobileFabButton.addEventListener("click", function () {
@@ -2456,9 +2582,12 @@
         }
 
         state.activeSessionStartMs = Date.now();
+        lastMilestoneAnnounced = 0;
+        hideMilestoneCelebration();
         persist();
         setStatus(statusMessage, "Session started. Let the profits flow.", "ok");
         renderTimerButton();
+        renderFirstSessionCoach();
         runTimerTick();
         timerIntervalId = window.setInterval(runTimerTick, 1000);
       }
@@ -2483,6 +2612,8 @@
 
         pendingSessionRatingId = state.sessions[0].id;
         state.activeSessionStartMs = null;
+        lastMilestoneAnnounced = 0;
+        hideMilestoneCelebration();
         persist();
         clearIntervalIfRunning();
         openRatingModal();
@@ -2493,10 +2624,14 @@
       function restoreRunningSession() {
         if (!state.activeSessionStartMs) {
           renderTimerButton();
+          renderFirstSessionCoach();
           return;
         }
 
+        var restoredElapsed = Math.max(0, Math.floor((Date.now() - state.activeSessionStartMs) / 1000));
+        lastMilestoneAnnounced = getReachedMilestone(restoredElapsed);
         renderTimerButton();
+        renderFirstSessionCoach();
         runTimerTick();
         timerIntervalId = window.setInterval(runTimerTick, 1000);
         setStatus(statusMessage, "Resumed active session.", "ok");
@@ -2549,6 +2684,7 @@
           liveEarnings.textContent = "";
         }
 
+        renderFirstSessionCoach();
         renderTimerRuntimeUI();
         renderTimerButton();
         renderStats();
@@ -2594,8 +2730,27 @@
         if (!state.sessions.length) {
           var empty = document.createElement("div");
           empty.className = "empty-state";
-          empty.textContent = "No sessions yet. Start a session to build your log.";
+          empty.innerHTML =
+            "<strong>No sessions yet.</strong>" +
+            "<p>Start your first session to build your log, then rate and share it.</p>" +
+            "<div class=\"empty-actions\">" +
+            "<button type=\"button\" class=\"button ghost\" data-empty-action=\"start\">Start First Session</button>" +
+            "<button type=\"button\" class=\"button ghost\" data-empty-action=\"stats\">Jump to Stats</button>" +
+            "</div>";
           logList.appendChild(empty);
+          var startAction = empty.querySelector("[data-empty-action=\"start\"]");
+          var statsAction = empty.querySelector("[data-empty-action=\"stats\"]");
+          if (startAction) {
+            startAction.addEventListener("click", function () {
+              handleCoachStartSession();
+            });
+          }
+          if (statsAction) {
+            statsAction.addEventListener("click", function () {
+              setActiveTab("stats");
+              setStatus(statusMessage, "Use Stats to track trends as your log grows.", "ok");
+            });
+          }
           return;
         }
 
@@ -3018,6 +3173,7 @@
           timerProgressBar.style.width = "0%";
           sessionProjection.textContent = "Projection: start a session to estimate 5m and 10m outcomes.";
           timerMilestone.textContent = "Next milestone: 1 minute.";
+          hideMilestoneCelebration();
           return;
         }
 
@@ -3036,12 +3192,99 @@
         var progressPercent = Math.min(100, (elapsed / 900) * 100);
         timerProgressBar.style.width = progressPercent.toFixed(1) + "%";
 
-        var milestones = [60, 180, 300, 600, 900];
-        var nextMilestone = milestones.find(function (value) { return elapsed < value; });
+        var nextMilestone = MILESTONE_SECONDS.find(function (value) { return elapsed < value; });
         if (nextMilestone) {
           timerMilestone.textContent = "Next milestone: " + formatDuration(nextMilestone) + ".";
         } else {
           timerMilestone.textContent = "Milestone complete: 15+ minute marathon session.";
+        }
+        updateMilestoneAnnouncements(elapsed, earnings);
+      }
+
+      function renderFirstSessionCoach() {
+        if (!firstSessionCoach || !coachSetWageButton || !coachStartButton || !firstSessionCoachBody) return;
+        var hasSessions = Array.isArray(state.sessions) && state.sessions.length > 0;
+        var running = Boolean(state.activeSessionStartMs);
+        var hasValidWage = getEffectiveHourlyWage() > 0;
+        var shouldShow = !hasSessions && !running;
+        firstSessionCoach.hidden = !shouldShow;
+        if (!shouldShow) return;
+
+        if (!hasValidWage) {
+          firstSessionCoachBody.textContent = "Step 1: add your wage so your earnings are calculated correctly.";
+          coachSetWageButton.disabled = false;
+          coachStartButton.disabled = true;
+        } else {
+          firstSessionCoachBody.textContent = "Step 2: you're set. Tap Start First Session and log your first paid poop.";
+          coachSetWageButton.disabled = false;
+          coachStartButton.disabled = false;
+        }
+      }
+
+      function handleCoachSetWage() {
+        if (wageModeCollapsed) {
+          wageModeCollapsed = false;
+          state.wageModeCollapsed = false;
+          persist();
+          renderWageStrip();
+        }
+        if (state.wageMode === "salary" && annualSalaryInput) {
+          annualSalaryInput.focus();
+        } else if (hourlyWageInput) {
+          hourlyWageInput.focus();
+        }
+        setStatus(statusMessage, "Set your wage, then start your first session.", "ok");
+      }
+
+      function handleCoachStartSession() {
+        if (!state.activeSessionStartMs) {
+          startSession();
+        }
+      }
+
+      function updateMilestoneAnnouncements(elapsed, earnings) {
+        var reachedMilestone = getReachedMilestone(elapsed);
+        if (!reachedMilestone || reachedMilestone <= lastMilestoneAnnounced) return;
+        lastMilestoneAnnounced = reachedMilestone;
+        showMilestoneCelebration(reachedMilestone, earnings);
+      }
+
+      function getReachedMilestone(elapsedSeconds) {
+        var reached = 0;
+        MILESTONE_SECONDS.forEach(function (milestone) {
+          if (elapsedSeconds >= milestone) {
+            reached = milestone;
+          }
+        });
+        return reached;
+      }
+
+      function showMilestoneCelebration(milestoneSeconds, earnings) {
+        if (timerCard) {
+          timerCard.classList.remove("milestone-pop");
+          void timerCard.offsetWidth;
+          timerCard.classList.add("milestone-pop");
+        }
+        var message = "Milestone hit: " + formatDuration(milestoneSeconds) + " - $" + earnings.toFixed(2) + " earned.";
+        setStatus(statusMessage, message, "ok");
+        if (!milestoneToast) return;
+        milestoneToast.textContent = message;
+        milestoneToast.classList.add("show");
+        if (milestoneToastTimerId !== null) {
+          window.clearTimeout(milestoneToastTimerId);
+        }
+        milestoneToastTimerId = window.setTimeout(function () {
+          hideMilestoneCelebration();
+        }, 2400);
+      }
+
+      function hideMilestoneCelebration() {
+        if (milestoneToastTimerId !== null) {
+          window.clearTimeout(milestoneToastTimerId);
+          milestoneToastTimerId = null;
+        }
+        if (milestoneToast) {
+          milestoneToast.classList.remove("show");
         }
       }
 
