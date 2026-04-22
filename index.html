@@ -165,6 +165,19 @@
     </script>
     <style>
       html { scroll-behavior: smooth; }
+      :root {
+        --ui-radius-xl: 16px;
+        --ui-radius-lg: 14px;
+        --ui-radius-md: 12px;
+        --ui-border: rgba(148, 220, 255, 0.34);
+        --ui-border-strong: rgba(173, 233, 255, 0.5);
+        --ui-surface: rgba(5, 16, 40, 0.74);
+        --ui-surface-soft: rgba(8, 19, 45, 0.62);
+        --ui-shadow-soft: 0 10px 30px rgba(2, 8, 24, 0.38), inset 0 0 24px rgba(14, 165, 233, 0.08);
+        --ui-shadow-strong: 0 14px 34px rgba(2, 8, 24, 0.45), inset 0 0 30px rgba(14, 165, 233, 0.14);
+        --ui-primary-from: #63d4ff;
+        --ui-primary-to: #2d8fe0;
+      }
       body {
         margin: 0;
         min-height: 100vh;
@@ -192,17 +205,35 @@
         text-shadow: 0 4px 24px rgba(8, 47, 73, 0.9);
       }
       .metric-card {
-        border: 1px solid rgba(125, 211, 252, 0.35);
-        box-shadow: inset 0 0 40px rgba(15, 23, 42, 0.55), 0 6px 28px rgba(14, 116, 144, 0.25);
+        border: 1px solid var(--ui-border);
+        border-radius: var(--ui-radius-xl);
+        background: var(--ui-surface);
+        box-shadow: var(--ui-shadow-strong);
       }
       .hero-mascot {
         filter: drop-shadow(0 25px 42px rgba(0, 191, 255, 0.3));
       }
+      .ui-primary-cta {
+        border-radius: var(--ui-radius-md);
+        border: 1px solid var(--ui-border-strong);
+        background: linear-gradient(180deg, var(--ui-primary-from), var(--ui-primary-to));
+        box-shadow:
+          0 0 0 1px rgba(149, 226, 255, 0.18),
+          0 0 28px rgba(56, 189, 248, 0.45),
+          0 10px 24px rgba(2, 10, 27, 0.45);
+        color: #f5fbff;
+      }
+      .ui-content-card {
+        border: 1px solid var(--ui-border);
+        border-radius: var(--ui-radius-lg);
+        background: var(--ui-surface-soft);
+        box-shadow: var(--ui-shadow-soft);
+      }
       .feature-showcase {
-        border-radius: 16px;
-        border: 1px solid rgba(125, 211, 252, 0.35);
-        background: rgba(2, 12, 35, 0.5);
-        box-shadow: inset 0 0 32px rgba(2, 132, 199, 0.12), 0 10px 28px rgba(2, 8, 23, 0.45);
+        border-radius: var(--ui-radius-xl);
+        border: 1px solid var(--ui-border);
+        background: var(--ui-surface);
+        box-shadow: var(--ui-shadow-strong);
         overflow: hidden;
       }
       .feature-showcase img {
@@ -213,11 +244,11 @@
       .ticker-shell {
         display: grid;
         grid-template-columns: auto 1fr;
-        border: 1px solid rgba(147, 220, 255, 0.48);
-        border-radius: 14px;
+        border: 1px solid var(--ui-border-strong);
+        border-radius: var(--ui-radius-lg);
         overflow: hidden;
         background: linear-gradient(180deg, rgba(3, 14, 37, 0.96), rgba(1, 9, 24, 0.96));
-        box-shadow: inset 0 0 34px rgba(2, 132, 199, 0.2), 0 8px 26px rgba(1, 8, 22, 0.55);
+        box-shadow: var(--ui-shadow-strong);
       }
       .ticker-live-tag {
         display: inline-flex;
@@ -297,6 +328,10 @@
         letter-spacing: 0.01em;
         text-shadow: 0 0 14px rgba(14, 165, 233, 0.2);
       }
+      #how-it-works h3,
+      #faq summary {
+        letter-spacing: 0.01em;
+      }
       .ticker-separator {
         color: rgba(125, 211, 252, 0.78);
         font-size: 1rem;
@@ -356,7 +391,7 @@
         <a
           href="https://www.poopprofit.com/core-preview.html"
           data-analytics-event="hero_primary_cta_click"
-          class="mt-8 inline-flex items-center justify-center rounded-xl border border-cyan-300/80 bg-gradient-to-b from-sky-300 via-blue-500 to-blue-700 px-10 py-4 text-2xl font-extrabold text-white shadow-[0_0_30px_rgba(56,189,248,.55)] transition hover:-translate-y-0.5 hover:brightness-110"
+          class="ui-primary-cta mt-8 inline-flex items-center justify-center px-10 py-4 text-2xl font-extrabold transition hover:-translate-y-0.5 hover:brightness-110"
         >
           Start Pooping!
         </a>
@@ -410,15 +445,15 @@
           PoopProfit turns your bathroom breaks into trackable earnings in under a minute.
         </p>
         <div class="mt-6 grid gap-3 sm:grid-cols-3">
-          <article class="rounded-2xl border border-sky-200/25 bg-slate-950/45 p-4 glass">
+          <article class="ui-content-card p-4 glass">
             <h3 class="text-base font-bold text-cyan-100 sm:text-lg">1. Enter your pay rate</h3>
             <p class="mt-2 text-sm leading-relaxed text-slate-300">Use hourly wage or salary + weekly hours to calculate an accurate per-hour rate.</p>
           </article>
-          <article class="rounded-2xl border border-sky-200/25 bg-slate-950/45 p-4 glass">
+          <article class="ui-content-card p-4 glass">
             <h3 class="text-base font-bold text-cyan-100 sm:text-lg">2. Start and stop your session</h3>
             <p class="mt-2 text-sm leading-relaxed text-slate-300">Run the timer during your break and instantly see live session earnings.</p>
           </article>
-          <article class="rounded-2xl border border-sky-200/25 bg-slate-950/45 p-4 glass">
+          <article class="ui-content-card p-4 glass">
             <h3 class="text-base font-bold text-cyan-100 sm:text-lg">3. Review, filter, and share</h3>
             <p class="mt-2 text-sm leading-relaxed text-slate-300">Save logs, explore trends by date range, and share highlights in one tap.</p>
           </article>
@@ -431,7 +466,7 @@
           Track your poop earnings and milestones.
         </p>
 
-        <div class="metric-card mt-6 overflow-hidden rounded-2xl bg-slate-950/60">
+        <div class="metric-card mt-6 overflow-hidden">
           <div class="flex items-center justify-between gap-3 border-b border-sky-200/20 px-4 py-3 sm:px-6">
             <p class="text-sm text-slate-200 sm:text-xl">Total Earnings <span class="mx-2 text-sky-200">|</span> <span class="font-bold text-emerald-300">$12.67</span> / <span class="text-slate-300">2 Sessions</span></p>
             <button class="rounded-lg border border-sky-200/35 bg-slate-900/60 px-3 py-1 text-xs font-semibold text-sky-100 hover:bg-slate-800/70">Share</button>
@@ -477,19 +512,19 @@
       <section id="faq" class="mx-auto mt-12 max-w-5xl px-4 sm:px-6">
         <h2 class="text-center text-3xl font-extrabold tracking-tight text-sky-100 sm:text-4xl">Frequently Asked Questions</h2>
         <div class="mt-6 space-y-3">
-          <details data-faq-id="account" class="rounded-xl border border-sky-200/25 bg-slate-950/50 p-4">
+          <details data-faq-id="account" class="ui-content-card p-4">
             <summary class="cursor-pointer list-none font-semibold text-cyan-100">Can I use PoopProfit without creating an account?</summary>
             <p class="mt-2 text-sm leading-relaxed text-slate-300">Yes. The core preview is account-free and stores your data locally in your current browser.</p>
           </details>
-          <details data-faq-id="salary-mode" class="rounded-xl border border-sky-200/25 bg-slate-950/50 p-4">
+          <details data-faq-id="salary-mode" class="ui-content-card p-4">
             <summary class="cursor-pointer list-none font-semibold text-cyan-100">Does PoopProfit work for salary-based jobs?</summary>
             <p class="mt-2 text-sm leading-relaxed text-slate-300">Yes. Switch to salary mode and enter annual salary plus weekly hours for an effective hourly rate.</p>
           </details>
-          <details data-faq-id="sharing" class="rounded-xl border border-sky-200/25 bg-slate-950/50 p-4">
+          <details data-faq-id="sharing" class="ui-content-card p-4">
             <summary class="cursor-pointer list-none font-semibold text-cyan-100">Can I share my session earnings and stats?</summary>
             <p class="mt-2 text-sm leading-relaxed text-slate-300">Yes. You can share logs and stat highlights from the preview dashboard to social and messages.</p>
           </details>
-          <details data-faq-id="live-preview" class="rounded-xl border border-sky-200/25 bg-slate-950/50 p-4">
+          <details data-faq-id="live-preview" class="ui-content-card p-4">
             <summary class="cursor-pointer list-none font-semibold text-cyan-100">Where can I try the live preview?</summary>
             <p class="mt-2 text-sm leading-relaxed text-slate-300">Open the live preview <a href="https://www.poopprofit.com/core-preview.html" data-analytics-event="faq_core_preview_link_click" class="font-semibold text-cyan-200 underline decoration-cyan-300/60 underline-offset-2 hover:text-cyan-100">HERE</a>.</p>
           </details>
