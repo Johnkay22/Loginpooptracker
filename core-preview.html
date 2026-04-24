@@ -2511,6 +2511,11 @@
         window.addEventListener("scroll", function () {
           queueTutorialPositionUpdate();
         }, true);
+
+        document.addEventListener("visibilitychange", function () {
+          if (document.hidden || !state.activeSessionStartMs) return;
+          runTimerTick();
+        });
       }
 
       function setActiveTab(tabName) {
