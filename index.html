@@ -34,6 +34,9 @@
     <meta name="twitter:image:alt" content="PoopProfit earnings dashboard preview" />
 
     <link rel="icon" href="favicon.png" />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preload" as="image" href="MAINDESKTOPBG.jpeg" />
+    <link rel="preload" as="image" href="POOPPROFITMASCOT.png" />
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -98,6 +101,31 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": "How It Works",
+        "description": "PoopProfit turns your bathroom breaks into trackable earnings in under a minute.",
+        "step": [
+          {
+            "@type": "HowToStep",
+            "name": "Enter your pay rate",
+            "text": "Use hourly wage or salary + weekly hours to calculate an accurate per-hour rate."
+          },
+          {
+            "@type": "HowToStep",
+            "name": "Start and stop your session",
+            "text": "Run the timer during your break and instantly see live session earnings."
+          },
+          {
+            "@type": "HowToStep",
+            "name": "Review, filter, and share",
+            "text": "Save logs, explore trends by date range, and share highlights in one tap."
+          }
+        ]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
         "@type": "FAQPage",
         "mainEntity": [
           {
@@ -130,6 +158,38 @@
             "acceptedAnswer": {
               "@type": "Answer",
               "text": "Open the live preview at https://www.poopprofit.com/core-preview.html."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are bathroom breaks considered paid time?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "In many workplaces, short bathroom breaks during the workday are treated as paid time. Policies can vary by employer and local labor rules."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I calculate my bathroom break earnings?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Enter your hourly wage, or convert salary to an hourly rate, then multiply by the time spent in your session."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is my effective hourly rate during a break?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Your effective hourly rate is your wage per hour, either entered directly or calculated from annual salary and weekly hours."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I track multiple bathroom sessions per day?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. You can log as many sessions as you want in a day and review totals in your logs and stats."
             }
           }
         ]
@@ -512,6 +572,19 @@
   </head>
 
   <body class="space-bg overflow-x-hidden">
+    <nav class="sticky top-0 z-40 border-b border-sky-200/20 bg-slate-950/85 backdrop-blur-md" aria-label="Primary">
+      <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-2 sm:px-6">
+        <a href="https://www.poopprofit.com/" class="inline-flex items-center" aria-label="PoopProfit home">
+          <img src="newpplogo.png" alt="PoopProfit logo" class="h-auto w-[112px] sm:w-[132px]" />
+        </a>
+        <a
+          href="https://www.poopprofit.com/core-preview.html"
+          class="ui-primary-cta inline-flex items-center justify-center px-4 py-2 text-sm font-extrabold sm:text-base"
+        >
+          Start Pooping
+        </a>
+      </div>
+    </nav>
     <main id="top" class="relative z-10 pb-20">
       <section id="hero" class="mx-auto max-w-6xl px-4 pt-8 text-center sm:px-6 sm:pt-10">
         <div class="mx-auto mb-6 flex justify-center sm:mb-8">
@@ -688,8 +761,32 @@
             <summary class="cursor-pointer list-none font-semibold text-cyan-100">Where can I try the live preview?</summary>
             <p class="mt-2 text-sm leading-relaxed text-slate-300">Open the live preview <a href="https://www.poopprofit.com/core-preview.html" data-analytics-event="faq_core_preview_link_click" class="font-semibold text-cyan-200 underline decoration-cyan-300/60 underline-offset-2 hover:text-cyan-100">HERE</a>.</p>
           </details>
+          <details data-faq-id="paid-time" class="ui-content-card p-4">
+            <summary class="cursor-pointer list-none font-semibold text-cyan-100">Are bathroom breaks considered paid time?</summary>
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">In many workplaces, short bathroom breaks during the workday are treated as paid time. Policies can vary by employer and local labor rules.</p>
+          </details>
+          <details data-faq-id="calculate-earnings" class="ui-content-card p-4">
+            <summary class="cursor-pointer list-none font-semibold text-cyan-100">How do I calculate my bathroom break earnings?</summary>
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">Enter your hourly wage, or convert salary to an hourly rate, then multiply by the time spent in your session.</p>
+          </details>
+          <details data-faq-id="effective-rate" class="ui-content-card p-4">
+            <summary class="cursor-pointer list-none font-semibold text-cyan-100">What is my effective hourly rate during a break?</summary>
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">Your effective hourly rate is your wage per hour, either entered directly or calculated from annual salary and weekly hours.</p>
+          </details>
+          <details data-faq-id="multiple-sessions" class="ui-content-card p-4">
+            <summary class="cursor-pointer list-none font-semibold text-cyan-100">Can I track multiple bathroom sessions per day?</summary>
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">Yes. You can log as many sessions as you want in a day and review totals in your logs and stats.</p>
+          </details>
         </div>
       </section>
+      <footer class="mx-auto mt-12 w-full max-w-6xl border-t border-sky-200/20 px-4 py-6 text-center text-sm text-slate-300 sm:px-6">
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <a href="https://www.poopprofit.com/" class="font-semibold text-cyan-200 hover:text-cyan-100">Home</a>
+          <span aria-hidden="true" class="text-slate-500">•</span>
+          <a href="https://www.poopprofit.com/core-preview.html" class="font-semibold text-cyan-200 hover:text-cyan-100">Core Preview</a>
+        </div>
+        <p class="mt-2">© 2026 PoopProfit. All rights reserved.</p>
+      </footer>
     </main>
     <div class="mobile-sticky-cta" role="complementary" aria-label="Quick start calculator">
       <span>See what your bathroom breaks are worth.</span>
