@@ -3,7 +3,86 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Poop Profit</title>
+  <title>PoopProfit Core Preview — Calculator, Timer, and Stats</title>
+  <meta
+    name="description"
+    content="Use PoopProfit Core Preview to calculate wage-based poop earnings, run session timers, log activity, and view shareable stats."
+  >
+  <link rel="canonical" href="https://www.poopprofit.com/core-preview.html">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="icon" href="favicon.png">
+
+  <meta property="og:title" content="PoopProfit Core Preview — Calculator, Timer, and Stats">
+  <meta
+    property="og:description"
+    content="Track poop sessions, calculate earnings, and review trends in the PoopProfit Core Preview."
+  >
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.poopprofit.com/core-preview.html">
+  <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="PoopProfit core preview dashboard">
+  <meta property="og:site_name" content="PoopProfit.com">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PoopProfit Core Preview — Calculator, Timer, and Stats">
+  <meta
+    name="twitter:description"
+    content="Track poop sessions, calculate earnings, and review trends in the PoopProfit Core Preview."
+  >
+  <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg">
+  <meta name="twitter:image:alt" content="PoopProfit core preview dashboard">
+  <link rel="preload" as="image" href="BANNER.jpeg">
+  <link rel="preload" as="image" href="MAINDESKTOPBG.jpeg">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-R1E17DCKNC');
+  </script>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "PoopProfit Core Preview",
+      "description": "Poop earnings calculator, timer, session log, and statistics preview.",
+      "url": "https://www.poopprofit.com/core-preview.html",
+      "inLanguage": "en",
+      "breadcrumb": {
+        "@id": "https://www.poopprofit.com/core-preview.html#breadcrumb"
+      },
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "PoopProfit.com",
+        "url": "https://www.poopprofit.com/"
+      }
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "@id": "https://www.poopprofit.com/core-preview.html#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.poopprofit.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Core Preview",
+          "item": "https://www.poopprofit.com/core-preview.html"
+        }
+      ]
+    }
+  </script>
   <style>
     :root {
       --bg: #060b16;
@@ -19,6 +98,15 @@
       --warning: #ffd166;
       --danger: #ff8080;
       --shadow: 0 24px 55px rgba(0, 0, 0, 0.45);
+      --ui-radius-xl: 16px;
+      --ui-radius-lg: 14px;
+      --ui-radius-md: 12px;
+      --ui-border: rgba(148, 220, 255, 0.34);
+      --ui-border-strong: rgba(173, 233, 255, 0.5);
+      --ui-surface: rgba(8, 19, 45, 0.74);
+      --ui-surface-soft: rgba(8, 19, 45, 0.62);
+      --ui-shadow-soft: 0 10px 30px rgba(2, 8, 24, 0.38), inset 0 0 24px rgba(14, 165, 233, 0.08);
+      --ui-shadow-strong: 0 14px 34px rgba(2, 8, 24, 0.45), inset 0 0 30px rgba(14, 165, 233, 0.14);
     }
 
     * {
@@ -85,6 +173,43 @@
       height: auto;
     }
 
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .tutorial-help-button {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid rgba(113, 210, 255, 0.55);
+      background: linear-gradient(180deg, rgba(28, 53, 92, 0.9), rgba(11, 24, 43, 0.95));
+      color: #e9f7ff;
+      font-size: 1.18rem;
+      font-weight: 900;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 35;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35), 0 0 14px rgba(87, 196, 255, 0.32);
+    }
+
+    .tutorial-help-button:hover {
+      filter: brightness(1.08);
+    }
+
     .tabs {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -93,17 +218,18 @@
       position: sticky;
       top: 8px;
       z-index: 30;
-      background: rgba(7, 12, 22, 0.72);
-      border: 1px solid rgba(67, 179, 255, 0.22);
-      border-radius: 12px;
+      background: var(--ui-surface-soft);
+      border: 1px solid var(--ui-border);
+      border-radius: var(--ui-radius-md);
       padding: 8px;
       backdrop-filter: blur(6px);
+      box-shadow: var(--ui-shadow-soft);
     }
 
     .tab-btn {
-      border: 1px solid rgba(67, 179, 255, 0.24);
-      border-radius: 10px;
-      background: rgba(8, 14, 28, 0.86);
+      border: 1px solid var(--ui-border);
+      border-radius: var(--ui-radius-md);
+      background: rgba(8, 15, 32, 0.86);
       color: var(--muted);
       min-height: 48px;
       cursor: pointer;
@@ -124,9 +250,9 @@
 
     .tab-btn.active {
       color: #fff;
-      border-color: var(--line-strong);
+      border-color: var(--ui-border-strong);
       background: linear-gradient(180deg, rgba(67, 179, 255, 0.24), rgba(24, 83, 133, 0.34));
-      box-shadow: 0 0 0 1px rgba(67, 179, 255, 0.25), 0 8px 20px rgba(0, 0, 0, 0.35);
+      box-shadow: var(--ui-shadow-soft);
     }
 
     .tab-panel {
@@ -147,11 +273,11 @@
     }
 
     .card {
-      background: linear-gradient(170deg, var(--panel), var(--panel-strong));
-      border: 1px solid var(--line);
-      border-radius: 14px;
+      background: linear-gradient(170deg, var(--ui-surface), rgba(6, 14, 32, 0.9));
+      border: 1px solid var(--ui-border);
+      border-radius: var(--ui-radius-lg);
       padding: 14px;
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
+      box-shadow: var(--ui-shadow-soft);
       min-width: 0;
     }
 
@@ -182,9 +308,8 @@
     }
 
     @media (min-width: 980px) {
-      .wage-card,
       .timer-card {
-        grid-column: span 6;
+        grid-column: span 12;
       }
 
       .log-card {
@@ -200,27 +325,30 @@
     }
 
     .button {
-      border: 1px solid transparent;
-      border-radius: 10px;
+      border: 1px solid var(--ui-border-strong);
+      border-radius: var(--ui-radius-md);
       padding: 10px 14px;
       cursor: pointer;
       font-weight: 700;
       letter-spacing: 0.01em;
       background: linear-gradient(180deg, var(--primary), var(--primary-strong));
-      color: #04101f;
-      transition: transform 0.14s ease, filter 0.2s ease;
+      color: #f5fbff;
+      box-shadow: 0 0 0 1px rgba(149, 226, 255, 0.18), 0 10px 24px rgba(2, 10, 27, 0.45);
+      transition: transform 0.14s ease, filter 0.2s ease, box-shadow 0.2s ease;
     }
 
     .button:hover {
       transform: translateY(-1px);
       filter: brightness(1.05);
+      box-shadow: 0 0 0 1px rgba(173, 233, 255, 0.38), 0 0 24px rgba(56, 189, 248, 0.36), 0 10px 24px rgba(2, 10, 27, 0.52);
     }
 
     .button.ghost {
-      background: rgba(67, 179, 255, 0.12);
-      border-color: rgba(67, 179, 255, 0.42);
+      background: var(--ui-surface-soft);
+      border-color: var(--ui-border);
       color: var(--text);
       font-weight: 600;
+      box-shadow: var(--ui-shadow-soft);
     }
 
     .button.warn {
@@ -228,10 +356,19 @@
       border-color: rgba(255, 128, 128, 0.42);
       color: #ffd9d9;
       font-weight: 600;
+      box-shadow: 0 10px 24px rgba(39, 8, 8, 0.4);
     }
 
     .button.full {
       width: 100%;
+    }
+
+    .button:disabled {
+      opacity: 0.58;
+      cursor: not-allowed;
+      transform: none;
+      filter: none;
+      box-shadow: var(--ui-shadow-soft);
     }
 
     .row {
@@ -261,8 +398,8 @@
     input,
     select {
       width: 100%;
-      border-radius: 10px;
-      border: 1px solid rgba(67, 179, 255, 0.3);
+      border-radius: var(--ui-radius-md);
+      border: 1px solid var(--ui-border);
       background: rgba(6, 11, 22, 0.76);
       color: var(--text);
       outline: none;
@@ -277,8 +414,8 @@
 
     .segmented {
       display: inline-flex;
-      border: 1px solid rgba(67, 179, 255, 0.34);
-      border-radius: 10px;
+      border: 1px solid var(--ui-border);
+      border-radius: var(--ui-radius-md);
       overflow: hidden;
       margin-bottom: 10px;
       background: rgba(6, 11, 22, 0.5);
@@ -298,6 +435,64 @@
       color: #fff;
     }
 
+    .wage-strip {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .wage-strip-toggle {
+      width: 100%;
+      border: 0;
+      border-radius: 0;
+      background: linear-gradient(180deg, rgba(67, 179, 255, 0.18), rgba(26, 88, 140, 0.24));
+      color: #ecf6ff;
+      min-height: 54px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .wage-strip-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    .wage-strip-title img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+    }
+
+    .wage-strip-summary {
+      color: #d8ecff;
+      font-size: 0.83rem;
+      font-weight: 600;
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .wage-strip-chevron {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      transition: transform 0.16s ease;
+    }
+
+    .wage-strip-toggle[aria-expanded="true"] .wage-strip-chevron {
+      transform: rotate(180deg);
+    }
+
+    .wage-strip-body {
+      padding: 12px 14px 14px;
+      border-top: 1px solid rgba(67, 179, 255, 0.2);
+      background: rgba(6, 11, 22, 0.58);
+    }
+
     .hourly-display {
       border-radius: 10px;
       border: 1px solid rgba(67, 179, 255, 0.34);
@@ -309,6 +504,12 @@
 
     .timer {
       text-align: center;
+    }
+
+    .timer-card {
+      max-width: 760px;
+      width: 100%;
+      justify-self: center;
     }
 
     .timer .emoji {
@@ -361,12 +562,47 @@
       margin-top: 8px;
     }
 
+    .first-session-coach {
+      margin-top: 10px;
+      border: 1px solid rgba(99, 205, 255, 0.28);
+      border-radius: var(--ui-radius-md);
+      background: rgba(12, 24, 46, 0.72);
+      padding: 10px;
+      text-align: left;
+      animation: fadeUp 0.22s ease;
+    }
+
+    .first-session-coach p {
+      margin: 0;
+      font-size: 0.86rem;
+      color: #d6e9ff;
+      line-height: 1.4;
+    }
+
+    .coach-actions {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .coach-actions .button {
+      flex: 1 1 160px;
+      min-height: 38px;
+      padding: 8px 10px;
+      font-size: 0.84rem;
+    }
+
     .timer-card.running {
       border-color: rgba(46, 219, 156, 0.58);
       box-shadow:
         0 18px 42px rgba(0, 0, 0, 0.35),
         0 0 0 1px rgba(46, 219, 156, 0.25),
         0 0 32px rgba(46, 219, 156, 0.35);
+    }
+
+    .timer-card.milestone-pop {
+      animation: milestoneFlash 0.6s ease;
     }
 
     .timer-card.running .emoji {
@@ -391,13 +627,14 @@
     }
 
     .log-entry {
-      border: 1px solid rgba(67, 179, 255, 0.24);
-      border-radius: 12px;
-      background: rgba(6, 11, 22, 0.78);
+      border: 1px solid var(--ui-border);
+      border-radius: var(--ui-radius-md);
+      background: var(--ui-surface-soft);
       padding: 10px;
       display: grid;
       gap: 6px;
       animation: fadeUp 0.2s ease;
+      box-shadow: var(--ui-shadow-soft);
     }
 
     .log-top {
@@ -437,9 +674,9 @@
     }
 
     .icon-button {
-      border: 1px solid rgba(67, 179, 255, 0.34);
-      border-radius: 10px;
-      background: rgba(67, 179, 255, 0.14);
+      border: 1px solid var(--ui-border);
+      border-radius: var(--ui-radius-md);
+      background: var(--ui-surface-soft);
       color: #d8ebff;
       cursor: pointer;
       min-height: 36px;
@@ -451,6 +688,7 @@
       gap: 6px;
       font-weight: 700;
       font-size: 0.84rem;
+      box-shadow: var(--ui-shadow-soft);
     }
 
     .icon-button.warn {
@@ -472,6 +710,27 @@
       padding: 22px 14px;
     }
 
+    .empty-state strong {
+      display: block;
+      color: #eff8ff;
+      font-size: 0.98rem;
+      margin-bottom: 4px;
+    }
+
+    .empty-state p {
+      margin: 0;
+      color: #bdd4ef;
+      font-size: 0.86rem;
+    }
+
+    .empty-actions {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 7px;
+    }
+
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
@@ -480,10 +739,11 @@
     }
 
     .stat {
-      border: 1px solid rgba(67, 179, 255, 0.28);
-      border-radius: 11px;
-      background: rgba(6, 11, 22, 0.68);
+      border: 1px solid var(--ui-border);
+      border-radius: var(--ui-radius-md);
+      background: var(--ui-surface-soft);
       padding: 10px;
+      box-shadow: var(--ui-shadow-soft);
     }
 
     .stat .label {
@@ -502,9 +762,9 @@
     }
 
     .share-stat-btn {
-      border: 1px solid rgba(67, 179, 255, 0.35);
+      border: 1px solid var(--ui-border);
       border-radius: 8px;
-      background: rgba(67, 179, 255, 0.15);
+      background: var(--ui-surface-soft);
       color: #d7ebff;
       cursor: pointer;
       padding: 0 8px;
@@ -515,33 +775,106 @@
       align-items: center;
       justify-content: center;
       gap: 4px;
+      box-shadow: var(--ui-shadow-soft);
     }
 
     .trend-panel {
-      border: 1px solid rgba(67, 179, 255, 0.24);
-      border-radius: 12px;
-      background: rgba(6, 11, 22, 0.65);
-      padding: 10px;
+      border: 1px solid var(--ui-border);
+      border-radius: var(--ui-radius-lg);
+      background: linear-gradient(180deg, var(--ui-surface), rgba(6, 11, 22, 0.9));
+      padding: 11px;
       margin-bottom: 10px;
+      box-shadow: var(--ui-shadow-soft);
     }
 
     .trend-head {
       display: flex;
       justify-content: space-between;
       gap: 8px;
-      color: var(--muted);
-      font-size: 0.82rem;
       margin-bottom: 8px;
       flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .trend-title-wrap {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .trend-title {
+      color: #e6f4ff;
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .trend-subtitle {
+      color: var(--muted);
+      font-size: 0.76rem;
+    }
+
+    .trend-range-badge {
+      border: 1px solid rgba(67, 179, 255, 0.36);
+      border-radius: 999px;
+      background: rgba(67, 179, 255, 0.16);
+      color: #dff2ff;
+      padding: 3px 9px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .trend-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .trend-legend {
+      color: var(--muted);
+      font-size: 0.74rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-right: auto;
+    }
+
+    .trend-legend-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: #50bdff;
+      box-shadow: 0 0 8px rgba(80, 189, 255, 0.48);
+    }
+
+    .trend-metric-pill {
+      border: 1px solid rgba(67, 179, 255, 0.25);
+      border-radius: 999px;
+      background: rgba(67, 179, 255, 0.12);
+      color: #d8ecff;
+      padding: 3px 8px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      white-space: nowrap;
     }
 
     #trendCanvas {
       width: 100%;
-      height: 136px;
+      height: 164px;
       display: block;
-      border-radius: 8px;
-      background: linear-gradient(180deg, rgba(11, 17, 33, 0.8), rgba(8, 13, 24, 0.9));
-      border: 1px solid rgba(67, 179, 255, 0.17);
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(12, 18, 36, 0.88), rgba(8, 13, 24, 0.95));
+      border: 1px solid rgba(67, 179, 255, 0.2);
+    }
+
+    .trend-footnote {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 0.74rem;
+      letter-spacing: 0.01em;
     }
 
     .insights-grid {
@@ -569,6 +902,65 @@
       font-weight: 700;
       font-size: 0.98rem;
       color: #dff2ff;
+    }
+
+    .stats-filter-bar {
+      border: 1px solid rgba(67, 179, 255, 0.24);
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(11, 19, 35, 0.82), rgba(7, 12, 24, 0.9));
+      padding: 11px;
+      margin-bottom: 11px;
+      display: grid;
+      gap: 9px;
+      box-shadow: inset 0 0 0 1px rgba(67, 179, 255, 0.08);
+    }
+
+    .stats-range-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .stats-range-buttons button {
+      border: 1px solid rgba(67, 179, 255, 0.3);
+      border-radius: 999px;
+      background: rgba(8, 14, 28, 0.84);
+      color: var(--muted);
+      min-height: 36px;
+      padding: 0 13px;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      transition: transform 0.14s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+    }
+
+    .stats-range-buttons button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(67, 179, 255, 0.5);
+      color: #e8f5ff;
+    }
+
+    .stats-range-buttons button.active {
+      color: #fff;
+      border-color: rgba(67, 179, 255, 0.7);
+      background: linear-gradient(180deg, rgba(67, 179, 255, 0.24), rgba(26, 93, 151, 0.36));
+      box-shadow: 0 0 0 1px rgba(67, 179, 255, 0.2);
+    }
+
+    .custom-range {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .range-summary {
+      color: var(--muted);
+      font-size: 0.82rem;
+      background: rgba(67, 179, 255, 0.08);
+      border: 1px solid rgba(67, 179, 255, 0.16);
+      border-radius: 10px;
+      padding: 8px 9px;
     }
 
     .coming-grid {
@@ -610,7 +1002,7 @@
 
     .share-buttons {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
       gap: 8px;
     }
 
@@ -635,6 +1027,71 @@
       object-fit: contain;
     }
 
+    .share-picker-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(3, 8, 16, 0.76);
+      backdrop-filter: blur(4px);
+      z-index: 130;
+    }
+
+    .share-picker-modal.open {
+      display: flex;
+    }
+
+    .share-picker-panel {
+      width: min(420px, 100%);
+      border-radius: 14px;
+      border: 1px solid rgba(67, 179, 255, 0.34);
+      background: linear-gradient(180deg, rgba(18, 27, 50, 0.98), rgba(10, 15, 30, 0.98));
+      box-shadow: var(--shadow);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .share-picker-panel h3 {
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+    }
+
+    .share-picker-panel p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .share-channel-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .share-channel-grid button {
+      border: 1px solid rgba(67, 179, 255, 0.34);
+      border-radius: 12px;
+      background: rgba(8, 14, 28, 0.8);
+      color: #d9ecff;
+      min-height: 88px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .share-channel-grid button img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+
     .preview-footnote {
       margin-top: 14px;
       padding-top: 12px;
@@ -645,6 +1102,12 @@
       justify-content: space-between;
       gap: 8px;
       flex-wrap: wrap;
+    }
+
+    .preview-footnote .button {
+      padding: 7px 12px;
+      min-height: 34px;
+      font-size: 0.8rem;
     }
 
     .rating-modal {
@@ -795,6 +1258,203 @@
       flex-wrap: wrap;
     }
 
+    .tutorial-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      z-index: 220;
+    }
+
+    .tutorial-overlay.open {
+      display: block;
+    }
+
+    .tutorial-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 8, 16, 0.12);
+    }
+
+    .tutorial-highlight {
+      position: fixed;
+      border-radius: 14px;
+      border: 1px solid rgba(107, 206, 255, 0.9);
+      box-shadow:
+        0 0 0 2px rgba(111, 212, 255, 0.28),
+        0 0 0 9999px rgba(2, 8, 16, 0.52),
+        0 0 24px rgba(89, 198, 255, 0.35);
+      pointer-events: none;
+      transition: all 0.24s ease;
+      z-index: 1;
+    }
+
+    .tutorial-card {
+      position: fixed;
+      width: min(380px, calc(100vw - 20px));
+      border-radius: 16px;
+      border: 1px solid rgba(101, 202, 255, 0.38);
+      background: linear-gradient(180deg, rgba(17, 28, 52, 0.98), rgba(9, 14, 28, 0.98));
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.55);
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+      z-index: 3;
+      transition: left 0.2s ease, top 0.2s ease;
+    }
+
+    .tutorial-step-pill {
+      justify-self: flex-start;
+      border-radius: 999px;
+      border: 1px solid rgba(113, 206, 255, 0.45);
+      background: rgba(25, 44, 77, 0.72);
+      color: #d9efff;
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .tutorial-body {
+      display: grid;
+      grid-template-columns: 116px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .tutorial-mascot-wrap {
+      border-radius: 12px;
+      border: 1px solid rgba(109, 205, 255, 0.35);
+      background: radial-gradient(circle at 35% 25%, rgba(121, 217, 255, 0.35), rgba(12, 22, 41, 0.9));
+      padding: 7px;
+      text-align: center;
+    }
+
+    .tutorial-mascot-image {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+      border-radius: 10px;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .tutorial-copy h3 {
+      margin: 0 0 6px;
+      font-size: 1.03rem;
+      line-height: 1.2;
+      color: #ecf7ff;
+    }
+
+    .tutorial-copy p {
+      margin: 0;
+      color: #c4d8f5;
+      font-size: 0.91rem;
+      line-height: 1.45;
+    }
+
+    .tutorial-progress {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .tutorial-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(105, 201, 255, 0.6);
+      background: rgba(71, 124, 171, 0.28);
+    }
+
+    .tutorial-dot.active {
+      background: #65cbff;
+      box-shadow: 0 0 10px rgba(101, 203, 255, 0.8);
+    }
+
+    .tutorial-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.3fr;
+      gap: 8px;
+    }
+
+    .tutorial-confirm-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(3, 8, 16, 0.72);
+      backdrop-filter: blur(2px);
+      z-index: 260;
+    }
+
+    .tutorial-confirm-modal.open {
+      display: flex;
+    }
+
+    .tutorial-confirm-panel {
+      width: min(420px, 100%);
+      border-radius: 14px;
+      border: 1px solid rgba(101, 202, 255, 0.4);
+      background: linear-gradient(180deg, rgba(17, 28, 52, 0.98), rgba(9, 14, 28, 0.98));
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .tutorial-confirm-panel h3 {
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+      color: #eaf6ff;
+    }
+
+    .tutorial-confirm-panel p {
+      margin: 0 0 12px;
+      color: #c6daf6;
+      line-height: 1.45;
+      font-size: 0.93rem;
+    }
+
+    .tutorial-confirm-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .tutorial-card[data-pose] .tutorial-mascot-image {
+      transform: none;
+      filter: none;
+    }
+
+    .milestone-toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(88px + env(safe-area-inset-bottom));
+      transform: translateX(-50%) translateY(22px);
+      opacity: 0;
+      pointer-events: none;
+      width: min(92vw, 420px);
+      border: 1px solid rgba(46, 219, 156, 0.45);
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(17, 42, 35, 0.95), rgba(9, 22, 20, 0.95));
+      color: #d9fff1;
+      font-size: 0.86rem;
+      font-weight: 700;
+      line-height: 1.25;
+      text-align: center;
+      padding: 10px 14px;
+      z-index: 300;
+      box-shadow: 0 0 0 1px rgba(78, 255, 174, 0.25), 0 14px 30px rgba(0, 0, 0, 0.45);
+      transition: transform 0.26s ease, opacity 0.26s ease;
+    }
+
+    .milestone-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
     .mobile-nav {
       position: fixed;
       left: 0;
@@ -906,6 +1566,14 @@
         display: none;
       }
 
+      .tutorial-help-button {
+        top: 12px;
+        right: 12px;
+        width: 34px;
+        height: 34px;
+        font-size: 1.06rem;
+      }
+
       input,
       select {
         font-size: 16px;
@@ -925,11 +1593,27 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .custom-range {
+        grid-template-columns: 1fr;
+      }
+
       #trendCanvas {
-        height: 120px;
+        height: 146px;
+      }
+
+      .trend-meta-row {
+        gap: 5px;
+      }
+
+      .trend-metric-pill {
+        font-size: 0.72rem;
       }
 
       .insights-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .custom-range {
         grid-template-columns: 1fr;
       }
 
@@ -941,6 +1625,18 @@
         min-height: 48px;
         justify-content: flex-start;
         padding-left: 12px;
+      }
+
+      .tutorial-body {
+        grid-template-columns: 96px 1fr;
+      }
+
+      .tutorial-controls {
+        grid-template-columns: 1fr;
+      }
+
+      .tutorial-card .button {
+        width: 100%;
       }
 
       .log-list {
@@ -979,11 +1675,19 @@
         transform: translateY(0);
       }
     }
+
+    @keyframes milestoneFlash {
+      0% { box-shadow: 0 0 0 1px rgba(46, 219, 156, 0), 0 0 0 rgba(46, 219, 156, 0); }
+      35% { box-shadow: 0 0 0 1px rgba(46, 219, 156, 0.6), 0 0 28px rgba(46, 219, 156, 0.55); }
+      100% { box-shadow: 0 0 0 1px rgba(46, 219, 156, 0), 0 0 0 rgba(46, 219, 156, 0); }
+    }
   </style>
 </head>
 <body>
   <main class="page">
     <section class="shell">
+      <h1 class="sr-only">PoopProfit Core Preview Calculator, Session Timer, and Stats</h1>
+      <button id="tutorialHelpButton" class="tutorial-help-button" type="button" aria-label="Open quick tour">?</button>
       <header class="top-banner">
         <img src="BANNER.jpeg" alt="Poop Profit banner">
       </header>
@@ -1006,34 +1710,41 @@
       <section id="panel-calculator" class="tab-panel active" aria-label="Calculator tab">
         <div class="panel-grid">
           <article class="card wage-card">
-            <h2><img src="calc.png" alt="">Wage Calculator</h2>
-            <div class="segmented" role="group" aria-label="Wage input mode">
-              <button id="hourlyModeButton" type="button">Hourly Wage</button>
-              <button id="salaryModeButton" type="button">Salary + Weekly Hours</button>
-            </div>
+            <button id="wageStripToggleButton" class="wage-strip-toggle" type="button" aria-expanded="false" aria-controls="wageStripBody">
+              <span class="wage-strip-title"><img src="calc.png" alt="">Wage Settings</span>
+              <span id="wageStripSummary" class="wage-strip-summary">Hourly mode - $0.00/hr</span>
+              <span id="wageStripChevron" class="wage-strip-chevron" aria-hidden="true">⌃</span>
+            </button>
 
-            <div id="hourlyInputs" class="row">
-              <div>
-                <label for="hourlyWageInput">Hourly Wage (USD)</label>
-                <input id="hourlyWageInput" type="number" min="0" step="0.01" placeholder="e.g. 25">
+            <div id="wageStripBody" class="wage-strip-body" hidden>
+              <div class="segmented" role="group" aria-label="Wage input mode">
+                <button id="hourlyModeButton" type="button">Hourly Wage</button>
+                <button id="salaryModeButton" type="button">Salary + Weekly Hours</button>
               </div>
-            </div>
 
-            <div id="salaryInputs" class="row two" hidden>
-              <div>
-                <label for="annualSalaryInput">Annual Salary (USD)</label>
-                <input id="annualSalaryInput" type="number" min="0" step="0.01" placeholder="e.g. 65000">
+              <div id="hourlyInputs" class="row">
+                <div>
+                  <label for="hourlyWageInput">Hourly Wage (USD)</label>
+                  <input id="hourlyWageInput" type="number" min="0" step="0.01" placeholder="e.g. 25">
+                </div>
               </div>
-              <div>
-                <label for="weeklyHoursInput">Weekly Hours</label>
-                <input id="weeklyHoursInput" type="number" min="0" step="0.1" placeholder="e.g. 40">
-              </div>
-            </div>
 
-            <div id="hourlyWageDisplay" class="hourly-display">Effective hourly wage: $0.00</div>
+              <div id="salaryInputs" class="row two" hidden>
+                <div>
+                  <label for="annualSalaryInput">Annual Salary (USD)</label>
+                  <input id="annualSalaryInput" type="number" min="0" step="0.01" placeholder="e.g. 65000">
+                </div>
+                <div>
+                  <label for="weeklyHoursInput">Weekly Hours</label>
+                  <input id="weeklyHoursInput" type="number" min="0" step="0.1" placeholder="e.g. 40">
+                </div>
+              </div>
+
+              <div id="hourlyWageDisplay" class="hourly-display">Effective hourly wage: $0.00</div>
+            </div>
           </article>
 
-          <article class="card timer-card">
+          <article class="card timer-card timer-hero">
             <h2><img src="poopemojifinal.jpeg" alt="">Session Timer</h2>
             <div class="timer">
               <div class="emoji" aria-hidden="true">💩</div>
@@ -1044,8 +1755,15 @@
                 <div id="timerProgressBar"></div>
               </div>
               <div id="timerMilestone" class="timer-subline"></div>
-              <button id="timerButton" class="button full" type="button">Start Session</button>
+              <button id="timerButton" class="button full" type="button">Start Poop!</button>
               <div id="statusMessage" class="status"></div>
+              <div id="firstSessionCoach" class="first-session-coach" hidden>
+                <p id="firstSessionCoachBody">Step 1: add your wage so your earnings are calculated correctly.</p>
+                <div class="coach-actions">
+                  <button id="coachSetWageButton" class="button ghost" type="button">Set Wage</button>
+                  <button id="coachStartButton" class="button" type="button">Start First Session</button>
+                </div>
+              </div>
             </div>
           </article>
 
@@ -1063,6 +1781,27 @@
         <div class="panel-grid">
           <article class="card" style="grid-column: span 12;">
             <h2><img src="stats.png" alt="">Statistics</h2>
+            <div class="stats-filter-bar">
+              <div class="stats-range-buttons" role="group" aria-label="Statistics date range">
+                <button id="statsRangeAllButton" data-stats-range="all" type="button" class="active">All Time</button>
+                <button id="statsRangeTodayButton" data-stats-range="today" type="button">Today</button>
+                <button id="statsRangeLast7Button" data-stats-range="last7" type="button">Last 7 Days</button>
+                <button id="statsRangeLast30Button" data-stats-range="last30" type="button">Last 30 Days</button>
+                <button id="statsRangeCustomButton" data-stats-range="custom" type="button">Custom Range</button>
+              </div>
+              <div id="customRangeWrap" class="custom-range" hidden>
+                <div>
+                  <label for="statsStartDateInput">Start date</label>
+                  <input id="statsStartDateInput" type="date">
+                </div>
+                <div>
+                  <label for="statsEndDateInput">End date</label>
+                  <input id="statsEndDateInput" type="date">
+                </div>
+                <button id="applyCustomRangeButton" class="button ghost" type="button">Apply</button>
+              </div>
+              <div id="statsRangeSummary" class="range-summary">Showing: All Time</div>
+            </div>
             <div class="stats-grid">
               <div class="stat">
                 <div class="label">Total Sessions <button class="share-stat-btn" data-stat-share="totalSessions" type="button"><span class="icon-share">↗</span>Share</button></div>
@@ -1092,10 +1831,19 @@
 
             <div class="trend-panel">
               <div class="trend-head">
-                <span>Recent Earnings Trend</span>
-                <span id="trendRangeLabel">Last 14 sessions</span>
+                <div class="trend-title-wrap">
+                  <span class="trend-title">Recent Earnings Trend</span>
+                  <span id="trendSubtitle" class="trend-subtitle">Last 14 sessions plotted by session profit</span>
+                </div>
+                <span id="trendRangeLabel" class="trend-range-badge">Last 14 sessions</span>
+              </div>
+              <div class="trend-meta-row">
+                <span class="trend-legend"><span class="trend-legend-dot" aria-hidden="true"></span>Earnings per session</span>
+                <span id="trendPeakLabel" class="trend-metric-pill">Peak: $0.00</span>
+                <span id="trendAverageLabel" class="trend-metric-pill">Avg: $0.00</span>
               </div>
               <canvas id="trendCanvas"></canvas>
+              <div id="trendFootnote" class="trend-footnote">Hover-like detail is shown via chart point highlights.</div>
             </div>
 
             <div class="insights-grid">
@@ -1122,11 +1870,8 @@
                 </select>
               </div>
               <div class="share-buttons">
-                <button data-share-target="native" type="button">Native Share</button>
-                <button data-share-target="x" type="button"><img src="xicon.png" alt="">Share to X</button>
-                <button data-share-target="facebook" type="button"><img src="fbicon.png" alt="">Facebook</button>
-                <button data-share-target="sms" type="button"><img src="txticon.png" alt="">SMS</button>
-                <button data-share-target="copy" type="button" style="grid-column: 1 / -1;">Copy Share Text</button>
+                <button id="openSharePickerButton" type="button"><span class="icon-share">↗</span>Share Summary</button>
+                <button id="copyShareTextButton" type="button">Copy Share Text</button>
               </div>
               <div id="shareStatus" class="status"></div>
             </div>
@@ -1171,6 +1916,9 @@
       <footer class="preview-footnote">
         <span>Data is stored locally on this browser/device until cleared.</span>
         <span>Built for smooth live usage while the full platform evolves.</span>
+        <span><a href="https://www.poopprofit.com/">Home</a> · <a href="https://www.poopprofit.com/core-preview.html">Core Preview</a></span>
+        <span>&copy; 2026 PoopProfit. All rights reserved.</span>
+        <button id="replayTutorialButton" class="button ghost" type="button">Replay Quick Tour</button>
       </footer>
     </section>
   </main>
@@ -1204,6 +1952,74 @@
     </div>
   </div>
 
+  <div id="sharePickerModal" class="share-picker-modal" aria-hidden="true">
+    <div class="share-picker-panel" role="dialog" aria-modal="true" aria-labelledby="sharePickerTitle">
+      <h3 id="sharePickerTitle">Share your Poop Profit</h3>
+      <p id="sharePickerDescription">Choose where to share.</p>
+      <div class="share-channel-grid" aria-label="Share channels">
+        <button type="button" data-share-channel="facebook">
+          <img src="fbicon.png" alt="">
+          <span>Facebook</span>
+        </button>
+        <button type="button" data-share-channel="x">
+          <img src="xicon.png" alt="">
+          <span>X</span>
+        </button>
+        <button type="button" data-share-channel="sms">
+          <img src="txticon.png" alt="">
+          <span>Text</span>
+        </button>
+      </div>
+      <button id="closeSharePickerButton" class="button ghost full" type="button">Cancel</button>
+    </div>
+  </div>
+
+  <div id="tutorialOverlay" class="tutorial-overlay" aria-hidden="true">
+    <div class="tutorial-backdrop"></div>
+    <div id="tutorialHighlight" class="tutorial-highlight"></div>
+    <div id="tutorialCard" class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle" data-pose="1">
+      <div id="tutorialStepPill" class="tutorial-step-pill">Step 1 of 8</div>
+      <div class="tutorial-body">
+        <div class="tutorial-mascot-wrap">
+          <img id="tutorialMascotImage" class="tutorial-mascot-image" src="OnboardingMascot_20260419_095122_00000.jpg" alt="Onboarding mascot pose 1">
+        </div>
+        <div class="tutorial-copy">
+          <h3 id="tutorialTitle">Welcome to Poop Profit</h3>
+          <p id="tutorialBody">Quick Tour: Learn how to track how much you get paid to poop at work!</p>
+        </div>
+      </div>
+      <div id="tutorialProgress" class="tutorial-progress" aria-hidden="true"></div>
+      <div class="tutorial-controls">
+        <button id="tutorialBackButton" class="button ghost" type="button">Back</button>
+        <button id="tutorialSkipButton" class="button ghost warn" type="button">Skip</button>
+        <button id="tutorialNextButton" class="button" type="button">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tutorialStartModal" class="tutorial-confirm-modal" aria-hidden="true">
+    <div class="tutorial-confirm-panel" role="dialog" aria-modal="true" aria-labelledby="tutorialStartTitle">
+      <h3 id="tutorialStartTitle">Run Quick Tour?</h3>
+      <p>Would you like to run the quick tour now?</p>
+      <div class="tutorial-confirm-actions">
+        <button id="tutorialStartCancelButton" class="button ghost" type="button">Not Now</button>
+        <button id="tutorialStartConfirmButton" class="button" type="button">Start Tour</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tutorialCompleteModal" class="tutorial-confirm-modal" aria-hidden="true">
+    <div class="tutorial-confirm-panel" role="dialog" aria-modal="true" aria-labelledby="tutorialCompleteTitle">
+      <h3 id="tutorialCompleteTitle">Tutorial Complete</h3>
+      <p>You are all set. Happy pooping.</p>
+      <div class="tutorial-confirm-actions">
+        <button id="tutorialCompleteCloseButton" class="button full" type="button">Awesome</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="milestoneToast" class="milestone-toast" role="status" aria-live="polite"></div>
+
   <script>
     (function () {
       "use strict";
@@ -1212,6 +2028,7 @@
       var DEFAULT_STATE = {
         activeTab: "calculator",
         wageMode: "hourly",
+        wageModeCollapsed: true,
         hourlyWage: "",
         annualSalary: "",
         weeklyHours: "",
@@ -1239,6 +2056,9 @@
       var annualSalaryInput = document.getElementById("annualSalaryInput");
       var weeklyHoursInput = document.getElementById("weeklyHoursInput");
       var hourlyWageDisplay = document.getElementById("hourlyWageDisplay");
+      var wageStripToggleButton = document.getElementById("wageStripToggleButton");
+      var wageStripBody = document.getElementById("wageStripBody");
+      var wageStripSummary = document.getElementById("wageStripSummary");
 
       var timerDisplay = document.getElementById("timerDisplay");
       var liveEarnings = document.getElementById("liveEarnings");
@@ -1248,6 +2068,11 @@
       var sessionProjection = document.getElementById("sessionProjection");
       var timerProgressBar = document.getElementById("timerProgressBar");
       var timerMilestone = document.getElementById("timerMilestone");
+      var firstSessionCoach = document.getElementById("firstSessionCoach");
+      var firstSessionCoachBody = document.getElementById("firstSessionCoachBody");
+      var coachSetWageButton = document.getElementById("coachSetWageButton");
+      var coachStartButton = document.getElementById("coachStartButton");
+      var milestoneToast = document.getElementById("milestoneToast");
 
       var mobileFabButton = document.getElementById("fabTimerButton");
       var mobileFabEmoji = document.getElementById("fabEmoji");
@@ -1262,6 +2087,10 @@
 
       var trendCanvas = document.getElementById("trendCanvas");
       var trendRangeLabel = document.getElementById("trendRangeLabel");
+      var trendSubtitle = document.getElementById("trendSubtitle");
+      var trendPeakLabel = document.getElementById("trendPeakLabel");
+      var trendAverageLabel = document.getElementById("trendAverageLabel");
+      var trendFootnote = document.getElementById("trendFootnote");
       var insightLongest = document.getElementById("insightLongest");
       var insightBestDay = document.getElementById("insightBestDay");
       var insightProfitRate = document.getElementById("insightProfitRate");
@@ -1272,6 +2101,18 @@
       var shareScopeSelect = document.getElementById("shareScopeSelect");
       var shareStatus = document.getElementById("shareStatus");
       var statShareButtons = document.querySelectorAll("[data-stat-share]");
+      var openSharePickerButton = document.getElementById("openSharePickerButton");
+      var copyShareTextButton = document.getElementById("copyShareTextButton");
+      var sharePickerModal = document.getElementById("sharePickerModal");
+      var sharePickerDescription = document.getElementById("sharePickerDescription");
+      var closeSharePickerButton = document.getElementById("closeSharePickerButton");
+      var shareChannelButtons = sharePickerModal ? sharePickerModal.querySelectorAll("[data-share-channel]") : [];
+      var statsRangeButtons = document.querySelectorAll("[data-stats-range]");
+      var customRangeWrap = document.getElementById("customRangeWrap");
+      var statsStartDateInput = document.getElementById("statsStartDateInput");
+      var statsEndDateInput = document.getElementById("statsEndDateInput");
+      var applyCustomRangeButton = document.getElementById("applyCustomRangeButton");
+      var statsRangeSummary = document.getElementById("statsRangeSummary");
       var ratingModal = document.getElementById("ratingModal");
       var poopRatingButtonsWrap = document.getElementById("poopRatingButtons");
       var poopRatingButtons = poopRatingButtonsWrap ? poopRatingButtonsWrap.querySelectorAll("[data-rating]") : [];
@@ -1279,6 +2120,104 @@
       var skipRatingButton = document.getElementById("skipRatingButton");
       var selectedRating = 0;
       var pendingSessionRatingId = null;
+      var milestoneToastTimerId = null;
+      var lastMilestoneAnnounced = 0;
+      var MILESTONE_SECONDS = [60, 180, 300, 600, 900];
+      var wageModeCollapsed = state.wageModeCollapsed === false ? false : true;
+      var statsRangeMode = "all";
+      var QUICK_RANGE_DAY_COUNTS = {
+        last7: 7,
+        last30: 30
+      };
+      var pendingShareText = "";
+      var tutorialHelpButton = document.getElementById("tutorialHelpButton");
+      var replayTutorialButton = document.getElementById("replayTutorialButton");
+      var tutorialOverlay = document.getElementById("tutorialOverlay");
+      var tutorialHighlight = document.getElementById("tutorialHighlight");
+      var tutorialCard = document.getElementById("tutorialCard");
+      var tutorialStepPill = document.getElementById("tutorialStepPill");
+      var tutorialTitle = document.getElementById("tutorialTitle");
+      var tutorialBody = document.getElementById("tutorialBody");
+      var tutorialMascotImage = document.getElementById("tutorialMascotImage");
+      var tutorialProgress = document.getElementById("tutorialProgress");
+      var tutorialBackButton = document.getElementById("tutorialBackButton");
+      var tutorialSkipButton = document.getElementById("tutorialSkipButton");
+      var tutorialNextButton = document.getElementById("tutorialNextButton");
+      var tutorialStartModal = document.getElementById("tutorialStartModal");
+      var tutorialStartConfirmButton = document.getElementById("tutorialStartConfirmButton");
+      var tutorialStartCancelButton = document.getElementById("tutorialStartCancelButton");
+      var tutorialCompleteModal = document.getElementById("tutorialCompleteModal");
+      var tutorialCompleteCloseButton = document.getElementById("tutorialCompleteCloseButton");
+      var TUTORIAL_SEEN_KEY = "pp_core_tutorial_seen_v1";
+      var TUTORIAL_STEPS = [
+        {
+          title: "Welcome to Poop Profit",
+          body: "Quick Tour: Learn how to track how much you get paid to poop at work!",
+          target: ".top-banner",
+          tab: "calculator",
+          mascotSrc: "OnboardingMascot_20260419_095122_00000.jpg"
+        },
+        {
+          title: "Set Your Pay",
+          body: "Input how much your job pays you per hour, or if you're on salary, enter your annual salary and how many hours a week you work.",
+          target: "#wageStripToggleButton",
+          tab: "calculator",
+          expandWage: true,
+          mascotSrc: "OnboardingMascot_20260419_094405_0000.jpg"
+        },
+        {
+          title: "Start Your Session",
+          body: "Tap Start Poop! to begin your session timer, then tap again when you're done so it saves to your log.",
+          target: "#timerButton",
+          tab: "calculator",
+          mascotSrc: "OnboardingMascot_20260419_094405_0001.jpg"
+        },
+        {
+          title: "Live Session Dashboard",
+          body: "This will display your session timer, current earnings, projections, and milestone progress.",
+          target: ".timer-card",
+          tab: "calculator",
+          mascotSrc: "OnboardingMascot_20260419_094405_0002.jpg"
+        },
+        {
+          title: "Navigate Tabs",
+          body: "Use these tabs to switch between Calculator, Stats, and Coming Soon whenever you want.",
+          target: ".tabs",
+          tab: "calculator",
+          mascotSrc: "OnboardingMascot_20260419_094405_0003.jpg"
+        },
+        {
+          title: "Save Your Log!",
+          body: "When you finish pooping, your poop logs saves here. You can rate it, share it, or delete it anytime.",
+          target: "#logList",
+          tab: "calculator",
+          mascotSrc: "OnboardingMascot_20260419_094405_0004.jpg"
+        },
+        {
+          title: "See Your Detailed Stats!",
+          body: "Use Stats to filter by date range, view trends, and share your results. You're all set! Happy pooping",
+          target: "#panel-stats .stats-filter-bar",
+          tab: "stats",
+          mascotSrc: "OnboardingMascot_20260419_094405_0005.jpg"
+        },
+        {
+          title: "Need Help Later?",
+          body: "Tap the ? button anytime if you'd like to run the tutorial again.",
+          target: "#tutorialHelpButton",
+          tab: "calculator",
+          mascotSrc: "OnboardingMascot_20260419_095122_00000.jpg"
+        }
+      ];
+      var tutorialState = {
+        open: false,
+        stepIndex: 0,
+        rafId: null
+      };
+
+      function trackCoreEvent(eventName, params) {
+        if (typeof gtag !== "function" || !eventName) return;
+        gtag("event", eventName, params || {});
+      }
 
       hydrateInputs();
       renderTabs();
@@ -1286,6 +2225,7 @@
       wireEvents();
       renderAll();
       restoreRunningSession();
+      setupTutorial();
 
       function wireEvents() {
         tabButtons.forEach(function (button) {
@@ -1340,6 +2280,18 @@
           toggleSession();
         });
 
+        if (coachSetWageButton) {
+          coachSetWageButton.addEventListener("click", function () {
+            handleCoachSetWage();
+          });
+        }
+
+        if (coachStartButton) {
+          coachStartButton.addEventListener("click", function () {
+            handleCoachStartSession();
+          });
+        }
+
         if (mobileFabButton) {
           mobileFabButton.addEventListener("click", function () {
             triggerHapticVisual(mobileFabButton);
@@ -1365,11 +2317,31 @@
           setStatus(statusMessage, "All sessions cleared.", "warn");
         });
 
-        document.querySelectorAll("[data-share-target]").forEach(function (button) {
-          button.addEventListener("click", function () {
-            handleShare(button.getAttribute("data-share-target"));
+        if (wageStripToggleButton) {
+          wageStripToggleButton.addEventListener("click", function () {
+            wageModeCollapsed = !wageModeCollapsed;
+            state.wageModeCollapsed = wageModeCollapsed;
+            persist();
+            renderWageStrip();
           });
-        });
+        }
+
+        if (openSharePickerButton) {
+          openSharePickerButton.addEventListener("click", function () {
+            handleShare();
+          });
+        }
+
+        if (copyShareTextButton) {
+          copyShareTextButton.addEventListener("click", function () {
+            var text = getShareText();
+            if (!text) {
+              setStatus(shareStatus, "Nothing to share yet. Log a session first.", "warn");
+              return;
+            }
+            copyToClipboard(text);
+          });
+        }
 
         statShareButtons.forEach(function (button) {
           button.addEventListener("click", function () {
@@ -1377,6 +2349,73 @@
             shareStatByKey(statKey);
           });
         });
+
+        statsRangeButtons.forEach(function (button) {
+          button.addEventListener("click", function () {
+            var mode = button.getAttribute("data-stats-range");
+            if (!mode) return;
+            statsRangeMode = mode;
+            trackCoreEvent("core_stats_range_change", { range_mode: mode });
+            if (mode === "custom") {
+              ensureCustomRangeDefaults();
+            }
+            renderStatsRangeControls();
+            renderStats();
+          });
+        });
+
+        if (applyCustomRangeButton) {
+          applyCustomRangeButton.addEventListener("click", function () {
+            if (statsRangeMode !== "custom") {
+              statsRangeMode = "custom";
+            }
+            renderStatsRangeControls();
+            renderStats();
+          });
+        }
+
+        if (statsStartDateInput) {
+          statsStartDateInput.addEventListener("change", function () {
+            if (statsRangeMode === "custom") {
+              renderStatsRangeControls();
+              renderStats();
+            }
+          });
+        }
+
+        if (statsEndDateInput) {
+          statsEndDateInput.addEventListener("change", function () {
+            if (statsRangeMode === "custom") {
+              renderStatsRangeControls();
+              renderStats();
+            }
+          });
+        }
+
+        if (shareChannelButtons && shareChannelButtons.length) {
+          shareChannelButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+              var channel = button.getAttribute("data-share-channel");
+              if (!pendingShareText || !channel) return;
+              shareText(pendingShareText, channel);
+              closeSharePicker();
+            });
+          });
+        }
+
+        if (closeSharePickerButton) {
+          closeSharePickerButton.addEventListener("click", function () {
+            closeSharePicker();
+          });
+        }
+
+        if (sharePickerModal) {
+          sharePickerModal.addEventListener("click", function (event) {
+            if (event.target === sharePickerModal) {
+              closeSharePicker();
+            }
+          });
+        }
 
         if (poopRatingButtons && poopRatingButtons.length) {
           poopRatingButtons.forEach(function (button) {
@@ -1412,11 +2451,98 @@
           });
         }
 
+        if (replayTutorialButton) {
+          replayTutorialButton.addEventListener("click", function () {
+            startTutorial(true);
+          });
+        }
+
+        if (tutorialHelpButton) {
+          tutorialHelpButton.addEventListener("click", function () {
+            triggerHapticVisual(tutorialHelpButton);
+            openTutorialStartModal();
+          });
+        }
+
+        if (tutorialBackButton) {
+          tutorialBackButton.addEventListener("click", function () {
+            moveTutorialStep(-1);
+          });
+        }
+
+        if (tutorialNextButton) {
+          tutorialNextButton.addEventListener("click", function () {
+            moveTutorialStep(1);
+          });
+        }
+
+        if (tutorialSkipButton) {
+          tutorialSkipButton.addEventListener("click", function () {
+            closeTutorial(true);
+          });
+        }
+
+        if (tutorialStartConfirmButton) {
+          tutorialStartConfirmButton.addEventListener("click", function () {
+            closeTutorialStartModal();
+            startTutorial(true);
+          });
+        }
+
+        if (tutorialStartCancelButton) {
+          tutorialStartCancelButton.addEventListener("click", function () {
+            closeTutorialStartModal();
+          });
+        }
+
+        if (tutorialCompleteCloseButton) {
+          tutorialCompleteCloseButton.addEventListener("click", function () {
+            closeTutorialCompleteModal();
+          });
+        }
+
+        if (tutorialStartModal) {
+          tutorialStartModal.addEventListener("click", function (event) {
+            if (event.target === tutorialStartModal) {
+              closeTutorialStartModal();
+            }
+          });
+        }
+
+        if (tutorialCompleteModal) {
+          tutorialCompleteModal.addEventListener("click", function (event) {
+            if (event.target === tutorialCompleteModal) {
+              closeTutorialCompleteModal();
+            }
+          });
+        }
+
+        window.addEventListener("keydown", function (event) {
+          if (!tutorialState.open) return;
+          if (event.key === "Escape") {
+            closeTutorial(true);
+          } else if (event.key === "ArrowRight" || event.key === "Enter") {
+            moveTutorialStep(1);
+          } else if (event.key === "ArrowLeft") {
+            moveTutorialStep(-1);
+          }
+        });
+
         window.addEventListener("resize", function () {
           if (resizeTimerId !== null) window.clearTimeout(resizeTimerId);
           resizeTimerId = window.setTimeout(function () {
-            renderTrend(state.sessions);
+            renderTrend(getFilteredSessions());
           }, 100);
+          queueTutorialPositionUpdate();
+        });
+
+        window.addEventListener("scroll", function () {
+          queueTutorialPositionUpdate();
+        }, true);
+
+        document.addEventListener("visibilitychange", function () {
+          if (document.hidden || !state.activeSessionStartMs) return;
+          runTimerTick();
         });
       }
 
@@ -1427,7 +2553,7 @@
         renderTabs();
         if (tabName === "stats") {
           window.setTimeout(function () {
-            renderTrend(state.sessions);
+            renderTrend(getFilteredSessions());
           }, 30);
         }
       }
@@ -1448,7 +2574,7 @@
 
         if (active === "stats") {
           window.setTimeout(function () {
-            renderTrend(state.sessions);
+            renderTrend(getFilteredSessions());
           }, 30);
         }
       }
@@ -1467,6 +2593,21 @@
         salaryInputs.hidden = isHourly;
         hourlyInputs.style.display = isHourly ? "grid" : "none";
         salaryInputs.style.display = isHourly ? "none" : "grid";
+        renderWageStrip();
+      }
+
+      function renderWageStrip() {
+        var effectiveHourly = getEffectiveHourlyWage();
+        var summaryPrefix = state.wageMode === "hourly" ? "Hourly mode" : "Salary mode";
+        if (wageStripSummary) {
+          wageStripSummary.textContent = summaryPrefix + " - $" + effectiveHourly.toFixed(2) + "/hr";
+        }
+        if (wageStripToggleButton) {
+          wageStripToggleButton.setAttribute("aria-expanded", wageModeCollapsed ? "false" : "true");
+        }
+        if (wageStripBody) {
+          wageStripBody.hidden = wageModeCollapsed;
+        }
       }
 
       function getEffectiveHourlyWage() {
@@ -1496,9 +2637,16 @@
         }
 
         state.activeSessionStartMs = Date.now();
+        lastMilestoneAnnounced = 0;
+        hideMilestoneCelebration();
         persist();
+        trackCoreEvent("core_session_start", {
+          wage_mode: state.wageMode,
+          hourly_rate: Number(hourly.toFixed(2))
+        });
         setStatus(statusMessage, "Session started. Let the profits flow.", "ok");
         renderTimerButton();
+        renderFirstSessionCoach();
         runTimerTick();
         timerIntervalId = window.setInterval(runTimerTick, 1000);
       }
@@ -1523,7 +2671,13 @@
 
         pendingSessionRatingId = state.sessions[0].id;
         state.activeSessionStartMs = null;
+        lastMilestoneAnnounced = 0;
+        hideMilestoneCelebration();
         persist();
+        trackCoreEvent("core_session_stop", {
+          duration_seconds: durationSeconds,
+          earnings: Number(roundCurrency(earnings).toFixed(2))
+        });
         clearIntervalIfRunning();
         openRatingModal();
         renderAll();
@@ -1533,10 +2687,14 @@
       function restoreRunningSession() {
         if (!state.activeSessionStartMs) {
           renderTimerButton();
+          renderFirstSessionCoach();
           return;
         }
 
+        var restoredElapsed = Math.max(0, Math.floor((Date.now() - state.activeSessionStartMs) / 1000));
+        lastMilestoneAnnounced = getReachedMilestone(restoredElapsed);
         renderTimerButton();
+        renderFirstSessionCoach();
         runTimerTick();
         timerIntervalId = window.setInterval(runTimerTick, 1000);
         setStatus(statusMessage, "Resumed active session.", "ok");
@@ -1561,7 +2719,7 @@
 
       function renderTimerButton() {
         var running = Boolean(state.activeSessionStartMs);
-        timerButton.textContent = running ? "Stop + Save Session" : "Start Session";
+        timerButton.textContent = running ? "Stop + Save Session" : "Start Poop!";
         timerButton.style.background = running
           ? "linear-gradient(180deg, #ff8a8a, #ff6f6f)"
           : "linear-gradient(180deg, var(--primary), var(--primary-strong))";
@@ -1581,12 +2739,15 @@
       function renderAll() {
         var hourly = getEffectiveHourlyWage();
         hourlyWageDisplay.textContent = "Effective hourly wage: $" + hourly.toFixed(2);
+        state.wageModeCollapsed = wageModeCollapsed;
+        renderWageStrip();
 
         if (!state.activeSessionStartMs) {
           timerDisplay.textContent = "00:00:00";
           liveEarnings.textContent = "";
         }
 
+        renderFirstSessionCoach();
         renderTimerRuntimeUI();
         renderTimerButton();
         renderStats();
@@ -1594,7 +2755,8 @@
       }
 
       function renderStats() {
-        var sessions = state.sessions;
+        renderStatsRangeControls();
+        var sessions = getFilteredSessions();
         var totalSessions = sessions.length;
         var totalTimeSeconds = sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
         var totalEarnings = sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
@@ -1631,8 +2793,27 @@
         if (!state.sessions.length) {
           var empty = document.createElement("div");
           empty.className = "empty-state";
-          empty.textContent = "No sessions yet. Start a session to build your log.";
+          empty.innerHTML =
+            "<strong>No sessions yet.</strong>" +
+            "<p>Start your first session to build your log, then rate and share it.</p>" +
+            "<div class=\"empty-actions\">" +
+            "<button type=\"button\" class=\"button ghost\" data-empty-action=\"start\">Start First Session</button>" +
+            "<button type=\"button\" class=\"button ghost\" data-empty-action=\"stats\">Jump to Stats</button>" +
+            "</div>";
           logList.appendChild(empty);
+          var startAction = empty.querySelector("[data-empty-action=\"start\"]");
+          var statsAction = empty.querySelector("[data-empty-action=\"stats\"]");
+          if (startAction) {
+            startAction.addEventListener("click", function () {
+              handleCoachStartSession();
+            });
+          }
+          if (statsAction) {
+            statsAction.addEventListener("click", function () {
+              setActiveTab("stats");
+              setStatus(statusMessage, "Use Stats to track trends as your log grows.", "ok");
+            });
+          }
           return;
         }
 
@@ -1702,23 +2883,27 @@
           setStatus(shareStatus, "Nothing to share yet. Log a session first.", "warn");
           return;
         }
-        shareText(text, target);
+        if (target === "copy") {
+          copyToClipboard(text);
+          return;
+        }
+        openSharePickerWithText(text, "Choose where to share your summary.");
       }
 
       function shareSingleLog(session) {
         var message = "I earned $" + session.earnings.toFixed(2) + " in " +
           formatDuration(session.durationSeconds) + " on Poop Profit. Check yours at poopprofit.com";
-        shareText(message, "native");
+        openSharePickerWithText(message, "Share this log entry to:");
       }
 
       function shareStatByKey(statKey) {
         var message = buildStatShareMessage(statKey);
         if (!message) return;
-        shareText(message, "native");
+        openSharePickerWithText(message, "Share this stat card to:");
       }
 
       function buildStatShareMessage(statKey) {
-        var sessions = state.sessions;
+        var sessions = getFilteredSessions();
         var totalSessions = sessions.length;
         var totalTimeSeconds = sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
         var totalEarnings = sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
@@ -1742,6 +2927,7 @@
       function shareText(text, target) {
         var shareTarget = target || "native";
         var url = "https://www.poopprofit.com";
+        trackCoreEvent("core_share_channel", { channel: shareTarget });
 
         if (shareTarget === "native") {
           if (navigator.share) {
@@ -1782,19 +2968,20 @@
 
       function getShareText() {
         var scope = shareScopeSelect.value;
+        var sessions = getFilteredSessions();
 
         if (scope === "latest") {
-          if (!state.sessions.length) return "";
-          var latest = state.sessions[0];
+          if (!sessions.length) return "";
+          var latest = sessions[0];
           return "I just earned $" + latest.earnings.toFixed(2) + " in " + formatDuration(latest.durationSeconds) +
             " with Poop Profit. Track your poop profits at poopprofit.com";
         }
 
-        if (!state.sessions.length) return "";
+        if (!sessions.length) return "";
 
-        var totalSessions = state.sessions.length;
-        var totalEarnings = state.sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
-        var totalTimeSeconds = state.sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
+        var totalSessions = sessions.length;
+        var totalEarnings = sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
+        var totalTimeSeconds = sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
 
         return "My Poop Profit stats: " + totalSessions + " sessions, $" + totalEarnings.toFixed(2) +
           " earned, " + formatDuration(totalTimeSeconds) + " total time. Check yours at poopprofit.com";
@@ -1839,6 +3026,166 @@
         else element.style.color = "var(--muted)";
       }
 
+      function renderStatsRangeControls() {
+        statsRangeButtons.forEach(function (button) {
+          var mode = button.getAttribute("data-stats-range");
+          button.classList.toggle("active", mode === statsRangeMode);
+        });
+
+        if (customRangeWrap) {
+          customRangeWrap.hidden = statsRangeMode !== "custom";
+        }
+
+        if (statsRangeSummary) {
+          statsRangeSummary.textContent = getStatsRangeSummaryText();
+        }
+      }
+
+      function getFilteredSessions() {
+        if (!Array.isArray(state.sessions)) return [];
+        if (statsRangeMode === "all") {
+          return state.sessions.slice();
+        }
+
+        if (statsRangeMode === "today") {
+          var now = Date.now();
+          return state.sessions.filter(function (session) {
+            return isSameDay(session.endedAtMs, now);
+          });
+        }
+
+        if (Object.prototype.hasOwnProperty.call(QUICK_RANGE_DAY_COUNTS, statsRangeMode)) {
+          var quickBounds = getQuickRangeBounds(QUICK_RANGE_DAY_COUNTS[statsRangeMode]);
+          return state.sessions.filter(function (session) {
+            return session.endedAtMs >= quickBounds.startMs && session.endedAtMs <= quickBounds.endMs;
+          });
+        }
+
+        if (statsRangeMode === "custom") {
+          var startMs = parseDateInputStart(statsStartDateInput ? statsStartDateInput.value : "");
+          var endMs = parseDateInputEnd(statsEndDateInput ? statsEndDateInput.value : "");
+          var normalizedBounds = normalizeRangeBounds(startMs, endMs);
+          return state.sessions.filter(function (session) {
+            var endedAt = session.endedAtMs;
+            if (normalizedBounds.startMs !== null && endedAt < normalizedBounds.startMs) return false;
+            if (normalizedBounds.endMs !== null && endedAt > normalizedBounds.endMs) return false;
+            return true;
+          });
+        }
+
+        return state.sessions.slice();
+      }
+
+      function getStatsRangeSummaryText() {
+        if (statsRangeMode === "all") return "Showing: All Time";
+        if (statsRangeMode === "today") {
+          return "Showing: Today (" + formatDateForSummary(Date.now()) + ")";
+        }
+        if (statsRangeMode === "last7" || statsRangeMode === "last30") {
+          var days = QUICK_RANGE_DAY_COUNTS[statsRangeMode];
+          var quickBounds = getQuickRangeBounds(days);
+          return "Showing: Last " + days + " Days (" +
+            formatDateForSummary(quickBounds.startMs) + " - " +
+            formatDateForSummary(quickBounds.endMs) + ")";
+        }
+
+        var startMs = parseDateInputStart(statsStartDateInput ? statsStartDateInput.value : "");
+        var endMs = parseDateInputEnd(statsEndDateInput ? statsEndDateInput.value : "");
+        var normalizedBounds = normalizeRangeBounds(startMs, endMs);
+        if (normalizedBounds.startMs !== null && normalizedBounds.endMs !== null) {
+          return "Showing: " + formatDateForSummary(normalizedBounds.startMs) +
+            " - " + formatDateForSummary(normalizedBounds.endMs);
+        }
+        if (normalizedBounds.startMs !== null) {
+          return "Showing: From " + formatDateForSummary(normalizedBounds.startMs);
+        }
+        if (normalizedBounds.endMs !== null) {
+          return "Showing: Up to " + formatDateForSummary(normalizedBounds.endMs);
+        }
+        return "Showing: Custom Range (select dates)";
+      }
+
+      function parseDateInputStart(value) {
+        if (!value) return null;
+        var parsed = Date.parse(value + "T00:00:00");
+        return Number.isFinite(parsed) ? parsed : null;
+      }
+
+      function parseDateInputEnd(value) {
+        if (!value) return null;
+        var parsed = Date.parse(value + "T23:59:59.999");
+        return Number.isFinite(parsed) ? parsed : null;
+      }
+
+      function normalizeRangeBounds(startMs, endMs) {
+        if (startMs !== null && endMs !== null && startMs > endMs) {
+          return {
+            startMs: endMs,
+            endMs: startMs
+          };
+        }
+        return {
+          startMs: startMs,
+          endMs: endMs
+        };
+      }
+
+      function getQuickRangeBounds(days) {
+        var endDate = new Date();
+        endDate.setHours(23, 59, 59, 999);
+        var startDate = new Date(endDate.getTime());
+        startDate.setHours(0, 0, 0, 0);
+        startDate.setDate(startDate.getDate() - (Math.max(1, days) - 1));
+        return {
+          startMs: startDate.getTime(),
+          endMs: endDate.getTime()
+        };
+      }
+
+      function ensureCustomRangeDefaults() {
+        if (!statsStartDateInput || !statsEndDateInput) return;
+        if (statsStartDateInput.value || statsEndDateInput.value) return;
+        var quickBounds = getQuickRangeBounds(7);
+        statsStartDateInput.value = toDateInputValue(quickBounds.startMs);
+        statsEndDateInput.value = toDateInputValue(quickBounds.endMs);
+      }
+
+      function toDateInputValue(timestamp) {
+        var date = new Date(timestamp);
+        var year = date.getFullYear();
+        var month = String(date.getMonth() + 1).padStart(2, "0");
+        var day = String(date.getDate()).padStart(2, "0");
+        return year + "-" + month + "-" + day;
+      }
+
+      function formatDateForSummary(timestamp) {
+        return new Date(timestamp).toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+          year: "numeric"
+        });
+      }
+
+      function openSharePickerWithText(text, description) {
+        pendingShareText = text || "";
+        if (!pendingShareText) return;
+        if (sharePickerDescription) {
+          sharePickerDescription.textContent = description || "Choose where to share.";
+        }
+        if (sharePickerModal) {
+          sharePickerModal.classList.add("open");
+          sharePickerModal.setAttribute("aria-hidden", "false");
+        }
+      }
+
+      function closeSharePicker() {
+        if (sharePickerModal) {
+          sharePickerModal.classList.remove("open");
+          sharePickerModal.setAttribute("aria-hidden", "true");
+        }
+        pendingShareText = "";
+      }
+
       function openRatingModal() {
         if (!ratingModal) return;
         selectedRating = 0;
@@ -1881,6 +3228,7 @@
         });
         if (updated) {
           persist();
+          trackCoreEvent("core_rating_saved", { rating: safeRating });
           renderAll();
         }
       }
@@ -1890,6 +3238,7 @@
           timerProgressBar.style.width = "0%";
           sessionProjection.textContent = "Projection: start a session to estimate 5m and 10m outcomes.";
           timerMilestone.textContent = "Next milestone: 1 minute.";
+          hideMilestoneCelebration();
           return;
         }
 
@@ -1908,12 +3257,99 @@
         var progressPercent = Math.min(100, (elapsed / 900) * 100);
         timerProgressBar.style.width = progressPercent.toFixed(1) + "%";
 
-        var milestones = [60, 180, 300, 600, 900];
-        var nextMilestone = milestones.find(function (value) { return elapsed < value; });
+        var nextMilestone = MILESTONE_SECONDS.find(function (value) { return elapsed < value; });
         if (nextMilestone) {
           timerMilestone.textContent = "Next milestone: " + formatDuration(nextMilestone) + ".";
         } else {
           timerMilestone.textContent = "Milestone complete: 15+ minute marathon session.";
+        }
+        updateMilestoneAnnouncements(elapsed, earnings);
+      }
+
+      function renderFirstSessionCoach() {
+        if (!firstSessionCoach || !coachSetWageButton || !coachStartButton || !firstSessionCoachBody) return;
+        var hasSessions = Array.isArray(state.sessions) && state.sessions.length > 0;
+        var running = Boolean(state.activeSessionStartMs);
+        var hasValidWage = getEffectiveHourlyWage() > 0;
+        var shouldShow = !hasSessions && !running;
+        firstSessionCoach.hidden = !shouldShow;
+        if (!shouldShow) return;
+
+        if (!hasValidWage) {
+          firstSessionCoachBody.textContent = "Step 1: add your wage so your earnings are calculated correctly.";
+          coachSetWageButton.disabled = false;
+          coachStartButton.disabled = true;
+        } else {
+          firstSessionCoachBody.textContent = "Step 2: you're set. Tap Start First Session and log your first paid poop.";
+          coachSetWageButton.disabled = false;
+          coachStartButton.disabled = false;
+        }
+      }
+
+      function handleCoachSetWage() {
+        if (wageModeCollapsed) {
+          wageModeCollapsed = false;
+          state.wageModeCollapsed = false;
+          persist();
+          renderWageStrip();
+        }
+        if (state.wageMode === "salary" && annualSalaryInput) {
+          annualSalaryInput.focus();
+        } else if (hourlyWageInput) {
+          hourlyWageInput.focus();
+        }
+        setStatus(statusMessage, "Set your wage, then start your first session.", "ok");
+      }
+
+      function handleCoachStartSession() {
+        if (!state.activeSessionStartMs) {
+          startSession();
+        }
+      }
+
+      function updateMilestoneAnnouncements(elapsed, earnings) {
+        var reachedMilestone = getReachedMilestone(elapsed);
+        if (!reachedMilestone || reachedMilestone <= lastMilestoneAnnounced) return;
+        lastMilestoneAnnounced = reachedMilestone;
+        showMilestoneCelebration(reachedMilestone, earnings);
+      }
+
+      function getReachedMilestone(elapsedSeconds) {
+        var reached = 0;
+        MILESTONE_SECONDS.forEach(function (milestone) {
+          if (elapsedSeconds >= milestone) {
+            reached = milestone;
+          }
+        });
+        return reached;
+      }
+
+      function showMilestoneCelebration(milestoneSeconds, earnings) {
+        if (timerCard) {
+          timerCard.classList.remove("milestone-pop");
+          void timerCard.offsetWidth;
+          timerCard.classList.add("milestone-pop");
+        }
+        var message = "Milestone hit: " + formatDuration(milestoneSeconds) + " - $" + earnings.toFixed(2) + " earned.";
+        setStatus(statusMessage, message, "ok");
+        if (!milestoneToast) return;
+        milestoneToast.textContent = message;
+        milestoneToast.classList.add("show");
+        if (milestoneToastTimerId !== null) {
+          window.clearTimeout(milestoneToastTimerId);
+        }
+        milestoneToastTimerId = window.setTimeout(function () {
+          hideMilestoneCelebration();
+        }, 2400);
+      }
+
+      function hideMilestoneCelebration() {
+        if (milestoneToastTimerId !== null) {
+          window.clearTimeout(milestoneToastTimerId);
+          milestoneToastTimerId = null;
+        }
+        if (milestoneToast) {
+          milestoneToast.classList.remove("show");
         }
       }
 
@@ -1934,59 +3370,149 @@
 
         var plotted = sessions.slice(0, 14).reverse();
         trendRangeLabel.textContent = plotted.length
-          ? "Last " + plotted.length + " session" + (plotted.length === 1 ? "" : "s")
-          : "No sessions yet";
+          ? plotted.length + " data point" + (plotted.length === 1 ? "" : "s")
+          : "No data";
+        if (trendSubtitle) {
+          trendSubtitle.textContent = plotted.length
+            ? "Filtered session profit trend"
+            : "Log sessions to unlock trend analytics";
+        }
+        if (trendPeakLabel) trendPeakLabel.textContent = "Peak: $0.00";
+        if (trendAverageLabel) trendAverageLabel.textContent = "Avg: $0.00";
+        if (trendFootnote) trendFootnote.textContent = "Trend updates with your selected date range.";
 
         if (!plotted.length) {
           context.fillStyle = "rgba(180, 198, 229, 0.8)";
           context.font = "12px Inter, sans-serif";
-          context.fillText("Log sessions to unlock your earnings trend.", 14, height / 2);
+          context.textAlign = "center";
+          context.fillText("Log sessions to unlock your earnings trend.", width / 2, height / 2);
+          context.textAlign = "left";
           return;
         }
 
-        var padding = { top: 14, right: 12, bottom: 18, left: 12 };
+        var values = plotted.map(function (session) { return Number(session.earnings) || 0; });
+        var totalValue = values.reduce(function (sum, value) { return sum + value; }, 0);
+        var maxValue = Math.max.apply(null, values);
+        var minValue = Math.min.apply(null, values);
+        var avgValue = totalValue / Math.max(1, values.length);
+        var latestSession = plotted[plotted.length - 1];
+        if (trendPeakLabel) trendPeakLabel.textContent = "Peak: $" + maxValue.toFixed(2);
+        if (trendAverageLabel) trendAverageLabel.textContent = "Avg: $" + avgValue.toFixed(2);
+        if (trendFootnote && latestSession) {
+          trendFootnote.textContent = "Latest: $" + latestSession.earnings.toFixed(2) + " on " +
+            formatDateForSummary(latestSession.endedAtMs);
+        }
+
+        var paddedMin = Math.min(0, minValue * 0.9);
+        var paddedMax = Math.max(maxValue * 1.12, 1);
+        if (paddedMax - paddedMin < 0.5) {
+          paddedMax = paddedMin + 0.5;
+        }
+
+        var padding = { top: 14, right: 48, bottom: 28, left: 12 };
         var chartWidth = width - padding.left - padding.right;
         var chartHeight = height - padding.top - padding.bottom;
-        var maxValue = Math.max.apply(null, plotted.map(function (s) { return s.earnings; }));
-        maxValue = maxValue <= 0 ? 1 : maxValue;
+        if (chartWidth < 20 || chartHeight < 20) return;
 
-        context.strokeStyle = "rgba(67, 172, 255, 0.16)";
+        var yTicks = [paddedMax, paddedMin + ((paddedMax - paddedMin) / 2), paddedMin];
+        context.strokeStyle = "rgba(67, 172, 255, 0.18)";
         context.lineWidth = 1;
-        for (var row = 0; row <= 3; row++) {
-          var yGrid = padding.top + (chartHeight / 3) * row;
+        context.font = "11px Inter, sans-serif";
+        context.fillStyle = "rgba(180, 198, 229, 0.78)";
+        context.textAlign = "right";
+        yTicks.forEach(function (tickValue, tickIndex) {
+          var y = padding.top + (chartHeight * tickIndex / (yTicks.length - 1));
           context.beginPath();
-          context.moveTo(padding.left, yGrid);
-          context.lineTo(width - padding.right, yGrid);
+          context.moveTo(padding.left, y);
+          context.lineTo(width - padding.right, y);
           context.stroke();
+          context.fillText("$" + tickValue.toFixed(2), width - 6, y + 3);
+        });
+        context.textAlign = "left";
+
+        var firstSession = plotted[0];
+        var lastSession = plotted[plotted.length - 1];
+        context.fillStyle = "rgba(170, 191, 224, 0.78)";
+        context.font = "11px Inter, sans-serif";
+        context.fillText(formatTrendDate(firstSession.endedAtMs), padding.left, height - 8);
+        var lastLabel = formatTrendDate(lastSession.endedAtMs);
+        var lastLabelWidth = context.measureText(lastLabel).width;
+        context.fillText(lastLabel, Math.max(padding.left, width - padding.right - lastLabelWidth), height - 8);
+
+        function toY(value) {
+          var ratio = (value - paddedMin) / Math.max(0.0001, (paddedMax - paddedMin));
+          return padding.top + chartHeight - (ratio * chartHeight);
         }
 
         var points = plotted.map(function (session, index) {
           var x = plotted.length === 1
             ? padding.left + chartWidth / 2
             : padding.left + (chartWidth * index / (plotted.length - 1));
-          var y = padding.top + chartHeight - ((session.earnings / maxValue) * chartHeight);
+          var y = toY(session.earnings);
           return { x: x, y: y };
         });
 
         context.beginPath();
-        points.forEach(function (point, index) {
-          if (index === 0) context.moveTo(point.x, point.y);
-          else context.lineTo(point.x, point.y);
-        });
-        context.strokeStyle = "rgba(67, 179, 255, 0.98)";
-        context.lineWidth = 2.4;
+        context.moveTo(points[0].x, points[0].y);
+        for (var curveIndex = 1; curveIndex < points.length; curveIndex++) {
+          var previous = points[curveIndex - 1];
+          var current = points[curveIndex];
+          var controlX = (previous.x + current.x) / 2;
+          context.quadraticCurveTo(controlX, previous.y, current.x, current.y);
+        }
+        context.lineTo(points[points.length - 1].x, padding.top + chartHeight);
+        context.lineTo(points[0].x, padding.top + chartHeight);
+        context.closePath();
+        var areaGradient = context.createLinearGradient(0, padding.top, 0, padding.top + chartHeight);
+        areaGradient.addColorStop(0, "rgba(67, 179, 255, 0.34)");
+        areaGradient.addColorStop(1, "rgba(67, 179, 255, 0.02)");
+        context.fillStyle = areaGradient;
+        context.fill();
+
+        context.beginPath();
+        context.moveTo(points[0].x, points[0].y);
+        for (var lineIndex = 1; lineIndex < points.length; lineIndex++) {
+          var prevLine = points[lineIndex - 1];
+          var currentLine = points[lineIndex];
+          var lineControlX = (prevLine.x + currentLine.x) / 2;
+          context.quadraticCurveTo(lineControlX, prevLine.y, currentLine.x, currentLine.y);
+        }
+        context.strokeStyle = "rgba(84, 197, 255, 0.42)";
+        context.lineWidth = 5.6;
         context.stroke();
 
         context.beginPath();
-        context.moveTo(points[0].x, padding.top + chartHeight);
-        points.forEach(function (point) { context.lineTo(point.x, point.y); });
-        context.lineTo(points[points.length - 1].x, padding.top + chartHeight);
-        context.closePath();
-        var gradient = context.createLinearGradient(0, padding.top, 0, padding.top + chartHeight);
-        gradient.addColorStop(0, "rgba(67, 179, 255, 0.35)");
-        gradient.addColorStop(1, "rgba(67, 179, 255, 0.04)");
-        context.fillStyle = gradient;
-        context.fill();
+        context.moveTo(points[0].x, points[0].y);
+        for (var sharpIndex = 1; sharpIndex < points.length; sharpIndex++) {
+          var prevSharp = points[sharpIndex - 1];
+          var currentSharp = points[sharpIndex];
+          var sharpControlX = (prevSharp.x + currentSharp.x) / 2;
+          context.quadraticCurveTo(sharpControlX, prevSharp.y, currentSharp.x, currentSharp.y);
+        }
+        context.strokeStyle = "rgba(86, 205, 255, 0.98)";
+        context.lineWidth = 2.4;
+        context.stroke();
+
+        points.forEach(function (point, index) {
+          context.beginPath();
+          context.fillStyle = index === points.length - 1 ? "#8fe3ff" : "#53c1ff";
+          context.arc(point.x, point.y, index === points.length - 1 ? 3.4 : 2.4, 0, Math.PI * 2);
+          context.fill();
+        });
+
+        var lastPoint = points[points.length - 1];
+        context.beginPath();
+        context.strokeStyle = "rgba(152, 230, 255, 0.95)";
+        context.lineWidth = 2;
+        context.arc(lastPoint.x, lastPoint.y, 6, 0, Math.PI * 2);
+        context.stroke();
+      }
+
+      function formatTrendDate(timestamp) {
+        return new Date(timestamp).toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric"
+        });
       }
 
       function getBestDayEarnings(sessions) {
@@ -2017,6 +3543,216 @@
         if (navigator.vibrate) navigator.vibrate(12);
       }
 
+      function setupTutorial() {
+        if (!tutorialOverlay || !tutorialCard || !tutorialStepPill || !tutorialTitle || !tutorialBody) return;
+        if (tutorialMascotImage) {
+          tutorialMascotImage.addEventListener("error", function () {
+            tutorialMascotImage.src = "poopemojifinal.jpeg";
+          });
+        }
+        buildTutorialProgressDots();
+        var seen = localStorage.getItem(TUTORIAL_SEEN_KEY) === "1";
+        if (seen) return;
+        window.setTimeout(function () {
+          if (!tutorialState.open) {
+            startTutorial(false);
+          }
+        }, 480);
+      }
+
+      function buildTutorialProgressDots() {
+        if (!tutorialProgress) return;
+        tutorialProgress.innerHTML = "";
+        TUTORIAL_STEPS.forEach(function (_step, index) {
+          var dot = document.createElement("span");
+          dot.className = "tutorial-dot";
+          dot.setAttribute("data-tutorial-dot", String(index));
+          tutorialProgress.appendChild(dot);
+        });
+      }
+
+      function startTutorial(fromReplay) {
+        if (!tutorialOverlay) return;
+        tutorialState.open = true;
+        tutorialState.stepIndex = 0;
+        tutorialOverlay.classList.add("open");
+        tutorialOverlay.setAttribute("aria-hidden", "false");
+        trackCoreEvent("core_tutorial_start", {
+          source: fromReplay ? "manual_replay" : "auto_prompt"
+        });
+        if (!fromReplay) {
+          localStorage.setItem(TUTORIAL_SEEN_KEY, "1");
+        }
+        showTutorialStep(0);
+      }
+
+      function closeTutorial(markSeen) {
+        tutorialState.open = false;
+        if (markSeen) {
+          localStorage.setItem(TUTORIAL_SEEN_KEY, "1");
+        }
+        if (tutorialOverlay) {
+          tutorialOverlay.classList.remove("open");
+          tutorialOverlay.setAttribute("aria-hidden", "true");
+        }
+        if (tutorialHighlight) {
+          tutorialHighlight.style.width = "0px";
+          tutorialHighlight.style.height = "0px";
+        }
+      }
+
+      function moveTutorialStep(direction) {
+        if (!tutorialState.open) return;
+        var nextIndex = tutorialState.stepIndex + direction;
+        if (nextIndex < 0) {
+          nextIndex = 0;
+        }
+        if (nextIndex >= TUTORIAL_STEPS.length) {
+          closeTutorial(true);
+          openTutorialCompleteModal();
+          trackCoreEvent("core_tutorial_complete", { steps_completed: TUTORIAL_STEPS.length });
+          setStatus(statusMessage, "Quick tour complete. Happy pooping.", "ok");
+          return;
+        }
+        showTutorialStep(nextIndex);
+      }
+
+      function showTutorialStep(index) {
+        if (!tutorialState.open) return;
+        var safeIndex = Math.max(0, Math.min(TUTORIAL_STEPS.length - 1, index));
+        tutorialState.stepIndex = safeIndex;
+        var step = TUTORIAL_STEPS[safeIndex];
+
+        if (step.tab && state.activeTab !== step.tab) {
+          setActiveTab(step.tab);
+        }
+        if (step.expandWage && wageModeCollapsed) {
+          wageModeCollapsed = false;
+          state.wageModeCollapsed = false;
+          persist();
+          renderWageStrip();
+        }
+
+        tutorialStepPill.textContent = "Step " + String(safeIndex + 1) + " of " + String(TUTORIAL_STEPS.length);
+        tutorialTitle.textContent = step.title;
+        tutorialBody.textContent = step.body;
+        if (tutorialMascotImage) {
+          tutorialMascotImage.onerror = function () {
+            this.onerror = null;
+            this.src = "poopemojifinal.jpeg";
+          };
+          tutorialMascotImage.src = step.mascotSrc || "poopemojifinal.jpeg";
+          tutorialMascotImage.alt = "Onboarding mascot pose " + String(safeIndex + 1);
+        }
+        if (tutorialCard) {
+          tutorialCard.setAttribute("data-pose", String(safeIndex + 1));
+        }
+        if (tutorialBackButton) {
+          tutorialBackButton.disabled = safeIndex === 0;
+        }
+        if (tutorialNextButton) {
+          tutorialNextButton.textContent = safeIndex === TUTORIAL_STEPS.length - 1 ? "Finish Tour" : "Next";
+        }
+
+        if (tutorialProgress) {
+          var dots = tutorialProgress.querySelectorAll("[data-tutorial-dot]");
+          dots.forEach(function (dot) {
+            var dotIndex = Number(dot.getAttribute("data-tutorial-dot")) || 0;
+            dot.classList.toggle("active", dotIndex === safeIndex);
+          });
+        }
+
+        ensureTutorialTargetVisibility(step);
+        window.setTimeout(function () {
+          queueTutorialPositionUpdate();
+        }, 80);
+      }
+
+      function ensureTutorialTargetVisibility(step) {
+        if (!step || !step.target) return;
+        var target = document.querySelector(step.target);
+        if (!target) return;
+        var rect = target.getBoundingClientRect();
+        var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+        var margin = 18;
+        var needsVerticalAdjust = rect.top < margin || rect.bottom > (viewportHeight - margin);
+        var needsHorizontalAdjust = rect.left < margin || rect.right > (viewportWidth - margin);
+        if (needsVerticalAdjust || needsHorizontalAdjust) {
+          target.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        }
+      }
+
+      function queueTutorialPositionUpdate() {
+        if (!tutorialState.open) return;
+        if (tutorialState.rafId !== null) {
+          window.cancelAnimationFrame(tutorialState.rafId);
+        }
+        tutorialState.rafId = window.requestAnimationFrame(function () {
+          tutorialState.rafId = null;
+          positionTutorialToTarget();
+        });
+      }
+
+      function positionTutorialToTarget() {
+        if (!tutorialState.open || !tutorialCard || !tutorialHighlight) return;
+        var step = TUTORIAL_STEPS[tutorialState.stepIndex];
+        var target = step && step.target ? document.querySelector(step.target) : null;
+        var viewportWidth = window.innerWidth;
+        var viewportHeight = window.innerHeight;
+
+        if (!target) {
+          tutorialCard.style.left = Math.max(10, (viewportWidth - tutorialCard.offsetWidth) / 2) + "px";
+          tutorialCard.style.top = Math.max(18, (viewportHeight - tutorialCard.offsetHeight) / 2) + "px";
+          tutorialHighlight.style.width = "0px";
+          tutorialHighlight.style.height = "0px";
+          return;
+        }
+
+        var targetRect = target.getBoundingClientRect();
+        var targetPadding = 8;
+        tutorialHighlight.style.left = Math.max(6, targetRect.left - targetPadding) + "px";
+        tutorialHighlight.style.top = Math.max(6, targetRect.top - targetPadding) + "px";
+        tutorialHighlight.style.width = Math.max(0, targetRect.width + targetPadding * 2) + "px";
+        tutorialHighlight.style.height = Math.max(0, targetRect.height + targetPadding * 2) + "px";
+
+        var cardWidth = tutorialCard.offsetWidth;
+        var cardHeight = tutorialCard.offsetHeight;
+        var placeBelow = (viewportHeight - targetRect.bottom) >= (cardHeight + 22) || targetRect.top < cardHeight + 20;
+        var centerX = targetRect.left + targetRect.width / 2;
+        var top = placeBelow
+          ? Math.min(viewportHeight - cardHeight - 10, targetRect.bottom + 16)
+          : Math.max(10, targetRect.top - cardHeight - 16);
+        var left = Math.min(viewportWidth - cardWidth - 10, Math.max(10, centerX - cardWidth / 2));
+
+        tutorialCard.style.left = left + "px";
+        tutorialCard.style.top = top + "px";
+      }
+
+      function openTutorialStartModal() {
+        if (!tutorialStartModal) return;
+        tutorialStartModal.classList.add("open");
+        tutorialStartModal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeTutorialStartModal() {
+        if (!tutorialStartModal) return;
+        tutorialStartModal.classList.remove("open");
+        tutorialStartModal.setAttribute("aria-hidden", "true");
+      }
+
+      function openTutorialCompleteModal() {
+        if (!tutorialCompleteModal) return;
+        tutorialCompleteModal.classList.add("open");
+        tutorialCompleteModal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeTutorialCompleteModal() {
+        if (!tutorialCompleteModal) return;
+        tutorialCompleteModal.classList.remove("open");
+        tutorialCompleteModal.setAttribute("aria-hidden", "true");
+      }
+
       function loadState() {
         try {
           var raw = localStorage.getItem(STORAGE_KEY);
@@ -2034,6 +3770,7 @@
 
         safe.activeTab = ["calculator", "stats", "coming"].includes(candidate.activeTab) ? candidate.activeTab : "calculator";
         safe.wageMode = candidate.wageMode === "salary" ? "salary" : "hourly";
+        safe.wageModeCollapsed = candidate.wageModeCollapsed === false ? false : true;
         safe.hourlyWage = toInputString(candidate.hourlyWage);
         safe.annualSalary = toInputString(candidate.annualSalary);
         safe.weeklyHours = toInputString(candidate.weeklyHours);
