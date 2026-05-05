@@ -513,8 +513,21 @@
     }
 
     .timer .emoji {
-      font-size: 2.3rem;
-      margin-bottom: 6px;
+      width: clamp(86px, 22vw, 132px);
+      margin: 0 auto 8px;
+      line-height: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .timer .emoji img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 122px;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 20px rgba(2, 10, 27, 0.45));
     }
 
     .timer-value {
@@ -606,7 +619,11 @@
     }
 
     .timer-card.running .emoji {
-      animation: pulseBounce 1.2s ease-in-out infinite;
+      animation: none;
+    }
+
+    .timer-card.running .emoji img {
+      filter: drop-shadow(0 0 18px rgba(62, 220, 165, 0.42));
     }
 
     .log-header {
@@ -1747,7 +1764,9 @@
           <article class="card timer-card timer-hero">
             <h2><img src="poopemojifinal.jpeg" alt="">Session Timer</h2>
             <div class="timer">
-              <div class="emoji" aria-hidden="true">💩</div>
+              <div class="emoji" aria-hidden="true">
+                <img id="timerMascotImage" src="nonanimated.jpg" alt="PoopProfit mascot idle in timer" loading="eager" decoding="async">
+              </div>
               <div id="timerDisplay" class="timer-value">00:00:00</div>
               <div id="liveEarnings" class="earnings-now"></div>
               <div id="sessionProjection" class="timer-subline"></div>
@@ -2068,6 +2087,10 @@
       var sessionProjection = document.getElementById("sessionProjection");
       var timerProgressBar = document.getElementById("timerProgressBar");
       var timerMilestone = document.getElementById("timerMilestone");
+      var timerMascotImage = document.getElementById("timerMascotImage");
+      var TIMER_MASCOT_IDLE_SRC = "nonanimated.jpg";
+      var TIMER_MASCOT_RUNNING_SRC = "animated.gif";
+      var TIMER_MASCOT_FALLBACK_SRC = "POOPPROFITMASCOT.png";
       var firstSessionCoach = document.getElementById("firstSessionCoach");
       var firstSessionCoachBody = document.getElementById("firstSessionCoachBody");
       var coachSetWageButton = document.getElementById("coachSetWageButton");
@@ -2717,12 +2740,21 @@
         renderTimerRuntimeUI(elapsedSeconds, currentEarnings);
       }
 
+      function setTimerMascotState(running) {
+        if (!timerMascotImage) return;
+        timerMascotImage.src = running ? TIMER_MASCOT_RUNNING_SRC : TIMER_MASCOT_IDLE_SRC;
+        timerMascotImage.alt = running
+          ? "PoopProfit mascot animation while timer is running"
+          : "PoopProfit mascot idle in timer";
+      }
+
       function renderTimerButton() {
         var running = Boolean(state.activeSessionStartMs);
         timerButton.textContent = running ? "Stop + Save Session" : "Start Poop!";
         timerButton.style.background = running
           ? "linear-gradient(180deg, #ff8a8a, #ff6f6f)"
           : "linear-gradient(180deg, var(--primary), var(--primary-strong))";
+        setTimerMascotState(running);
 
         if (mobileFabButton) {
           mobileFabButton.classList.toggle("running", running);
@@ -2734,6 +2766,16 @@
         if (timerCard) {
           timerCard.classList.toggle("running", running);
         }
+      }
+
+      if (timerMascotImage) {
+        timerMascotImage.addEventListener("error", function () {
+          var fallback = timerMascotImage.src.includes(TIMER_MASCOT_FALLBACK_SRC)
+            ? "poopemojifinal.jpeg"
+            : TIMER_MASCOT_FALLBACK_SRC;
+          timerMascotImage.src = fallback;
+          timerMascotImage.alt = "PoopProfit mascot timer fallback image";
+        });
       }
 
       function renderAll() {
