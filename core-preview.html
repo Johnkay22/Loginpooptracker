@@ -47,38 +47,40 @@
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "PoopProfit Core Preview",
-      "description": "Poop earnings calculator, timer, session log, and statistics preview.",
-      "url": "https://www.poopprofit.com/core-preview.html",
-      "inLanguage": "en",
-      "breadcrumb": {
-        "@id": "https://www.poopprofit.com/core-preview.html#breadcrumb"
-      },
-      "isPartOf": {
-        "@type": "WebSite",
-        "name": "PoopProfit.com",
-        "url": "https://www.poopprofit.com/"
-      }
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "@id": "https://www.poopprofit.com/core-preview.html#breadcrumb",
-      "itemListElement": [
+      "@graph": [
         {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://www.poopprofit.com/"
+          "@type": "WebPage",
+          "@id": "https://www.poopprofit.com/core-preview.html#webpage",
+          "name": "PoopProfit Core Preview",
+          "description": "Poop earnings calculator, timer, session log, and statistics preview.",
+          "url": "https://www.poopprofit.com/core-preview.html",
+          "inLanguage": "en",
+          "breadcrumb": {
+            "@id": "https://www.poopprofit.com/core-preview.html#breadcrumb"
+          },
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "PoopProfit.com",
+            "url": "https://www.poopprofit.com/"
+          }
         },
         {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Core Preview",
-          "item": "https://www.poopprofit.com/core-preview.html"
+          "@type": "BreadcrumbList",
+          "@id": "https://www.poopprofit.com/core-preview.html#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://www.poopprofit.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Core Preview",
+              "item": "https://www.poopprofit.com/core-preview.html"
+            }
+          ]
         }
       ]
     }
