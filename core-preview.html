@@ -1117,6 +1117,25 @@
       flex-wrap: wrap;
     }
 
+    .page-bottom-links {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.4;
+      padding: 8px 12px 14px;
+    }
+
+    .page-bottom-links a {
+      color: #c8e8ff;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .page-bottom-links a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
     .preview-footnote .button {
       padding: 7px 12px;
       min-height: 34px;
@@ -1664,6 +1683,10 @@
       .mobile-fab {
         display: inline-flex;
       }
+
+      .page-bottom-links {
+        padding-bottom: calc(90px + env(safe-area-inset-bottom));
+      }
     }
 
     @media (max-width: 420px) {
@@ -1930,10 +1953,7 @@
 
       <footer class="preview-footnote">
         <span>Data is stored locally on this browser/device until cleared.</span>
-        <span>Built for smooth live usage while the full platform evolves.</span>
-        <span><a href="https://www.poopprofit.com/">Home</a> · <a href="https://www.poopprofit.com/core-preview.html">Core Preview</a></span>
         <span>&copy; 2026 PoopProfit. All rights reserved.</span>
-        <button id="replayTutorialButton" class="button ghost" type="button">Replay Quick Tour</button>
       </footer>
     </section>
   </main>
@@ -1961,8 +1981,8 @@
         <button type="button" data-rating="5" aria-label="5 poops">💩</button>
       </div>
       <div class="rating-actions">
-        <button id="saveRatingButton" class="button" type="button">Save Rating</button>
         <button id="skipRatingButton" class="button ghost" type="button">Skip</button>
+        <button id="saveRatingButton" class="button" type="button">Save Rating</button>
       </div>
     </div>
   </div>
@@ -2034,6 +2054,12 @@
   </div>
 
   <div id="milestoneToast" class="milestone-toast" role="status" aria-live="polite"></div>
+
+  <div class="page-bottom-links">
+    <a href="https://www.poopprofit.com/">Home</a>
+    <span aria-hidden="true"> · </span>
+    <a href="https://www.poopprofit.com/core-preview.html">Core Preview</a>
+  </div>
 
   <script>
     (function () {
