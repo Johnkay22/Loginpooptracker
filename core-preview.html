@@ -1136,12 +1136,6 @@
       text-underline-offset: 2px;
     }
 
-    .preview-footnote .button {
-      padding: 7px 12px;
-      min-height: 34px;
-      font-size: 0.8rem;
-    }
-
     .rating-modal {
       position: fixed;
       inset: 0;
@@ -2176,7 +2170,6 @@
       };
       var pendingShareText = "";
       var tutorialHelpButton = document.getElementById("tutorialHelpButton");
-      var replayTutorialButton = document.getElementById("replayTutorialButton");
       var tutorialOverlay = document.getElementById("tutorialOverlay");
       var tutorialHighlight = document.getElementById("tutorialHighlight");
       var tutorialCard = document.getElementById("tutorialCard");
@@ -2493,12 +2486,6 @@
             if (event.target === ratingModal) {
               closeRatingModal();
             }
-          });
-        }
-
-        if (replayTutorialButton) {
-          replayTutorialButton.addEventListener("click", function () {
-            startTutorial(true);
           });
         }
 
