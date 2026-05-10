@@ -777,6 +777,30 @@
       font-weight: 800;
     }
 
+    .stat-hero {
+      margin-bottom: 14px;
+      padding: 20px 18px;
+      border-radius: 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--ui-border);
+      display: grid;
+      gap: 8px;
+    }
+    .stat-hero .label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .stat-hero .value {
+      font-size: clamp(2.1rem, 5vw, 2.7rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff;
+      line-height: 1;
+    }
+
     .share-stat-btn {
       border: 1px solid var(--ui-border);
       border-radius: 8px;
@@ -2120,6 +2144,10 @@
 
           <article class="card" style="grid-column: span 12;">
             <h2><img src="stats.png" alt="">Statistics</h2>
+            <div class="stat stat-hero">
+              <div class="label">Total Earnings <button class="share-stat-btn" data-stat-share="totalEarnings" type="button"><span class="icon-share">↗</span>Share</button></div>
+              <div id="statEarnings" class="value">$0.00</div>
+            </div>
             <div class="stats-grid">
               <div class="stat">
                 <div class="label">Total Sessions <button class="share-stat-btn" data-stat-share="totalSessions" type="button"><span class="icon-share">↗</span>Share</button></div>
@@ -2128,10 +2156,6 @@
               <div class="stat">
                 <div class="label">Total Time <button class="share-stat-btn" data-stat-share="totalTime" type="button"><span class="icon-share">↗</span>Share</button></div>
                 <div id="statTime" class="value">00:00:00</div>
-              </div>
-              <div class="stat">
-                <div class="label">Total Earnings <button class="share-stat-btn" data-stat-share="totalEarnings" type="button"><span class="icon-share">↗</span>Share</button></div>
-                <div id="statEarnings" class="value">$0.00</div>
               </div>
               <div class="stat">
                 <div class="label">Average Session <button class="share-stat-btn" data-stat-share="avgSession" type="button"><span class="icon-share">↗</span>Share</button></div>
