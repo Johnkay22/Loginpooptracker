@@ -48,149 +48,143 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "PoopProfit",
-        "applicationCategory": "WebApplication",
-        "operatingSystem": "All",
-        "url": "https://www.poopprofit.com/",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        },
-        "featureList": [
-          "Poop earnings calculator",
-          "Session tracking and logs",
-          "Statistics and trend insights",
-          "Shareable earnings stats"
-        ],
-        "description": "PoopProfit helps users calculate and track how much they get paid to poop at work."
-      }
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "PoopProfit.com",
-        "url": "https://www.poopprofit.com/"
-      }
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "PoopProfit",
-        "url": "https://www.poopprofit.com/",
-        "logo": "https://www.poopprofit.com/newpplogo.png"
-      }
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        "name": "PoopProfit — Get Paid to Poop at Work",
-        "url": "https://www.poopprofit.com/",
-        "description": "Calculate how much you get paid to poop at work and preview PoopProfit tracking features.",
-        "inLanguage": "en",
-        "isPartOf": {
-          "@type": "WebSite",
-          "url": "https://www.poopprofit.com/"
-        }
-      }
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "HowTo",
-        "name": "How It Works",
-        "description": "PoopProfit turns your bathroom breaks into trackable earnings in under a minute.",
-        "step": [
+        "@graph": [
           {
-            "@type": "HowToStep",
-            "name": "Enter your pay rate",
-            "text": "Use hourly wage or salary + weekly hours to calculate an accurate per-hour rate."
+            "@type": "SoftwareApplication",
+            "@id": "https://www.poopprofit.com/#softwareapplication",
+            "name": "PoopProfit",
+            "applicationCategory": "WebApplication",
+            "operatingSystem": "All",
+            "url": "https://www.poopprofit.com/",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Poop earnings calculator",
+              "Session tracking and logs",
+              "Statistics and trend insights",
+              "Shareable earnings stats"
+            ],
+            "description": "PoopProfit helps users calculate and track how much they get paid to poop at work."
           },
           {
-            "@type": "HowToStep",
-            "name": "Start and stop your session",
-            "text": "Run the timer during your break and instantly see live session earnings."
+            "@type": "WebSite",
+            "@id": "https://www.poopprofit.com/#website",
+            "name": "PoopProfit.com",
+            "url": "https://www.poopprofit.com/"
           },
           {
-            "@type": "HowToStep",
-            "name": "Review, filter, and share",
-            "text": "Save logs, explore trends by date range, and share highlights in one tap."
-          }
-        ]
-      }
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
+            "@type": "Organization",
+            "@id": "https://www.poopprofit.com/#organization",
+            "name": "PoopProfit",
+            "url": "https://www.poopprofit.com/",
+            "logo": "https://www.poopprofit.com/newpplogo.png"
+          },
           {
-            "@type": "Question",
-            "name": "Can I use PoopProfit without creating an account?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. The core preview is account-free and stores your data locally in your current browser."
+            "@type": "WebPage",
+            "@id": "https://www.poopprofit.com/#webpage",
+            "name": "PoopProfit — Get Paid to Poop at Work",
+            "url": "https://www.poopprofit.com/",
+            "description": "Calculate how much you get paid to poop at work and preview PoopProfit tracking features.",
+            "inLanguage": "en",
+            "isPartOf": {
+              "@id": "https://www.poopprofit.com/#website"
             }
           },
           {
-            "@type": "Question",
-            "name": "Does PoopProfit work for salary-based jobs?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Switch to salary mode and enter annual salary plus weekly hours for an effective hourly rate."
-            }
+            "@type": "HowTo",
+            "@id": "https://www.poopprofit.com/#howto",
+            "name": "How It Works",
+            "description": "PoopProfit turns your bathroom breaks into trackable earnings in under a minute.",
+            "step": [
+              {
+                "@type": "HowToStep",
+                "name": "Enter your pay rate",
+                "text": "Use hourly wage or salary + weekly hours to calculate an accurate per-hour rate."
+              },
+              {
+                "@type": "HowToStep",
+                "name": "Start and stop your session",
+                "text": "Run the timer during your break and instantly see live session earnings."
+              },
+              {
+                "@type": "HowToStep",
+                "name": "Review, filter, and share",
+                "text": "Save logs, explore trends by date range, and share highlights in one tap."
+              }
+            ]
           },
           {
-            "@type": "Question",
-            "name": "Can I share my session earnings and stats?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. You can share logs and stat highlights from the preview dashboard to social and messages."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Where can I try the live preview?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Open the live preview at https://www.poopprofit.com/core-preview.html."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Are bathroom breaks considered paid time?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "In many workplaces, short bathroom breaks during the workday are treated as paid time. Policies can vary by employer and local labor rules."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How do I calculate my bathroom break earnings?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Enter your hourly wage, or convert salary to an hourly rate, then multiply by the time spent in your session."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is my effective hourly rate during a break?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Your effective hourly rate is your wage per hour, either entered directly or calculated from annual salary and weekly hours."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I track multiple bathroom sessions per day?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. You can log as many sessions as you want in a day and review totals in your logs and stats."
-            }
+            "@type": "FAQPage",
+            "@id": "https://www.poopprofit.com/#faqpage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Can I use PoopProfit without creating an account?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. The core preview is account-free and stores your data locally in your current browser."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does PoopProfit work for salary-based jobs?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Switch to salary mode and enter annual salary plus weekly hours for an effective hourly rate."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I share my session earnings and stats?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. You can share logs and stat highlights from the preview dashboard to social and messages."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Where can I try the live preview?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Open the live preview at https://www.poopprofit.com/core-preview.html."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Are bathroom breaks considered paid time?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "In many workplaces, short bathroom breaks during the workday are treated as paid time. Policies can vary by employer and local labor rules."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How do I calculate my bathroom break earnings?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Enter your hourly wage, or convert salary to an hourly rate, then multiply by the time spent in your session."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What is my effective hourly rate during a break?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Your effective hourly rate is your wage per hour, either entered directly or calculated from annual salary and weekly hours."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I track multiple bathroom sessions per day?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. You can log as many sessions as you want in a day and review totals in your logs and stats."
+                }
+              }
+            ]
           }
         ]
       }
@@ -586,7 +580,7 @@
           Track session time, live earnings, and trends in seconds with the PoopProfit calculator.
         </p>
         <p class="hero-value-note">
-          "The most revolutionary financial technology to ever exist in the bathroom market." - Steve Jobs
+          "The most revolutionary financial technology to ever exist in the bathroom market." - Steve Occupations
         </p>
         <section id="features" class="mx-auto mt-7 max-w-5xl" aria-label="PoopProfit feature highlights">
           <picture class="feature-showcase">
