@@ -957,34 +957,33 @@
 
     .stats-range-buttons {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+      align-items: center;
     }
 
-    .stats-range-buttons button {
-      border: 1px solid rgba(67, 179, 255, 0.3);
+    .segmented-control {
+      display: inline-flex;
+      padding: 4px;
+      background: var(--canvas);
+      border: 1px solid var(--ui-border);
       border-radius: 999px;
-      background: rgba(8, 14, 28, 0.84);
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+    .segmented-control button {
+      border: 0;
+      background: transparent;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.84rem;
+      font-weight: 600;
       color: var(--muted);
-      min-height: 36px;
-      padding: 0 13px;
+      min-height: 34px;
       cursor: pointer;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      transition: transform 0.14s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
     }
-
-    .stats-range-buttons button:hover {
-      transform: translateY(-1px);
-      border-color: rgba(67, 179, 255, 0.5);
-      color: #e8f5ff;
-    }
-
-    .stats-range-buttons button.active {
+    .segmented-control button.active {
+      background: var(--surface-2);
       color: #fff;
-      border-color: rgba(67, 179, 255, 0.7);
-      background: linear-gradient(180deg, rgba(67, 179, 255, 0.24), rgba(26, 93, 151, 0.36));
-      box-shadow: 0 0 0 1px rgba(67, 179, 255, 0.2);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.06);
     }
 
     .custom-range {
@@ -2120,7 +2119,7 @@
         <div class="panel-grid">
           <article class="card" style="grid-column: span 12;">
             <div class="stats-filter-bar">
-              <div class="stats-range-buttons" role="group" aria-label="Statistics date range">
+              <div class="stats-range-buttons segmented-control" role="group" aria-label="Statistics date range">
                 <button id="statsRangeAllButton" data-stats-range="all" type="button" class="active">All Time</button>
                 <button id="statsRangeTodayButton" data-stats-range="today" type="button">Today</button>
                 <button id="statsRangeLast7Button" data-stats-range="last7" type="button">Last 7 Days</button>
