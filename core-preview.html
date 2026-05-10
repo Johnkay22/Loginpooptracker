@@ -271,7 +271,7 @@
 
     .panel-grid {
       display: grid;
-      gap: 12px;
+      gap: 16px;
       grid-template-columns: repeat(12, 1fr);
     }
 
@@ -2095,7 +2095,6 @@
       <section id="panel-stats" class="tab-panel" aria-label="Stats tab">
         <div class="panel-grid">
           <article class="card" style="grid-column: span 12;">
-            <h2><img src="stats.png" alt="">Statistics</h2>
             <div class="stats-filter-bar">
               <div class="stats-range-buttons" role="group" aria-label="Statistics date range">
                 <button id="statsRangeAllButton" data-stats-range="all" type="button" class="active">All Time</button>
@@ -2117,6 +2116,10 @@
               </div>
               <div id="statsRangeSummary" class="range-summary">Showing: All Time</div>
             </div>
+          </article>
+
+          <article class="card" style="grid-column: span 12;">
+            <h2><img src="stats.png" alt="">Statistics</h2>
             <div class="stats-grid">
               <div class="stat">
                 <div class="label">Total Sessions <button class="share-stat-btn" data-stat-share="totalSessions" type="button"><span class="icon-share">↗</span>Share</button></div>
@@ -2143,7 +2146,9 @@
                 <div id="statToday" class="value">0</div>
               </div>
             </div>
+          </article>
 
+          <article class="card" style="grid-column: span 12;">
             <div class="trend-panel">
               <div class="trend-head">
                 <div class="trend-title-wrap">
@@ -2160,7 +2165,9 @@
               <canvas id="trendCanvas"></canvas>
               <div id="trendFootnote" class="trend-footnote">Hover-like detail is shown via chart point highlights.</div>
             </div>
+          </article>
 
+          <article class="card" style="grid-column: span 12;">
             <div class="insights-grid">
               <article class="insight">
                 <div class="label">Longest Session</div>
