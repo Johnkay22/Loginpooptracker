@@ -1557,6 +1557,16 @@
       flex-wrap: wrap;
     }
 
+    .rating-step[hidden] {
+      display: none;
+    }
+
+    .rating-share-message {
+      color: #e4f4ff;
+      font-size: 1.02rem;
+      font-weight: 700;
+    }
+
     .tutorial-overlay {
       position: fixed;
       inset: 0;
@@ -2239,18 +2249,28 @@
 
   <div id="ratingModal" class="rating-modal" aria-hidden="true">
     <div class="rating-panel" role="dialog" aria-modal="true" aria-labelledby="ratingTitle">
-      <h3 id="ratingTitle">Rate Your Poop</h3>
-      <p>How would you rate that session?</p>
-      <div id="poopRatingButtons" class="poop-rating" aria-label="Poop rating">
-        <button type="button" data-rating="1" aria-label="1 poop">💩</button>
-        <button type="button" data-rating="2" aria-label="2 poops">💩</button>
-        <button type="button" data-rating="3" aria-label="3 poops">💩</button>
-        <button type="button" data-rating="4" aria-label="4 poops">💩</button>
-        <button type="button" data-rating="5" aria-label="5 poops">💩</button>
+      <div id="ratingInputStep" class="rating-step">
+        <h3 id="ratingTitle">Rate Your Poop</h3>
+        <p>How would you rate that session?</p>
+        <div id="poopRatingButtons" class="poop-rating" aria-label="Poop rating">
+          <button type="button" data-rating="1" aria-label="1 poop">💩</button>
+          <button type="button" data-rating="2" aria-label="2 poops">💩</button>
+          <button type="button" data-rating="3" aria-label="3 poops">💩</button>
+          <button type="button" data-rating="4" aria-label="4 poops">💩</button>
+          <button type="button" data-rating="5" aria-label="5 poops">💩</button>
+        </div>
+        <div class="rating-actions">
+          <button id="skipRatingButton" class="button ghost" type="button">Skip</button>
+          <button id="saveRatingButton" class="button" type="button">Save Rating</button>
+        </div>
       </div>
-      <div class="rating-actions">
-        <button id="skipRatingButton" class="button ghost" type="button">Skip</button>
-        <button id="saveRatingButton" class="button" type="button">Save Rating</button>
+      <div id="ratingShareStep" class="rating-step" hidden>
+        <h3>Ready to Share?</h3>
+        <p id="ratingShareMessage" class="rating-share-message">Share your $0.00 poop?</p>
+        <div class="rating-actions">
+          <button id="ratingShareSkipButton" class="button ghost" type="button">Skip</button>
+          <button id="ratingShareCardButton" class="button" type="button">Share Card</button>
+        </div>
       </div>
     </div>
   </div>
@@ -2502,12 +2522,18 @@
       var applyCustomRangeButton = document.getElementById("applyCustomRangeButton");
       var statsRangeSummary = document.getElementById("statsRangeSummary");
       var ratingModal = document.getElementById("ratingModal");
+      var ratingInputStep = document.getElementById("ratingInputStep");
+      var ratingShareStep = document.getElementById("ratingShareStep");
+      var ratingShareMessage = document.getElementById("ratingShareMessage");
       var poopRatingButtonsWrap = document.getElementById("poopRatingButtons");
       var poopRatingButtons = poopRatingButtonsWrap ? poopRatingButtonsWrap.querySelectorAll("[data-rating]") : [];
       var saveRatingButton = document.getElementById("saveRatingButton");
       var skipRatingButton = document.getElementById("skipRatingButton");
+      var ratingShareCardButton = document.getElementById("ratingShareCardButton");
+      var ratingShareSkipButton = document.getElementById("ratingShareSkipButton");
       var selectedRating = 0;
       var pendingSessionRatingId = null;
+      var pendingRatingShareSession = null;
       var milestoneToastTimerId = null;
       var lastMilestoneAnnounced = 0;
       var MILESTONE_SECONDS = [60, 180, 300, 600, 900];
@@ -2848,7 +2874,11 @@
         if (saveRatingButton) {
           saveRatingButton.addEventListener("click", function () {
             if (pendingSessionRatingId) {
-              persistRatingForSession(pendingSessionRatingId, selectedRating);
+              var ratedSession = persistRatingForSession(pendingSessionRatingId, selectedRating);
+              if (ratedSession) {
+                showRatingShareStep(ratedSession);
+                return;
+              }
             }
             closeRatingModal();
           });
@@ -2857,6 +2887,35 @@
         if (skipRatingButton) {
           skipRatingButton.addEventListener("click", function () {
             closeRatingModal();
+          });
+        }
+
+        if (ratingShareSkipButton) {
+          ratingShareSkipButton.addEventListener("click", function () {
+            closeRatingModal();
+          });
+        }
+
+        if (ratingShareCardButton) {
+          ratingShareCardButton.addEventListener("click", function () {
+            if (!pendingRatingShareSession) {
+              closeRatingModal();
+              return;
+            }
+            var originalText = ratingShareCardButton.textContent;
+            ratingShareCardButton.disabled = true;
+            ratingShareCardButton.textContent = "Generating...";
+            shareSessionCard(pendingRatingShareSession, "rating")
+              .then(function (shared) {
+                if (shared) {
+                  closeRatingModal();
+                }
+              })
+              .finally(function () {
+                if (!ratingShareCardButton) return;
+                ratingShareCardButton.disabled = false;
+                ratingShareCardButton.textContent = originalText;
+              });
           });
         }
 
@@ -3321,9 +3380,7 @@
       }
 
       function shareSingleLog(session) {
-        var message = "I earned $" + session.earnings.toFixed(2) + " in " +
-          formatDuration(session.durationSeconds) + " on Poop Profit. Check yours at poopprofit.com";
-        openSharePickerWithText(message, "Share this log entry to:");
+        shareSessionCard(session, "log");
       }
 
       function shareStatByKey(statKey) {
@@ -3352,6 +3409,67 @@
           todaySessions: "My poop sessions today: " + todaySessions + ". Track yours at poopprofit.com"
         };
         return map[statKey] || "";
+      }
+
+      function shareSessionCard(session, source) {
+        if (!session) {
+          announceShareStatus("Session not found for sharing.", "warn");
+          return Promise.resolve(false);
+        }
+        var shareSource = source === "rating" ? "rating" : "log";
+        var caption = "I got paid $" + Number(session.earnings || 0).toFixed(2) + " to poop. Track yours at poopprofit.com";
+        var fileName = "poopprofit-" + Number(session.earnings || 0).toFixed(2).replace(".", "-") + ".png";
+
+        announceShareStatus("Generating card...", "ok");
+        return generateShareCardPng(session)
+          .then(function (blob) {
+            trackCoreEvent("core_share_card_generate", { source: shareSource });
+            var file = new File([blob], fileName, { type: "image/png" });
+            if (canNativeShareFile(file)) {
+              return navigator.share({
+                title: "PoopProfit",
+                text: caption,
+                files: [file]
+              }).then(function () {
+                trackCoreEvent("core_share_card_complete", { source: shareSource, method: "native" });
+                announceShareStatus("Share complete.", "ok");
+                return true;
+              }).catch(function (error) {
+                if (error && error.name === "AbortError") {
+                  announceShareStatus("Share canceled.", "warn");
+                  return false;
+                }
+                throw error;
+              });
+            }
+
+            downloadBlob(blob, fileName);
+            return copyTextSilently(caption).then(function (copied) {
+              trackCoreEvent("core_share_card_complete", { source: shareSource, method: "download" });
+              if (copied) {
+                announceShareStatus("Card downloaded and caption copied.", "ok");
+              } else {
+                announceShareStatus("Card downloaded. Caption copy failed.", "warn");
+              }
+              return true;
+            });
+          })
+          .catch(function (error) {
+            console.error(error);
+            announceShareStatus("Card share failed. Please try again.", "warn");
+            return false;
+          });
+      }
+
+      function canNativeShareFile(file) {
+        if (!navigator || typeof navigator.share !== "function" || typeof navigator.canShare !== "function") {
+          return false;
+        }
+        try {
+          return navigator.canShare({ files: [file] });
+        } catch (_error) {
+          return false;
+        }
       }
 
       function shareText(text, target) {
@@ -3502,6 +3620,32 @@
         window.setTimeout(function () {
           URL.revokeObjectURL(objectUrl);
         }, 1000);
+      }
+
+      function copyTextSilently(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text)
+            .then(function () { return true; })
+            .catch(function () {
+              return Promise.resolve(fallbackCopySilently(text));
+            });
+        }
+        return Promise.resolve(fallbackCopySilently(text));
+      }
+
+      function fallbackCopySilently(text) {
+        var helper = document.createElement("textarea");
+        helper.value = text;
+        document.body.appendChild(helper);
+        helper.select();
+        var copied = false;
+        try {
+          copied = document.execCommand("copy");
+        } catch (_error) {
+          copied = false;
+        }
+        helper.remove();
+        return copied;
       }
 
       function copyToClipboard(text) {
@@ -3706,7 +3850,9 @@
       function openRatingModal() {
         if (!ratingModal) return;
         selectedRating = 0;
+        pendingRatingShareSession = null;
         applyRatingSelection(0);
+        showRatingInputStep();
         ratingModal.classList.add("open");
         ratingModal.setAttribute("aria-hidden", "false");
       }
@@ -3717,6 +3863,26 @@
         ratingModal.setAttribute("aria-hidden", "true");
         selectedRating = 0;
         pendingSessionRatingId = null;
+        pendingRatingShareSession = null;
+        showRatingInputStep();
+      }
+
+      function showRatingInputStep() {
+        if (ratingInputStep) ratingInputStep.hidden = false;
+        if (ratingShareStep) ratingShareStep.hidden = true;
+      }
+
+      function showRatingShareStep(session) {
+        if (!session) {
+          closeRatingModal();
+          return;
+        }
+        pendingRatingShareSession = session;
+        if (ratingShareMessage) {
+          ratingShareMessage.textContent = "Share your $" + Number(session.earnings || 0).toFixed(2) + " poop?";
+        }
+        if (ratingInputStep) ratingInputStep.hidden = true;
+        if (ratingShareStep) ratingShareStep.hidden = false;
       }
 
       function applyRatingSelection(rating) {
@@ -3730,10 +3896,11 @@
       function persistRatingForSession(sessionId, rating) {
         var safeRating = Math.max(0, Math.min(5, Number(rating) || 0));
         var updated = false;
+        var updatedSession = null;
         state.sessions = state.sessions.map(function (session) {
           if (session.id !== sessionId) return session;
           updated = true;
-          return {
+          updatedSession = {
             id: session.id,
             startedAtMs: session.startedAtMs,
             endedAtMs: session.endedAtMs,
@@ -3742,12 +3909,14 @@
             earnings: session.earnings,
             rating: safeRating
           };
+          return updatedSession;
         });
         if (updated) {
           persist();
           trackCoreEvent("core_rating_saved", { rating: safeRating });
           renderAll();
         }
+        return updated ? updatedSession : null;
       }
 
       function renderTimerRuntimeUI(elapsedSeconds, currentEarnings) {
