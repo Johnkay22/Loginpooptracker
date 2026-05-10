@@ -334,86 +334,6 @@
         font-weight: 600;
         letter-spacing: 0.01em;
       }
-      .mini-timer-demo {
-        margin: 18px auto 0;
-        max-width: 560px;
-        border: 1px solid rgba(148, 220, 255, 0.34);
-        border-radius: var(--ui-radius-xl);
-        background: rgba(5, 18, 42, 0.82);
-        box-shadow: var(--ui-shadow-strong);
-        padding: 16px;
-      }
-      .mini-timer-heading {
-        margin: 0;
-        color: #dff5ff;
-        font-size: 0.95rem;
-        font-weight: 700;
-      }
-      .mini-timer-layout {
-        margin-top: 12px;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 12px;
-        align-items: center;
-      }
-      .mini-timer-label {
-        display: grid;
-        gap: 6px;
-        text-align: left;
-        color: #c6e7ff;
-        font-size: 0.78rem;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        font-weight: 700;
-      }
-      .mini-timer-input {
-        width: 100%;
-        min-height: 44px;
-        border-radius: 10px;
-        border: 1px solid rgba(156, 222, 255, 0.45);
-        background: rgba(3, 12, 29, 0.76);
-        color: #ecf8ff;
-        padding: 0 12px;
-        font-size: 1rem;
-        font-weight: 700;
-      }
-      .mini-timer-readout {
-        text-align: right;
-      }
-      .mini-timer-clock {
-        margin: 0;
-        font-size: 1.75rem;
-        font-weight: 900;
-        letter-spacing: 0.06em;
-        color: #ecf8ff;
-      }
-      .mini-timer-earned {
-        margin: 3px 0 0;
-        color: #c6e7ff;
-        font-size: 0.82rem;
-        font-weight: 600;
-      }
-      .mini-timer-earned-value {
-        color: #86efac;
-        font-weight: 800;
-      }
-      .mini-timer-actions {
-        margin-top: 12px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        justify-content: center;
-      }
-      .mini-timer-btn {
-        min-height: 42px;
-        min-width: 124px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0 14px;
-        font-size: 0.9rem;
-        font-weight: 800;
-      }
       .faq-cta-wrap {
         margin: 14px auto 0;
         display: grid;
@@ -604,25 +524,6 @@
           max-width: 360px;
           min-height: 50px;
         }
-        .mini-timer-demo {
-          padding: 13px;
-        }
-        .mini-timer-layout {
-          grid-template-columns: 1fr;
-          justify-items: stretch;
-        }
-        .mini-timer-readout {
-          text-align: left;
-        }
-        .mini-timer-clock {
-          font-size: 1.55rem;
-        }
-        .mini-timer-actions {
-          justify-content: stretch;
-        }
-        .mini-timer-btn {
-          width: 100%;
-        }
         .faq-cta-wrap a {
           width: 100%;
           max-width: 360px;
@@ -704,23 +605,6 @@
           </a>
         </div>
         <p class="hero-secondary-line">Free. Anonymous. No account required.</p>
-        <section class="mini-timer-demo glass" aria-label="Sample mini timer calculator">
-          <p class="mini-timer-heading">Sample Mini Timer</p>
-          <div class="mini-timer-layout">
-            <label class="mini-timer-label" for="miniTimerRateInput">
-              Hourly Pay (USD)
-              <input id="miniTimerRateInput" class="mini-timer-input" type="number" min="0" step="0.01" value="25" inputmode="decimal" />
-            </label>
-            <div class="mini-timer-readout" aria-live="polite">
-              <p id="miniTimerClock" class="mini-timer-clock">00:00</p>
-              <p class="mini-timer-earned">Earned: <span id="miniTimerEarned" class="mini-timer-earned-value">$0.00</span></p>
-            </div>
-          </div>
-          <div class="mini-timer-actions">
-            <button id="miniTimerToggle" type="button" class="ui-primary-cta mini-timer-btn">Start Sample</button>
-            <button id="miniTimerReset" type="button" class="ui-secondary-cta mini-timer-btn">Reset</button>
-          </div>
-        </section>
         <div class="trust-row" aria-label="Trust indicators">
           <span class="trust-pill">No login needed</span>
           <span class="trust-pill">Local data only</span>
@@ -890,6 +774,18 @@
           <span aria-hidden="true" class="text-slate-500">•</span>
           <a href="https://www.poopprofit.com/core-preview.html" class="font-semibold text-cyan-200 hover:text-cyan-100">Core Preview</a>
         </div>
+        <a
+          href="https://www.instagram.com/poopprofit?igsh=MWpncm00bWR1YzNteA=="
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-3 inline-flex items-center gap-2 font-semibold text-pink-200 hover:text-pink-100"
+          aria-label="Follow PoopProfit on Instagram"
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4 fill-current">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 1.8A3.7 3.7 0 0 0 3.8 7.5v9a3.7 3.7 0 0 0 3.7 3.7h9a3.7 3.7 0 0 0 3.7-3.7v-9a3.7 3.7 0 0 0-3.7-3.7h-9Zm9.75 1.35a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4Z"></path>
+          </svg>
+          <span>Follow us on Instagram</span>
+        </a>
         <p class="mt-2">© 2026 PoopProfit. All rights reserved.</p>
       </footer>
     </main>
@@ -924,73 +820,6 @@
           });
         }
 
-        function setupMiniTimerDemo() {
-          var rateInput = document.getElementById("miniTimerRateInput");
-          var clock = document.getElementById("miniTimerClock");
-          var earned = document.getElementById("miniTimerEarned");
-          var toggleButton = document.getElementById("miniTimerToggle");
-          var resetButton = document.getElementById("miniTimerReset");
-          if (!rateInput || !clock || !earned || !toggleButton || !resetButton) return;
-
-          var elapsedSeconds = 0;
-          var timerId = null;
-
-          function safeRate() {
-            var value = parseFloat(rateInput.value);
-            if (!Number.isFinite(value) || value < 0) return 0;
-            return value;
-          }
-
-          function formatClock(totalSeconds) {
-            var minutes = Math.floor(totalSeconds / 60);
-            var seconds = totalSeconds % 60;
-            return String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
-          }
-
-          function render() {
-            var rate = safeRate();
-            var total = (rate / 3600) * elapsedSeconds;
-            clock.textContent = formatClock(elapsedSeconds);
-            earned.textContent = "$" + total.toFixed(2);
-          }
-
-          function start() {
-            if (timerId) return;
-            timerId = window.setInterval(function () {
-              elapsedSeconds += 1;
-              render();
-            }, 1000);
-            toggleButton.textContent = "Pause Sample";
-            trackEvent("hero_mini_timer_start", { location: "hero" });
-          }
-
-          function pause() {
-            if (!timerId) return;
-            window.clearInterval(timerId);
-            timerId = null;
-            toggleButton.textContent = "Resume Sample";
-          }
-
-          function reset() {
-            pause();
-            elapsedSeconds = 0;
-            toggleButton.textContent = "Start Sample";
-            render();
-            trackEvent("hero_mini_timer_reset", { location: "hero" });
-          }
-
-          toggleButton.addEventListener("click", function () {
-            if (timerId) {
-              pause();
-            } else {
-              start();
-            }
-          });
-          resetButton.addEventListener("click", reset);
-          rateInput.addEventListener("input", render);
-          render();
-        }
-
         var trackedLinks = document.querySelectorAll("[data-analytics-event]");
         trackedLinks.forEach(function (element) {
           element.addEventListener("click", function () {
@@ -1013,7 +842,6 @@
         });
 
         setupTickerMotion();
-        setupMiniTimerDemo();
         window.addEventListener("resize", setupTickerMotion);
       })();
     </script>
