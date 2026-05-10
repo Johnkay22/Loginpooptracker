@@ -43,6 +43,7 @@
     gtag('js', new Date());
     gtag('config', 'G-R1E17DCKNC');
   </script>
+  <script src="https://unpkg.com/html-to-image"></script>
 
   <script type="application/ld+json">
     {
@@ -1107,6 +1108,262 @@
       object-fit: contain;
     }
 
+    .share-card-template {
+      position: fixed;
+      left: -9999px;
+      top: 0;
+      width: 1080px;
+      height: 1920px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .share-card-canvas {
+      width: 1080px;
+      height: 1920px;
+      border-radius: 54px;
+      overflow: hidden;
+      position: relative;
+      padding: 72px 62px 58px;
+      background:
+        radial-gradient(circle at 20% 18%, rgba(68, 193, 255, 0.2), transparent 44%),
+        radial-gradient(circle at 86% 14%, rgba(92, 142, 255, 0.18), transparent 40%),
+        radial-gradient(circle at 48% 64%, rgba(36, 102, 214, 0.12), transparent 38%),
+        linear-gradient(180deg, #061226 0%, #071a3b 58%, #061226 100%);
+      color: #eef8ff;
+      font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      isolation: isolate;
+    }
+
+    .share-card-canvas::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 8% 12%, rgba(159, 226, 255, 0.82) 1px, transparent 1.5px),
+        radial-gradient(circle at 32% 28%, rgba(129, 205, 255, 0.65) 1px, transparent 1.5px),
+        radial-gradient(circle at 74% 22%, rgba(179, 237, 255, 0.75) 1px, transparent 1.6px),
+        radial-gradient(circle at 64% 46%, rgba(118, 189, 255, 0.58) 1px, transparent 1.4px),
+        radial-gradient(circle at 16% 72%, rgba(169, 232, 255, 0.72) 1px, transparent 1.6px),
+        radial-gradient(circle at 82% 78%, rgba(154, 226, 255, 0.76) 1px, transparent 1.5px);
+      opacity: 0.9;
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    .share-card-canvas::after {
+      content: "";
+      position: absolute;
+      inset: 26px;
+      border-radius: 40px;
+      border: 1px solid rgba(127, 218, 255, 0.24);
+      box-shadow: inset 0 0 40px rgba(79, 188, 255, 0.12), 0 0 40px rgba(25, 125, 215, 0.22);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .share-card-top {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 104px;
+    }
+
+    .share-card-top img {
+      width: 420px;
+      height: auto;
+      display: block;
+    }
+
+    .share-card-panel {
+      border-radius: 36px;
+      border: 2px solid rgba(122, 217, 255, 0.74);
+      background: linear-gradient(180deg, rgba(7, 28, 63, 0.8), rgba(6, 23, 52, 0.84));
+      box-shadow:
+        inset 0 0 26px rgba(91, 198, 255, 0.14),
+        0 0 26px rgba(74, 193, 255, 0.33),
+        0 14px 32px rgba(3, 11, 27, 0.52);
+      backdrop-filter: blur(4px);
+    }
+
+    .share-card-headline-panel {
+      padding: 46px 38px 34px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 20px;
+    }
+
+    .share-card-headline {
+      margin: 0;
+      font-size: 78px;
+      line-height: 1.03;
+      font-weight: 900;
+      letter-spacing: -0.015em;
+      text-wrap: balance;
+    }
+
+    .share-card-amount {
+      display: block;
+      margin: 8px 0 5px;
+      font-size: 176px;
+      line-height: 0.9;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+      background: linear-gradient(180deg, #edfbff 0%, #80e0ff 58%, #3fc1ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 36px rgba(72, 189, 255, 0.34);
+      white-space: nowrap;
+    }
+
+    .share-card-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(121, 215, 255, 0.58);
+      background: rgba(6, 20, 48, 0.72);
+      box-shadow: inset 0 0 20px rgba(66, 179, 255, 0.16);
+      color: #e2f5ff;
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 1;
+      padding: 16px 30px;
+      white-space: nowrap;
+    }
+
+    .share-card-badge svg {
+      width: 42px;
+      height: 42px;
+      fill: currentColor;
+      opacity: 0.96;
+      flex-shrink: 0;
+    }
+
+    .share-card-main-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 20px;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .share-card-duration-panel {
+      min-height: 560px;
+      padding: 40px 28px 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .share-card-stopwatch {
+      width: 220px;
+      height: 220px;
+      fill: none;
+      stroke: #8ee7ff;
+      stroke-width: 10;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 14px rgba(102, 216, 255, 0.42));
+    }
+
+    .share-card-duration-value {
+      margin: 0;
+      font-size: 90px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #dbf6ff;
+      text-shadow: 0 0 24px rgba(74, 188, 255, 0.3);
+      white-space: nowrap;
+    }
+
+    .share-card-mascot {
+      width: 100%;
+      max-height: 560px;
+      object-fit: contain;
+      object-position: center;
+      filter: drop-shadow(0 16px 30px rgba(2, 8, 22, 0.55));
+      align-self: center;
+    }
+
+    .share-card-footer-panel {
+      margin-top: auto;
+      min-height: 186px;
+      padding: 22px 26px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .share-card-footer-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .share-card-footer-left img {
+      width: 104px;
+      height: 104px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 16px rgba(95, 201, 255, 0.45));
+      flex-shrink: 0;
+    }
+
+    .share-card-footer-text {
+      margin: 0;
+      font-size: 58px;
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #eaf7ff;
+      text-wrap: balance;
+      word-break: keep-all;
+    }
+
+    .share-card-footer-text strong {
+      color: #6bd3ff;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .share-card-arrow {
+      width: 106px;
+      height: 106px;
+      border-radius: 999px;
+      border: 2px solid rgba(128, 220, 255, 0.66);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #e6f7ff;
+      font-size: 56px;
+      line-height: 1;
+      box-shadow: inset 0 0 18px rgba(83, 191, 255, 0.18);
+      flex-shrink: 0;
+    }
+
+    .share-card-bottom-badge-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .share-card-bottom-badge-wrap .share-card-badge {
+      font-size: 38px;
+      padding: 14px 28px;
+    }
+
     .preview-footnote {
       margin-top: 14px;
       padding-top: 12px;
@@ -1920,6 +2177,7 @@
               <div class="share-buttons">
                 <button id="openSharePickerButton" type="button"><span class="icon-share">↗</span>Share Summary</button>
                 <button id="copyShareTextButton" type="button">Copy Share Text</button>
+                <button id="testShareCardRenderButton" type="button">Test Render</button>
               </div>
               <div id="shareStatus" class="status"></div>
             </div>
@@ -2085,6 +2343,59 @@
     </div>
   </div>
 
+  <div id="shareCardTemplate" class="share-card-template" aria-hidden="true">
+    <div class="share-card-canvas">
+      <header class="share-card-top">
+        <img id="shareCardLogoImage" src="newpplogo.png" alt="PoopProfit.com logo and wordmark" />
+      </header>
+
+      <section class="share-card-panel share-card-headline-panel" aria-label="Session earnings headline">
+        <p class="share-card-headline">
+          I got paid
+          <span id="shareCardAmountValue" class="share-card-amount">$0.00</span>
+          to poop.
+        </p>
+        <div class="share-card-badge" aria-label="Anonymous and free">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M4.5 9.5h15a1.5 1.5 0 1 1 0 3h-15a1.5 1.5 0 1 1 0-3Zm4.84-5.11A3.86 3.86 0 0 1 12 3.4a3.86 3.86 0 0 1 2.66.99l4.35 4.08H4.99l4.35-4.08ZM12 15.1c2.79 0 5.05 1.71 5.05 3.82v1.28H6.95v-1.28c0-2.11 2.26-3.82 5.05-3.82Zm-2.05 2.3a1.1 1.1 0 1 0 0 2.2h4.1a1.1 1.1 0 1 0 0-2.2h-4.1Z"></path>
+          </svg>
+          <span>Anonymous &amp; Free</span>
+        </div>
+      </section>
+
+      <section class="share-card-main-row" aria-label="Session duration and mascot">
+        <div class="share-card-panel share-card-duration-panel">
+          <svg class="share-card-stopwatch" viewBox="0 0 64 64" aria-hidden="true">
+            <rect x="26" y="3" width="12" height="7" rx="2"></rect>
+            <rect x="42.5" y="8.5" width="9" height="5" rx="1.8"></rect>
+            <circle cx="32" cy="36" r="20"></circle>
+            <line x1="32" y1="36" x2="32" y2="24"></line>
+            <line x1="32" y1="36" x2="43" y2="36"></line>
+          </svg>
+          <p id="shareCardDurationValue" class="share-card-duration-value">0hr 0min</p>
+        </div>
+        <img id="shareCardMascotImage" class="share-card-mascot" src="herman-cash-suit.png" alt="Herman mascot holding cash" />
+      </section>
+
+      <section class="share-card-panel share-card-footer-panel" aria-label="PoopProfit call to action">
+        <div class="share-card-footer-left">
+          <img id="shareCardToiletImage" src="icon-toilet.png" alt="Toilet icon" />
+          <p class="share-card-footer-text">Track yours at <strong>PoopProfit.com</strong></p>
+        </div>
+        <div class="share-card-arrow" aria-hidden="true">→</div>
+      </section>
+
+      <div class="share-card-bottom-badge-wrap">
+        <div class="share-card-badge" aria-label="Anonymous and free">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M4.5 9.5h15a1.5 1.5 0 1 1 0 3h-15a1.5 1.5 0 1 1 0-3Zm4.84-5.11A3.86 3.86 0 0 1 12 3.4a3.86 3.86 0 0 1 2.66.99l4.35 4.08H4.99l4.35-4.08ZM12 15.1c2.79 0 5.05 1.71 5.05 3.82v1.28H6.95v-1.28c0-2.11 2.26-3.82 5.05-3.82Zm-2.05 2.3a1.1 1.1 0 1 0 0 2.2h4.1a1.1 1.1 0 1 0 0-2.2h-4.1Z"></path>
+          </svg>
+          <span>Anonymous &amp; Free</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     (function () {
       "use strict";
@@ -2176,6 +2487,14 @@
       var sharePickerDescription = document.getElementById("sharePickerDescription");
       var closeSharePickerButton = document.getElementById("closeSharePickerButton");
       var shareChannelButtons = sharePickerModal ? sharePickerModal.querySelectorAll("[data-share-channel]") : [];
+      var testShareCardRenderButton = document.getElementById("testShareCardRenderButton");
+      var shareCardTemplate = document.getElementById("shareCardTemplate");
+      var shareCardAmountValue = document.getElementById("shareCardAmountValue");
+      var shareCardDurationValue = document.getElementById("shareCardDurationValue");
+      var shareCardLogoImage = document.getElementById("shareCardLogoImage");
+      var shareCardMascotImage = document.getElementById("shareCardMascotImage");
+      var shareCardToiletImage = document.getElementById("shareCardToiletImage");
+      var shareCardAssetsPromise = null;
       var statsRangeButtons = document.querySelectorAll("[data-stats-range]");
       var customRangeWrap = document.getElementById("customRangeWrap");
       var statsStartDateInput = document.getElementById("statsStartDateInput");
@@ -2294,6 +2613,10 @@
       renderAll();
       restoreRunningSession();
       setupTutorial();
+      window.generateShareCardPng = generateShareCardPng;
+      preloadShareCardAssets().catch(function () {
+        // Keep startup silent; generateShareCardPng will report failures when invoked.
+      });
 
       function wireEvents() {
         tabButtons.forEach(function (button) {
@@ -2408,6 +2731,32 @@
               return;
             }
             copyToClipboard(text);
+          });
+        }
+
+        if (testShareCardRenderButton) {
+          testShareCardRenderButton.addEventListener("click", function () {
+            var mockSession = {
+              earnings: 3.82,
+              durationSeconds: 12 * 60
+            };
+            var originalText = testShareCardRenderButton.textContent;
+            testShareCardRenderButton.disabled = true;
+            testShareCardRenderButton.textContent = "Rendering...";
+
+            generateShareCardPng(mockSession)
+              .then(function (blob) {
+                downloadBlob(blob, "poopprofit-share-card-sample.png");
+                announceShareStatus("Sample card downloaded.", "ok");
+              })
+              .catch(function (error) {
+                console.error(error);
+                announceShareStatus("Share card render failed. Verify required image assets exist.", "warn");
+              })
+              .finally(function () {
+                testShareCardRenderButton.disabled = false;
+                testShareCardRenderButton.textContent = originalText;
+              });
           });
         }
 
@@ -3066,6 +3415,93 @@
 
         return "My Poop Profit stats: " + totalSessions + " sessions, $" + totalEarnings.toFixed(2) +
           " earned, " + formatDuration(totalTimeSeconds) + " total time. Check yours at poopprofit.com";
+      }
+
+      function generateShareCardPng(session) {
+        return preloadShareCardAssets()
+          .then(function () {
+            if (!shareCardTemplate) {
+              throw new Error("Share card template not found.");
+            }
+            if (!window.htmlToImage || typeof window.htmlToImage.toBlob !== "function") {
+              throw new Error("html-to-image library not available.");
+            }
+            populateShareCardTemplate(session);
+            return window.htmlToImage.toBlob(shareCardTemplate, {
+              cacheBust: true,
+              backgroundColor: "#061226",
+              width: 1080,
+              height: 1920,
+              pixelRatio: 1
+            });
+          })
+          .then(function (blob) {
+            if (!blob) {
+              throw new Error("Failed to render share card PNG.");
+            }
+            return blob;
+          });
+      }
+
+      function populateShareCardTemplate(session) {
+        if (!shareCardAmountValue || !shareCardDurationValue) {
+          throw new Error("Share card content nodes not found.");
+        }
+        var earnings = Number(session && session.earnings);
+        var safeEarnings = Number.isFinite(earnings) ? Math.max(0, earnings) : 0;
+        var durationSeconds = Number(session && session.durationSeconds);
+        var safeDurationSeconds = Number.isFinite(durationSeconds) ? Math.max(0, Math.floor(durationSeconds)) : 0;
+        shareCardAmountValue.textContent = "$" + safeEarnings.toFixed(2);
+        shareCardDurationValue.textContent = formatShareCardDuration(safeDurationSeconds);
+      }
+
+      function formatShareCardDuration(durationSeconds) {
+        var safeSeconds = Math.max(0, Math.floor(Number(durationSeconds) || 0));
+        var hours = Math.floor(safeSeconds / 3600);
+        var minutes = Math.floor((safeSeconds % 3600) / 60);
+        return hours + "hr " + minutes + "min";
+      }
+
+      function preloadShareCardAssets() {
+        if (shareCardAssetsPromise) return shareCardAssetsPromise;
+        var sources = [];
+        if (shareCardLogoImage) sources.push(shareCardLogoImage.getAttribute("src"));
+        if (shareCardMascotImage) sources.push(shareCardMascotImage.getAttribute("src"));
+        if (shareCardToiletImage) sources.push(shareCardToiletImage.getAttribute("src"));
+        shareCardAssetsPromise = Promise.all(
+          sources.filter(Boolean).map(function (source) {
+            return preloadImageAsset(source);
+          })
+        ).catch(function (error) {
+          shareCardAssetsPromise = null;
+          throw error;
+        });
+        return shareCardAssetsPromise;
+      }
+
+      function preloadImageAsset(source) {
+        return new Promise(function (resolve, reject) {
+          var image = new Image();
+          image.decoding = "async";
+          image.onload = function () { resolve(image); };
+          image.onerror = function () {
+            reject(new Error("Unable to preload asset: " + source));
+          };
+          image.src = source;
+        });
+      }
+
+      function downloadBlob(blob, fileName) {
+        var objectUrl = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.href = objectUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(function () {
+          URL.revokeObjectURL(objectUrl);
+        }, 1000);
       }
 
       function copyToClipboard(text) {
