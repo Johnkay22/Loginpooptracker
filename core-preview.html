@@ -1110,11 +1110,12 @@
 
     .share-card-template {
       position: fixed;
-      left: -9999px;
+      left: 0;
       top: 0;
       width: 1080px;
       height: 1920px;
       pointer-events: none;
+      opacity: 0;
       z-index: -1;
     }
 
@@ -1186,7 +1187,6 @@
         inset 0 0 26px rgba(91, 198, 255, 0.14),
         0 0 26px rgba(74, 193, 255, 0.33),
         0 14px 32px rgba(3, 11, 27, 0.52);
-      backdrop-filter: blur(4px);
     }
 
     .share-card-headline-panel {
@@ -2509,6 +2509,7 @@
       var shareChannelButtons = sharePickerModal ? sharePickerModal.querySelectorAll("[data-share-channel]") : [];
       var testShareCardRenderButton = document.getElementById("testShareCardRenderButton");
       var shareCardTemplate = document.getElementById("shareCardTemplate");
+      var shareCardCanvas = shareCardTemplate ? shareCardTemplate.querySelector(".share-card-canvas") : null;
       var shareCardAmountValue = document.getElementById("shareCardAmountValue");
       var shareCardDurationValue = document.getElementById("shareCardDurationValue");
       var shareCardLogoImage = document.getElementById("shareCardLogoImage");
@@ -3538,20 +3539,14 @@
       function generateShareCardPng(session) {
         return preloadShareCardAssets()
           .then(function () {
-            if (!shareCardTemplate) {
+            if (!shareCardTemplate || !shareCardCanvas) {
               throw new Error("Share card template not found.");
             }
             if (!window.htmlToImage || typeof window.htmlToImage.toBlob !== "function") {
               throw new Error("html-to-image library not available.");
             }
             populateShareCardTemplate(session);
-            return window.htmlToImage.toBlob(shareCardTemplate, {
-              cacheBust: true,
-              backgroundColor: "#061226",
-              width: 1080,
-              height: 1920,
-              pixelRatio: 1
-            });
+            return renderShareCardBlob();
           })
           .then(function (blob) {
             if (!blob) {
@@ -3580,6 +3575,43 @@
         return hours + "hr " + minutes + "min";
       }
 
+      function renderShareCardBlob() {
+        var previousInline = {
+          left: shareCardTemplate.style.left,
+          top: shareCardTemplate.style.top,
+          opacity: shareCardTemplate.style.opacity,
+          zIndex: shareCardTemplate.style.zIndex,
+          display: shareCardTemplate.style.display,
+          transform: shareCardTemplate.style.transform
+        };
+
+        shareCardTemplate.style.left = "0px";
+        shareCardTemplate.style.top = "0px";
+        shareCardTemplate.style.opacity = "0.01";
+        shareCardTemplate.style.zIndex = "-1";
+        shareCardTemplate.style.display = "block";
+        shareCardTemplate.style.transform = "translateZ(0)";
+
+        return window.htmlToImage.toBlob(shareCardCanvas, {
+          cacheBust: true,
+          backgroundColor: "#061226",
+          width: 1080,
+          height: 1920,
+          pixelRatio: 1,
+          style: {
+            transform: "none",
+            margin: "0"
+          }
+        }).finally(function () {
+          shareCardTemplate.style.left = previousInline.left;
+          shareCardTemplate.style.top = previousInline.top;
+          shareCardTemplate.style.opacity = previousInline.opacity;
+          shareCardTemplate.style.zIndex = previousInline.zIndex;
+          shareCardTemplate.style.display = previousInline.display;
+          shareCardTemplate.style.transform = previousInline.transform;
+        });
+      }
+
       function preloadShareCardAssets() {
         if (shareCardAssetsPromise) return shareCardAssetsPromise;
         var sources = [];
@@ -3589,7 +3621,11 @@
         shareCardAssetsPromise = Promise.all(
           sources.filter(Boolean).map(function (source) {
             return preloadImageAsset(source);
-          })
+          }).concat([
+            waitForTemplateImage(shareCardLogoImage),
+            waitForTemplateImage(shareCardMascotImage),
+            waitForTemplateImage(shareCardToiletImage)
+          ])
         ).catch(function (error) {
           shareCardAssetsPromise = null;
           throw error;
@@ -3606,6 +3642,29 @@
             reject(new Error("Unable to preload asset: " + source));
           };
           image.src = source;
+        });
+      }
+
+      function waitForTemplateImage(imageElement) {
+        if (!imageElement) return Promise.resolve();
+        if (imageElement.complete && imageElement.naturalWidth > 0) {
+          return Promise.resolve();
+        }
+        return new Promise(function (resolve, reject) {
+          function cleanup() {
+            imageElement.removeEventListener("load", onLoad);
+            imageElement.removeEventListener("error", onError);
+          }
+          function onLoad() {
+            cleanup();
+            resolve();
+          }
+          function onError() {
+            cleanup();
+            reject(new Error("Template image failed to load: " + (imageElement.currentSrc || imageElement.src)));
+          }
+          imageElement.addEventListener("load", onLoad);
+          imageElement.addEventListener("error", onError);
         });
       }
 
