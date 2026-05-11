@@ -89,6 +89,11 @@
   <style>
     :root {
       --bg: #060b16;
+      --canvas: #060b16;
+      --surface-1: #0d1729;
+      --surface-2: #15223d;
+      --surface-3: #1c2c4d;
+      --divider: rgba(255,255,255,0.08);
       --panel: rgba(14, 23, 44, 0.9);
       --panel-strong: rgba(9, 15, 30, 0.94);
       --line: rgba(68, 172, 255, 0.25);
@@ -125,7 +130,7 @@
       color: var(--text);
       background-color: var(--bg);
       background-image:
-        linear-gradient(135deg, rgba(6, 11, 22, 0.93), rgba(6, 11, 22, 0.8)),
+        linear-gradient(135deg, rgba(6, 11, 22, 0.96), rgba(6, 11, 22, 0.96)),
         url("MAINDESKTOPBG.jpeg");
       background-position: center;
       background-size: cover;
@@ -138,18 +143,18 @@
     }
 
     .shell {
-      border: 1px solid var(--line);
+      border: none;
       border-radius: 18px;
-      background: linear-gradient(180deg, rgba(15, 24, 45, 0.9), rgba(10, 15, 28, 0.94));
-      box-shadow: var(--shadow);
+      background: transparent;
+      box-shadow: none;
       padding: 14px;
       position: relative;
       overflow: hidden;
-      backdrop-filter: blur(8px);
+      backdrop-filter: none;
     }
 
     .shell::before {
-      content: "";
+      content: none;
       position: absolute;
       width: 380px;
       height: 380px;
@@ -277,16 +282,16 @@
 
     .panel-grid {
       display: grid;
-      gap: 16px;
+      gap: 20px;
       grid-template-columns: repeat(12, 1fr);
     }
 
     .card {
-      background: linear-gradient(170deg, var(--ui-surface), rgba(6, 14, 32, 0.9));
-      border: 1px solid var(--ui-border);
-      border-radius: var(--ui-radius-lg);
+      background: var(--surface-1);
+      border: 1px solid var(--divider);
+      border-radius: 16px;
       padding: 14px;
-      box-shadow: var(--ui-shadow-soft);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 12px 32px rgba(0,0,0,0.5);
       min-width: 0;
     }
 
@@ -761,11 +766,11 @@
     }
 
     .stat {
-      border: 1px solid var(--ui-border);
+      border: 1px solid var(--divider);
       border-radius: var(--ui-radius-md);
-      background: var(--ui-surface-soft);
+      background: var(--surface-2);
       padding: 10px;
-      box-shadow: var(--ui-shadow-soft);
+      box-shadow: none;
     }
 
     .stat .label {
@@ -788,7 +793,7 @@
       padding: 20px 18px;
       border-radius: 14px;
       background: var(--surface-2);
-      border: 1px solid var(--ui-border);
+      border: 1px solid var(--divider);
       display: grid;
       gap: 8px;
     }
@@ -825,12 +830,12 @@
     }
 
     .trend-panel {
-      border: 1px solid var(--ui-border);
+      border: 1px solid var(--divider);
       border-radius: var(--ui-radius-lg);
-      background: linear-gradient(180deg, var(--ui-surface), rgba(6, 11, 22, 0.9));
+      background: var(--surface-2);
       padding: 11px;
       margin-bottom: 10px;
-      box-shadow: var(--ui-shadow-soft);
+      box-shadow: none;
     }
 
     .trend-head {
@@ -944,9 +949,10 @@
 
     .insight {
       border-radius: 10px;
-      border: 1px solid rgba(67, 179, 255, 0.24);
-      background: rgba(6, 11, 22, 0.68);
+      border: 1px solid var(--divider);
+      background: var(--surface-2);
       padding: 9px;
+      box-shadow: none;
     }
 
     .insight .label {
@@ -964,14 +970,14 @@
     }
 
     .stats-filter-bar {
-      border: 1px solid rgba(67, 179, 255, 0.24);
+      border: 1px solid var(--divider);
       border-radius: 12px;
-      background: linear-gradient(180deg, rgba(11, 19, 35, 0.82), rgba(7, 12, 24, 0.9));
+      background: var(--surface-1);
       padding: 12px;
       margin-bottom: 11px;
       display: grid;
       gap: 12px;
-      box-shadow: inset 0 0 0 1px rgba(67, 179, 255, 0.08);
+      box-shadow: none;
     }
 
     .stats-range-buttons {
@@ -1010,7 +1016,7 @@
       flex: 0 0 auto;
     }
     .segmented-control button.active {
-      background: var(--surface-2);
+      background: var(--surface-3);
       color: #fff;
       box-shadow: 0 1px 0 rgba(255,255,255,0.06);
     }
