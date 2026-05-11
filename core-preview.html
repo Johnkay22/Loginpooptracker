@@ -917,6 +917,19 @@
       letter-spacing: 0.01em;
     }
 
+    .trend-footer {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--ui-border);
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 600;
+      flex-wrap: wrap;
+    }
+    .trend-footer span { white-space: nowrap; }
+
     .insights-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -2174,19 +2187,15 @@
           <article class="card" style="grid-column: span 12;">
             <div class="trend-panel">
               <div class="trend-head">
-                <div class="trend-title-wrap">
-                  <span class="trend-title">Recent Earnings Trend</span>
-                  <span id="trendSubtitle" class="trend-subtitle">Last 14 sessions plotted by session profit</span>
-                </div>
-                <span id="trendRangeLabel" class="trend-range-badge">Last 14 sessions</span>
-              </div>
-              <div class="trend-meta-row">
-                <span class="trend-legend"><span class="trend-legend-dot" aria-hidden="true"></span>Earnings per session</span>
-                <span id="trendPeakLabel" class="trend-metric-pill">Peak: $0.00</span>
-                <span id="trendAverageLabel" class="trend-metric-pill">Avg: $0.00</span>
+                <span class="trend-title">Recent Earnings Trend</span>
               </div>
               <canvas id="trendCanvas"></canvas>
-              <div id="trendFootnote" class="trend-footnote">Hover-like detail is shown via chart point highlights.</div>
+              <div class="trend-footer">
+                <span id="trendPeakLabel">Peak $0.00</span>
+                <span id="trendAverageLabel">Avg $0.00</span>
+                <span id="trendSubtitle">Last 14 sessions</span>
+              </div>
+              <span id="trendRangeLabel" class="sr-only">Last 14 sessions</span>
             </div>
           </article>
 
