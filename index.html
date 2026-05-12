@@ -399,6 +399,32 @@
         background: linear-gradient(180deg, rgba(3, 14, 37, 0.96), rgba(1, 9, 24, 0.96));
         box-shadow: var(--ui-shadow-strong);
       }
+      .top-ticker-fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 160;
+        padding: 8px 10px;
+        background: linear-gradient(180deg, rgba(2, 10, 28, 0.96), rgba(2, 10, 28, 0.72));
+        backdrop-filter: blur(6px);
+      }
+      .top-ticker-fixed .ticker-shell {
+        max-width: 1220px;
+        margin: 0 auto;
+      }
+      .top-ticker-fixed .ticker-live-tag {
+        min-height: 56px;
+      }
+      .hero-findout-wrap {
+        margin-top: 14px;
+        display: flex;
+        justify-content: center;
+      }
+      .hero-findout-wrap a {
+        min-height: 50px;
+        min-width: 190px;
+      }
       .ticker-live-tag {
         display: inline-flex;
         align-items: center;
@@ -496,6 +522,9 @@
         50% { transform: scale(0.84); opacity: 0.7; }
       }
       @media (max-width: 767px) {
+        .top-ticker-fixed {
+          padding: 6px 8px;
+        }
         .ticker-shell {
           grid-template-columns: 1fr;
         }
@@ -503,6 +532,9 @@
           min-height: 42px;
           border-right: none;
           border-bottom: 1px solid rgba(125, 211, 252, 0.28);
+        }
+        .top-ticker-fixed .ticker-live-tag {
+          min-height: 38px;
         }
         .review-marquee {
           min-height: 72px;
@@ -573,7 +605,38 @@
   </head>
 
   <body class="space-bg overflow-x-hidden">
-    <main id="top" class="relative z-10 pb-20">
+    <section class="top-ticker-fixed" aria-label="Live Toilet Ticker">
+      <div class="ticker-shell">
+        <span class="ticker-live-tag">Live</span>
+        <div class="review-marquee review-marquee-row">
+          <div class="review-marquee-track">
+            <div class="review-marquee-group">
+              <span class="review-item">"Leading gastroenterologist begins prescribing double espressos and bran muffins to patients, citing 'unprecedented financial upside.'"</span>
+              <span class="ticker-separator" aria-hidden="true">|</span>
+              <span class="review-item">"Wall Street panics as rogue trader liquidates a $40M portfolio to invest exclusively in 'paid-to-poop' behavioral futures."</span>
+              <span class="ticker-separator" aria-hidden="true">|</span>
+              <span class="review-item">"Fortune 500 company files for Chapter 11 bankruptcy after the entire C-suite discovers the app and refuses to leave the executive washroom."</span>
+              <span class="ticker-separator" aria-hidden="true">|</span>
+              <span class="review-item">"Silicon Valley venture capitalists secure $200M in Series B funding for a startup that replaces ergonomic desk chairs with high-yield porcelain bowls."</span>
+              <span class="ticker-separator" aria-hidden="true">|</span>
+              <span class="review-item">"National labor union successfully averts a strike by negotiating a groundbreaking contract that guarantees time-and-a-half for cafeteria-induced digestive distress."</span>
+            </div>
+            <div class="review-marquee-group" aria-hidden="true">
+              <span class="review-item">"Leading gastroenterologist begins prescribing double espressos and bran muffins to patients, citing 'unprecedented financial upside.'"</span>
+              <span class="ticker-separator" aria-hidden="true">|</span>
+              <span class="review-item">"Wall Street panics as rogue trader liquidates a $40M portfolio to invest exclusively in 'paid-to-poop' behavioral futures."</span>
+              <span class="ticker-separator" aria-hidden="true">|</span>
+              <span class="review-item">"Fortune 500 company files for Chapter 11 bankruptcy after the entire C-suite discovers the app and refuses to leave the executive washroom."</span>
+              <span class="ticker-separator" aria-hidden="true">|</span>
+              <span class="review-item">"Silicon Valley venture capitalists secure $200M in Series B funding for a startup that replaces ergonomic desk chairs with high-yield porcelain bowls."</span>
+              <span class="ticker-separator" aria-hidden="true">|</span>
+              <span class="review-item">"National labor union successfully averts a strike by negotiating a groundbreaking contract that guarantees time-and-a-half for cafeteria-induced digestive distress."</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <main id="top" class="relative z-10 pb-20 pt-24 sm:pt-28">
       <section id="hero" class="mx-auto max-w-6xl px-4 pt-8 text-center sm:px-6 sm:pt-10">
         <div class="mx-auto mb-6 flex justify-center sm:mb-8">
           <img src="newpplogo.png" alt="PoopProfit.com logo" class="h-auto w-full max-w-[170px] sm:max-w-[260px]" />
@@ -583,9 +646,15 @@
           How Much Do You Get
           <span class="bg-gradient-to-r from-cyan-100 via-emerald-200 to-cyan-300 bg-clip-text text-transparent">Paid to Poop at Work?</span>
         </h1>
-        <p class="mx-auto mt-5 max-w-3xl text-base leading-relaxed text-slate-200 sm:text-xl">
-          Enter your pay. Start the timer. See exactly what your bathroom break earned.
-        </p>
+        <div class="hero-findout-wrap">
+          <a
+            href="https://www.poopprofit.com/core-preview.html"
+            data-analytics-event="hero_primary_cta_click"
+            class="ui-primary-cta inline-flex items-center justify-center px-10 py-3 text-lg font-extrabold transition hover:-translate-y-0.5 hover:brightness-110"
+          >
+            FIND OUT!
+          </a>
+        </div>
         <p class="hero-value-note">
           "The most revolutionary financial technology to ever exist in the bathroom market." - Steve Occupations
         </p>
@@ -595,15 +664,6 @@
             <img src="featuresmobile.png" alt="PoopProfit feature highlights preview image" loading="eager" decoding="async" />
           </picture>
         </section>
-        <div class="hero-cta-row">
-          <a
-            href="https://www.poopprofit.com/core-preview.html"
-            data-analytics-event="hero_primary_cta_click"
-            class="ui-primary-cta inline-flex items-center justify-center px-10 py-4 text-xl font-extrabold transition hover:-translate-y-0.5 hover:brightness-110"
-          >
-            Start the Timer
-          </a>
-        </div>
         <p class="hero-secondary-line">Free. Anonymous. No account required.</p>
         <div class="trust-row" aria-label="Trust indicators">
           <span class="trust-pill">No login needed</span>
@@ -611,39 +671,6 @@
           <span class="trust-pill">Mobile-friendly</span>
           <span class="trust-pill">Shareable stats</span>
         </div>
-        <section class="mx-auto mt-5 max-w-5xl" aria-label="Community earnings highlights">
-          <p class="mb-2 text-center text-sm font-semibold uppercase tracking-[0.2em] text-cyan-200/90 sm:text-base">Live Toilet Ticker</p>
-          <div class="ticker-shell">
-            <span class="ticker-live-tag">Live</span>
-            <div class="review-marquee review-marquee-row">
-              <div class="review-marquee-track">
-                <div class="review-marquee-group">
-                  <span class="review-item">"Leading gastroenterologist begins prescribing double espressos and bran muffins to patients, citing 'unprecedented financial upside.'"</span>
-                  <span class="ticker-separator" aria-hidden="true">|</span>
-                  <span class="review-item">"Wall Street panics as rogue trader liquidates a $40M portfolio to invest exclusively in 'paid-to-poop' behavioral futures."</span>
-                  <span class="ticker-separator" aria-hidden="true">|</span>
-                  <span class="review-item">"Fortune 500 company files for Chapter 11 bankruptcy after the entire C-suite discovers the app and refuses to leave the executive washroom."</span>
-                  <span class="ticker-separator" aria-hidden="true">|</span>
-                  <span class="review-item">"Silicon Valley venture capitalists secure $200M in Series B funding for a startup that replaces ergonomic desk chairs with high-yield porcelain bowls."</span>
-                  <span class="ticker-separator" aria-hidden="true">|</span>
-                  <span class="review-item">"National labor union successfully averts a strike by negotiating a groundbreaking contract that guarantees time-and-a-half for cafeteria-induced digestive distress."</span>
-                </div>
-                <div class="review-marquee-group" aria-hidden="true">
-                  <span class="review-item">"Leading gastroenterologist begins prescribing double espressos and bran muffins to patients, citing 'unprecedented financial upside.'"</span>
-                  <span class="ticker-separator" aria-hidden="true">|</span>
-                  <span class="review-item">"Wall Street panics as rogue trader liquidates a $40M portfolio to invest exclusively in 'paid-to-poop' behavioral futures."</span>
-                  <span class="ticker-separator" aria-hidden="true">|</span>
-                  <span class="review-item">"Fortune 500 company files for Chapter 11 bankruptcy after the entire C-suite discovers the app and refuses to leave the executive washroom."</span>
-                  <span class="ticker-separator" aria-hidden="true">|</span>
-                  <span class="review-item">"Silicon Valley venture capitalists secure $200M in Series B funding for a startup that replaces ergonomic desk chairs with high-yield porcelain bowls."</span>
-                  <span class="ticker-separator" aria-hidden="true">|</span>
-                  <span class="review-item">"National labor union successfully averts a strike by negotiating a groundbreaking contract that guarantees time-and-a-half for cafeteria-induced digestive distress."</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <div class="mt-10 flex justify-center sm:mt-14">
           <img src="POOPPROFITMASCOT.png" alt="PoopProfit mascot holding cash" class="hero-mascot h-auto w-full max-w-[330px] animate-float sm:max-w-[430px]" />
         </div>
