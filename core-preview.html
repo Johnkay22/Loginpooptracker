@@ -131,10 +131,11 @@
       color: var(--text);
       background-color: var(--bg);
       background-image:
-        linear-gradient(135deg, rgba(6, 11, 22, 0.96), rgba(6, 11, 22, 0.96)),
+        linear-gradient(135deg, rgba(6, 11, 22, 0.68), rgba(6, 11, 22, 0.72)),
         url("corepreviewdesktopbg.jpg");
-      background-position: center;
+      background-position: center center;
       background-size: cover;
+      background-repeat: no-repeat;
       background-attachment: fixed;
     }
 
@@ -142,8 +143,12 @@
       html,
       body {
         background-image:
-          linear-gradient(135deg, rgba(6, 11, 22, 0.96), rgba(6, 11, 22, 0.96)),
+          linear-gradient(135deg, rgba(6, 11, 22, 0.58), rgba(6, 11, 22, 0.64)),
           url("corepreviewmobilebg.png");
+        background-position: center top;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: scroll;
       }
     }
 
