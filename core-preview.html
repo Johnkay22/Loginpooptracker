@@ -34,7 +34,8 @@
   <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg">
   <meta name="twitter:image:alt" content="PoopProfit core preview dashboard">
   <link rel="preload" as="image" href="BANNER.jpeg">
-  <link rel="preload" as="image" href="MAINDESKTOPBG.jpeg">
+  <link rel="preload" as="image" href="corepreviewdesktopbg.png">
+  <link rel="preload" as="image" href="corepreviewmobilebg.png" media="(max-width: 760px)">
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
   <script>
@@ -131,10 +132,19 @@
       background-color: var(--bg);
       background-image:
         linear-gradient(135deg, rgba(6, 11, 22, 0.96), rgba(6, 11, 22, 0.96)),
-        url("MAINDESKTOPBG.jpeg");
+        url("corepreviewdesktopbg.png");
       background-position: center;
       background-size: cover;
       background-attachment: fixed;
+    }
+
+    @media (max-width: 760px) {
+      html,
+      body {
+        background-image:
+          linear-gradient(135deg, rgba(6, 11, 22, 0.96), rgba(6, 11, 22, 0.96)),
+          url("corepreviewmobilebg.png");
+      }
     }
 
     .page {
