@@ -758,59 +758,115 @@
       gap: 7px;
     }
 
-    .stats-strip {
-      border-top: 1px solid var(--divider);
-      border-bottom: 1px solid var(--divider);
-      margin-top: 4px;
+    .stat-carousel-wrap {
+      position: relative;
+      margin-top: 16px;
+      margin-bottom: 24px;
+      padding: 20px 0 40px;
     }
-
-    .stats-strip-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      padding: 16px 0;
+    .stat-carousel-viewport {
+      overflow: hidden;
+      position: relative;
+      padding: 20px 0;
+      mask-image: linear-gradient(90deg, transparent 0%, #000 15%, #000 85%, transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 15%, #000 85%, transparent 100%);
     }
-
-    .stats-strip-row + .stats-strip-row {
-      border-top: 1px solid var(--divider);
+    .stat-carousel-track {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+      touch-action: pan-y;
     }
-
-    .stats-strip-row:has(.stats-cell:nth-child(2):last-child) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .stats-cell {
+    .stat-card {
+      flex: 0 0 70%;
+      min-height: 180px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(14, 165, 233, 0.12), rgba(8, 47, 73, 0.4));
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      box-shadow: 0 0 32px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
       display: flex;
       flex-direction: column;
+      justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 0 8px;
-      position: relative;
+      padding: 32px 20px;
+      opacity: 0.3;
+      transform: scale(0.85);
+      transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.5s ease;
     }
-
-    .stats-cell + .stats-cell::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 8px;
-      bottom: 8px;
-      width: 1px;
-      background: var(--divider);
+    .stat-card.active {
+      opacity: 1;
+      transform: scale(1);
+      box-shadow: 0 0 48px rgba(56, 189, 248, 0.35), 0 0 96px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     }
-
-    .stats-cell-value {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.01em;
-      margin-bottom: 4px;
-    }
-
-    .stats-cell-label {
-      font-size: 0.68rem;
+    .stat-card-label {
+      font-size: 0.72rem;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.12em;
       color: var(--muted);
       font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .stat-card-value {
+      font-size: clamp(1.8rem, 6vw, 2.4rem);
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      text-shadow: 0 0 24px rgba(56, 189, 248, 0.4);
+    }
+    .stat-carousel-pedestal {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 24px;
+      background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.6) 0%, rgba(56, 189, 248, 0.2) 40%, transparent 70%);
+      border-radius: 50%;
+      filter: blur(2px);
+      pointer-events: none;
+    }
+    .stat-carousel-pedestal::before {
+      content: "";
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40%;
+      height: 160px;
+      background: linear-gradient(to top, rgba(56, 189, 248, 0.25) 0%, rgba(56, 189, 248, 0.08) 40%, transparent 100%);
+      pointer-events: none;
+    }
+    .stat-carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+      position: relative;
+      z-index: 2;
+    }
+    .stat-carousel-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: background 0.3s ease, width 0.3s ease;
+    }
+    .stat-carousel-dot.active {
+      background: rgba(56, 189, 248, 0.9);
+      width: 20px;
+      border-radius: 3px;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+    }
+    @media (max-width: 480px) {
+      .stat-card { flex-basis: 78%; }
     }
 
     .stat-hero {
@@ -2201,31 +2257,33 @@
               <div class="label">Total Earnings <button class="share-stat-btn" data-stat-share="totalEarnings" type="button"><span class="icon-share">↗</span>Share</button></div>
               <div id="statEarnings" class="value">$0.00</div>
             </div>
-            <div class="stats-strip">
-              <div class="stats-strip-row">
-                <div class="stats-cell">
-                  <div id="statSessions" class="stats-cell-value">0</div>
-                  <div class="stats-cell-label">Sessions</div>
-                </div>
-                <div class="stats-cell">
-                  <div id="statTime" class="stats-cell-value">00:00:00</div>
-                  <div class="stats-cell-label">Total Time</div>
-                </div>
-                <div class="stats-cell">
-                  <div id="statToday" class="stats-cell-value">0</div>
-                  <div class="stats-cell-label">Today</div>
+            <div class="stat-carousel-wrap">
+              <div class="stat-carousel-viewport">
+                <div class="stat-carousel-track" id="statCarouselTrack">
+                  <div class="stat-card" data-stat-index="0">
+                    <div class="stat-card-label">Total Time</div>
+                    <div id="statTime" class="stat-card-value">00:00:00</div>
+                  </div>
+                  <div class="stat-card" data-stat-index="1">
+                    <div class="stat-card-label">Total Sessions</div>
+                    <div id="statSessions" class="stat-card-value">0</div>
+                  </div>
+                  <div class="stat-card" data-stat-index="2">
+                    <div class="stat-card-label">Avg Earnings</div>
+                    <div id="statAvgEarnings" class="stat-card-value">$0.00</div>
+                  </div>
+                  <div class="stat-card" data-stat-index="3">
+                    <div class="stat-card-label">Avg Session</div>
+                    <div id="statAvgTime" class="stat-card-value">00:00:00</div>
+                  </div>
+                  <div class="stat-card" data-stat-index="4">
+                    <div class="stat-card-label">Today's Sessions</div>
+                    <div id="statToday" class="stat-card-value">0</div>
+                  </div>
                 </div>
               </div>
-              <div class="stats-strip-row">
-                <div class="stats-cell">
-                  <div id="statAvgTime" class="stats-cell-value">00:00:00</div>
-                  <div class="stats-cell-label">Avg Time</div>
-                </div>
-                <div class="stats-cell">
-                  <div id="statAvgEarnings" class="stats-cell-value">$0.00</div>
-                  <div class="stats-cell-label">Avg Earnings</div>
-                </div>
-              </div>
+              <div class="stat-carousel-pedestal"></div>
+              <div class="stat-carousel-dots" id="statCarouselDots"></div>
             </div>
           </article>
 
@@ -4674,6 +4732,96 @@
           String(minutes).padStart(2, "0") + ":" +
           String(seconds).padStart(2, "0");
       }
+
+      (function initStatCarousel() {
+        var track = document.getElementById('statCarouselTrack');
+        var dotsWrap = document.getElementById('statCarouselDots');
+        if (!track || !dotsWrap) return;
+
+        var cards = track.querySelectorAll('.stat-card');
+        var totalCards = cards.length;
+        var currentIndex = 0;
+        var touchStartX = 0;
+        var touchEndX = 0;
+
+        for (var i = 0; i < totalCards; i++) {
+          var dot = document.createElement('button');
+          dot.className = 'stat-carousel-dot';
+          dot.setAttribute('type', 'button');
+          dot.setAttribute('data-dot-index', i);
+          dot.setAttribute('aria-label', 'Show stat ' + (i + 1));
+          dotsWrap.appendChild(dot);
+        }
+        var dots = dotsWrap.querySelectorAll('.stat-carousel-dot');
+
+        function goToIndex(index) {
+          currentIndex = Math.max(0, Math.min(totalCards - 1, index));
+          var cardWidth = cards[0].offsetWidth;
+          var gap = 24;
+          var viewport = track.parentElement;
+          var viewportWidth = viewport.offsetWidth;
+          var offset = (viewportWidth / 2) - (cardWidth / 2) - (currentIndex * (cardWidth + gap));
+          track.style.transform = 'translateX(' + offset + 'px)';
+          cards.forEach(function (card, i) {
+            card.classList.toggle('active', i === currentIndex);
+          });
+          dots.forEach(function (dot, i) {
+            dot.classList.toggle('active', i === currentIndex);
+          });
+        }
+
+        function next() { goToIndex(currentIndex + 1); }
+        function prev() { goToIndex(currentIndex - 1); }
+
+        track.addEventListener('touchstart', function (e) {
+          touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        track.addEventListener('touchend', function (e) {
+          touchEndX = e.changedTouches[0].screenX;
+          var diff = touchStartX - touchEndX;
+          if (Math.abs(diff) > 40) {
+            if (diff > 0) next(); else prev();
+          }
+        }, { passive: true });
+
+        var isDragging = false;
+        var dragStartX = 0;
+        track.addEventListener('mousedown', function (e) {
+          isDragging = true;
+          dragStartX = e.clientX;
+        });
+        track.addEventListener('mouseup', function (e) {
+          if (!isDragging) return;
+          isDragging = false;
+          var diff = dragStartX - e.clientX;
+          if (Math.abs(diff) > 40) {
+            if (diff > 0) next(); else prev();
+          }
+        });
+        track.addEventListener('mouseleave', function () { isDragging = false; });
+
+        dots.forEach(function (dot, i) {
+          dot.addEventListener('click', function () {
+            goToIndex(i);
+          });
+        });
+
+        window.addEventListener('resize', function () {
+          goToIndex(currentIndex);
+        });
+
+        var statsTabPanel = document.getElementById('panel-stats');
+        if (statsTabPanel) {
+          var observer = new MutationObserver(function () {
+            if (statsTabPanel.classList.contains('active')) {
+              setTimeout(function () { goToIndex(currentIndex); }, 50);
+            }
+          });
+          observer.observe(statsTabPanel, { attributes: true, attributeFilter: ['class'] });
+        }
+
+        setTimeout(function () { goToIndex(0); }, 100);
+      })();
     })();
   </script>
 </body>
