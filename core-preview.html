@@ -200,7 +200,6 @@
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.12);
       box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
-      margin-bottom: 12px;
       position: relative;
       z-index: 1;
     }
@@ -248,14 +247,22 @@
       filter: brightness(1.08);
     }
 
+    .fixed-nav-stack {
+      position: sticky;
+      top: 8px;
+      z-index: 42;
+      display: grid;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
     .tabs {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
-      margin-bottom: 16px;
-      position: sticky;
-      top: 8px;
-      z-index: 30;
+      margin-bottom: 0;
+      position: static;
+      z-index: 1;
       background: transparent;
       border: 0;
       padding: 0;
@@ -2235,6 +2242,10 @@
       }
 
       .tabs {
+        margin-bottom: 0;
+      }
+
+      .fixed-nav-stack {
         top: 6px;
       }
 
@@ -2395,24 +2406,26 @@
     <section class="shell">
       <h1 class="sr-only">PoopProfit Core Preview Calculator, Session Timer, and Stats</h1>
       <button id="tutorialHelpButton" class="tutorial-help-button" type="button" aria-label="Open quick tour">?</button>
-      <header class="top-banner">
-        <img src="BANNER.jpeg" alt="Poop Profit banner">
-      </header>
+      <div class="fixed-nav-stack">
+        <header class="top-banner">
+          <img src="BANNER.jpeg" alt="Poop Profit banner">
+        </header>
 
-      <nav class="tabs" aria-label="Main tabs">
-        <button class="tab-btn active" data-tab="calculator" type="button">
-          <img src="calc.png" alt="">
-          <span>Calc</span>
-        </button>
-        <button class="tab-btn" data-tab="stats" type="button">
-          <img src="stats.png" alt="">
-          <span>Stats</span>
-        </button>
-        <button class="tab-btn" data-tab="coming" type="button">
-          <img src="shop.png" alt="">
-          <span>Soon</span>
-        </button>
-      </nav>
+        <nav class="tabs" aria-label="Main tabs">
+          <button class="tab-btn active" data-tab="calculator" type="button">
+            <img src="calc.png" alt="">
+            <span>Calc</span>
+          </button>
+          <button class="tab-btn" data-tab="stats" type="button">
+            <img src="stats.png" alt="">
+            <span>Stats</span>
+          </button>
+          <button class="tab-btn" data-tab="coming" type="button">
+            <img src="shop.png" alt="">
+            <span>Soon</span>
+          </button>
+        </nav>
+      </div>
 
       <section id="panel-calculator" class="tab-panel active" aria-label="Calculator tab">
         <div class="panel-grid">
