@@ -1909,9 +1909,46 @@
       color: var(--muted);
       font-size: 0.83rem;
       display: flex;
-      justify-content: space-between;
-      gap: 8px;
+      justify-content: center;
+    }
+
+    .social-follow-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
       flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .social-icon-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(115, 207, 255, 0.28);
+      border-radius: 999px;
+      background: rgba(6, 20, 44, 0.72);
+      color: #e4f5ff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.86rem;
+      line-height: 1;
+      padding: 9px 14px;
+      box-shadow: inset 0 1px 0 rgba(184, 236, 255, 0.1), 0 10px 20px rgba(3, 11, 26, 0.35);
+      transition: transform 0.14s ease, filter 0.2s ease, border-color 0.2s ease;
+    }
+
+    .social-icon-link:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.07);
+      border-color: rgba(131, 221, 255, 0.44);
+    }
+
+    .social-icon-link svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+      flex-shrink: 0;
     }
 
     .page-bottom-links {
@@ -1920,6 +1957,8 @@
       font-size: 0.82rem;
       line-height: 1.4;
       padding: 8px 12px 14px;
+      display: grid;
+      gap: 6px;
     }
 
     .page-bottom-links a {
@@ -1934,17 +1973,19 @@
     }
 
     .instagram-follow-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 8px;
       color: #fbcfe8;
     }
 
-    .instagram-follow-link svg {
-      width: 14px;
-      height: 14px;
-      fill: currentColor;
+    .tiktok-follow-link {
+      color: #c9f6ff;
+    }
+
+    .legal-bottom {
+      display: grid;
+      gap: 3px;
+      color: #9ec0e8;
+      font-size: 0.8rem;
+      line-height: 1.35;
     }
 
     .rating-modal,
@@ -2559,6 +2600,20 @@
       .page-bottom-links {
         padding-bottom: calc(32px + env(safe-area-inset-bottom));
       }
+
+      .social-follow-links {
+        gap: 8px;
+      }
+
+      .social-icon-link {
+        font-size: 0.8rem;
+        padding: 8px 11px;
+      }
+
+      .social-icon-link svg {
+        width: 24px;
+        height: 24px;
+      }
     }
 
     @keyframes pulseBounce {
@@ -2904,8 +2959,32 @@
       </section>
 
       <footer class="preview-footnote">
-        <span>Data is stored locally on this browser/device until cleared.</span>
-        <span>&copy; 2026 PoopProfit. All rights reserved.</span>
+        <div class="social-follow-links">
+          <a
+            href="https://www.instagram.com/poopprofit?igsh=MWpncm00bWR1YzNteA=="
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-icon-link instagram-follow-link"
+            aria-label="Follow PoopProfit on Instagram"
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 1.8A3.7 3.7 0 0 0 3.8 7.5v9a3.7 3.7 0 0 0 3.7 3.7h9a3.7 3.7 0 0 0 3.7-3.7v-9a3.7 3.7 0 0 0-3.7-3.7h-9Zm9.75 1.35a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4Z"></path>
+            </svg>
+            <span>Instagram</span>
+          </a>
+          <a
+            href="https://www.tiktok.com/@poopprofit?_r=1&_t=ZT-96OTayv1Eon"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-icon-link tiktok-follow-link"
+            aria-label="Follow PoopProfit on TikTok"
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M19.56 8.77a7.7 7.7 0 0 1-4.63-1.54v6.95a5.67 5.67 0 1 1-4.89-5.61v2.8a2.93 2.93 0 1 0 2.15 2.81V2h2.72a4.9 4.9 0 0 0 4.65 4.38v2.39Z"></path>
+            </svg>
+            <span>TikTok</span>
+          </a>
+        </div>
       </footer>
     </section>
   </main>
@@ -3023,19 +3102,9 @@
     <a href="https://www.poopprofit.com/">Home</a>
     <span aria-hidden="true"> · </span>
     <a href="https://www.poopprofit.com/core-preview.html">Core Preview</a>
-    <div>
-      <a
-        href="https://www.instagram.com/poopprofit?igsh=MWpncm00bWR1YzNteA=="
-        target="_blank"
-        rel="noopener noreferrer"
-        class="instagram-follow-link"
-        aria-label="Follow PoopProfit on Instagram"
-      >
-        <svg aria-hidden="true" viewBox="0 0 24 24">
-          <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 1.8A3.7 3.7 0 0 0 3.8 7.5v9a3.7 3.7 0 0 0 3.7 3.7h9a3.7 3.7 0 0 0 3.7-3.7v-9a3.7 3.7 0 0 0-3.7-3.7h-9Zm9.75 1.35a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4Z"></path>
-        </svg>
-        <span>Follow us on Instagram</span>
-      </a>
+    <div class="legal-bottom">
+      <span>Data is stored locally on this browser/device until cleared.</span>
+      <span>&copy; 2026 PoopProfit. All rights reserved.</span>
     </div>
   </div>
 
