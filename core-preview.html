@@ -3954,6 +3954,8 @@
           remove.className = "icon-button warn";
           remove.textContent = "Delete";
           remove.addEventListener("click", function () {
+            var approved = window.confirm("Are you sure you want to delete this log?");
+            if (!approved) return;
             deleteSession(session.id);
           });
 
