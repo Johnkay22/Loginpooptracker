@@ -236,52 +236,99 @@
     .tabs {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-      margin-bottom: 14px;
+      gap: 10px;
+      margin-bottom: 16px;
       position: sticky;
       top: 8px;
       z-index: 30;
-      background: var(--ui-surface-soft);
-      border: 1px solid var(--ui-border);
-      border-radius: var(--ui-radius-md);
-      padding: 8px;
-      backdrop-filter: blur(6px);
-      box-shadow: var(--ui-shadow-soft);
-    }
-
-    @media (max-width: 767px) {
-      .tabs {
-        display: none;
-      }
+      background: transparent;
+      border: 0;
+      padding: 0;
+      backdrop-filter: none;
+      box-shadow: none;
     }
 
     .tab-btn {
-      border: 1px solid var(--ui-border);
-      border-radius: var(--ui-radius-md);
-      background: rgba(8, 15, 32, 0.86);
-      color: var(--muted);
-      min-height: 48px;
+      position: relative;
+      border: 1px solid rgba(116, 170, 216, 0.34);
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 50% calc(100% - 6px), rgba(97, 188, 232, 0.34) 0 2px, transparent 2.5px) center bottom / 44px 8px no-repeat,
+        linear-gradient(180deg, rgba(7, 16, 34, 0.96), rgba(4, 11, 25, 0.94));
+      color: #c9dbef;
+      min-height: 72px;
       cursor: pointer;
-      font-weight: 700;
-      letter-spacing: 0.01em;
+      font-weight: 800;
+      letter-spacing: 0.015em;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      font-size: 0.94rem;
+      gap: 10px;
+      font-size: 1.08rem;
+      padding: 12px 14px 16px;
+      box-shadow: inset 0 0 0 1px rgba(171, 219, 255, 0.09), 0 10px 22px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+      isolation: isolate;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.18s ease, color 0.2s ease;
+    }
+
+    .tab-btn::before {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border: 1px solid rgba(131, 182, 225, 0.22);
+      border-radius: 10px;
+      clip-path: polygon(11px 0, calc(100% - 11px) 0, 100% 11px, 100% calc(100% - 11px), calc(100% - 11px) 100%, 11px 100%, 0 calc(100% - 11px), 0 11px);
+      pointer-events: none;
+      opacity: 0.88;
+    }
+
+    .tab-btn::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 5px;
+      transform: translateX(-50%);
+      width: 34px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(106, 188, 232, 0.35);
+      box-shadow: 0 0 8px rgba(76, 154, 212, 0.3);
+      pointer-events: none;
     }
 
     .tab-btn img {
-      width: 18px;
-      height: 18px;
+      width: 28px;
+      height: 28px;
       object-fit: contain;
+      filter: brightness(0.92);
     }
 
     .tab-btn.active {
       color: #fff;
-      border-color: var(--ui-border-strong);
-      background: linear-gradient(180deg, rgba(67, 179, 255, 0.24), rgba(24, 83, 133, 0.34));
-      box-shadow: var(--ui-shadow-soft);
+      border-color: rgba(73, 211, 255, 0.86);
+      background:
+        radial-gradient(circle at 50% calc(100% - 6px), rgba(73, 211, 255, 0.82) 0 2px, transparent 2.5px) center bottom / 44px 8px no-repeat,
+        linear-gradient(180deg, rgba(10, 42, 71, 0.96), rgba(5, 22, 41, 0.94));
+      box-shadow:
+        inset 0 0 0 1px rgba(166, 236, 255, 0.26),
+        0 0 22px rgba(63, 203, 255, 0.42),
+        0 8px 22px rgba(0, 0, 0, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .tab-btn.active::before {
+      border-color: rgba(94, 222, 255, 0.68);
+    }
+
+    .tab-btn.active::after {
+      width: 42px;
+      background: rgba(73, 211, 255, 0.95);
+      box-shadow: 0 0 12px rgba(73, 211, 255, 0.62);
+    }
+
+    .tab-btn.active img {
+      filter: brightness(1.14) drop-shadow(0 0 10px rgba(73, 211, 255, 0.62));
     }
 
     .tab-panel {
@@ -1932,9 +1979,10 @@
       background: linear-gradient(180deg, rgba(8, 13, 24, 0.95), rgba(6, 10, 18, 0.98));
       backdrop-filter: blur(8px);
       z-index: 65;
-      display: none;
+      display: none !important;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 6px;
+      pointer-events: none;
     }
 
     .mobile-nav-btn {
@@ -2025,12 +2073,14 @@
       }
 
       .tab-btn {
-        min-height: 46px;
-        font-size: 0.84rem;
+        min-height: 64px;
+        font-size: 1rem;
+        gap: 8px;
+        padding: 10px 10px 14px;
       }
 
       .tab-btn span {
-        display: none;
+        display: inline;
       }
 
       .tutorial-help-button {
@@ -2106,17 +2156,12 @@
         max-height: 260px;
       }
 
-      .mobile-nav,
-      .mobile-fab {
-        display: grid;
-      }
-
       .mobile-fab {
         display: inline-flex;
       }
 
       .page-bottom-links {
-        padding-bottom: calc(90px + env(safe-area-inset-bottom));
+        padding-bottom: calc(32px + env(safe-area-inset-bottom));
       }
     }
 
@@ -2156,7 +2201,7 @@
       <nav class="tabs" aria-label="Main tabs">
         <button class="tab-btn active" data-tab="calculator" type="button">
           <img src="calc.png" alt="">
-          <span>Calculator</span>
+          <span>Calc</span>
         </button>
         <button class="tab-btn" data-tab="stats" type="button">
           <img src="stats.png" alt="">
@@ -2164,7 +2209,7 @@
         </button>
         <button class="tab-btn" data-tab="coming" type="button">
           <img src="shop.png" alt="">
-          <span>Coming Soon</span>
+          <span>Soon</span>
         </button>
       </nav>
 
