@@ -1384,32 +1384,165 @@
       padding: 8px 9px;
     }
 
-    .coming-grid {
+    .coming-screen {
+      display: grid;
+      gap: 12px;
+    }
+
+    .coming-screen-head {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .coming-back-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      border: 1px solid rgba(103, 199, 255, 0.34);
+      background: linear-gradient(180deg, rgba(6, 20, 44, 0.95), rgba(5, 16, 34, 0.96));
+      color: #dff3ff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 12px 30px rgba(3, 10, 24, 0.44), inset 0 1px 0 rgba(180, 232, 255, 0.14);
+      transition: transform 0.14s ease, filter 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .coming-back-btn:active {
+      transform: scale(0.96);
+    }
+
+    .coming-title-wrap h2 {
+      margin: 0;
+      font-size: clamp(1.72rem, 3.6vw, 2.4rem);
+      line-height: 1.05;
+      color: #e9f7ff;
+      letter-spacing: -0.018em;
+    }
+
+    .coming-title-wrap p {
+      margin: 4px 0 0;
+      font-size: 1.07rem;
+      color: #b8d4f4;
+    }
+
+    .coming-list {
       display: grid;
       gap: 10px;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      margin-bottom: 12px;
     }
 
-    .coming-card {
-      border: 1px solid rgba(67, 179, 255, 0.24);
-      border-radius: 12px;
-      background: rgba(6, 11, 22, 0.7);
-      padding: 12px;
+    .coming-row {
+      border: 1px solid rgba(74, 176, 236, 0.3);
+      border-radius: 16px;
+      background: linear-gradient(90deg, rgba(6, 24, 52, 0.82), rgba(5, 18, 41, 0.84) 45%, rgba(4, 14, 34, 0.92) 100%);
+      display: grid;
+      grid-template-columns: minmax(112px, 34%) minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: stretch;
+      min-height: 138px;
+      overflow: hidden;
+      box-shadow: 0 14px 30px rgba(2, 8, 20, 0.42), inset 0 1px 0 rgba(175, 229, 255, 0.08);
+      transition: transform 0.16s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .coming-card h4 {
-      margin: 0 0 6px;
-      font-size: 0.96rem;
-      color: #d9edff;
+    .coming-row:hover {
+      transform: translateY(-1px);
+      border-color: rgba(96, 200, 255, 0.45);
+      box-shadow: 0 18px 32px rgba(1, 8, 20, 0.5), inset 0 1px 0 rgba(204, 242, 255, 0.12);
     }
 
-    .coming-card p {
+    .coming-media {
+      position: relative;
+      height: 100%;
+      min-height: 138px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 28%, rgba(68, 192, 255, 0.3), rgba(8, 23, 47, 0.9) 70%);
+    }
+
+    .coming-media::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(14, 54, 104, 0.12), rgba(4, 17, 40, 0.72));
+      pointer-events: none;
+    }
+
+    .coming-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      filter: saturate(1.04) contrast(1.03);
+    }
+
+    .coming-copy {
+      display: grid;
+      align-content: center;
+      gap: 7px;
+      padding: 14px 0;
+      min-width: 0;
+    }
+
+    .coming-pill {
+      justify-self: start;
+      border-radius: 999px;
+      border: 1px solid rgba(136, 188, 255, 0.32);
+      background: rgba(97, 87, 194, 0.25);
+      color: #d8deff;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .coming-copy h3 {
       margin: 0;
-      color: var(--muted);
-      font-size: 0.9rem;
-      line-height: 1.42;
+      font-size: clamp(1.02rem, 1.9vw, 1.17rem);
+      color: #ebf8ff;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
     }
+
+    .coming-copy p {
+      margin: 0;
+      color: #b9d1ef;
+      font-size: 0.95rem;
+      line-height: 1.38;
+      max-width: 34ch;
+    }
+
+    .coming-chevron {
+      align-self: center;
+      justify-self: end;
+      width: 44px;
+      height: 44px;
+      margin-right: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(108, 194, 255, 0.26);
+      background: rgba(6, 20, 45, 0.64);
+      color: #d9f2ff;
+      font-size: 2rem;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 1px 0 rgba(187, 236, 255, 0.1);
+    }
+
+    .coming-row--accounts .coming-media img { object-position: center top; }
+    .coming-row--wallet .coming-media img { object-position: center; }
+    .coming-row--games .coming-media img { object-position: center; }
+    .coming-row--shop .coming-media img { object-position: center; }
+    .coming-row--analytics .coming-media img { object-position: center; }
+    .coming-row--community .coming-media img { object-position: center; }
 
     .share-controls {
       border: 1px solid rgba(67, 179, 255, 0.25);
@@ -2349,6 +2482,60 @@
         padding-left: 12px;
       }
 
+      .coming-screen-head {
+        gap: 10px;
+      }
+
+      .coming-back-btn {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        font-size: 1.78rem;
+      }
+
+      .coming-title-wrap h2 {
+        font-size: 2.06rem;
+      }
+
+      .coming-title-wrap p {
+        font-size: 0.95rem;
+      }
+
+      .coming-row {
+        grid-template-columns: 120px minmax(0, 1fr) auto;
+        min-height: 126px;
+        gap: 10px;
+      }
+
+      .coming-media {
+        min-height: 126px;
+      }
+
+      .coming-copy {
+        padding: 10px 0;
+        gap: 6px;
+      }
+
+      .coming-pill {
+        font-size: 0.68rem;
+        padding: 4px 8px;
+      }
+
+      .coming-copy h3 {
+        font-size: 1rem;
+      }
+
+      .coming-copy p {
+        font-size: 0.9rem;
+      }
+
+      .coming-chevron {
+        width: 38px;
+        height: 38px;
+        margin-right: 8px;
+        font-size: 1.7rem;
+      }
+
       .tutorial-body {
         grid-template-columns: 96px 1fr;
       }
@@ -2631,36 +2818,88 @@
       </section>
 
       <section id="panel-coming" class="tab-panel" aria-label="Coming soon tab">
-        <div class="panel-grid">
-          <article class="card" style="grid-column: span 12;">
-            <h2><img src="shop.png" alt="">What's Coming to Poop Profit</h2>
-            <div class="coming-grid">
-              <article class="coming-card">
-                <h4>Accounts + Cloud Sync</h4>
-                <p>Optional sign-in and backup so sessions and stats move with you across devices.</p>
-              </article>
-              <article class="coming-card">
-                <h4>Turd Token Wallet</h4>
-                <p>A wallet and rewards layer tied to activity, streaks, and special milestones.</p>
-              </article>
-              <article class="coming-card">
-                <h4>Games + Leaderboards</h4>
-                <p>Integrated game hub with live rankings and challenge events.</p>
-              </article>
-              <article class="coming-card">
-                <h4>Shop + Unlockables</h4>
-                <p>Redeemable items, profile cosmetics, and limited drops.</p>
-              </article>
-              <article class="coming-card">
-                <h4>Deeper Analytics</h4>
-                <p>More trends, performance snapshots, and richer share cards.</p>
-              </article>
-              <article class="coming-card">
-                <h4>Community Features</h4>
-                <p>Competitive and social features focused on fun and retention.</p>
-              </article>
+        <div class="coming-screen">
+          <header class="coming-screen-head">
+            <button id="comingBackButton" class="coming-back-btn" type="button" aria-label="Back to calculator">‹</button>
+            <div class="coming-title-wrap">
+              <h2>What's Coming to Poop Profit</h2>
+              <p>Exciting new features on the way.</p>
             </div>
-          </article>
+          </header>
+
+          <div class="coming-list">
+            <article class="coming-row coming-row--accounts">
+              <div class="coming-media">
+                <img src="POOPPROFITMASCOT1.png" alt="Poop mascot with cloud sync visual">
+              </div>
+              <div class="coming-copy">
+                <span class="coming-pill">Coming Soon</span>
+                <h3>Accounts + Cloud Sync</h3>
+                <p>Optional sign-in and backup so sessions and stats move with you across devices.</p>
+              </div>
+              <span class="coming-chevron" aria-hidden="true">›</span>
+            </article>
+
+            <article class="coming-row coming-row--wallet">
+              <div class="coming-media">
+                <img src="Turdtoken.png" alt="Turd token wallet preview">
+              </div>
+              <div class="coming-copy">
+                <span class="coming-pill">Coming Soon</span>
+                <h3>Turd Token Wallet</h3>
+                <p>A wallet and rewards layer tied to activity, streaks, and special milestones.</p>
+              </div>
+              <span class="coming-chevron" aria-hidden="true">›</span>
+            </article>
+
+            <article class="coming-row coming-row--games">
+              <div class="coming-media">
+                <img src="games.png" alt="Games and leaderboard preview">
+              </div>
+              <div class="coming-copy">
+                <span class="coming-pill">Coming Soon</span>
+                <h3>Games + Leaderboards</h3>
+                <p>Integrated game hub with live rankings and challenge events.</p>
+              </div>
+              <span class="coming-chevron" aria-hidden="true">›</span>
+            </article>
+
+            <article class="coming-row coming-row--shop">
+              <div class="coming-media">
+                <img src="Storecomingsoon.png" alt="Shop and unlockables preview">
+              </div>
+              <div class="coming-copy">
+                <span class="coming-pill">Coming Soon</span>
+                <h3>Shop + Unlockables</h3>
+                <p>Redeemable items, profile cosmetics, and limited drops.</p>
+              </div>
+              <span class="coming-chevron" aria-hidden="true">›</span>
+            </article>
+
+            <article class="coming-row coming-row--analytics">
+              <div class="coming-media">
+                <img src="stats.png" alt="Analytics dashboard preview">
+              </div>
+              <div class="coming-copy">
+                <span class="coming-pill">Coming Soon</span>
+                <h3>Deeper Analytics</h3>
+                <p>More trends, performance snapshots, and richer share cards.</p>
+              </div>
+              <span class="coming-chevron" aria-hidden="true">›</span>
+            </article>
+
+            <article class="coming-row coming-row--community">
+              <div class="coming-media">
+                <img src="b7a9e867-016b-415e-8b4f-6477ef9d6cdc.webp" alt="Community features preview">
+              </div>
+              <div class="coming-copy">
+                <span class="coming-pill">Coming Soon</span>
+                <h3>Community Features</h3>
+                <p>Competitive and social features focused on fun and retention.</p>
+              </div>
+              <span class="coming-chevron" aria-hidden="true">›</span>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -2874,6 +3113,7 @@
         coming: document.getElementById("panel-coming")
       };
       var mobileTabButtons = document.querySelectorAll("[data-mobile-tab]");
+      var comingBackButton = document.getElementById("comingBackButton");
       var TAB_ORDER = ["calculator", "stats", "coming"];
       var tabTransitionClass = "";
       var tabTransitionResetTimerId = null;
@@ -3111,6 +3351,13 @@
             triggerHapticVisual(button);
           });
         });
+
+        if (comingBackButton) {
+          comingBackButton.addEventListener("click", function () {
+            setActiveTab("calculator");
+            triggerHapticVisual(comingBackButton);
+          });
+        }
 
         hourlyModeButton.addEventListener("click", function () {
           state.wageMode = "hourly";
