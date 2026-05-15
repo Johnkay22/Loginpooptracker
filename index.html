@@ -234,6 +234,9 @@
         --ui-shadow-strong: 0 14px 34px rgba(2, 8, 24, 0.45), inset 0 0 30px rgba(14, 165, 233, 0.14);
         --ui-primary-from: #63d4ff;
         --ui-primary-to: #2d8fe0;
+        --app-shell-bg: linear-gradient(180deg, rgba(3, 13, 33, 0.72), rgba(2, 10, 26, 0.8));
+        --app-shell-border: rgba(146, 219, 255, 0.24);
+        --app-shell-shadow: 0 36px 64px rgba(1, 8, 22, 0.5), inset 0 1px 0 rgba(197, 237, 255, 0.12);
       }
       body {
         margin: 0;
@@ -241,6 +244,15 @@
         color: #e8f6ff;
         font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
         background: #010818;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        overscroll-behavior-y: none;
+      }
+      button,
+      a,
+      [role="button"] {
+        -webkit-tap-highlight-color: transparent;
       }
       .space-bg {
         background-image:
@@ -374,6 +386,18 @@
         border-radius: var(--ui-radius-lg);
         background: var(--ui-surface-soft);
         box-shadow: var(--ui-shadow-soft);
+        transition: transform 0.16s ease, box-shadow 0.2s ease;
+      }
+      .ui-content-card:hover {
+        transform: translateY(-1px);
+      }
+      .ui-primary-cta,
+      .ui-secondary-cta {
+        transition: transform 0.14s ease, filter 0.2s ease, box-shadow 0.2s ease;
+      }
+      .ui-primary-cta:active,
+      .ui-secondary-cta:active {
+        transform: translateY(0) scale(0.98);
       }
       .section-heading {
         letter-spacing: -0.01em;
@@ -384,6 +408,16 @@
         background: var(--ui-surface);
         box-shadow: var(--ui-shadow-strong);
         overflow: hidden;
+        transition: transform 0.18s ease, box-shadow 0.2s ease;
+      }
+      .feature-showcase:hover {
+        transform: translateY(-1px);
+      }
+      .metric-card {
+        transition: transform 0.18s ease, box-shadow 0.2s ease;
+      }
+      .metric-card:hover {
+        transform: translateY(-1px);
       }
       .feature-showcase img {
         display: block;
@@ -424,6 +458,22 @@
       .hero-findout-wrap a {
         min-height: 50px;
         min-width: 190px;
+      }
+      .app-shell {
+        width: min(1120px, calc(100vw - 16px));
+        margin: 0 auto 18px;
+        border-radius: 26px;
+        border: 1px solid var(--app-shell-border);
+        background: var(--app-shell-bg);
+        box-shadow: var(--app-shell-shadow);
+        backdrop-filter: blur(7px);
+        -webkit-backdrop-filter: blur(7px);
+      }
+      .app-section {
+        border: 1px solid rgba(142, 218, 255, 0.14);
+        border-radius: 20px;
+        background: rgba(4, 15, 36, 0.56);
+        box-shadow: 0 14px 28px rgba(1, 8, 20, 0.38), inset 0 1px 0 rgba(168, 228, 255, 0.08);
       }
       .ticker-live-tag {
         display: inline-flex;
@@ -522,6 +572,17 @@
         50% { transform: scale(0.84); opacity: 0.7; }
       }
       @media (max-width: 767px) {
+        .app-shell {
+          width: 100%;
+          border-radius: 0;
+          border-left: 0;
+          border-right: 0;
+          margin-bottom: 0;
+          box-shadow: none;
+        }
+        .app-section {
+          border-radius: 16px;
+        }
         .top-ticker-fixed {
           padding: 4px 8px;
         }
@@ -636,8 +697,8 @@
         </div>
       </div>
     </section>
-    <main id="top" class="relative z-10 pb-20 pt-24 sm:pt-28">
-      <section id="hero" class="mx-auto max-w-6xl px-4 pt-8 text-center sm:px-6 sm:pt-10">
+    <main id="top" class="app-shell relative z-10 pb-20 pt-24 sm:pt-28">
+      <section id="hero" class="app-section mx-auto max-w-6xl px-4 pt-8 text-center sm:px-6 sm:pt-10">
         <div class="mx-auto mb-6 flex justify-center sm:mb-8">
           <img src="newpplogo.png" alt="PoopProfit.com logo" class="h-auto w-full max-w-[170px] sm:max-w-[260px]" />
         </div>
@@ -678,7 +739,7 @@
 
       <div class="mx-auto mt-16 h-px w-[92%] max-w-6xl glow-line"></div>
 
-      <section id="how-it-works" class="mx-auto mt-12 max-w-5xl px-4 sm:px-6">
+      <section id="how-it-works" class="app-section mx-auto mt-12 max-w-5xl px-4 py-6 sm:px-6">
         <h2 class="section-heading text-center text-3xl font-extrabold tracking-tight text-sky-100 sm:text-4xl">How It Works</h2>
         <p class="mx-auto mt-3 max-w-3xl text-center text-slate-200 sm:text-lg">
           PoopProfit turns your bathroom breaks into trackable earnings in under a minute.
@@ -699,7 +760,7 @@
         </div>
       </section>
 
-      <section id="stats" class="mx-auto mt-12 max-w-4xl px-4 sm:px-6">
+      <section id="stats" class="app-section mx-auto mt-12 max-w-4xl px-4 py-6 sm:px-6">
         <h2 class="section-heading text-center text-4xl font-extrabold tracking-tight text-sky-100 sm:text-5xl">Poop Profit Stats</h2>
         <p class="mx-auto mt-3 max-w-2xl text-center text-lg text-slate-200">
           Track your poop earnings and milestones.
@@ -748,7 +809,7 @@
         </div>
       </section>
 
-      <section id="faq" class="mx-auto mt-12 max-w-5xl px-4 sm:px-6">
+      <section id="faq" class="app-section mx-auto mt-12 max-w-5xl px-4 py-6 sm:px-6">
         <div class="faq-cta-wrap">
           <a
             href="https://www.poopprofit.com/core-preview.html"
