@@ -831,72 +831,158 @@
       position: relative;
       margin-top: 16px;
       margin-bottom: 24px;
-      padding: 20px 0 40px;
+      padding: 24px 0 52px;
+      isolation: isolate;
+    }
+    .stat-carousel-wrap::before,
+    .stat-carousel-wrap::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+    .stat-carousel-wrap::before {
+      bottom: 14px;
+      width: min(74%, 460px);
+      height: 120px;
+      background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.22) 0%, rgba(56, 189, 248, 0.06) 48%, transparent 78%);
+      filter: blur(8px);
+    }
+    .stat-carousel-wrap::after {
+      top: 12px;
+      width: 92%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(121, 206, 255, 0.2) 16%, rgba(121, 206, 255, 0.2) 84%, transparent 100%);
     }
     .stat-carousel-viewport {
       overflow: hidden;
       position: relative;
-      padding: 20px 0;
-      mask-image: linear-gradient(90deg, transparent 0%, #000 15%, #000 85%, transparent 100%);
-      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 15%, #000 85%, transparent 100%);
+      padding: 24px 0 30px;
+      mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+      perspective: 1200px;
     }
     .stat-carousel-track {
       display: flex;
       align-items: center;
-      gap: 24px;
-      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      gap: 22px;
+      transition: transform 0.56s cubic-bezier(0.22, 1, 0.36, 1);
       will-change: transform;
       touch-action: pan-y;
+      transform-style: preserve-3d;
     }
     .stat-card {
+      position: relative;
       flex: 0 0 70%;
-      min-height: 180px;
+      min-height: 188px;
       border-radius: 18px;
-      background: linear-gradient(180deg, rgba(14, 165, 233, 0.12), rgba(8, 47, 73, 0.4));
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      box-shadow: 0 0 32px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(8px);
+      background:
+        radial-gradient(circle at 18% 14%, rgba(109, 214, 255, 0.16), transparent 36%),
+        radial-gradient(circle at 84% 90%, rgba(82, 144, 255, 0.14), transparent 38%),
+        linear-gradient(180deg, rgba(14, 165, 233, 0.14), rgba(8, 47, 73, 0.5));
+      border: 1px solid rgba(80, 193, 245, 0.34);
+      box-shadow:
+        0 0 20px rgba(56, 189, 248, 0.08),
+        0 14px 34px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 32px 20px;
-      opacity: 0.3;
-      transform: scale(0.85);
-      transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.5s ease;
+      padding: 34px 22px;
+      opacity: 0.34;
+      transform: translateY(4px) scale(0.86);
+      filter: saturate(0.74) brightness(0.86);
+      transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.5s ease, filter 0.5s ease, border-color 0.4s ease;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 14px;
+      border: 1px solid rgba(146, 218, 255, 0.22);
+      clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+      background:
+        linear-gradient(180deg, rgba(147, 222, 255, 0.24), rgba(147, 222, 255, 0.02)) left 10px center / 1px 58% no-repeat,
+        linear-gradient(180deg, rgba(147, 222, 255, 0.24), rgba(147, 222, 255, 0.02)) right 10px center / 1px 58% no-repeat;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          rgba(130, 209, 255, 0.08) 0px,
+          rgba(130, 209, 255, 0.08) 1px,
+          transparent 2px,
+          transparent 8px
+        );
+      opacity: 0.06;
+      pointer-events: none;
+      z-index: 0;
     }
     .stat-card.active {
       opacity: 1;
-      transform: scale(1);
-      box-shadow: 0 0 48px rgba(56, 189, 248, 0.35), 0 0 96px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px) scale(1);
+      filter: saturate(1) brightness(1);
+      border-color: rgba(102, 226, 255, 0.82);
+      box-shadow:
+        0 0 34px rgba(56, 189, 248, 0.32),
+        0 0 86px rgba(56, 189, 248, 0.16),
+        0 16px 34px rgba(0, 0, 0, 0.48),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    }
+    .stat-card.active::before {
+      border-color: rgba(130, 233, 255, 0.62);
+      background:
+        linear-gradient(180deg, rgba(73, 211, 255, 0.95), rgba(73, 211, 255, 0.2)) left 10px center / 2px 68% no-repeat,
+        linear-gradient(180deg, rgba(73, 211, 255, 0.95), rgba(73, 211, 255, 0.2)) right 10px center / 2px 68% no-repeat;
+    }
+    .stat-card.active::after {
+      opacity: 0.16;
+      animation: statCardScan 9s linear infinite;
     }
     .stat-card-label {
       font-size: 0.72rem;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.13em;
       color: var(--muted);
-      font-weight: 600;
-      margin-bottom: 16px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
     }
     .stat-card-value {
-      font-size: clamp(1.8rem, 6vw, 2.4rem);
+      font-size: clamp(1.95rem, 6vw, 2.6rem);
       font-weight: 800;
       color: #fff;
       letter-spacing: -0.02em;
       line-height: 1;
-      text-shadow: 0 0 24px rgba(56, 189, 248, 0.4);
+      text-shadow: 0 0 26px rgba(56, 189, 248, 0.46);
+      position: relative;
+      z-index: 1;
     }
     .stat-carousel-pedestal {
       position: absolute;
-      bottom: 20px;
+      bottom: 18px;
       left: 50%;
       transform: translateX(-50%);
-      width: 60%;
-      height: 24px;
-      background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.6) 0%, rgba(56, 189, 248, 0.2) 40%, transparent 70%);
+      width: 64%;
+      height: 30px;
+      background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.64) 0%, rgba(56, 189, 248, 0.22) 42%, transparent 74%);
       border-radius: 50%;
-      filter: blur(2px);
+      filter: blur(2.5px);
+      box-shadow: 0 0 26px rgba(56, 189, 248, 0.3);
       pointer-events: none;
     }
     .stat-carousel-pedestal::before {
@@ -905,37 +991,76 @@
       bottom: 100%;
       left: 50%;
       transform: translateX(-50%);
-      width: 40%;
-      height: 160px;
-      background: linear-gradient(to top, rgba(56, 189, 248, 0.25) 0%, rgba(56, 189, 248, 0.08) 40%, transparent 100%);
+      width: 42%;
+      height: 170px;
+      background: linear-gradient(to top, rgba(56, 189, 248, 0.28) 0%, rgba(56, 189, 248, 0.1) 40%, transparent 100%);
       pointer-events: none;
+      filter: blur(0.2px);
+    }
+    .stat-carousel-pedestal::after {
+      content: "";
+      position: absolute;
+      inset: 4px 6%;
+      border: 1px solid rgba(127, 220, 255, 0.56);
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(73, 211, 255, 0.42);
     }
     .stat-carousel-dots {
       display: flex;
       justify-content: center;
-      gap: 8px;
-      margin-top: 20px;
+      gap: 10px;
+      margin-top: 22px;
       position: relative;
       z-index: 2;
+      padding: 6px 12px;
     }
     .stat-carousel-dot {
-      width: 6px;
-      height: 6px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(186, 213, 233, 0.34);
+      box-shadow: inset 0 0 0 1px rgba(167, 202, 233, 0.3);
       border: none;
       padding: 0;
       cursor: pointer;
-      transition: background 0.3s ease, width 0.3s ease;
+      transition: background 0.3s ease, width 0.3s ease, transform 0.25s ease, box-shadow 0.25s ease;
     }
     .stat-carousel-dot.active {
-      background: rgba(56, 189, 248, 0.9);
-      width: 20px;
-      border-radius: 3px;
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+      background: linear-gradient(90deg, rgba(73, 211, 255, 0.98), rgba(141, 237, 255, 0.98));
+      width: 28px;
+      border-radius: 999px;
+      transform: translateY(-1px);
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.62);
     }
     @media (max-width: 480px) {
-      .stat-card { flex-basis: 78%; }
+      .stat-card {
+        flex-basis: 80%;
+        min-height: 170px;
+      }
+      .stat-carousel-viewport {
+        padding-top: 18px;
+      }
+      .stat-carousel-pedestal {
+        width: 70%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .stat-card,
+      .stat-card::after,
+      .stat-carousel-dot {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    @keyframes statCardScan {
+      from {
+        background-position: 0 0;
+      }
+      to {
+        background-position: 0 18px;
+      }
     }
 
     .stat-hero {
