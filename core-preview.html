@@ -147,7 +147,9 @@
       background-size: cover;
       background-repeat: no-repeat;
       background-attachment: fixed;
-      overscroll-behavior-y: none;
+      overscroll-behavior-y: auto;
+      overflow-y: auto;
+      touch-action: pan-y;
     }
 
     body.sheet-open {
@@ -165,6 +167,7 @@
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: scroll;
+        -webkit-overflow-scrolling: touch;
       }
     }
 
@@ -3069,11 +3072,21 @@
         gtag("event", eventName, params || {});
       }
 
+      function unlockBodyScrollIfNoSheetsOpen() {
+        if (!document.body) return;
+        var ratingOpen = ratingModal && ratingModal.classList.contains("open");
+        var shareOpen = sharePickerModal && sharePickerModal.classList.contains("open");
+        if (!ratingOpen && !shareOpen) {
+          document.body.classList.remove("sheet-open");
+        }
+      }
+
       hydrateInputs();
       renderTabs();
       renderWageMode();
       wireEvents();
       setupBottomSheets();
+      unlockBodyScrollIfNoSheetsOpen();
       renderAll();
       restoreRunningSession();
       setupTutorial();
@@ -3638,12 +3651,7 @@
           if (activeSheetModal === modal) {
             activeSheetModal = null;
           }
-          if (
-            (!ratingModal || !ratingModal.classList.contains("open")) &&
-            (!sharePickerModal || !sharePickerModal.classList.contains("open"))
-          ) {
-            document.body.classList.remove("sheet-open");
-          }
+          unlockBodyScrollIfNoSheetsOpen();
           modal._sheetCloseTimerId = null;
         }, closeDelay);
       }
