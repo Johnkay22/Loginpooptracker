@@ -178,7 +178,7 @@
       box-shadow: var(--app-frame-shadow);
       padding: 14px;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       backdrop-filter: blur(7px);
     }
 
@@ -249,7 +249,7 @@
 
     .fixed-nav-stack {
       position: sticky;
-      top: 8px;
+      top: calc(8px + env(safe-area-inset-top));
       z-index: 42;
       display: grid;
       gap: 10px;
@@ -1589,12 +1589,12 @@
     }
 
     .share-card-headline-panel {
-      padding: 46px 38px 34px;
+      padding: 46px 38px 30px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      gap: 20px;
+      gap: 12px;
     }
 
     .share-card-headline {
@@ -2793,12 +2793,6 @@
           <span id="shareCardAmountValue" class="share-card-amount">$0.00</span>
           to poop.
         </p>
-        <div class="share-card-badge" aria-label="Anonymous and free">
-          <svg aria-hidden="true" viewBox="0 0 24 24">
-            <path d="M4.5 9.5h15a1.5 1.5 0 1 1 0 3h-15a1.5 1.5 0 1 1 0-3Zm4.84-5.11A3.86 3.86 0 0 1 12 3.4a3.86 3.86 0 0 1 2.66.99l4.35 4.08H4.99l4.35-4.08ZM12 15.1c2.79 0 5.05 1.71 5.05 3.82v1.28H6.95v-1.28c0-2.11 2.26-3.82 5.05-3.82Zm-2.05 2.3a1.1 1.1 0 1 0 0 2.2h4.1a1.1 1.1 0 1 0 0-2.2h-4.1Z"></path>
-          </svg>
-          <span>Anonymous &amp; Free</span>
-        </div>
       </section>
 
       <section class="share-card-main-row" aria-label="Session duration and mascot">

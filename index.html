@@ -462,18 +462,18 @@
       .app-shell {
         width: min(1120px, calc(100vw - 16px));
         margin: 0 auto 18px;
-        border-radius: 26px;
-        border: 1px solid var(--app-shell-border);
-        background: var(--app-shell-bg);
-        box-shadow: var(--app-shell-shadow);
-        backdrop-filter: blur(7px);
-        -webkit-backdrop-filter: blur(7px);
+        border-radius: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
       }
       .app-section {
-        border: 1px solid rgba(142, 218, 255, 0.14);
-        border-radius: 20px;
-        background: rgba(4, 15, 36, 0.56);
-        box-shadow: 0 14px 28px rgba(1, 8, 20, 0.38), inset 0 1px 0 rgba(168, 228, 255, 0.08);
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
       }
       .ticker-live-tag {
         display: inline-flex;
@@ -574,14 +574,8 @@
       @media (max-width: 767px) {
         .app-shell {
           width: 100%;
-          border-radius: 0;
-          border-left: 0;
-          border-right: 0;
           margin-bottom: 0;
           box-shadow: none;
-        }
-        .app-section {
-          border-radius: 16px;
         }
         .top-ticker-fixed {
           padding: 4px 8px;
