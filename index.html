@@ -336,13 +336,6 @@
         min-height: 56px;
         min-width: 210px;
       }
-      .hero-secondary-line {
-        margin: 10px 0 0;
-        color: #cce7ff;
-        font-size: 0.93rem;
-        font-weight: 600;
-        letter-spacing: 0.01em;
-      }
       .faq-cta-wrap {
         margin: 14px auto 0;
         display: grid;
@@ -360,23 +353,94 @@
         font-size: 0.9rem;
         line-height: 1.4;
       }
-      .trust-row {
-        margin: 12px auto 0;
-        max-width: 760px;
+      .hero-security-pills {
+        margin: 18px auto 0;
+        max-width: 980px;
+        padding: 0;
+        list-style: none;
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 8px;
+        gap: 12px;
       }
-      .trust-pill {
-        border: 1px solid rgba(148, 220, 255, 0.34);
+      .hero-security-pill {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 62px;
+        padding: 9px 22px 9px 12px;
         border-radius: 999px;
-        padding: 6px 11px;
-        background: rgba(8, 20, 45, 0.68);
-        color: #d8ecff;
-        font-size: 0.77rem;
-        font-weight: 600;
+        border: 1px solid rgba(96, 205, 255, 0.48);
+        background:
+          radial-gradient(80% 120% at 10% 12%, rgba(29, 110, 194, 0.18), rgba(5, 14, 34, 0) 70%),
+          linear-gradient(180deg, rgba(8, 23, 52, 0.92), rgba(4, 12, 30, 0.95));
+        color: #eef8ff;
+        font-size: 1.02rem;
+        font-weight: 700;
         letter-spacing: 0.01em;
+        box-shadow:
+          inset 0 0 0 1px rgba(140, 224, 255, 0.08),
+          0 0 18px rgba(41, 170, 255, 0.22),
+          0 8px 22px rgba(0, 6, 20, 0.45);
+      }
+      .hero-security-pill::after {
+        content: "";
+        position: absolute;
+        left: 22%;
+        right: 22%;
+        bottom: -8px;
+        height: 10px;
+        border-radius: 999px;
+        pointer-events: none;
+        opacity: 0.75;
+      }
+      .hero-security-pill--free {
+        border-color: rgba(84, 194, 255, 0.64);
+      }
+      .hero-security-pill--free::after {
+        background: radial-gradient(circle, rgba(68, 193, 255, 0.7), rgba(68, 193, 255, 0) 70%);
+      }
+      .hero-security-pill--account {
+        border-color: rgba(140, 134, 255, 0.6);
+      }
+      .hero-security-pill--account::after {
+        background: radial-gradient(circle, rgba(124, 116, 255, 0.72), rgba(124, 116, 255, 0) 70%);
+      }
+      .hero-security-pill--local {
+        border-color: rgba(76, 226, 255, 0.58);
+      }
+      .hero-security-pill--local::after {
+        background: radial-gradient(circle, rgba(68, 213, 255, 0.7), rgba(68, 213, 255, 0) 70%);
+      }
+      .hero-security-pill-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(134, 213, 255, 0.42);
+        background: radial-gradient(circle at 50% 20%, rgba(84, 196, 255, 0.26), rgba(15, 33, 70, 0.58) 72%);
+        box-shadow: inset 0 0 0 1px rgba(198, 241, 255, 0.07);
+      }
+      .hero-security-pill-icon svg {
+        width: 20px;
+        height: 20px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .hero-security-pill--free .hero-security-pill-icon {
+        color: #6fd4ff;
+      }
+      .hero-security-pill--account .hero-security-pill-icon {
+        color: #8ea3ff;
+      }
+      .hero-security-pill--local .hero-security-pill-icon {
+        color: #6ae8ff;
       }
       .ui-content-card {
         border: 1px solid var(--ui-border);
@@ -624,6 +688,20 @@
           width: 100%;
           max-width: 360px;
         }
+        .hero-security-pills {
+          gap: 10px;
+        }
+        .hero-security-pill {
+          min-height: 58px;
+          padding: 8px 16px 8px 11px;
+          font-size: 0.96rem;
+          flex: 1 1 240px;
+          justify-content: flex-start;
+        }
+        .hero-security-pill-icon {
+          width: 34px;
+          height: 34px;
+        }
       }
       .mobile-sticky-cta {
         position: fixed;
@@ -728,13 +806,35 @@
             <img src="featuresmobile.png" alt="PoopProfit feature highlights preview image" loading="eager" decoding="async" />
           </picture>
         </section>
-        <p class="hero-secondary-line">Free. Anonymous. No account required.</p>
-        <div class="trust-row" aria-label="Trust indicators">
-          <span class="trust-pill">No login needed</span>
-          <span class="trust-pill">Local data only</span>
-          <span class="trust-pill">Mobile-friendly</span>
-          <span class="trust-pill">Shareable stats</span>
-        </div>
+        <ul class="hero-security-pills" aria-label="Trust indicators">
+          <li class="hero-security-pill hero-security-pill--free">
+            <span class="hero-security-pill-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3.2 5.5 6v5.6c0 4.2 2.5 7.9 6.5 9.2 4-1.3 6.5-5 6.5-9.2V6L12 3.2Z"></path>
+                <path d="m9.4 12 1.8 1.9 3.6-3.8"></path>
+              </svg>
+            </span>
+            <span>100% Free</span>
+          </li>
+          <li class="hero-security-pill hero-security-pill--account">
+            <span class="hero-security-pill-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="3.6"></circle>
+                <path d="M5.6 20c.8-3.6 3.4-5.5 6.4-5.5s5.6 1.9 6.4 5.5"></path>
+              </svg>
+            </span>
+            <span>No Account Required</span>
+          </li>
+          <li class="hero-security-pill hero-security-pill--local">
+            <span class="hero-security-pill-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="6" y="11" width="12" height="9" rx="2"></rect>
+                <path d="M8.4 11V8.8A3.6 3.6 0 0 1 12 5.2a3.6 3.6 0 0 1 3.6 3.6V11"></path>
+              </svg>
+            </span>
+            <span>Local Data Only</span>
+          </li>
+        </ul>
       </section>
 
       <div class="mx-auto mt-16 h-px w-[92%] max-w-6xl glow-line"></div>
