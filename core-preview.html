@@ -2369,22 +2369,22 @@
       position: fixed;
       right: 14px;
       bottom: calc(74px + env(safe-area-inset-bottom));
-      width: 58px;
-      height: 58px;
-      border-radius: 999px;
-      border: 1px solid rgba(67, 179, 255, 0.5);
-      background: radial-gradient(circle at 30% 30%, #6cc7ff, #1f96ea 70%);
-      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), 0 0 24px rgba(67, 179, 255, 0.45);
+      width: auto;
+      height: auto;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
       display: none;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      gap: 1px;
       cursor: pointer;
       z-index: 70;
       transition: transform 0.13s ease, filter 0.2s ease;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
+      line-height: 0;
     }
 
     .mobile-fab.haptic,
@@ -2393,24 +2393,11 @@
       filter: brightness(1.08);
     }
 
-    .mobile-fab.running {
-      background: radial-gradient(circle at 30% 30%, #ffb0b0, #ff6f6f 70%);
-      border-color: rgba(255, 132, 132, 0.55);
-      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), 0 0 24px rgba(255, 132, 132, 0.4);
-    }
-
     .fab-icon {
-      width: 29px;
-      height: 29px;
+      width: 58px;
+      height: 58px;
       object-fit: contain;
-      filter: drop-shadow(0 2px 8px rgba(0, 10, 25, 0.45));
-    }
-
-    .fab-label {
-      font-size: 0.6rem;
-      font-weight: 800;
-      letter-spacing: 0.01em;
-      margin-top: -2px;
+      filter: drop-shadow(0 8px 16px rgba(0, 10, 25, 0.45));
     }
 
     @media (max-width: 760px) {
@@ -3001,7 +2988,6 @@
 
   <button id="fabTimerButton" class="mobile-fab" type="button" aria-label="Start session">
     <img id="fabTimerIcon" class="fab-icon" src="vacant.png" alt="">
-    <span id="fabLabel" class="fab-label">Start</span>
   </button>
 
   <div id="ratingModal" class="rating-modal" aria-hidden="true">
@@ -3225,7 +3211,6 @@
 
       var mobileFabButton = document.getElementById("fabTimerButton");
       var mobileFabIcon = document.getElementById("fabTimerIcon");
-      var mobileFabLabel = document.getElementById("fabLabel");
 
       var statSessions = document.getElementById("statSessions");
       var statTime = document.getElementById("statTime");
@@ -4133,10 +4118,8 @@
         setTimerMascotState(running);
 
         if (mobileFabButton) {
-          mobileFabButton.classList.toggle("running", running);
           mobileFabButton.setAttribute("aria-label", running ? "Stop session" : "Start session");
           if (mobileFabIcon) mobileFabIcon.src = running ? FAB_TIMER_RUNNING_SRC : FAB_TIMER_IDLE_SRC;
-          if (mobileFabLabel) mobileFabLabel.textContent = running ? "Stop" : "Start";
         }
 
         if (timerCard) {
