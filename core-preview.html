@@ -645,7 +645,7 @@
     }
 
     .timer .emoji {
-      width: clamp(86px, 22vw, 132px);
+      width: clamp(98px, 24vw, 146px);
       margin: 0 auto 8px;
       line-height: 0;
       display: flex;
@@ -657,7 +657,7 @@
       display: block;
       width: 100%;
       height: auto;
-      max-height: 122px;
+      max-height: 136px;
       object-fit: contain;
       filter: drop-shadow(0 10px 20px rgba(2, 10, 27, 0.45));
     }
@@ -2374,9 +2374,6 @@
       border-radius: 999px;
       border: 1px solid rgba(67, 179, 255, 0.5);
       background: radial-gradient(circle at 30% 30%, #6cc7ff, #1f96ea 70%);
-      color: #021426;
-      font-size: 1.35rem;
-      font-weight: 900;
       box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), 0 0 24px rgba(67, 179, 255, 0.45);
       display: none;
       align-items: center;
@@ -2400,6 +2397,13 @@
       background: radial-gradient(circle at 30% 30%, #ffb0b0, #ff6f6f 70%);
       border-color: rgba(255, 132, 132, 0.55);
       box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), 0 0 24px rgba(255, 132, 132, 0.4);
+    }
+
+    .fab-icon {
+      width: 29px;
+      height: 29px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(0, 10, 25, 0.45));
     }
 
     .fab-label {
@@ -2996,7 +3000,7 @@
   </nav>
 
   <button id="fabTimerButton" class="mobile-fab" type="button" aria-label="Start session">
-    <span id="fabEmoji">🚀</span>
+    <img id="fabTimerIcon" class="fab-icon" src="vacant.png" alt="">
     <span id="fabLabel" class="fab-label">Start</span>
   </button>
 
@@ -3211,6 +3215,8 @@
       var TIMER_MASCOT_IDLE_SRC = "nonanimated.jpg";
       var TIMER_MASCOT_RUNNING_SRC = "animated.gif";
       var TIMER_MASCOT_FALLBACK_SRC = "POOPPROFITMASCOT.png";
+      var FAB_TIMER_IDLE_SRC = "vacant.png";
+      var FAB_TIMER_RUNNING_SRC = "occupied.png";
       var firstSessionCoach = document.getElementById("firstSessionCoach");
       var firstSessionCoachBody = document.getElementById("firstSessionCoachBody");
       var coachSetWageButton = document.getElementById("coachSetWageButton");
@@ -3218,7 +3224,7 @@
       var milestoneToast = document.getElementById("milestoneToast");
 
       var mobileFabButton = document.getElementById("fabTimerButton");
-      var mobileFabEmoji = document.getElementById("fabEmoji");
+      var mobileFabIcon = document.getElementById("fabTimerIcon");
       var mobileFabLabel = document.getElementById("fabLabel");
 
       var statSessions = document.getElementById("statSessions");
@@ -4129,7 +4135,7 @@
         if (mobileFabButton) {
           mobileFabButton.classList.toggle("running", running);
           mobileFabButton.setAttribute("aria-label", running ? "Stop session" : "Start session");
-          if (mobileFabEmoji) mobileFabEmoji.textContent = running ? "⏹" : "🚀";
+          if (mobileFabIcon) mobileFabIcon.src = running ? FAB_TIMER_RUNNING_SRC : FAB_TIMER_IDLE_SRC;
           if (mobileFabLabel) mobileFabLabel.textContent = running ? "Stop" : "Start";
         }
 
