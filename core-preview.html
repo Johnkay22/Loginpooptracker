@@ -3366,10 +3366,59 @@
         stepIndex: 0,
         rafId: null
       };
+      var RETURN_VISIT_LAST_SEEN_KEY = "pp_core_last_seen_ms_v1";
+      var RETURN_VISIT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+      var RETURN_VISIT_MIN_GAP_MS = 60 * 1000;
+      var lastTrackedHourlyWageValue = null;
 
       function trackCoreEvent(eventName, params) {
         if (typeof gtag !== "function" || !eventName) return;
         gtag("event", eventName, params || {});
+      }
+
+      function trackReturnVisitWithin7Days() {
+        var now = Date.now();
+        var previousVisitMs = null;
+
+        try {
+          if (window.localStorage) {
+            var storedVisit = Number(window.localStorage.getItem(RETURN_VISIT_LAST_SEEN_KEY));
+            if (Number.isFinite(storedVisit) && storedVisit > 0) {
+              previousVisitMs = storedVisit;
+            }
+          }
+        } catch (_error) {
+          previousVisitMs = null;
+        }
+
+        if (previousVisitMs !== null) {
+          var elapsedMs = now - previousVisitMs;
+          if (elapsedMs >= RETURN_VISIT_MIN_GAP_MS && elapsedMs <= RETURN_VISIT_WINDOW_MS) {
+            trackCoreEvent("core_returned_within_7_days", {
+              days_since_last_visit: Number((elapsedMs / (24 * 60 * 60 * 1000)).toFixed(2))
+            });
+          }
+        }
+
+        try {
+          if (window.localStorage) {
+            window.localStorage.setItem(RETURN_VISIT_LAST_SEEN_KEY, String(now));
+          }
+        } catch (_error) {
+          // Ignore storage write failures.
+        }
+      }
+
+      function trackHourlyWageEntered(rawValue, source) {
+        var hourlyValue = normalizeNumber(rawValue);
+        if (hourlyValue <= 0) return;
+        var roundedWage = Number(hourlyValue.toFixed(2));
+        if (lastTrackedHourlyWageValue === roundedWage) return;
+        lastTrackedHourlyWageValue = roundedWage;
+        trackCoreEvent("core_entered_hourly_wage", {
+          hourly_wage: roundedWage,
+          source: source || "input"
+        });
       }
 
       function unlockBodyScrollIfNoSheetsOpen() {
@@ -3390,6 +3439,7 @@
       renderAll();
       restoreRunningSession();
       setupTutorial();
+      trackReturnVisitWithin7Days();
       window.generateShareCardPng = generateShareCardPng;
       preloadShareCardAssets().catch(function () {
         // Keep startup silent; generateShareCardPng will report failures when invoked.
@@ -3439,6 +3489,10 @@
           renderAll();
         });
 
+        hourlyWageInput.addEventListener("change", function () {
+          trackHourlyWageEntered(hourlyWageInput.value, "change");
+        });
+
         annualSalaryInput.addEventListener("input", function () {
           state.annualSalary = annualSalaryInput.value;
           persist();
@@ -3452,7 +3506,7 @@
         });
 
         timerButton.addEventListener("click", function () {
-          toggleSession();
+          toggleSession("timer_button");
         });
 
         if (coachSetWageButton) {
@@ -3470,7 +3524,7 @@
         if (mobileFabButton) {
           mobileFabButton.addEventListener("click", function () {
             triggerHapticVisual(mobileFabButton);
-            toggleSession();
+            toggleSession("floating_button");
             if (state.activeTab !== "calculator") {
               setActiveTab("calculator");
             }
@@ -4005,19 +4059,30 @@
         return annualSalary / 52 / weeklyHours;
       }
 
-      function toggleSession() {
+      function toggleSession(source) {
         if (state.activeSessionStartMs) {
-          stopSession();
+          stopSession(source);
         } else {
-          startSession();
+          var startSource = source || "timer_button";
+          trackCoreEvent("core_clicked_start", {
+            source: startSource,
+            wage_mode: state.wageMode,
+            has_valid_wage: getEffectiveHourlyWage() > 0
+          });
+          startSession(startSource);
         }
       }
 
-      function startSession() {
+      function startSession(source) {
+        var startSource = source || "timer_button";
         var hourly = getEffectiveHourlyWage();
         if (hourly <= 0) {
           setStatus(statusMessage, "Set a valid wage first so earnings can be calculated.", "warn");
           return;
+        }
+
+        if (state.wageMode === "hourly") {
+          trackHourlyWageEntered(state.hourlyWage, "session_start");
         }
 
         state.activeSessionStartMs = Date.now();
@@ -4028,6 +4093,11 @@
           wage_mode: state.wageMode,
           hourly_rate: Number(hourly.toFixed(2))
         });
+        trackCoreEvent("core_started_timer", {
+          source: startSource,
+          wage_mode: state.wageMode,
+          hourly_rate: Number(hourly.toFixed(2))
+        });
         setStatus(statusMessage, "Session started. Let the profits flow.", "ok");
         renderTimerButton();
         renderFirstSessionCoach();
@@ -4035,8 +4105,9 @@
         timerIntervalId = window.setInterval(runTimerTick, 1000);
       }
 
-      function stopSession() {
+      function stopSession(source) {
         if (!state.activeSessionStartMs) return;
+        var stopSource = source || "timer_button";
 
         var endedAt = Date.now();
         var durationSeconds = Math.max(1, Math.floor((endedAt - state.activeSessionStartMs) / 1000));
@@ -4059,6 +4130,16 @@
         hideMilestoneCelebration();
         persist();
         trackCoreEvent("core_session_stop", {
+          duration_seconds: durationSeconds,
+          earnings: Number(roundCurrency(earnings).toFixed(2))
+        });
+        trackCoreEvent("core_stopped_timer", {
+          source: stopSource,
+          duration_seconds: durationSeconds,
+          earnings: Number(roundCurrency(earnings).toFixed(2))
+        });
+        trackCoreEvent("core_saved_result", {
+          source: stopSource,
           duration_seconds: durationSeconds,
           earnings: Number(roundCurrency(earnings).toFixed(2))
         });
@@ -4349,6 +4430,7 @@
                 files: [file]
               }).then(function () {
                 trackCoreEvent("core_share_card_complete", { source: shareSource, method: "native" });
+                trackCoreEvent("core_shared_result", { source: shareSource, method: "native", share_type: "card" });
                 announceShareStatus("Share complete.", "ok");
                 return true;
               }).catch(function (error) {
@@ -4363,6 +4445,7 @@
             downloadBlob(blob, fileName);
             return copyTextSilently(caption).then(function (copied) {
               trackCoreEvent("core_share_card_complete", { source: shareSource, method: "download" });
+              trackCoreEvent("core_shared_result", { source: shareSource, method: "download", share_type: "card" });
               if (copied) {
                 announceShareStatus("Card downloaded and caption copied.", "ok");
               } else {
@@ -4397,21 +4480,27 @@
         if (shareTarget === "native") {
           if (navigator.share) {
             navigator.share({ title: "Poop Profit", text: text, url: url })
-              .then(function () { announceShareStatus("Shared successfully.", "ok"); })
+              .then(function () {
+                trackCoreEvent("core_shared_result", { channel: "native", share_type: "text" });
+                announceShareStatus("Shared successfully.", "ok");
+              })
               .catch(function () { announceShareStatus("Share canceled.", "warn"); });
           } else {
+            trackCoreEvent("core_shared_result", { channel: "copy", share_type: "text" });
             copyToClipboard(text);
           }
           return;
         }
 
         if (shareTarget === "x") {
+          trackCoreEvent("core_shared_result", { channel: "x", share_type: "text" });
           window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text), "_blank");
           announceShareStatus("Opening X share...", "ok");
           return;
         }
 
         if (shareTarget === "facebook") {
+          trackCoreEvent("core_shared_result", { channel: "facebook", share_type: "text" });
           window.open(
             "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url) + "&quote=" + encodeURIComponent(text),
             "_blank"
@@ -4421,12 +4510,14 @@
         }
 
         if (shareTarget === "sms") {
+          trackCoreEvent("core_shared_result", { channel: "sms", share_type: "text" });
           window.open("sms:?&body=" + encodeURIComponent(text));
           announceShareStatus("Opening SMS share...", "ok");
           return;
         }
 
         if (shareTarget === "copy") {
+          trackCoreEvent("core_shared_result", { channel: "copy", share_type: "text" });
           copyToClipboard(text);
         }
       }
@@ -5003,7 +5094,7 @@
 
       function handleCoachStartSession() {
         if (!state.activeSessionStartMs) {
-          startSession();
+          toggleSession("coach_button");
         }
       }
 
