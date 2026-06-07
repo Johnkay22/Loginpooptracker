@@ -253,6 +253,59 @@
       filter: brightness(1.08);
     }
 
+    .wallet-corner {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 35;
+      border: 1px solid rgba(112, 201, 255, 0.42);
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(12, 31, 61, 0.88), rgba(7, 19, 41, 0.94));
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.34), inset 0 0 16px rgba(89, 196, 255, 0.12);
+      padding: 7px 10px 8px;
+      min-width: 132px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .wallet-balance-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1;
+    }
+
+    .wallet-coin {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+      transform-origin: center;
+    }
+
+    .wallet-coin.pulsing {
+      animation: walletCoinPulse 0.6s ease;
+    }
+
+    .wallet-balance-value {
+      color: #f3fcff;
+      font-size: 1.08rem;
+      font-weight: 900;
+      letter-spacing: 0.01em;
+      text-shadow: 0 0 10px rgba(111, 214, 255, 0.34);
+      min-width: 24px;
+      text-align: left;
+    }
+
+    .wallet-streak {
+      margin: 4px 0 0;
+      color: #ffdc88;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      text-shadow: 0 0 8px rgba(255, 162, 76, 0.26);
+    }
+
     .fixed-nav-stack {
       position: sticky;
       top: calc(8px + env(safe-area-inset-top));
@@ -2441,6 +2494,26 @@
         font-size: 1.06rem;
       }
 
+      .wallet-corner {
+        top: 10px;
+        left: 10px;
+        min-width: 120px;
+        padding: 6px 8px 7px;
+      }
+
+      .wallet-coin {
+        width: 32px;
+        height: 32px;
+      }
+
+      .wallet-balance-value {
+        font-size: 1rem;
+      }
+
+      .wallet-streak {
+        font-size: 0.72rem;
+      }
+
       .tab-btn {
         min-height: 60px;
         font-size: 1rem;
@@ -2651,12 +2724,25 @@
       35% { box-shadow: 0 0 0 1px rgba(46, 219, 156, 0.6), 0 0 28px rgba(46, 219, 156, 0.55); }
       100% { box-shadow: 0 0 0 1px rgba(46, 219, 156, 0), 0 0 0 rgba(46, 219, 156, 0); }
     }
+
+    @keyframes walletCoinPulse {
+      0% { transform: scale(1); filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45)); }
+      40% { transform: scale(1.18); filter: drop-shadow(0 0 16px rgba(255, 207, 114, 0.7)); }
+      100% { transform: scale(1); filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45)); }
+    }
   </style>
 </head>
 <body>
   <main class="page">
     <section class="shell">
       <h1 class="sr-only">PoopProfit Core Preview Calculator, Session Timer, and Stats</h1>
+      <aside id="walletCorner" class="wallet-corner" aria-live="polite" aria-label="Turd Token wallet">
+        <div class="wallet-balance-row">
+          <img id="walletCoinImage" class="wallet-coin" src="turdtoken2026.png" alt="Turd Token coin">
+          <span id="walletBalanceValue" class="wallet-balance-value">0</span>
+        </div>
+        <p id="walletStreakValue" class="wallet-streak">🔥 0 day streak</p>
+      </aside>
       <button id="tutorialHelpButton" class="tutorial-help-button" type="button" aria-label="Open quick tour">?</button>
       <div class="fixed-nav-stack">
         <header class="top-banner">
@@ -3211,6 +3297,10 @@
 
       var mobileFabButton = document.getElementById("fabTimerButton");
       var mobileFabIcon = document.getElementById("fabTimerIcon");
+      var walletCorner = document.getElementById("walletCorner");
+      var walletCoinImage = document.getElementById("walletCoinImage");
+      var walletBalanceValue = document.getElementById("walletBalanceValue");
+      var walletStreakValue = document.getElementById("walletStreakValue");
 
       var statSessions = document.getElementById("statSessions");
       var statTime = document.getElementById("statTime");
@@ -3370,6 +3460,13 @@
       var RETURN_VISIT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
       var RETURN_VISIT_MIN_GAP_MS = 60 * 1000;
       var lastTrackedHourlyWageValue = null;
+      var WALLET_ANON_ID_KEY = "pp_wallet_anon_id_v1";
+      var WALLET_FUNCTION_URL = "https://ukfboxemqwuwkvfglzfq.supabase.co/functions/v1/wallet";
+      var walletSnapshot = {
+        token_balance: 0,
+        current_streak: 0
+      };
+      var walletBalanceAnimationFrameId = null;
 
       function trackCoreEvent(eventName, params) {
         if (typeof gtag !== "function" || !eventName) return;
@@ -3421,6 +3518,168 @@
         });
       }
 
+      function getWalletAnonId() {
+        var existingId = "";
+        try {
+          if (window.localStorage) {
+            existingId = window.localStorage.getItem(WALLET_ANON_ID_KEY) || "";
+          }
+        } catch (_error) {
+          existingId = "";
+        }
+        if (existingId) return existingId;
+
+        var generated = "";
+        if (window.crypto && typeof window.crypto.randomUUID === "function") {
+          generated = "pp_" + window.crypto.randomUUID();
+        } else {
+          generated = "pp_" + String(Date.now()) + "_" + Math.random().toString(36).slice(2, 10);
+        }
+
+        try {
+          if (window.localStorage) {
+            window.localStorage.setItem(WALLET_ANON_ID_KEY, generated);
+          }
+        } catch (_error) {
+          // Ignore storage failures.
+        }
+        return generated;
+      }
+
+      function normalizeWalletSnapshot(data) {
+        var source = data || {};
+        return {
+          token_balance: Math.max(0, Math.floor(Number(source.token_balance) || 0)),
+          current_streak: Math.max(0, Math.floor(Number(source.current_streak) || 0)),
+          longest_streak: Math.max(0, Math.floor(Number(source.longest_streak) || 0)),
+          total_earned: Math.max(0, Math.floor(Number(source.total_earned) || 0)),
+          awarded: Math.max(0, Math.floor(Number(source.awarded) || 0))
+        };
+      }
+
+      function setWalletBalanceValue(value) {
+        if (!walletBalanceValue) return;
+        walletBalanceValue.textContent = String(Math.max(0, Math.floor(Number(value) || 0)));
+      }
+
+      function setWalletStreakValue(streakDays) {
+        if (!walletStreakValue) return;
+        var safeDays = Math.max(0, Math.floor(Number(streakDays) || 0));
+        walletStreakValue.textContent = "🔥 " + safeDays + " day streak";
+      }
+
+      function animateWalletBalanceTo(targetBalance, durationMs) {
+        if (!walletBalanceValue) return;
+        var startBalance = Math.max(0, Math.floor(Number(walletSnapshot.token_balance) || 0));
+        var endBalance = Math.max(0, Math.floor(Number(targetBalance) || 0));
+        var duration = Math.max(120, Number(durationMs) || 600);
+
+        if (walletBalanceAnimationFrameId !== null) {
+          window.cancelAnimationFrame(walletBalanceAnimationFrameId);
+          walletBalanceAnimationFrameId = null;
+        }
+
+        if (startBalance === endBalance) {
+          setWalletBalanceValue(endBalance);
+          walletSnapshot.token_balance = endBalance;
+          return;
+        }
+
+        var startedAt = null;
+        function step(timestamp) {
+          if (startedAt === null) startedAt = timestamp;
+          var elapsed = Math.max(0, timestamp - startedAt);
+          var progress = Math.min(1, elapsed / duration);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          var value = Math.round(startBalance + (endBalance - startBalance) * eased);
+          setWalletBalanceValue(value);
+          if (progress < 1) {
+            walletBalanceAnimationFrameId = window.requestAnimationFrame(step);
+          } else {
+            walletBalanceAnimationFrameId = null;
+            walletSnapshot.token_balance = endBalance;
+            setWalletBalanceValue(endBalance);
+          }
+        }
+
+        walletBalanceAnimationFrameId = window.requestAnimationFrame(step);
+      }
+
+      function pulseWalletCoin() {
+        if (!walletCoinImage) return;
+        walletCoinImage.classList.remove("pulsing");
+        void walletCoinImage.offsetWidth;
+        walletCoinImage.classList.add("pulsing");
+      }
+
+      function renderWalletSnapshot(snapshot, options) {
+        if (!walletCorner) return;
+        var resolved = normalizeWalletSnapshot(snapshot);
+        var opts = options || {};
+        var animate = Boolean(opts.animateBalance);
+        var pulse = Boolean(opts.pulseCoin);
+
+        if (animate) {
+          animateWalletBalanceTo(resolved.token_balance, opts.durationMs || 600);
+        } else {
+          if (walletBalanceAnimationFrameId !== null) {
+            window.cancelAnimationFrame(walletBalanceAnimationFrameId);
+            walletBalanceAnimationFrameId = null;
+          }
+          walletSnapshot.token_balance = resolved.token_balance;
+          setWalletBalanceValue(resolved.token_balance);
+        }
+
+        walletSnapshot.current_streak = resolved.current_streak;
+        setWalletStreakValue(resolved.current_streak);
+
+        if (pulse) {
+          pulseWalletCoin();
+        }
+      }
+
+      function walletFunctionPayload(mode) {
+        return {
+          anon_id: getWalletAnonId(),
+          mode: mode,
+          tz_offset_minutes: new Date().getTimezoneOffset()
+        };
+      }
+
+      function callWalletFunction(mode) {
+        return fetch(WALLET_FUNCTION_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(walletFunctionPayload(mode))
+        }).then(function (response) {
+          if (!response.ok) throw new Error("wallet_request_failed");
+          return response.json();
+        }).then(function (payload) {
+          return normalizeWalletSnapshot(payload);
+        });
+      }
+
+      function peekWallet() {
+        return callWalletFunction("peek");
+      }
+
+      function claimWallet() {
+        return callWalletFunction("claim");
+      }
+
+      function initializeWallet() {
+        renderWalletSnapshot(walletSnapshot);
+        peekWallet()
+          .then(function (snapshot) {
+            renderWalletSnapshot(snapshot);
+          })
+          .catch(function () {
+            // Keep wallet silently non-blocking if API unavailable.
+          });
+      }
+
       function unlockBodyScrollIfNoSheetsOpen() {
         if (!document.body) return;
         var ratingOpen = ratingModal && ratingModal.classList.contains("open");
@@ -3440,6 +3699,7 @@
       restoreRunningSession();
       setupTutorial();
       trackReturnVisitWithin7Days();
+      initializeWallet();
       window.generateShareCardPng = generateShareCardPng;
       preloadShareCardAssets().catch(function () {
         // Keep startup silent; generateShareCardPng will report failures when invoked.
@@ -4147,6 +4407,27 @@
         openRatingModal();
         renderAll();
         setStatus(statusMessage, "Session saved. Rate your poop.", "ok");
+        claimWallet()
+          .then(function (walletResult) {
+            if (!walletResult) return;
+            if (walletResult.awarded > 0) {
+              renderWalletSnapshot(walletResult, {
+                animateBalance: true,
+                durationMs: 600,
+                pulseCoin: true
+              });
+              setStatus(
+                statusMessage,
+                "Herman wired you " + walletResult.awarded + " Turd Token" + (walletResult.awarded === 1 ? "" : "s") + ".",
+                "ok"
+              );
+            } else {
+              renderWalletSnapshot(walletResult);
+            }
+          })
+          .catch(function () {
+            // Wallet claim should never block or alter normal session flow.
+          });
       }
 
       function restoreRunningSession() {
