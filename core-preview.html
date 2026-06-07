@@ -157,6 +157,11 @@
       touch-action: none;
     }
 
+    body.wallet-modal-open {
+      overflow: hidden;
+      touch-action: none;
+    }
+
     @media (max-width: 760px) {
       html,
       body {
@@ -316,6 +321,124 @@
       letter-spacing: 0.01em;
       text-shadow: 0 0 8px rgba(255, 162, 76, 0.26);
       white-space: nowrap;
+    }
+
+    .wallet-first-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(2, 8, 20, 0.72);
+      z-index: 340;
+    }
+
+    .wallet-first-modal.open {
+      display: flex;
+    }
+
+    .wallet-first-panel {
+      position: relative;
+      width: min(520px, 100%);
+      border-radius: 16px;
+      border: 1px solid rgba(112, 201, 255, 0.38);
+      background: linear-gradient(180deg, rgba(11, 27, 53, 0.98), rgba(6, 17, 36, 0.98));
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(86, 192, 255, 0.12);
+      padding: 18px 16px 14px;
+    }
+
+    .wallet-first-close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      border: 1px solid rgba(128, 207, 255, 0.42);
+      background: rgba(8, 22, 43, 0.9);
+      color: #d9f3ff;
+      font-size: 1.1rem;
+      font-weight: 800;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .wallet-first-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .wallet-first-token {
+      width: 44px;
+      max-width: 44px;
+      height: 44px;
+      object-fit: contain;
+      flex-shrink: 0;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+    }
+
+    .wallet-first-copy h3 {
+      margin: 0 0 8px;
+      color: #edf9ff;
+      font-size: 1.22rem;
+      line-height: 1.2;
+    }
+
+    .wallet-first-copy p {
+      margin: 0;
+      color: #cce8ff;
+      font-size: 0.96rem;
+      line-height: 1.45;
+    }
+
+    .wallet-first-dismiss {
+      margin-top: 14px;
+      width: 100%;
+    }
+
+    .wallet-reward-toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(88px + env(safe-area-inset-bottom));
+      transform: translateX(-50%) translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      width: min(92vw, 520px);
+      border: 1px solid rgba(112, 201, 255, 0.45);
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(10, 25, 50, 0.96), rgba(6, 16, 33, 0.98));
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.45), inset 0 0 20px rgba(88, 194, 255, 0.1);
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 320;
+      transition: opacity 0.24s ease, transform 0.24s ease;
+    }
+
+    .wallet-reward-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .wallet-reward-token {
+      width: 36px;
+      max-width: 36px;
+      height: 36px;
+      object-fit: contain;
+      flex-shrink: 0;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+    }
+
+    .wallet-reward-text {
+      margin: 0;
+      color: #ebf9ff;
+      font-size: 0.94rem;
+      font-weight: 800;
+      line-height: 1.35;
     }
 
     .fixed-nav-stack {
@@ -2525,6 +2648,39 @@
         font-size: 0.82rem;
       }
 
+      .wallet-first-content {
+        align-items: center;
+      }
+
+      .wallet-first-token {
+        width: 40px;
+        max-width: 40px;
+        height: 40px;
+      }
+
+      .wallet-first-copy h3 {
+        font-size: 1.06rem;
+      }
+
+      .wallet-first-copy p {
+        font-size: 0.88rem;
+      }
+
+      .wallet-reward-toast {
+        bottom: calc(96px + env(safe-area-inset-bottom));
+        padding: 9px 10px;
+      }
+
+      .wallet-reward-token {
+        width: 34px;
+        max-width: 34px;
+        height: 34px;
+      }
+
+      .wallet-reward-text {
+        font-size: 0.86rem;
+      }
+
       .tab-btn {
         min-height: 60px;
         font-size: 1rem;
@@ -3185,6 +3341,25 @@
     </div>
   </div>
 
+  <div id="walletFirstModal" class="wallet-first-modal" aria-hidden="true">
+    <div class="wallet-first-panel" role="dialog" aria-modal="true" aria-labelledby="walletFirstTitle">
+      <button id="walletFirstCloseButton" class="wallet-first-close" type="button" aria-label="Close wallet welcome">×</button>
+      <div class="wallet-first-content">
+        <img class="wallet-first-token" src="turdtoken2026.png" alt="Turd Token">
+        <div class="wallet-first-copy">
+          <h3 id="walletFirstTitle">You've earned your first Turd Token!</h3>
+          <p>Collect a Token after your first poop logged each day, and earn bonus Tokens for keeping your brown streak alive.</p>
+        </div>
+      </div>
+      <button id="walletFirstDismissButton" class="button wallet-first-dismiss" type="button">Awesome</button>
+    </div>
+  </div>
+
+  <div id="walletRewardToast" class="wallet-reward-toast" role="status" aria-live="polite">
+    <img class="wallet-reward-token" src="turdtoken2026.png" alt="Turd Token">
+    <p id="walletRewardToastText" class="wallet-reward-text"></p>
+  </div>
+
   <div id="milestoneToast" class="milestone-toast" role="status" aria-live="polite"></div>
 
   <div class="page-bottom-links">
@@ -3314,6 +3489,12 @@
       var walletCoinImage = document.getElementById("walletCoinImage");
       var walletBalanceValue = document.getElementById("walletBalanceValue");
       var walletStreakValue = document.getElementById("walletStreakValue");
+      var walletFirstModal = document.getElementById("walletFirstModal");
+      var walletFirstDismissButton = document.getElementById("walletFirstDismissButton");
+      var walletFirstCloseButton = document.getElementById("walletFirstCloseButton");
+      var walletRewardToast = document.getElementById("walletRewardToast");
+      var walletRewardToastText = document.getElementById("walletRewardToastText");
+      var walletRewardToastTimerId = null;
 
       var statSessions = document.getElementById("statSessions");
       var statTime = document.getElementById("statTime");
@@ -3476,8 +3657,9 @@
       var WALLET_ANON_ID_KEY = "pp_wallet_anon_id_v1";
       var WALLET_FUNCTION_URL = "https://ukfboxemqwuwkvfglzfq.supabase.co/functions/v1/wallet";
       var walletSnapshot = {
-        token_balance: 0,
-        current_streak: 0
+        new_balance: 0,
+        window_day_count: 0,
+        goals_completed: 0
       };
       var walletBalanceAnimationFrameId = null;
 
@@ -3559,14 +3741,24 @@
         return generated;
       }
 
-      function normalizeWalletSnapshot(data) {
+      function normalizeWalletPayload(data) {
         var source = data || {};
+        var dayCount = Math.max(
+          0,
+          Math.min(
+            7,
+            Math.floor(Number(source.window_day_count !== undefined ? source.window_day_count : source.current_streak) || 0)
+          )
+        );
         return {
-          token_balance: Math.max(0, Math.floor(Number(source.token_balance) || 0)),
-          current_streak: Math.max(0, Math.floor(Number(source.current_streak) || 0)),
-          longest_streak: Math.max(0, Math.floor(Number(source.longest_streak) || 0)),
-          total_earned: Math.max(0, Math.floor(Number(source.total_earned) || 0)),
-          awarded: Math.max(0, Math.floor(Number(source.awarded) || 0))
+          status: String(source.status || "unknown"),
+          tokens_awarded: Math.max(0, Math.floor(Number(source.tokens_awarded !== undefined ? source.tokens_awarded : source.awarded) || 0)),
+          new_balance: Math.max(0, Math.floor(Number(source.new_balance !== undefined ? source.new_balance : source.token_balance) || 0)),
+          window_day_count: dayCount,
+          tier: String(source.tier || "normal"),
+          days_to_goal: Math.max(0, Math.floor(Number(source.days_to_goal) || Math.max(0, 5 - dayCount))),
+          goals_completed: Math.max(0, Math.floor(Number(source.goals_completed) || 0)),
+          is_first_ever: Boolean(source.is_first_ever)
         };
       }
 
@@ -3583,7 +3775,7 @@
 
       function animateWalletBalanceTo(targetBalance, durationMs) {
         if (!walletBalanceValue) return;
-        var startBalance = Math.max(0, Math.floor(Number(walletSnapshot.token_balance) || 0));
+        var startBalance = Math.max(0, Math.floor(Number(walletSnapshot.new_balance) || 0));
         var endBalance = Math.max(0, Math.floor(Number(targetBalance) || 0));
         var duration = Math.max(120, Number(durationMs) || 600);
 
@@ -3594,7 +3786,7 @@
 
         if (startBalance === endBalance) {
           setWalletBalanceValue(endBalance);
-          walletSnapshot.token_balance = endBalance;
+          walletSnapshot.new_balance = endBalance;
           return;
         }
 
@@ -3610,7 +3802,7 @@
             walletBalanceAnimationFrameId = window.requestAnimationFrame(step);
           } else {
             walletBalanceAnimationFrameId = null;
-            walletSnapshot.token_balance = endBalance;
+            walletSnapshot.new_balance = endBalance;
             setWalletBalanceValue(endBalance);
           }
         }
@@ -3627,28 +3819,67 @@
 
       function renderWalletSnapshot(snapshot, options) {
         if (!walletCorner) return;
-        var resolved = normalizeWalletSnapshot(snapshot);
+        var resolved = normalizeWalletPayload(snapshot);
         var opts = options || {};
         var animate = Boolean(opts.animateBalance);
         var pulse = Boolean(opts.pulseCoin);
 
         if (animate) {
-          animateWalletBalanceTo(resolved.token_balance, opts.durationMs || 600);
+          animateWalletBalanceTo(resolved.new_balance, opts.durationMs || 600);
         } else {
           if (walletBalanceAnimationFrameId !== null) {
             window.cancelAnimationFrame(walletBalanceAnimationFrameId);
             walletBalanceAnimationFrameId = null;
           }
-          walletSnapshot.token_balance = resolved.token_balance;
-          setWalletBalanceValue(resolved.token_balance);
+          walletSnapshot.new_balance = resolved.new_balance;
+          setWalletBalanceValue(resolved.new_balance);
         }
 
-        walletSnapshot.current_streak = resolved.current_streak;
-        setWalletStreakValue(resolved.current_streak);
+        walletSnapshot.window_day_count = resolved.window_day_count;
+        walletSnapshot.goals_completed = resolved.goals_completed;
+        setWalletStreakValue(resolved.window_day_count);
 
         if (pulse) {
           pulseWalletCoin();
         }
+      }
+
+      function getWalletToastHtml(windowDayCount) {
+        var safeDay = Math.max(1, Math.min(7, Math.floor(Number(windowDayCount) || 1)));
+        if (safeDay === 1) return "+1 Turd Token! 4 days to your bonus.";
+        if (safeDay === 2) return "+1 Turd Token! 3 days to your bonus.";
+        if (safeDay === 3) return "+1 Turd Token! 2 days to your bonus.";
+        if (safeDay === 4) return "+1 Turd Token! 1 more day. Keep that brown streak alive.";
+        if (safeDay === 5) return "💰 Goal hit! +2 Turd Tokens! 2 days left to go perfect.";
+        if (safeDay === 6) return "💪 Pulling overtime <em>duty</em>! +3 Tokens!";
+        return "🏆 Overachiever! Poopaholic! +5 Tokens!";
+      }
+
+      function showWalletRewardToast(walletPayload) {
+        if (!walletRewardToast || !walletRewardToastText) return;
+        walletRewardToastText.innerHTML = getWalletToastHtml(walletPayload.window_day_count);
+        walletRewardToast.classList.add("show");
+        if (walletRewardToastTimerId !== null) {
+          window.clearTimeout(walletRewardToastTimerId);
+        }
+        walletRewardToastTimerId = window.setTimeout(function () {
+          walletRewardToast.classList.remove("show");
+          walletRewardToastTimerId = null;
+        }, 4000);
+      }
+
+      function openWalletFirstModal() {
+        if (!walletFirstModal) return;
+        walletFirstModal.classList.add("open");
+        walletFirstModal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("wallet-modal-open");
+      }
+
+      function closeWalletFirstModal() {
+        if (!walletFirstModal) return;
+        walletFirstModal.classList.remove("open");
+        walletFirstModal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("wallet-modal-open");
       }
 
       function walletFunctionPayload(mode) {
@@ -3670,7 +3901,7 @@
           if (!response.ok) throw new Error("wallet_request_failed");
           return response.json();
         }).then(function (payload) {
-          return normalizeWalletSnapshot(payload);
+          return normalizeWalletPayload(payload);
         });
       }
 
@@ -3684,6 +3915,16 @@
 
       function initializeWallet() {
         renderWalletSnapshot(walletSnapshot);
+        if (walletFirstDismissButton) {
+          walletFirstDismissButton.addEventListener("click", function () {
+            closeWalletFirstModal();
+          });
+        }
+        if (walletFirstCloseButton) {
+          walletFirstCloseButton.addEventListener("click", function () {
+            closeWalletFirstModal();
+          });
+        }
         peekWallet()
           .then(function (snapshot) {
             renderWalletSnapshot(snapshot);
@@ -4423,19 +4664,19 @@
         claimWallet()
           .then(function (walletResult) {
             if (!walletResult) return;
-            if (walletResult.awarded > 0) {
-              renderWalletSnapshot(walletResult, {
-                animateBalance: true,
-                durationMs: 600,
-                pulseCoin: true
-              });
-              setStatus(
-                statusMessage,
-                "Herman wired you " + walletResult.awarded + " Turd Token" + (walletResult.awarded === 1 ? "" : "s") + ".",
-                "ok"
-              );
-            } else {
+            if (walletResult.status !== "claimed" || walletResult.tokens_awarded <= 0) {
               renderWalletSnapshot(walletResult);
+              return;
+            }
+            renderWalletSnapshot(walletResult, {
+              animateBalance: true,
+              durationMs: 600,
+              pulseCoin: true
+            });
+            if (walletResult.is_first_ever) {
+              openWalletFirstModal();
+            } else {
+              showWalletRewardToast(walletResult);
             }
           })
           .catch(function () {
