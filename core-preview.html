@@ -257,21 +257,24 @@
       position: relative;
       z-index: 3;
       border: 1px solid rgba(112, 201, 255, 0.42);
-      border-radius: 14px;
-      background: linear-gradient(180deg, rgba(12, 31, 61, 0.88), rgba(7, 19, 41, 0.94));
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(8, 24, 50, 0.92), rgba(5, 15, 34, 0.96));
       box-shadow: 0 10px 22px rgba(0, 0, 0, 0.34), inset 0 0 16px rgba(89, 196, 255, 0.12);
-      padding: 7px 10px 8px;
-      min-width: 132px;
+      padding: 10px 14px;
+      width: 100%;
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
     }
 
     .wallet-banner-row {
-      display: flex;
-      justify-content: flex-end;
+      display: block;
       width: 100%;
       margin-top: 2px;
-      padding-right: 2px;
       position: relative;
       z-index: 2;
     }
@@ -279,7 +282,7 @@
     .wallet-balance-row {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       line-height: 1;
     }
 
@@ -297,21 +300,22 @@
 
     .wallet-balance-value {
       color: #f3fcff;
-      font-size: 1.08rem;
+      font-size: 1.45rem;
       font-weight: 900;
       letter-spacing: 0.01em;
       text-shadow: 0 0 10px rgba(111, 214, 255, 0.34);
-      min-width: 24px;
+      min-width: 18px;
       text-align: left;
     }
 
     .wallet-streak {
-      margin: 4px 0 0;
+      margin: 0;
       color: #ffdc88;
-      font-size: 0.76rem;
+      font-size: 0.95rem;
       font-weight: 800;
       letter-spacing: 0.01em;
       text-shadow: 0 0 8px rgba(255, 162, 76, 0.26);
+      white-space: nowrap;
     }
 
     .fixed-nav-stack {
@@ -2503,8 +2507,9 @@
       }
 
       .wallet-corner {
-        min-width: 120px;
-        padding: 6px 8px 7px;
+        min-height: 52px;
+        padding: 8px 10px;
+        gap: 8px;
       }
 
       .wallet-coin {
@@ -2513,11 +2518,11 @@
       }
 
       .wallet-balance-value {
-        font-size: 1rem;
+        font-size: 1.2rem;
       }
 
       .wallet-streak {
-        font-size: 0.72rem;
+        font-size: 0.82rem;
       }
 
       .tab-btn {
