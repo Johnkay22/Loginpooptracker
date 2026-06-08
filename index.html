@@ -3,11 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Paid to Poop at Work Calculator | PoopProfit.com</title>
-    <meta
-      name="description"
-      content="Use the PoopProfit paid-to-poop calculator to estimate bathroom break earnings, track sessions, and share progress with no account required."
-    />
+    <title>PoopProfit | Poop Salary Calculator & Work Bathroom Tracker</title>
+    <meta name="description" content="Calculate your poop salary and track exactly how much you earn during bathroom breaks based on your existing wages. View detailed analytics and share your stats.">
     <link rel="canonical" href="https://www.poopprofit.com/" />
     <meta name="robots" content="index,follow,max-image-preview:large" />
 
@@ -270,8 +267,38 @@
       .glow-line {
         background: linear-gradient(90deg, transparent, rgba(125,211,252,0.7), transparent);
       }
-      .hero-title {
+      .hero-title,
+      #hero > h1 {
         text-shadow: 0 4px 24px rgba(8, 47, 73, 0.9);
+      }
+      #hero > h1 {
+        max-width: 56rem;
+        margin: 1rem auto 0;
+        color: #f1f5f9;
+        font-size: 2.25rem;
+        font-weight: 900;
+        line-height: 1.05;
+        letter-spacing: -0.025em;
+      }
+      #poop-salary-faq > div {
+        border: 1px solid var(--ui-border);
+        border-radius: var(--ui-radius-lg);
+        background: var(--ui-surface-soft);
+        box-shadow: var(--ui-shadow-soft);
+        padding: 1rem;
+      }
+      #poop-salary-faq h2 {
+        margin: 0;
+        color: #e0f2fe;
+        font-size: 1.35rem;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+      #poop-salary-faq p {
+        margin: 0.75rem 0 0;
+        color: #cbd5e1;
+        font-size: 0.95rem;
+        line-height: 1.6;
       }
       .hero-kicker {
         display: inline-flex;
@@ -703,6 +730,20 @@
           height: 34px;
         }
       }
+      @media (min-width: 640px) {
+        #hero > h1 {
+          font-size: 3.75rem;
+        }
+        #poop-salary-faq > div {
+          padding: 1.5rem;
+        }
+        #poop-salary-faq h2 {
+          font-size: 1.875rem;
+        }
+        #poop-salary-faq p {
+          font-size: 1rem;
+        }
+      }
       .mobile-sticky-cta {
         position: fixed;
         left: 0;
@@ -784,10 +825,7 @@
           <img src="newpplogo.png" alt="PoopProfit.com logo" class="h-auto w-full max-w-[170px] sm:max-w-[260px]" />
         </div>
         <span class="hero-kicker">No account required</span>
-        <h1 class="hero-title mx-auto mt-4 max-w-4xl text-4xl font-black leading-tight tracking-tight text-slate-100 sm:text-6xl">
-          How Much Do You Get
-          <span class="bg-gradient-to-r from-cyan-100 via-emerald-200 to-cyan-300 bg-clip-text text-transparent">Paid to Poop at Work?</span>
-        </h1>
+        <h1>Poop Salary Calculator</h1>
         <div class="hero-findout-wrap">
           <a
             href="https://www.poopprofit.com/core-preview.html"
@@ -940,6 +978,12 @@
             <summary class="cursor-pointer list-none font-semibold text-cyan-100">Can I track multiple bathroom sessions per day?</summary>
             <p class="mt-2 text-sm leading-relaxed text-slate-300">Yes. You can log as many sessions as you want in a day and review totals in your logs and stats.</p>
           </details>
+        </div>
+      </section>
+      <section id="poop-salary-faq" class="app-section mx-auto mt-12 max-w-5xl px-4 py-6 sm:px-6">
+        <div>
+          <h2>How much do I get paid to poop at work?</h2>
+          <p>Input your hourly wage or annual salary into the PoopProfit calculator. Start the timer when you head to the bathroom, and the tracker will calculate your exact poop wage in real-time based on your existing pay rate.</p>
         </div>
       </section>
       <footer class="mx-auto mt-12 w-full max-w-6xl border-t border-sky-200/20 px-4 py-6 text-center text-sm text-slate-300 sm:px-6">
