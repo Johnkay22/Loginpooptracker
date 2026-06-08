@@ -20,6 +20,17 @@ interface WalletRequestBody {
   tz_offset_minutes: number;
 }
 
+interface WalletPayload {
+  status: string;
+  tokens_awarded: number;
+  new_balance: number;
+  window_day_count: number;
+  tier: "normal" | "goal" | "overtime" | "perfect";
+  days_to_goal: number;
+  goals_completed: number;
+  is_first_ever: boolean;
+}
+
 function jsonResponse(status: number, payload: Record<string, unknown>) {
   return new Response(JSON.stringify(payload), {
     status,
@@ -53,6 +64,33 @@ function validateInput(body: unknown): WalletRequestBody {
     anon_id: anonId,
     mode,
     tz_offset_minutes: tzOffset,
+  };
+}
+
+function toSafeInteger(value: unknown): number {
+  return Math.max(0, Math.floor(Number(value) || 0));
+}
+
+function tierForWindowDay(dayCount: number): WalletPayload["tier"] {
+  if (dayCount >= 7) return "perfect";
+  if (dayCount === 6) return "overtime";
+  if (dayCount === 5) return "goal";
+  return "normal";
+}
+
+function normalizeWalletPayload(payload: unknown): WalletPayload {
+  const source = (payload && typeof payload === "object") ? payload as Record<string, unknown> : {};
+  const windowDayCount = Math.min(7, Math.max(0, toSafeInteger(source.window_day_count)));
+  const tier = tierForWindowDay(windowDayCount);
+  return {
+    status: typeof source.status === "string" ? source.status : "claimed",
+    tokens_awarded: toSafeInteger(source.tokens_awarded),
+    new_balance: toSafeInteger(source.new_balance),
+    window_day_count: windowDayCount,
+    tier,
+    days_to_goal: Math.max(0, 5 - windowDayCount),
+    goals_completed: toSafeInteger(source.goals_completed),
+    is_first_ever: Boolean(source.is_first_ever),
   };
 }
 
@@ -92,7 +130,7 @@ Deno.serve(async (req: Request) => {
 
       const { data: wallet, error: selectError } = await supabase
         .from("wallets")
-        .select("token_balance, current_streak, longest_streak, total_earned, last_claim_date, last_claim_at")
+        .select("token_balance, window_log_count, goals_completed, first_claim_at")
         .eq("anon_id", parsedBody.anon_id)
         .single();
 
@@ -100,18 +138,20 @@ Deno.serve(async (req: Request) => {
         return jsonResponse(500, { error: "database_error" });
       }
 
-      return jsonResponse(200, {
-        token_balance: wallet.token_balance,
-        current_streak: wallet.current_streak,
-        longest_streak: wallet.longest_streak,
-        total_earned: wallet.total_earned,
-        last_claim_date: wallet.last_claim_date,
-        last_claim_at: wallet.last_claim_at,
-        awarded: 0,
-      });
+      const windowDayCount = Math.min(7, Math.max(0, toSafeInteger(wallet.window_log_count)));
+      return jsonResponse(200, normalizeWalletPayload({
+        status: "peek",
+        tokens_awarded: 0,
+        new_balance: wallet.token_balance,
+        window_day_count: windowDayCount,
+        tier: tierForWindowDay(windowDayCount),
+        days_to_goal: Math.max(0, 5 - windowDayCount),
+        goals_completed: wallet.goals_completed,
+        is_first_ever: !wallet.first_claim_at,
+      }));
     }
 
-    const { data: claimRows, error: claimError } = await supabase.rpc("wallet_claim", {
+    const { data: claimData, error: claimError } = await supabase.rpc("wallet_claim", {
       p_anon_id: parsedBody.anon_id,
       p_tz_offset_minutes: parsedBody.tz_offset_minutes,
       p_normal_reward: NORMAL_REWARD,
@@ -120,20 +160,16 @@ Deno.serve(async (req: Request) => {
       p_min_hours_between_claims: MIN_HOURS_BETWEEN_CLAIMS,
     });
 
-    if (claimError || !Array.isArray(claimRows) || claimRows.length === 0) {
+    if (claimError) {
       return jsonResponse(500, { error: "database_error" });
     }
 
-    const claimed = claimRows[0];
-    return jsonResponse(200, {
-      token_balance: claimed.token_balance,
-      current_streak: claimed.current_streak,
-      longest_streak: claimed.longest_streak,
-      total_earned: claimed.total_earned,
-      last_claim_date: claimed.last_claim_date,
-      last_claim_at: claimed.last_claim_at,
-      awarded: claimed.awarded,
-    });
+    const rawPayload = Array.isArray(claimData) ? claimData[0] : claimData;
+    if (!rawPayload || typeof rawPayload !== "object") {
+      return jsonResponse(500, { error: "database_error" });
+    }
+
+    return jsonResponse(200, normalizeWalletPayload(rawPayload));
   } catch (error) {
     if (error instanceof Error) {
       if (
