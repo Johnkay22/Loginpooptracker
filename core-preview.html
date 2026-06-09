@@ -1948,6 +1948,16 @@
       white-space: nowrap;
     }
 
+    /* Capture fallback: avoid desktop foreignObject gradient text artifact. */
+    .share-card-canvas.capture-safe .share-card-amount {
+      background: none !important;
+      -webkit-background-clip: border-box !important;
+      background-clip: border-box !important;
+      color: #9be7ff !important;
+      -webkit-text-fill-color: #9be7ff !important;
+      text-shadow: 0 0 24px rgba(72, 189, 255, 0.28);
+    }
+
     .share-card-badge {
       display: inline-flex;
       align-items: center;
@@ -2181,9 +2191,9 @@
       position: fixed;
       inset: 0;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: center;
-      padding: 14px 12px calc(14px + env(safe-area-inset-bottom));
+      padding: 16px;
       background: rgba(3, 8, 16, 0.6);
       backdrop-filter: blur(3px);
       z-index: 140;
@@ -2207,14 +2217,14 @@
     .rating-panel,
     .share-picker-panel {
       width: min(520px, 100%);
-      border-radius: 20px 20px 16px 16px;
+      border-radius: 18px;
       border: 1px solid rgba(67, 179, 255, 0.36);
       background: linear-gradient(180deg, rgba(18, 27, 50, 0.98), rgba(10, 15, 30, 0.98));
       box-shadow: 0 28px 56px rgba(0, 0, 0, 0.55);
-      padding: 10px 16px calc(16px + env(safe-area-inset-bottom));
+      padding: 14px 16px 16px;
       text-align: center;
-      transform: translate3d(0, calc(100% + 24px), 0);
-      transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+      transform: translate3d(0, 24px, 0) scale(0.98);
+      transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
       max-height: min(86vh, 700px);
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
@@ -2223,7 +2233,7 @@
 
     .rating-modal.open.visible .rating-panel,
     .share-picker-modal.open.visible .share-picker-panel {
-      transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0) scale(1);
     }
 
     .rating-panel.sheet-dragging,
@@ -2232,7 +2242,7 @@
     }
 
     .sheet-grabber {
-      display: flex;
+      display: none;
       justify-content: center;
       align-items: center;
       margin: 0 0 10px;
@@ -2694,13 +2704,13 @@
 
       .rating-modal,
       .share-picker-modal {
-        padding: 10px 8px calc(8px + env(safe-area-inset-bottom));
+        padding: 10px;
       }
 
       .rating-panel,
       .share-picker-panel {
-        width: 100%;
-        border-radius: 18px 18px 14px 14px;
+        width: min(520px, 100%);
+        border-radius: 16px;
         padding-left: 14px;
         padding-right: 14px;
       }
@@ -5172,6 +5182,7 @@
         shareCardTemplate.style.zIndex = "-1";
         shareCardTemplate.style.display = "block";
         shareCardTemplate.style.transform = "translateZ(0)";
+        shareCardCanvas.classList.add("capture-safe");
 
         return window.htmlToImage.toBlob(shareCardCanvas, {
           cacheBust: true,
@@ -5190,6 +5201,7 @@
           shareCardTemplate.style.zIndex = previousInline.zIndex;
           shareCardTemplate.style.display = previousInline.display;
           shareCardTemplate.style.transform = previousInline.transform;
+          shareCardCanvas.classList.remove("capture-safe");
         });
       }
 
