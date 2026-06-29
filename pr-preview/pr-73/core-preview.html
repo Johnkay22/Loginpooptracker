@@ -3281,7 +3281,7 @@ html, body {
   box-shadow: 0 0 0 1px rgba(59, 157, 255, 0.12), 0 0 20px rgba(59, 157, 255, 0.22);
   flex: none;
 }
-.wage-strip-copy { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.wage-strip-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; }
 .wage-strip-toggle .wage-strip-title {
   display: block;
   font-size: 10.5px;
@@ -3298,6 +3298,8 @@ html, body {
   color: var(--text);
   line-height: 1.2;
   margin: 0;
+  text-align: left;
+  align-self: flex-start;
 }
 .wage-strip-hint {
   display: block;
@@ -3556,6 +3558,13 @@ html, body {
   .panel-calculator > .panel-grid > .wage-card:first-child {
     margin-top: 6px !important;
   }
+
+  .wage-strip-toggle { gap: 10px; }
+  .wage-strip-icon { width: 44px; height: 44px; font-size: 18px; border-radius: 12px; }
+  .wage-strip-summary { font-size: 16px; }
+  .wage-strip-rate { font-size: 15px; }
+  .wage-strip-divider { height: 40px; }
+  .wage-strip-edit { width: 36px; height: 36px; }
 
   .log-entry {
     padding: 12px 13px !important;
