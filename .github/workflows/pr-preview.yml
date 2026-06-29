@@ -1,0 +1,39 @@
+name: Deploy PR previews
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Pull request number to preview"
+        required: true
+        default: "73"
+
+concurrency: preview-${{ github.event.pull_request.number || inputs.pr_number || github.run_id }}
+
+permissions:
+  contents: write
+  pull-requests: write
+  pages: read
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: .
+          preview-branch: main
+          umbrella-dir: pr-preview
+          pr-number: ${{ github.event.pull_request.number || inputs.pr_number }}
+          qr-code: true
+          wait-for-pages-deployment: true
