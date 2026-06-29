@@ -4189,15 +4189,15 @@ html, body {
         {
           title: "Save Your Log!",
           body: "When you finish pooping, your poop logs saves here. You can rate it, share it, or delete it anytime.",
-          target: "#logList",
+          target: ".log-card",
           tab: "calculator",
           mascotSrc: "OnboardingMascot_20260419_094405_0004.jpg"
         },
         {
           title: "See Your Detailed Stats!",
           body: "Use Stats to filter by date range, view trends, and share your results. You're all set! Happy pooping",
-          target: "#panel-stats .stats-filter-bar",
-          tab: "stats",
+          target: "#appDock [data-tab=\"stats\"]",
+          tab: "calculator",
           mascotSrc: "OnboardingMascot_20260419_094405_0005.jpg"
         },
         {
@@ -6772,7 +6772,7 @@ html, body {
         }
 
         ensureTutorialTargetVisibility(step);
-        var positionDelay = step.target === "nav.dock" ? 160 : 80;
+        var positionDelay = step.target && step.target.indexOf("appDock") !== -1 ? 160 : 80;
         window.setTimeout(function () {
           queueTutorialPositionUpdate();
         }, positionDelay);

@@ -3283,7 +3283,7 @@ html, body {
 .share-controls .share-buttons { display: flex; gap: 9px; flex-wrap: wrap; }
 .share-controls .share-buttons button { flex: 1; min-width: 120px; border: 0; border-radius: 12px; padding: 13px; font-weight: 700; font-size: 13px; cursor: pointer; }
 #openSharePickerButton { color: #fff; background: linear-gradient(180deg, #4aa6ff, #2f7fe0); box-shadow: 0 8px 18px -8px rgba(59,157,255,.6); }
-#copyShareTextButton, #testShareCardRenderButton { background: rgba(120,170,235,.07); border: 1px solid var(--line-2) !important; color: var(--muted); }
+#copyShareTextButton { background: rgba(120,170,235,.07); border: 1px solid var(--line-2) !important; color: var(--muted); }
 .share-controls select { width: 100%; background: var(--field); border: 1px solid var(--line-2); color: var(--text); border-radius: 11px; padding: 12px; font-size: 13.5px; font-weight: 600; color-scheme: dark; margin-bottom: 13px; }
 
 .coming-screen { padding-bottom: 0; }
@@ -3624,7 +3624,6 @@ html, body {
               <div class="share-buttons share-btns">
                 <button id="openSharePickerButton" class="primary" type="button">↗ Share Summary</button>
                 <button id="copyShareTextButton" class="ghost" type="button">Copy Share Text</button>
-                <button id="testShareCardRenderButton" class="ghost" type="button">Test Render</button>
               </div>
               <div id="shareStatus" class="share-status status"></div>
             </div>
@@ -4056,7 +4055,6 @@ html, body {
       var sharePickerDescription = document.getElementById("sharePickerDescription");
       var closeSharePickerButton = document.getElementById("closeSharePickerButton");
       var shareChannelButtons = sharePickerModal ? sharePickerModal.querySelectorAll("[data-share-channel]") : [];
-      var testShareCardRenderButton = document.getElementById("testShareCardRenderButton");
       var shareCardTemplate = document.getElementById("shareCardTemplate");
       var shareCardCanvas = shareCardTemplate ? shareCardTemplate.querySelector(".share-card-canvas") : null;
       var shareCardAmountValue = document.getElementById("shareCardAmountValue");
@@ -4629,32 +4627,6 @@ html, body {
               return;
             }
             copyToClipboard(text);
-          });
-        }
-
-        if (testShareCardRenderButton) {
-          testShareCardRenderButton.addEventListener("click", function () {
-            var mockSession = {
-              earnings: 3.82,
-              durationSeconds: 12 * 60
-            };
-            var originalText = testShareCardRenderButton.textContent;
-            testShareCardRenderButton.disabled = true;
-            testShareCardRenderButton.textContent = "Rendering...";
-
-            generateShareCardPng(mockSession)
-              .then(function (blob) {
-                downloadBlob(blob, "poopprofit-share-card-sample.png");
-                announceShareStatus("Sample card downloaded.", "ok");
-              })
-              .catch(function (error) {
-                console.error(error);
-                announceShareStatus("Share card render failed. Verify required image assets exist.", "warn");
-              })
-              .finally(function () {
-                testShareCardRenderButton.disabled = false;
-                testShareCardRenderButton.textContent = originalText;
-              });
           });
         }
 

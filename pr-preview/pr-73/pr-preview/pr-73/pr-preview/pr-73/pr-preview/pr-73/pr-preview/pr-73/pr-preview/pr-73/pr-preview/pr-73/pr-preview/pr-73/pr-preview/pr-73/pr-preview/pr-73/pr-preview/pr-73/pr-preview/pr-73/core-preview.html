@@ -3173,8 +3173,26 @@
   @media(max-width:380px){.hero .big{font-size:40px}.timer-display{font-size:44px}.hero-herman{width:128px}.logo{height:40px}}
 
 /* === Live app bridge (maps existing markup to redesign) === */
-.page { width: min(460px, calc(100vw - 18px)); margin: 14px auto calc(116px + env(safe-area-inset-bottom)); }
-html, body { background-image: none !important; background-color: var(--bg) !important; font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif; }
+html, body {
+  background-image: none !important;
+  background-color: var(--bg) !important;
+  font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  display: block !important;
+  width: 100%;
+  margin: 0;
+  padding: 0 !important;
+  padding-bottom: calc(116px + env(safe-area-inset-bottom)) !important;
+  min-height: 100%;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+.page {
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 14px 0 0;
+  padding-bottom: calc(116px + env(safe-area-inset-bottom));
+}
 .shell { border: 1px solid var(--line-2); border-radius: 22px; background: linear-gradient(180deg, rgba(16,26,43,.72), rgba(10,17,32,.78)); box-shadow: var(--shadow); padding: 14px; position: relative; overflow: visible; backdrop-filter: blur(12px); }
 .shell::before { display: none; }
 .fixed-nav-stack { margin-bottom: 8px; }
@@ -3257,6 +3275,74 @@ html, body { background-image: none !important; background-color: var(--bg) !imp
 .mobile-fab { z-index: 45; }
 .tutorial-help-button { z-index: 55; }
 @keyframes rise { to { opacity: 1; transform: none; } }
+
+@media (max-width: 760px) {
+  body {
+    padding: 0 !important;
+    padding-bottom: calc(108px + env(safe-area-inset-bottom)) !important;
+    overflow-x: hidden;
+  }
+
+  .page {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    padding-bottom: calc(108px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .shell {
+    width: 100% !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    margin: 0 !important;
+    padding: calc(8px + env(safe-area-inset-top)) 12px 16px !important;
+  }
+
+  .fixed-nav-stack,
+  .head,
+  .wallet-banner-row,
+  .wallet-corner,
+  .panel-grid,
+  .panel-grid > .card,
+  .card,
+  .timer-panel-bridge {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .head {
+    margin-bottom: 10px;
+  }
+
+  .dock {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: min(300px, calc(100vw - 32px)) !important;
+    bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .mobile-fab {
+    display: inline-flex !important;
+    right: calc(12px + env(safe-area-inset-right)) !important;
+    bottom: calc(92px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .ring-wrap {
+    width: min(300px, 86vw) !important;
+    max-width: 86vw !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .tutorial-help-button {
+    top: calc(10px + env(safe-area-inset-top));
+    right: calc(10px + env(safe-area-inset-right));
+  }
+}
 
   </style>
 </head>
