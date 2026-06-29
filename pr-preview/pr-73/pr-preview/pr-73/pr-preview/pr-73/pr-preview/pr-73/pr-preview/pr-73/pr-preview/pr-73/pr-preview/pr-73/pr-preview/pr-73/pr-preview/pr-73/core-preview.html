@@ -2665,9 +2665,9 @@
       }
 
       .tutorial-help-button {
-        position: absolute;
-        top: 12px;
-        right: 12px;
+        position: static;
+        top: auto;
+        right: auto;
         width: 34px;
         height: 34px;
         font-size: 1.06rem;
@@ -3170,7 +3170,7 @@
   .nav-btn svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
   .nav-btn.active{color:var(--blue-2)}
 
-  @media(max-width:380px){.hero .big{font-size:40px}.timer-display{font-size:44px}.hero-herman{width:128px}.logo{height:40px}}
+  @media(max-width:380px){.hero .big{font-size:40px}.timer-display{font-size:44px}.hero-herman{width:128px}.logo{height:48px}}
 
 /* === Live app bridge (maps existing markup to redesign) === */
 html, body {
@@ -3196,8 +3196,9 @@ html, body {
 .shell { border: 1px solid var(--line-2); border-radius: 22px; background: linear-gradient(180deg, rgba(16,26,43,.72), rgba(10,17,32,.78)); box-shadow: var(--shadow); padding: 14px; position: relative; overflow: visible; backdrop-filter: blur(12px); }
 .shell::before { display: none; }
 .fixed-nav-stack { margin-bottom: 8px; }
-.head { display: flex; align-items: center; gap: 11px; margin-bottom: 10px; padding: 0 2px; }
-.head .logo { height: 46px; width: auto; display: block; }
+.head { display: flex; align-items: center; justify-content: space-between; gap: 11px; margin-bottom: 10px; padding: 0 2px; width: 100%; }
+.head .logo { height: 56px; width: auto; display: block; flex: none; }
+.head .tutorial-help-button { position: static; top: auto; right: auto; flex: none; }
 .wallet-banner-row { width: 100%; }
 .wallet-corner { border-radius: 999px; padding: 8px 13px 8px 9px; background: linear-gradient(180deg, var(--panel-top), var(--panel-bot)); border: 1px solid var(--line); box-shadow: var(--shadow); min-height: auto; }
 .wallet-coin { width: 28px; height: 28px; }
@@ -3273,7 +3274,7 @@ html, body {
 .coming-chevron { color: var(--muted-2); }
 
 .mobile-fab { z-index: 45; }
-.tutorial-help-button { z-index: 55; }
+.tutorial-help-button { z-index: 80; position: relative; }
 @keyframes rise { to { opacity: 1; transform: none; } }
 
 @media (max-width: 760px) {
@@ -3317,6 +3318,16 @@ html, body {
     margin-bottom: 10px;
   }
 
+  .head .logo {
+    height: 52px;
+  }
+
+  .head .tutorial-help-button {
+    width: 34px;
+    height: 34px;
+    font-size: 1.06rem;
+  }
+
   .dock {
     left: 50% !important;
     right: auto !important;
@@ -3338,9 +3349,10 @@ html, body {
     margin-right: auto !important;
   }
 
-  .tutorial-help-button {
-    top: calc(10px + env(safe-area-inset-top));
-    right: calc(10px + env(safe-area-inset-right));
+  .head .tutorial-help-button {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
   }
 }
 
@@ -3350,10 +3362,10 @@ html, body {
   <main class="page">
     <section class="shell">
       <h1 class="sr-only">PoopProfit Core Preview Calculator, Session Timer, and Stats</h1>
-      <button id="tutorialHelpButton" class="tutorial-help-button" type="button" aria-label="Open quick tour">?</button>
       <div class="fixed-nav-stack">
         <header class="head">
           <img class="logo" src="poopprofit_logo.png" alt="PoopProfit.com — Get Paid To Poop">
+          <button id="tutorialHelpButton" class="tutorial-help-button" type="button" aria-label="Open quick tour">?</button>
         </header>
         <div class="wallet-banner-row">
           <aside id="walletCorner" class="wallet-corner" aria-live="polite" aria-label="Turd Token wallet">

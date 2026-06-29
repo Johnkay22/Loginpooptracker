@@ -5393,7 +5393,7 @@ html, body {
         var streakDays = Math.max(0, Math.floor(Number(walletSnapshot.window_day_count) || 0));
 
         // TODO: replace with live Supabase rank query
-        var pct = Math.min(99, Math.max(1, Math.round(100 * (1 - Math.exp(-totalEarnings / 250)))));
+        var pct = Math.min(99, Math.max(1, Math.round(100 * (1 - Math.exp(-allTimeEarnings / 250)))));
 
         if (animate) {
           statsCountUpGeneration += 1;
