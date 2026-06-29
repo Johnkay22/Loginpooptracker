@@ -2613,10 +2613,16 @@
       justify-content: center;
       cursor: pointer;
       z-index: 70;
-      transition: transform 0.13s ease, filter 0.2s ease;
+      transition: opacity 0.18s ease, transform 0.18s ease, filter 0.2s ease;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       line-height: 0;
+    }
+
+    .mobile-fab.fab-hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px) scale(0.9);
     }
 
     .mobile-fab.haptic,
@@ -2630,6 +2636,17 @@
       height: 58px;
       object-fit: contain;
       filter: drop-shadow(0 8px 16px rgba(0, 10, 25, 0.45));
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      @keyframes fabOccupiedPulse {
+        0%, 100% { filter: drop-shadow(0 8px 16px rgba(0, 10, 25, 0.45)); }
+        50% { filter: drop-shadow(0 0 14px rgba(255, 90, 90, 0.85)); }
+      }
+
+      .mobile-fab.is-running .fab-icon {
+        animation: fabOccupiedPulse 1.6s ease-in-out infinite;
+      }
     }
 
     @media (max-width: 760px) {
@@ -4176,6 +4193,8 @@ html, body {
       };
       var statsCountUpGeneration = 0;
       var statsCountUpTimerId = null;
+      var timerButtonVisible = false;
+      var fabVisibilityObserver = null;
       var RETURN_VISIT_LAST_SEEN_KEY = "pp_core_last_seen_ms_v1";
       var RETURN_VISIT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
       var RETURN_VISIT_MIN_GAP_MS = 60 * 1000;
@@ -4481,6 +4500,7 @@ html, body {
       renderWageMode();
       wireEvents();
       setupBottomSheets();
+      setupFabVisibilityObserver();
       window.addEventListener("resize", function () {
         var activeDock = document.querySelector(".nav-btn.active[data-tab]");
         if (activeDock) moveDockIndicator(activeDock);
@@ -4905,6 +4925,60 @@ html, body {
         } else {
           resetStatsCountUpTimer();
         }
+        recheckFabVisibility();
+      }
+
+      function applyFabVisibility() {
+        if (!mobileFabButton) return;
+        mobileFabButton.classList.toggle("fab-hidden", timerButtonVisible);
+      }
+
+      function syncTimerButtonVisibilityFromRect() {
+        if (!timerButton || state.activeTab !== "calculator") {
+          timerButtonVisible = false;
+          return;
+        }
+        var rect = timerButton.getBoundingClientRect();
+        var viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+        var viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+        timerButtonVisible = rect.width > 0 &&
+          rect.height > 0 &&
+          rect.bottom > 0 &&
+          rect.top < viewportHeight &&
+          rect.right > 0 &&
+          rect.left < viewportWidth;
+      }
+
+      function recheckFabVisibility() {
+        syncTimerButtonVisibilityFromRect();
+        applyFabVisibility();
+      }
+
+      function setupFabVisibilityObserver() {
+        if (!timerButton || !mobileFabButton) return;
+
+        if (typeof IntersectionObserver !== "function") {
+          recheckFabVisibility();
+          return;
+        }
+
+        if (fabVisibilityObserver) {
+          fabVisibilityObserver.disconnect();
+        }
+
+        fabVisibilityObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (state.activeTab !== "calculator") {
+              timerButtonVisible = false;
+              return;
+            }
+            timerButtonVisible = entry.isIntersecting && entry.intersectionRatio >= 0.1;
+          });
+          applyFabVisibility();
+        }, { threshold: 0.1 });
+
+        fabVisibilityObserver.observe(timerButton);
+        recheckFabVisibility();
       }
 
       function getTabTransitionClass(previousTab, nextTab) {
@@ -5291,6 +5365,7 @@ html, body {
         setTimerMascotState(running);
 
         if (mobileFabButton) {
+          mobileFabButton.classList.toggle("is-running", running);
           mobileFabButton.setAttribute("aria-label", running ? "Stop session" : "Start session");
           if (mobileFabIcon) mobileFabIcon.src = running ? FAB_TIMER_RUNNING_SRC : FAB_TIMER_IDLE_SRC;
         }
