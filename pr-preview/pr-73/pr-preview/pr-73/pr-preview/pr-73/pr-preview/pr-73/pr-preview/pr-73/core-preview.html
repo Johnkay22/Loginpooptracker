@@ -4176,6 +4176,7 @@ html, body {
         stepIndex: 0,
         rafId: null
       };
+      var statsCountUpGeneration = 0;
       var RETURN_VISIT_LAST_SEEN_KEY = "pp_core_last_seen_ms_v1";
       var RETURN_VISIT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
       var RETURN_VISIT_MIN_GAP_MS = 60 * 1000;
@@ -4667,7 +4668,7 @@ html, body {
               ensureCustomRangeDefaults();
             }
             renderStatsRangeControls();
-            renderStats();
+            renderStats({ animate: state.activeTab === "stats" });
           });
         });
 
@@ -4677,7 +4678,7 @@ html, body {
               statsRangeMode = "custom";
             }
             renderStatsRangeControls();
-            renderStats();
+            renderStats({ animate: state.activeTab === "stats" });
           });
         }
 
@@ -4685,7 +4686,7 @@ html, body {
           statsStartDateInput.addEventListener("change", function () {
             if (statsRangeMode === "custom") {
               renderStatsRangeControls();
-              renderStats();
+              renderStats({ animate: state.activeTab === "stats" });
             }
           });
         }
@@ -4694,7 +4695,7 @@ html, body {
           statsEndDateInput.addEventListener("change", function () {
             if (statsRangeMode === "custom") {
               renderStatsRangeControls();
-              renderStats();
+              renderStats({ animate: state.activeTab === "stats" });
             }
           });
         }
@@ -4895,12 +4896,14 @@ html, body {
       function setActiveTab(tabName) {
         if (!tabPanels[tabName]) return;
         var previousTab = state.activeTab || "calculator";
+        var shouldAnimateStats = tabName === "stats" && previousTab !== "stats";
         tabTransitionClass = getTabTransitionClass(previousTab, tabName);
         state.activeTab = tabName;
         persist();
         renderTabs();
         if (tabName === "stats") {
           window.setTimeout(function () {
+            renderStats({ animate: shouldAnimateStats });
             renderTrend(getFilteredSessions());
           }, 30);
         }
@@ -5322,7 +5325,9 @@ html, body {
         renderLog();
       }
 
-      function renderStats() {
+      function renderStats(options) {
+        var opts = options || {};
+        var animate = Boolean(opts.animate);
         renderStatsRangeControls();
         var sessions = getFilteredSessions();
         var totalSessions = sessions.length;
@@ -5341,17 +5346,6 @@ html, body {
         var bestDayEarnings = getBestDayEarnings(sessions);
         var profitRate = totalTimeSeconds > 0 ? totalEarnings / (totalTimeSeconds / 3600) : 0;
 
-        statSessions.textContent = String(totalSessions);
-        statTime.textContent = formatDuration(totalTimeSeconds);
-        statEarnings.textContent = "$" + totalEarnings.toFixed(2);
-        statAvgTime.textContent = formatDuration(Math.floor(avgTime));
-        statAvgEarnings.textContent = "$" + avgEarnings.toFixed(2);
-        statToday.textContent = String(todaySessions);
-
-        insightLongest.textContent = formatDuration(longestSession);
-        insightBestDay.textContent = "$" + bestDayEarnings.toFixed(2);
-        insightProfitRate.textContent = "$" + profitRate.toFixed(2) + " / hr";
-
         var allSessions = Array.isArray(state.sessions) ? state.sessions.slice() : sessions;
         var activeDays = new Set(allSessions.map(function (s) {
           return new Date(s.endedAtMs).toDateString();
@@ -5359,22 +5353,110 @@ html, body {
         var allTimeEarnings = allSessions.reduce(function (sum, s) { return sum + s.earnings; }, 0);
         var perDay = allTimeEarnings / activeDays;
         var projectedAnnual = perDay * 365;
-        if (statAnnualYield) statAnnualYield.textContent = "$" + Math.round(projectedAnnual).toLocaleString("en-US");
-        if (statAnnualYieldInline) statAnnualYieldInline.textContent = "$" + Math.round(projectedAnnual).toLocaleString("en-US");
+        var tokenBalance = Math.max(0, Math.floor(Number(walletSnapshot.new_balance) || 0));
+        var streakDays = Math.max(0, Math.floor(Number(walletSnapshot.window_day_count) || 0));
 
         // TODO: replace with live Supabase rank query
         var pct = Math.min(99, Math.max(1, Math.round(100 * (1 - Math.exp(-totalEarnings / 250)))));
-        if (statPercentile) statPercentile.textContent = pct + "%";
-        if (statPercentileTop) statPercentileTop.textContent = String(100 - pct);
-        if (statPercentileFill) statPercentileFill.style.width = pct + "%";
 
-        if (statTokens) statTokens.textContent = String(Math.max(0, Math.floor(Number(walletSnapshot.new_balance) || 0)));
-        if (statStreak) {
-          var streakDays = Math.max(0, Math.floor(Number(walletSnapshot.window_day_count) || 0));
-          statStreak.textContent = streakDays + " days";
+        if (animate) {
+          statsCountUpGeneration += 1;
+          var countGen = statsCountUpGeneration;
+          countUpStatValue(statEarnings, totalEarnings, formatStatHeroMoney, countGen);
+          countUpStatValue(statAnnualYield, projectedAnnual, formatStatMoneyRounded, countGen);
+          countUpStatValue(statAnnualYieldInline, projectedAnnual, formatStatMoneyRounded, countGen);
+          countUpStatValue(statTime, totalTimeSeconds, formatStatDurationAnimated, countGen);
+          countUpStatValue(statSessions, totalSessions, null, countGen);
+          countUpStatValue(statAvgEarnings, avgEarnings, formatStatMoneyFixed, countGen);
+          countUpStatValue(statAvgTime, avgTime, formatStatDurationAnimated, countGen);
+          countUpStatValue(statToday, todaySessions, null, countGen);
+          countUpStatValue(statTokens, tokenBalance, null, countGen);
+          if (statPercentile) statPercentile.textContent = pct + "%";
+          if (statPercentileTop) statPercentileTop.textContent = String(100 - pct);
+          if (statPercentileFill) {
+            statPercentileFill.style.width = "0%";
+            window.requestAnimationFrame(function () {
+              if (countGen !== statsCountUpGeneration) return;
+              statPercentileFill.style.width = pct + "%";
+            });
+          }
+        } else {
+          statsCountUpGeneration += 1;
+          if (statEarnings) statEarnings.textContent = "$" + totalEarnings.toFixed(2);
+          if (statAnnualYield) statAnnualYield.textContent = "$" + Math.round(projectedAnnual).toLocaleString("en-US");
+          if (statAnnualYieldInline) statAnnualYieldInline.textContent = "$" + Math.round(projectedAnnual).toLocaleString("en-US");
+          if (statSessions) statSessions.textContent = String(totalSessions);
+          if (statTime) statTime.textContent = formatDuration(totalTimeSeconds);
+          if (statAvgTime) statAvgTime.textContent = formatDuration(Math.floor(avgTime));
+          if (statAvgEarnings) statAvgEarnings.textContent = "$" + avgEarnings.toFixed(2);
+          if (statToday) statToday.textContent = String(todaySessions);
+          if (statTokens) statTokens.textContent = String(tokenBalance);
+          if (statPercentile) statPercentile.textContent = pct + "%";
+          if (statPercentileTop) statPercentileTop.textContent = String(100 - pct);
+          if (statPercentileFill) statPercentileFill.style.width = pct + "%";
         }
 
+        if (statStreak) statStreak.textContent = streakDays + " days";
+
+        insightLongest.textContent = formatDuration(longestSession);
+        insightBestDay.textContent = "$" + bestDayEarnings.toFixed(2);
+        insightProfitRate.textContent = "$" + profitRate.toFixed(2) + " / hr";
+
         renderTrend(sessions);
+      }
+
+      function countUpStatValue(element, target, formatter, generation) {
+        if (!element) return;
+        var safeTarget = Math.max(0, Number(target) || 0);
+        var start = performance.now();
+        var duration = 900;
+
+        function frame(now) {
+          if (generation !== statsCountUpGeneration) return;
+          var progress = Math.min((now - start) / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          var current = safeTarget * eased;
+          if (formatter) {
+            element.innerHTML = formatter(current, progress >= 1 ? safeTarget : null);
+          } else {
+            element.textContent = String(Math.round(current));
+          }
+          if (progress < 1) {
+            window.requestAnimationFrame(frame);
+          } else if (formatter) {
+            element.innerHTML = formatter(safeTarget, safeTarget);
+          } else {
+            element.textContent = String(Math.round(safeTarget));
+          }
+        }
+
+        window.requestAnimationFrame(frame);
+      }
+
+      function formatStatHeroMoney(value, finalValue) {
+        var amount = typeof finalValue === "number" ? finalValue : value;
+        var formatted = "$" + Math.max(0, amount).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+        var dotIndex = formatted.lastIndexOf(".");
+        if (dotIndex === -1) return formatted;
+        return formatted.slice(0, dotIndex) + '<span class="cents">' + formatted.slice(dotIndex) + "</span>";
+      }
+
+      function formatStatMoneyRounded(value, finalValue) {
+        var amount = typeof finalValue === "number" ? finalValue : value;
+        return "$" + Math.round(Math.max(0, amount)).toLocaleString("en-US");
+      }
+
+      function formatStatMoneyFixed(value, finalValue) {
+        var amount = typeof finalValue === "number" ? finalValue : value;
+        return "$" + Math.max(0, amount).toFixed(2);
+      }
+
+      function formatStatDurationAnimated(value, finalValue) {
+        var seconds = typeof finalValue === "number" ? finalValue : value;
+        return formatDuration(Math.floor(Math.max(0, seconds)));
       }
 
       function renderLog() {
