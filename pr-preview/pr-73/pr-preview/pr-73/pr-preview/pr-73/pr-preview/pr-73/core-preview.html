@@ -3279,10 +3279,8 @@ html, body {
 #timerButton, .button.full { margin-top: 18px; width: 100%; border: 0; border-radius: 15px; padding: 16px; font-family: inherit; font-weight: 800; font-size: 16px; color: #fff; cursor: pointer; background: linear-gradient(180deg, #54acff, #2c79e6); box-shadow: 0 12px 26px -8px rgba(59,157,255,.7), 0 1px 0 rgba(255,255,255,.4) inset; }
 .timer-card.running #timerButton { background: linear-gradient(180deg, #ff8a8a, #e85d5d); box-shadow: 0 12px 26px -8px rgba(232,93,93,.6); }
 
-.log-card .log-header { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }
-.log-card .log-header h3 { font-size: 12.5px; font-weight: 700; letter-spacing: .06em; margin: 0; }
-.log-card .log-header h3 img { display: none; }
-.log-card .log-header::before { content: ""; width: 26px; height: 26px; border-radius: 8px; background: var(--blue-soft); flex: none; }
+.log-card .log-header { display: flex; align-items: center; justify-content: space-between; gap: 9px; margin-bottom: 14px; }
+.log-card .log-header .eyebrow { margin: 0; }
 .log-entry { display: flex; flex-wrap: wrap; align-items: center; gap: 13px; padding: 13px 0; border-top: 1px solid var(--line); }
 .log-entry .log-top { width: 100%; display: flex; justify-content: space-between; }
 .log-entry .log-date { font-size: 13.5px; font-weight: 700; }
@@ -3541,7 +3539,7 @@ html, body {
 
           <article class="card log-card">
             <div class="log-header">
-              <h3 style="margin: 0;"><img src="calc.png" alt="">Session Log</h3>
+              <div class="eyebrow">Session Log</div>
               <button id="clearAllButton" class="button warn" type="button">Clear All</button>
             </div>
             <div id="logList" class="log-list" aria-live="polite"></div>
