@@ -2941,6 +2941,323 @@
       40% { transform: scale(1.18); filter: drop-shadow(0 0 16px rgba(255, 207, 114, 0.7)); }
       100% { transform: scale(1); filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45)); }
     }
+
+/* === PoopProfit Redesign v5 === */
+
+  :root{
+
+    --primary: #3b9dff;
+    --primary-strong: #2f7fe0;
+    --success: #2fe08a;
+    --warning: #f5a623;
+    --danger: #ff8080;
+    --canvas: var(--bg);
+
+    --bg:#060a12;
+    --blue:#3b9dff;--blue-2:#6fc0ff;--cyan:#79e2ff;
+    --green:#2fe08a;--purple:#9b7bff;--orange:#f5a623;--gold:#e0a64b;
+    --blue-soft:rgba(59,157,255,.12);--blue-line:rgba(59,157,255,.34);
+    --text:#eaf1fb;--muted:#8ba0bd;--muted-2:#5b6c87;
+    --panel-top:#101a2b;--panel-bot:#0a1120;
+    --field:#0a0f1a;
+    --line:rgba(120,170,235,.10);--line-2:rgba(120,170,235,.20);
+    --r-card:20px;--r-md:14px;--r-sm:11px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+    --shadow:0 1px 0 rgba(255,255,255,.05) inset,0 20px 44px -22px rgba(0,0,0,.9);
+    --herman:url("herman-cash-suit.png");
+    --coin:url("turdtoken2026.png");
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--text);background:var(--bg);
+    -webkit-font-smoothing:antialiased;display:flex;justify-content:center;min-height:100%;
+    padding:20px 14px 116px;position:relative;overflow-x:hidden;font-variant-numeric:tabular-nums}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(90% 50% at 50% -8%,rgba(59,157,255,.16),transparent 56%),
+      radial-gradient(55% 38% at 88% 12%,rgba(121,226,255,.07),transparent 60%),
+      radial-gradient(70% 50% at 10% 88%,rgba(59,157,255,.06),transparent 60%),
+      radial-gradient(140% 100% at 50% 32%,transparent 58%,rgba(0,0,0,.45)),
+      linear-gradient(180deg,#0a1426,#060a12 44%)}
+  body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.03;background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.03) 2px,rgba(255,255,255,.03) 4px)}
+  .num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .app{position:relative;z-index:1;width:100%;max-width:460px}
+  .reveal{opacity:0;transform:translateY(12px);animation:rise .7s var(--ease) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+
+  /* header */
+  .head{display:flex;align-items:center;gap:11px;margin-bottom:18px;padding:0 2px}
+  .logo{height:46px;width:auto;display:block;flex:none}
+  .glyph{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:19px;color:#fff;
+    background:linear-gradient(160deg,#4aa6ff,#2b6fdd);box-shadow:0 8px 18px -6px rgba(59,157,255,.6),0 1px 0 rgba(255,255,255,.35) inset}
+  .wm{font-size:19px;font-weight:800;letter-spacing:-.02em}
+  .wallet{margin-left:auto;display:flex;align-items:center;gap:9px;padding:8px 13px 8px 9px;border-radius:999px;
+    background:linear-gradient(180deg,var(--panel-top),var(--panel-bot));border:1px solid var(--line);box-shadow:var(--shadow)}
+  .wallet .coin{width:28px;height:28px;border-radius:50%;background:url("turdtoken2026.png") center/cover no-repeat;flex-shrink:0}
+  .wallet .bal{font-weight:700;font-size:14px}
+  .wallet .streak{font-size:11.5px;color:var(--muted);border-left:1px solid var(--line-2);padding-left:9px}
+  .wallet .streak b{color:var(--blue-2);font-weight:700}
+
+  .card{position:relative;border-radius:var(--r-card);padding:20px;margin-bottom:14px;
+    background:linear-gradient(180deg,var(--panel-top),var(--panel-bot));border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden}
+  .card::before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--line-2),transparent)}
+  .eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)}
+  .screen{display:none}.screen.active{display:block;animation:rise .5s var(--ease)}
+
+  .ic{flex:none;display:grid;place-items:center;border-radius:50%}
+  .ic svg{stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ===== CALCULATOR ===== */
+  .wage{display:flex;align-items:center;gap:14px;width:100%;background:transparent;border:0;color:var(--text);font-family:inherit;cursor:pointer;padding:0;text-align:left}
+  .wage .wic{width:46px;height:46px;border:1.5px solid var(--blue-line);color:var(--blue);background:var(--blue-soft)}
+  .wage .wic svg{width:20px;height:20px;stroke:var(--blue)}
+  .wage .wl{display:block;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue)}
+  .wage .wv{display:block;font-size:18px;font-weight:700;margin-top:3px}
+  .wage .chev{margin-left:auto;color:var(--muted);transition:transform .3s var(--ease)}
+  .wage[aria-expanded="true"] .chev{transform:rotate(180deg)}
+  .wage-body{margin-top:16px;display:none}.wage-body.show{display:block;animation:rise .4s var(--ease)}
+  .seg{display:flex;padding:4px;border-radius:var(--r-sm);background:var(--field);border:1px solid var(--line);margin-bottom:13px}
+  .seg button{flex:1;border:0;background:transparent;color:var(--muted);font-family:inherit;font-weight:600;font-size:12.5px;padding:9px;border-radius:8px;cursor:pointer;transition:.25s}
+  .seg button.active{color:#fff;background:linear-gradient(180deg,#4aa6ff,#2f7fe0);font-weight:700;box-shadow:0 5px 14px -5px rgba(59,157,255,.6)}
+  .field label{display:block;font-size:11px;color:var(--muted);margin-bottom:7px;font-weight:600}
+  .field input{width:100%;background:var(--field);border:1px solid var(--line-2);color:var(--text);border-radius:11px;padding:12px;font-family:inherit;font-size:15px;font-weight:600}
+  .field input:focus{outline:none;border-color:var(--blue-line);box-shadow:0 0 0 3px var(--blue-soft)}
+  .wage-eff{margin-top:13px;font-size:12.5px;color:var(--muted)}.wage-eff b{color:var(--text)}
+
+  /* timer ring */
+  .timer-card{padding:8px 18px 22px;text-align:center;
+    background:var(--timer-bg,radial-gradient(120% 72% at 50% 24%,rgba(59,157,255,.13),transparent 56%)),
+      linear-gradient(180deg,var(--panel-top),var(--panel-bot));
+    background-size:cover;background-position:center}
+  .ring-wrap.live .ring-arc{animation:ringpulse 2.6s ease-in-out infinite}
+  @keyframes ringpulse{0%,100%{filter:drop-shadow(0 0 7px rgba(59,157,255,.65))}50%{filter:drop-shadow(0 0 15px rgba(59,157,255,1))}}
+  .ring-wrap{position:relative;width:300px;max-width:84%;aspect-ratio:1;margin:6px auto -34px}
+  .ring-wrap svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  .ring-track{stroke:rgba(120,170,235,.12);stroke-width:5;fill:none}
+  .ring-ticks{stroke:rgba(59,157,255,.30);stroke-width:6;fill:none;stroke-dasharray:1.4 7.5}
+  .ring-arc{stroke:url(#ringGrad);stroke-width:4.5;fill:none;stroke-linecap:round;filter:drop-shadow(0 0 7px rgba(59,157,255,.7));
+    transition:stroke-dashoffset .4s var(--ease)}
+  .ring-herman{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:104%;aspect-ratio:1;
+    object-fit:cover;background:#06101f;
+    -webkit-mask-image:radial-gradient(circle at 50% 49%,#000 54%,transparent 80%);
+    mask-image:radial-gradient(circle at 50% 49%,#000 54%,transparent 80%);
+    filter:drop-shadow(0 14px 22px rgba(0,0,0,.5))}
+  .timer-panel{position:relative;border-radius:18px;padding:26px 18px 18px;
+    background:linear-gradient(180deg,rgba(15,26,44,.72),rgba(9,16,30,.72));border:1px solid var(--line-2);
+    box-shadow:0 1px 0 rgba(255,255,255,.05) inset}
+  .timer-display{font-size:50px;font-weight:800;letter-spacing:-.03em;line-height:1}
+  .timer-display .c{color:var(--blue)}
+  .earn-line{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:10px}
+  .earn-line .dash{height:1px;width:34px;background:linear-gradient(90deg,transparent,var(--line-2))}
+  .earn-line .dash.r{background:linear-gradient(90deg,var(--line-2),transparent)}
+  .timer-earn{font-size:22px;font-weight:800;color:var(--green)}
+  .timer-sub{font-size:12.5px;color:var(--muted-2);margin-top:8px}
+  .btn-start{margin-top:18px;width:100%;border:0;border-radius:15px;padding:16px;font-family:inherit;font-weight:800;font-size:16px;color:#fff;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:12px;background:linear-gradient(180deg,#54acff,#2c79e6);
+    box-shadow:0 12px 26px -8px rgba(59,157,255,.7),0 1px 0 rgba(255,255,255,.4) inset;transition:transform .12s var(--ease),filter .2s,background .3s}
+  .btn-start:active{transform:scale(.99)}
+  .btn-start .play{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.85);display:grid;place-items:center}
+  .btn-start .play svg{width:13px;height:13px;fill:#fff;stroke:none;margin-left:2px}
+  .btn-start.running{background:linear-gradient(180deg,#ff8a8a,#e85d5d);box-shadow:0 12px 26px -8px rgba(232,93,93,.6),0 1px 0 rgba(255,255,255,.3) inset}
+
+  .log-head{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+  .log-head .di{width:26px;height:26px;color:var(--blue);background:var(--blue-soft);border-radius:8px}
+  .log-head .di svg{width:15px;height:15px;stroke:var(--blue)}
+  .log-head h3{font-size:12.5px;font-weight:700;letter-spacing:.06em}
+  .log-head .view{margin-left:auto;font-size:12.5px;font-weight:700;color:var(--blue);cursor:pointer;display:flex;align-items:center;gap:3px}
+  .log-row{display:flex;align-items:center;gap:13px;padding:13px 0;border-top:1px solid var(--line)}
+  .log-row .lic{width:42px;height:42px;color:var(--green);background:rgba(47,224,138,.1);border:1px solid rgba(47,224,138,.25)}
+  .log-row .lic svg{width:19px;height:19px;stroke:var(--green)}
+  .log-row .when{font-size:13.5px;font-weight:700}
+  .log-row .meta{font-size:11.5px;color:var(--muted-2);margin-top:2px}
+  .log-row .amt{margin-left:auto;font-weight:800;font-size:16px;color:var(--green);display:flex;align-items:center;gap:6px}
+  .log-row .amt .ch{color:var(--muted-2);font-weight:600}
+
+  /* ===== STATS ===== */
+  .segmented{display:flex;gap:4px;overflow-x:auto;padding:4px;border-radius:var(--r-md);background:linear-gradient(180deg,var(--panel-top),var(--panel-bot));border:1px solid var(--line);box-shadow:var(--shadow);scrollbar-width:none;margin-bottom:9px}
+  .segmented::-webkit-scrollbar{display:none}
+  .segmented button{flex:none;border:0;background:transparent;color:var(--muted);font-family:inherit;font-weight:600;font-size:12.5px;padding:9px 15px;border-radius:10px;cursor:pointer;white-space:nowrap;transition:.25s}
+  .segmented button.active{color:#fff;background:linear-gradient(180deg,#4aa6ff,#2f7fe0);font-weight:700;box-shadow:0 5px 14px -5px rgba(59,157,255,.6)}
+  .range-sum{font-size:11.5px;color:var(--muted-2);padding-left:4px;margin-bottom:16px}
+  .range-sum b{color:var(--blue)}
+  .custom-range{display:none;gap:10px;margin:10px 0 0;padding:13px;border-radius:var(--r-md);background:var(--field);border:1px solid var(--line);flex-wrap:wrap;align-items:flex-end}
+  .custom-range.show{display:flex}
+  .custom-range label{display:block;font-size:10px;color:var(--muted-2);margin-bottom:5px;font-weight:600}
+  .custom-range input{background:#070c15;border:1px solid var(--line-2);color:var(--text);border-radius:9px;padding:8px 10px;font-family:inherit;font-size:13px;color-scheme:dark}
+  .custom-range .apply{background:linear-gradient(180deg,#4aa6ff,#2f7fe0);color:#fff;border:0;border-radius:9px;padding:9px 15px;font-weight:700;font-family:inherit;cursor:pointer}
+
+  .hero{position:relative;overflow:hidden;border-color:var(--blue-line);padding:22px}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(70% 80% at 84% 40%,rgba(59,157,255,.16),transparent 60%)}
+  .hero .lab{font-size:10.5px;font-weight:700;letter-spacing:.16em;color:var(--blue);text-transform:uppercase;position:relative}
+  .hero .big{position:relative;font-size:46px;font-weight:800;letter-spacing:-.03em;line-height:1;margin-top:10px}
+  .hero .big .cents{font-size:26px;color:var(--muted)}
+  .hero .hline{position:relative;margin-top:14px;max-width:56%;font-size:13px;color:var(--muted);line-height:1.5}
+  .hero .hline b{color:var(--text);font-weight:700}
+  .hero-foot{position:relative;display:flex;align-items:flex-end;gap:16px;margin-top:18px}
+  .hero-foot .sl{font-size:10px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+  .hero-foot .sv{font-size:20px;font-weight:800;margin-top:4px}
+  .share-mini{margin-left:0;display:inline-flex;align-items:center;gap:6px;background:rgba(120,170,235,.07);border:1px solid var(--line-2);color:var(--text);font-family:inherit;font-weight:700;font-size:12.5px;padding:10px 15px;border-radius:11px;cursor:pointer}
+  .share-mini svg{width:14px;height:14px;stroke:var(--text);fill:none;stroke-width:1.9}
+  .hero-herman{position:absolute;right:-6px;top:50%;transform:translateY(-52%);width:150px;aspect-ratio:1;
+    background:var(--herman) center bottom/contain no-repeat;pointer-events:none;
+    filter:drop-shadow(0 14px 18px rgba(0,0,0,.5))}
+  .hero-pedestal{position:absolute;right:34px;bottom:30px;width:104px;height:22px;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(59,157,255,.55),rgba(59,157,255,0));filter:blur(1px)}
+  .hero-arrow{position:absolute;right:18px;top:18px;width:120px;height:90px;opacity:.5;pointer-events:none}
+
+  .stand-top{display:flex;align-items:baseline;justify-content:space-between}
+  .stand-top .t{font-size:14px;font-weight:600}.stand-top .t b{color:var(--blue);font-weight:800}
+  .stand-top .pct{font-size:12.5px;font-weight:700;color:var(--muted)}.stand-top .pct b{color:var(--text)}
+  .stand-bar{height:8px;border-radius:8px;background:var(--field);border:1px solid var(--line);overflow:hidden;margin-top:14px}
+  .stand-bar i{display:block;height:100%;width:0;border-radius:8px;background:linear-gradient(90deg,#2f7fe0,#5db4ff);box-shadow:0 0 12px rgba(59,157,255,.6);transition:width 1.2s var(--ease)}
+
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .metric{display:flex;align-items:center;gap:12px;border-radius:var(--r-md);padding:13px;
+    background:linear-gradient(180deg,rgba(16,26,44,.6),rgba(10,17,32,.6));border:1px solid var(--line)}
+  .metric .mic{width:42px;height:42px}
+  .metric .mic svg{width:20px;height:20px}
+  .metric .ml{font-size:10.5px;color:var(--muted);font-weight:600}
+  .metric .mv{font-size:18px;font-weight:800;margin-top:3px;letter-spacing:-.02em}
+  .metric.tok .mv{color:var(--blue)}
+  .metric .coin{width:42px;height:42px;background:var(--coin) center/contain no-repeat;flex:none}
+  .i-blue{color:var(--blue);background:var(--blue-soft);border:1px solid var(--blue-line)}.i-blue svg{stroke:var(--blue)}
+  .i-purple{color:var(--purple);background:rgba(155,123,255,.12);border:1px solid rgba(155,123,255,.3)}.i-purple svg{stroke:var(--purple)}
+  .i-green{color:var(--green);background:rgba(47,224,138,.1);border:1px solid rgba(47,224,138,.3)}.i-green svg{stroke:var(--green)}
+  .i-orange{color:var(--orange);background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3)}.i-orange svg{stroke:var(--orange)}
+
+  .trend-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2px}
+  .trend-head .tt{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)}
+  .trend-head .ts{font-size:11px;color:var(--muted-2)}
+  .canvas-wrap{position:relative;margin-top:12px}
+  #trendCanvas{width:100%;height:150px;display:block}
+  .tooltip{position:absolute;pointer-events:none;opacity:0;transform:translate(-50%,-130%);background:#0c1626;border:1px solid var(--line-2);border-radius:9px;padding:6px 10px;font-size:11px;font-weight:700;white-space:nowrap;transition:opacity .15s}
+  .tooltip b{color:var(--blue-2)}
+  .trend-foot{display:flex;gap:18px;margin-top:13px;font-size:11.5px;color:var(--muted)}
+  .trend-foot b{color:var(--text);font-weight:700}
+
+  .ins-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-top:1px solid var(--line)}
+  .ins-row:first-of-type{border-top:0;padding-top:2px}
+  .ins-row .il{font-size:13px;color:var(--muted)}
+  .ins-row .iv{font-size:15px;font-weight:800}.ins-row .iv.acc{color:var(--blue)}
+
+  .share-scope label{font-size:11px;color:var(--muted-2);font-weight:600;display:block;margin-bottom:8px}
+  .share-scope select{width:100%;background:var(--field);border:1px solid var(--line-2);color:var(--text);border-radius:11px;padding:12px;font-family:inherit;font-size:13.5px;font-weight:600;color-scheme:dark;margin-bottom:13px}
+  .share-btns{display:flex;gap:9px;flex-wrap:wrap}
+  .share-btns button{flex:1;min-width:120px;border:0;border-radius:12px;padding:13px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;transition:.2s}
+  .share-btns .primary{color:#fff;background:linear-gradient(180deg,#4aa6ff,#2f7fe0);box-shadow:0 8px 18px -8px rgba(59,157,255,.6)}
+  .share-btns .ghost{background:rgba(120,170,235,.07);border:1px solid var(--line-2);color:var(--muted)}
+  .share-status{font-size:11.5px;color:var(--green);min-height:14px;margin-top:11px;font-weight:600}
+
+  .soon-row{display:flex;align-items:center;gap:14px;padding:16px 0;border-top:1px solid var(--line)}
+  .soon-row:first-child{border-top:0}
+  .soon-ic{width:46px;height:46px}
+  .soon-ic svg{width:21px;height:21px}
+  .soon-row h4{font-size:14px;font-weight:700}
+  .soon-row p{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
+  .soon-pill{font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--blue);background:var(--blue-soft);border:1px solid var(--blue-line);padding:3px 8px;border-radius:999px;text-transform:uppercase;display:inline-block;margin-bottom:6px}
+
+  .foot{text-align:center;font-size:10.5px;color:var(--muted-2);margin-top:14px;letter-spacing:.04em}
+
+  /* dock — icons only */
+  .dock{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:50;width:min(300px,calc(100% - 80px));
+    border-radius:20px;padding:7px;background:rgba(11,18,30,.82);border:1px solid var(--line-2);
+    backdrop-filter:blur(22px) saturate(1.3);-webkit-backdrop-filter:blur(22px) saturate(1.3);box-shadow:0 18px 44px -12px rgba(0,0,0,.85)}
+  .dock-inner{position:relative;display:flex}
+  .dock-ind{position:absolute;top:0;bottom:0;left:0;width:0;border-radius:14px;z-index:0;
+    background:linear-gradient(180deg,rgba(59,157,255,.28),rgba(59,157,255,.12));border:1px solid var(--blue-line);
+    box-shadow:0 6px 16px -6px rgba(59,157,255,.6),0 1px 0 rgba(255,255,255,.18) inset;transition:transform .46s var(--ease),width .3s var(--ease)}
+  .nav-btn{position:relative;z-index:1;flex:1;display:grid;place-items:center;background:transparent;border:0;cursor:pointer;padding:14px 0;color:var(--muted-2);transition:color .3s}
+  .nav-btn svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .nav-btn.active{color:var(--blue-2)}
+
+  @media(max-width:380px){.hero .big{font-size:40px}.timer-display{font-size:44px}.hero-herman{width:128px}.logo{height:40px}}
+
+/* === Live app bridge (maps existing markup to redesign) === */
+.page { width: min(460px, calc(100vw - 18px)); margin: 14px auto calc(116px + env(safe-area-inset-bottom)); }
+html, body { background-image: none !important; background-color: var(--bg) !important; font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif; }
+.shell { border: 1px solid var(--line-2); border-radius: 22px; background: linear-gradient(180deg, rgba(16,26,43,.72), rgba(10,17,32,.78)); box-shadow: var(--shadow); padding: 14px; position: relative; overflow: visible; backdrop-filter: blur(12px); }
+.shell::before { display: none; }
+.fixed-nav-stack { margin-bottom: 8px; }
+.head { display: flex; align-items: center; gap: 11px; margin-bottom: 10px; padding: 0 2px; }
+.head .logo { height: 46px; width: auto; display: block; }
+.wallet-banner-row { width: 100%; }
+.wallet-corner { border-radius: 999px; padding: 8px 13px 8px 9px; background: linear-gradient(180deg, var(--panel-top), var(--panel-bot)); border: 1px solid var(--line); box-shadow: var(--shadow); min-height: auto; }
+.wallet-coin { width: 28px; height: 28px; }
+.wallet-balance-value { font-weight: 700; font-size: 14px; }
+.wallet-streak { font-size: 11.5px; color: var(--muted); border-left: 1px solid var(--line-2); padding-left: 9px; margin: 0; }
+.tabs, .mobile-nav { display: none !important; }
+
+.panel-grid { display: block; }
+.panel-grid > .card { grid-column: auto !important; margin-bottom: 14px; }
+
+.wage-card { padding: 16px; }
+.wage-strip-toggle { display: grid; grid-template-columns: 46px 1fr auto; grid-template-rows: auto auto; align-items: center; column-gap: 14px; width: 100%; background: transparent; border: 0; color: var(--text); font-family: inherit; cursor: pointer; padding: 0; text-align: left; }
+.wage-strip-toggle .wage-strip-title { grid-column: 2; grid-row: 1; display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+.wage-strip-toggle .wage-strip-title img { display: none; }
+.wage-strip-toggle::before { content: "$"; grid-column: 1; grid-row: 1 / span 2; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 18px; color: var(--blue); background: var(--blue-soft); border: 1.5px solid var(--blue-line); }
+.wage-strip-summary { grid-column: 2; grid-row: 2; display: block; font-size: 18px; font-weight: 700; margin-top: 3px; text-align: left; }
+.wage-strip-chevron { grid-column: 3; grid-row: 1 / span 2; color: var(--muted); transition: transform .3s var(--ease); }
+.wage-strip-toggle[aria-expanded="true"] .wage-strip-chevron { transform: rotate(180deg); }
+.wage-strip-body { margin-top: 16px; }
+.wage-strip-body[hidden] { display: none !important; }
+.wage-strip-body:not([hidden]) { display: block; animation: rise .4s var(--ease); }
+.segmented, .segmented-control { display: flex; padding: 4px; border-radius: var(--r-sm); background: var(--field); border: 1px solid var(--line); margin-bottom: 13px; gap: 0; }
+.segmented button, .segmented-control button { flex: 1; border: 0; background: transparent; color: var(--muted); font-family: inherit; font-weight: 600; font-size: 12.5px; padding: 9px; border-radius: 8px; cursor: pointer; transition: .25s; }
+.segmented button.active, .segmented-control button.active { color: #fff; background: linear-gradient(180deg, #4aa6ff, #2f7fe0); font-weight: 700; box-shadow: 0 5px 14px -5px rgba(59,157,255,.6); }
+.row label, .row.two label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 7px; font-weight: 600; }
+.row input, .custom-range input { width: 100%; background: var(--field); border: 1px solid var(--line-2); color: var(--text); border-radius: 11px; padding: 12px; font-family: inherit; font-size: 15px; font-weight: 600; color-scheme: dark; }
+.hourly-display, .wage-eff { margin-top: 13px; font-size: 12.5px; color: var(--muted); }
+
+.timer-card h2 { display: none; }
+.timer-card .timer { text-align: center; }
+.timer-card .emoji { display: none; }
+.timer-panel-bridge { position: relative; border-radius: 18px; padding: 26px 18px 18px; background: linear-gradient(180deg, rgba(15,26,44,.72), rgba(9,16,30,.72)); border: 1px solid var(--line-2); box-shadow: 0 1px 0 rgba(255,255,255,.05) inset; margin-top: 0; }
+.timer-value, .timer-display { font-size: 50px; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+.earnings-now, .live-earn-bridge { font-size: 22px; font-weight: 800; color: var(--green); margin-top: 10px; }
+.timer-subline, .timer-sub { font-size: 12.5px; color: var(--muted-2); margin-top: 8px; }
+.timer-progress { height: 4px; background: var(--field); border-radius: 4px; margin: 12px 0; overflow: hidden; }
+.timer-progress > div { height: 100%; background: linear-gradient(90deg, #2f7fe0, #5db4ff); width: 0; transition: width .4s var(--ease); }
+#timerButton, .button.full { margin-top: 18px; width: 100%; border: 0; border-radius: 15px; padding: 16px; font-family: inherit; font-weight: 800; font-size: 16px; color: #fff; cursor: pointer; background: linear-gradient(180deg, #54acff, #2c79e6); box-shadow: 0 12px 26px -8px rgba(59,157,255,.7), 0 1px 0 rgba(255,255,255,.4) inset; }
+.timer-card.running #timerButton { background: linear-gradient(180deg, #ff8a8a, #e85d5d); box-shadow: 0 12px 26px -8px rgba(232,93,93,.6); }
+
+.log-card .log-header { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }
+.log-card .log-header h3 { font-size: 12.5px; font-weight: 700; letter-spacing: .06em; margin: 0; }
+.log-card .log-header h3 img { display: none; }
+.log-card .log-header::before { content: ""; width: 26px; height: 26px; border-radius: 8px; background: var(--blue-soft); flex: none; }
+.log-entry { display: flex; flex-wrap: wrap; align-items: center; gap: 13px; padding: 13px 0; border-top: 1px solid var(--line); }
+.log-entry .log-top { width: 100%; display: flex; justify-content: space-between; }
+.log-entry .log-date { font-size: 13.5px; font-weight: 700; }
+.log-entry .log-earnings { font-weight: 800; font-size: 16px; color: var(--green); }
+.log-entry .log-meta { width: 100%; font-size: 11.5px; color: var(--muted-2); }
+.log-entry .log-actions { width: 100%; display: flex; gap: 8px; }
+
+.stats-filter-bar .segmented-control { overflow-x: auto; scrollbar-width: none; margin-bottom: 9px; background: linear-gradient(180deg, var(--panel-top), var(--panel-bot)); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: var(--r-md); padding: 4px; gap: 4px; }
+.stats-filter-bar .segmented-control button { flex: none; white-space: nowrap; padding: 9px 15px; border-radius: 10px; }
+.range-summary { font-size: 11.5px; color: var(--muted-2); padding-left: 4px; margin-bottom: 16px; }
+.custom-range { gap: 10px; margin: 10px 0 0; padding: 13px; border-radius: var(--r-md); background: var(--field); border: 1px solid var(--line); flex-wrap: wrap; align-items: flex-end; }
+.custom-range:not([hidden]) { display: flex; }
+#applyCustomRangeButton { background: linear-gradient(180deg, #4aa6ff, #2f7fe0); color: #fff; border: 0; border-radius: 9px; padding: 9px 15px; font-weight: 700; }
+
+.share-controls .share-buttons { display: flex; gap: 9px; flex-wrap: wrap; }
+.share-controls .share-buttons button { flex: 1; min-width: 120px; border: 0; border-radius: 12px; padding: 13px; font-weight: 700; font-size: 13px; cursor: pointer; }
+#openSharePickerButton { color: #fff; background: linear-gradient(180deg, #4aa6ff, #2f7fe0); box-shadow: 0 8px 18px -8px rgba(59,157,255,.6); }
+#copyShareTextButton, #testShareCardRenderButton { background: rgba(120,170,235,.07); border: 1px solid var(--line-2) !important; color: var(--muted); }
+.share-controls select { width: 100%; background: var(--field); border: 1px solid var(--line-2); color: var(--text); border-radius: 11px; padding: 12px; font-size: 13.5px; font-weight: 600; color-scheme: dark; margin-bottom: 13px; }
+
+.coming-screen-head { margin-bottom: 8px; }
+.coming-list .coming-row { display: flex; align-items: center; gap: 14px; padding: 16px 0; border-top: 1px solid var(--line); }
+.coming-list .coming-row:first-child { border-top: 0; }
+.coming-media { width: 46px; height: 46px; border-radius: 50%; overflow: hidden; flex: none; background: var(--blue-soft); border: 1px solid var(--blue-line); display: grid; place-items: center; }
+.coming-media img { width: 100%; height: 100%; object-fit: cover; }
+.coming-pill { font-size: 9px; font-weight: 700; letter-spacing: .12em; color: var(--blue); background: var(--blue-soft); border: 1px solid var(--blue-line); padding: 3px 8px; border-radius: 999px; text-transform: uppercase; display: inline-block; margin-bottom: 6px; }
+.coming-copy h3 { font-size: 14px; font-weight: 700; margin: 0; }
+.coming-copy p { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.45; }
+.coming-chevron { color: var(--muted-2); }
+
+.mobile-fab { z-index: 45; }
+.tutorial-help-button { z-index: 55; }
+@keyframes rise { to { opacity: 1; transform: none; } }
+
   </style>
 </head>
 <body>
@@ -2949,8 +3266,8 @@
       <h1 class="sr-only">PoopProfit Core Preview Calculator, Session Timer, and Stats</h1>
       <button id="tutorialHelpButton" class="tutorial-help-button" type="button" aria-label="Open quick tour">?</button>
       <div class="fixed-nav-stack">
-        <header class="top-banner">
-          <img src="banner.png" alt="Poop Profit banner">
+        <header class="head">
+          <img class="logo" src="poopprofit_logo.png" alt="PoopProfit.com — Get Paid To Poop">
         </header>
         <div class="wallet-banner-row">
           <aside id="walletCorner" class="wallet-corner" aria-live="polite" aria-label="Turd Token wallet">
@@ -2962,20 +3279,7 @@
           </aside>
         </div>
 
-        <nav class="tabs" aria-label="Main tabs">
-          <button class="tab-btn active" data-tab="calculator" type="button">
-            <img src="calc.png" alt="">
-            <span>Calc</span>
-          </button>
-          <button class="tab-btn" data-tab="stats" type="button">
-            <img src="stats.png" alt="">
-            <span>Stats</span>
-          </button>
-          <button class="tab-btn" data-tab="coming" type="button">
-            <img src="shop.png" alt="">
-            <span>Soon</span>
-          </button>
-        </nav>
+
       </div>
 
       <section id="panel-calculator" class="tab-panel active" aria-label="Calculator tab">
@@ -3016,11 +3320,18 @@
           </article>
 
           <article class="card timer-card timer-hero">
-            <h2><img src="poopemojifinal.jpeg" alt="">Session Timer</h2>
-            <div class="timer">
-              <div class="emoji" aria-hidden="true">
-                <img id="timerMascotImage" src="nonanimated.jpg" alt="PoopProfit mascot idle in timer" loading="eager" decoding="async">
-              </div>
+            <div class="ring-wrap">
+              <svg viewBox="0 0 200 200" aria-hidden="true">
+                <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2f7fe0"/><stop offset="55%" stop-color="#5db4ff"/><stop offset="100%" stop-color="#9ad8ff"/></linearGradient></defs>
+                <circle class="ring-track" cx="100" cy="100" r="92"/>
+                <circle class="ring-ticks" cx="100" cy="100" r="92"/>
+                <circle class="ring-arc" id="ringArc" cx="100" cy="100" r="92" transform="rotate(-90 100 100)"/>
+              </svg>
+              <video id="timerMascotImage" class="ring-herman" muted loop playsinline preload="auto" poster="herman_poster.jpg" aria-label="PoopProfit mascot timer">
+                <source src="herman_loop.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="timer timer-panel-bridge">
               <div id="timerDisplay" class="timer-value">00:00:00</div>
               <div id="liveEarnings" class="earnings-now"></div>
               <div id="sessionProjection" class="timer-subline"></div>
@@ -3051,15 +3362,16 @@
       </section>
 
       <section id="panel-stats" class="tab-panel" aria-label="Stats tab">
-        <div class="panel-grid">
+        <div class="panel-grid stats-panel-grid">
           <article class="card" style="grid-column: span 12;">
             <div class="stats-filter-bar">
-              <div class="stats-range-buttons segmented-control" role="group" aria-label="Statistics date range">
+              <div class="stats-range-buttons segmented segmented-control" role="group" aria-label="Statistics date range">
                 <button id="statsRangeAllButton" data-stats-range="all" type="button" class="active">All Time</button>
                 <button id="statsRangeTodayButton" data-stats-range="today" type="button">Today</button>
-                <button id="statsRangeLast7Button" data-stats-range="last7" type="button">Last 7 Days</button>
-                <button id="statsRangeLast30Button" data-stats-range="last30" type="button">Last 30 Days</button>
-                <button id="statsRangeCustomButton" data-stats-range="custom" type="button">Custom Range</button>
+                <button id="statsRangeWeekButton" data-stats-range="week" type="button">This Week</button>
+                <button id="statsRangeMonthButton" data-stats-range="month" type="button">This Month</button>
+                <button id="statsRangeYearButton" data-stats-range="year" type="button">This Year</button>
+                <button id="statsRangeCustomButton" data-stats-range="custom" type="button">Custom</button>
               </div>
               <div id="customRangeWrap" class="custom-range" hidden>
                 <div>
@@ -3070,93 +3382,80 @@
                   <label for="statsEndDateInput">End date</label>
                   <input id="statsEndDateInput" type="date">
                 </div>
-                <button id="applyCustomRangeButton" class="button ghost" type="button">Apply</button>
+                <button id="applyCustomRangeButton" class="button ghost apply" type="button">Apply</button>
               </div>
               <div id="statsRangeSummary" class="range-summary">Showing: All Time</div>
             </div>
           </article>
 
-          <article class="card" style="grid-column: span 12;">
-            <h2><img src="stats.png" alt="">Statistics</h2>
-            <div class="stat stat-hero">
-              <div class="label">Total Earnings <button class="share-stat-btn" data-stat-share="totalEarnings" type="button"><span class="icon-share">↗</span>Share</button></div>
-              <div id="statEarnings" class="value">$0.00</div>
-            </div>
-            <div class="stat-carousel-wrap">
-              <div class="stat-carousel-viewport">
-                <div class="stat-carousel-track" id="statCarouselTrack">
-                  <div class="stat-card" data-stat-index="0">
-                    <div class="stat-card-label">Total Time</div>
-                    <div id="statTime" class="stat-card-value">00:00:00</div>
-                  </div>
-                  <div class="stat-card" data-stat-index="1">
-                    <div class="stat-card-label">Total Sessions</div>
-                    <div id="statSessions" class="stat-card-value">0</div>
-                  </div>
-                  <div class="stat-card" data-stat-index="2">
-                    <div class="stat-card-label">Avg Earnings</div>
-                    <div id="statAvgEarnings" class="stat-card-value">$0.00</div>
-                  </div>
-                  <div class="stat-card" data-stat-index="3">
-                    <div class="stat-card-label">Avg Session</div>
-                    <div id="statAvgTime" class="stat-card-value">00:00:00</div>
-                  </div>
-                  <div class="stat-card" data-stat-index="4">
-                    <div class="stat-card-label">Today's Sessions</div>
-                    <div id="statToday" class="stat-card-value">0</div>
-                  </div>
-                </div>
+          <article class="card hero" style="grid-column: span 12;">
+            <svg class="hero-arrow" viewBox="0 0 120 90" fill="none" aria-hidden="true"><path d="M6 80 L40 54 L62 66 L110 16" stroke="#5db4ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M95 14 L112 12 L108 30" stroke="#5db4ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="hero-pedestal" aria-hidden="true"></div>
+            <div class="hero-herman" aria-hidden="true"></div>
+            <div class="lab">All-Time Earnings</div>
+            <div class="big"><span class="num" id="statEarnings">$0.00</span></div>
+            <p class="hline">You're up <b id="statAnnualYieldInline">$0</b> a year at this pace. <b>That's all.</b></p>
+            <div class="hero-foot">
+              <div>
+                <div class="sl">Projected Annual Yield</div>
+                <div class="sv num" id="statAnnualYield">$0</div>
               </div>
-              <div class="stat-carousel-pedestal"></div>
-              <div class="stat-carousel-dots" id="statCarouselDots"></div>
+              <button class="share-mini" type="button" data-stat-share="totalEarnings"><svg viewBox="0 0 24 24"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M12 3v13M8 7l4-4 4 4"/></svg>Share</button>
+            </div>
+          </article>
+
+          <article class="card" style="grid-column: span 12;">
+            <div class="stand-top"><div class="t">You out-earn <b id="statPercentile">0%</b> of users</div><div class="pct">Top <b id="statPercentileTop">100</b>%</div></div>
+            <div class="stand-bar"><i id="statPercentileFill"></i></div>
+          </article>
+
+          <article class="card" style="grid-column: span 12;">
+            <div class="eyebrow" style="margin-bottom:14px">Metrics</div>
+            <div class="metrics">
+              <div class="metric"><span class="ic mic i-blue"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></span><div><div class="ml">Total Time</div><div class="mv num" id="statTime">00:00:00</div></div></div>
+              <div class="metric"><span class="ic mic i-purple"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 7.5a3 3 0 0 1 0 5.5M20.5 19a4.5 4.5 0 0 0-3-4.2"/></svg></span><div><div class="ml">Sessions</div><div class="mv num" id="statSessions">0</div></div></div>
+              <div class="metric"><span class="ic mic i-green"><svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M15.5 8.3C15.5 6.9 14 6 12 6s-3.5 1-3.5 2.6c0 3.5 7 1.8 7 5.2C15.5 16 14 17 12 17s-3.5-1-3.5-2.6"/></svg></span><div><div class="ml">Avg Earnings</div><div class="mv num" id="statAvgEarnings">$0.00</div></div></div>
+              <div class="metric"><span class="ic mic i-orange"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7"/><path d="M12 13V9M10 2h4M18 6l1.5-1.5"/></svg></span><div><div class="ml">Avg Session</div><div class="mv num" id="statAvgTime">00:00:00</div></div></div>
+              <div class="metric"><span class="ic mic i-blue"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9h16M8 3v4M16 3v4"/></svg></span><div><div class="ml">Today's Sessions</div><div class="mv num" id="statToday">0</div></div></div>
+              <div class="metric tok"><span class="coin" aria-hidden="true"></span><div><div class="ml">Turd Tokens</div><div class="mv num" id="statTokens">0</div></div></div>
             </div>
           </article>
 
           <article class="card" style="grid-column: span 12;">
             <div class="trend-panel">
-              <div class="trend-head">
-                <span class="trend-title">Recent Earnings Trend</span>
-              </div>
-              <canvas id="trendCanvas"></canvas>
-              <div class="trend-footer">
-                <span id="trendPeakLabel">Peak $0.00</span>
-                <span id="trendAverageLabel">Avg $0.00</span>
-                <span id="trendSubtitle">Last 14 sessions</span>
+              <div class="trend-head"><span class="tt">Earnings Trend</span><span class="ts" id="trendSubtitle">Last 14 sessions</span></div>
+              <div class="canvas-wrap"><canvas id="trendCanvas"></canvas><div class="tooltip" id="trendTooltip"></div></div>
+              <div class="trend-foot trend-footer">
+                <span>Peak <b id="trendPeakLabel">$0.00</b></span>
+                <span>Avg <b id="trendAverageLabel">$0.00</b></span>
               </div>
               <span id="trendRangeLabel" class="sr-only">Last 14 sessions</span>
+              <span id="trendFootnote" class="sr-only"></span>
             </div>
           </article>
 
           <article class="card" style="grid-column: span 12;">
-            <div class="insights-grid">
-              <article class="insight">
-                <div class="label">Longest Session</div>
-                <div id="insightLongest" class="value">00:00:00</div>
-              </article>
-              <article class="insight">
-                <div class="label">Best Day</div>
-                <div id="insightBestDay" class="value">$0.00</div>
-              </article>
-              <article class="insight">
-                <div class="label">Profit Rate</div>
-                <div id="insightProfitRate" class="value">$0.00 / hr</div>
-              </article>
-            </div>
+            <div class="eyebrow" style="margin-bottom:8px">Performance</div>
+            <div class="ins-row"><span class="il">Longest Session</span><span class="iv num" id="insightLongest">00:00:00</span></div>
+            <div class="ins-row"><span class="il">Best Day</span><span class="iv num" id="insightBestDay">$0.00</span></div>
+            <div class="ins-row"><span class="il">Profit Rate</span><span class="iv num" id="insightProfitRate">$0.00 / hr</span></div>
+            <div class="ins-row"><span class="il">Throne Streak</span><span class="iv num acc" id="statStreak">0 days</span></div>
+          </article>
 
-            <div class="share-controls">
-              <div>
-                <label for="shareScopeSelect">Share scope</label>
-                <select id="shareScopeSelect">
-                  <option value="overall">Overall Stats</option>
-                  <option value="latest">Latest Session</option>
-                </select>
+          <article class="card" style="grid-column: span 12;">
+            <div class="eyebrow" style="margin-bottom:14px">Share Your Report</div>
+            <div class="share-controls share-scope">
+              <label for="shareScopeSelect">Share scope</label>
+              <select id="shareScopeSelect">
+                <option value="overall">Overall Stats</option>
+                <option value="latest">Latest Session</option>
+              </select>
+              <div class="share-buttons share-btns">
+                <button id="openSharePickerButton" class="primary" type="button">↗ Share Summary</button>
+                <button id="copyShareTextButton" class="ghost" type="button">Copy Share Text</button>
+                <button id="testShareCardRenderButton" class="ghost" type="button">Test Render</button>
               </div>
-              <div class="share-buttons">
-                <button id="openSharePickerButton" type="button"><span class="icon-share">↗</span>Share Summary</button>
-                <button id="copyShareTextButton" type="button">Copy Share Text</button>
-                <button id="testShareCardRenderButton" type="button">Test Render</button>
-              </div>
-              <div id="shareStatus" class="status"></div>
+              <div id="shareStatus" class="share-status status"></div>
             </div>
           </article>
         </div>
@@ -3279,10 +3578,13 @@
     </section>
   </main>
 
-  <nav class="mobile-nav" aria-label="Quick tabs">
-    <button class="mobile-nav-btn active" data-mobile-tab="calculator" type="button"><img src="calc.png" alt=""><span>Calc</span></button>
-    <button class="mobile-nav-btn" data-mobile-tab="stats" type="button"><img src="stats.png" alt=""><span>Stats</span></button>
-    <button class="mobile-nav-btn" data-mobile-tab="coming" type="button"><img src="shop.png" alt=""><span>Soon</span></button>
+<nav class="dock" aria-label="Primary">
+    <div class="dock-inner">
+      <div class="dock-ind" id="dockInd"></div>
+      <button class="nav-btn active" data-tab="calculator" type="button" aria-label="Calculator"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 13V9M10 3h4M18 6l1.5-1.5"/></svg></button>
+      <button class="nav-btn" data-tab="stats" type="button" aria-label="Stats"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 16v-4M12 16V8M16 16v-6"/></svg></button>
+      <button class="nav-btn" data-tab="coming" type="button" aria-label="Soon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M6 6l1.4 1.4M16.6 16.6 18 18M18 6l-1.4 1.4M7.4 16.6 6 18"/></svg></button>
+    </div>
   </nav>
 
   <button id="fabTimerButton" class="mobile-fab" type="button" aria-label="Start session">
@@ -3516,9 +3818,13 @@
       var timerProgressBar = document.getElementById("timerProgressBar");
       var timerMilestone = document.getElementById("timerMilestone");
       var timerMascotImage = document.getElementById("timerMascotImage");
-      var TIMER_MASCOT_IDLE_SRC = "nonanimated.jpg";
-      var TIMER_MASCOT_RUNNING_SRC = "animated.gif";
-      var TIMER_MASCOT_FALLBACK_SRC = "POOPPROFITMASCOT.png";
+      var ringArc = document.getElementById("ringArc");
+      var RING_RADIUS = 92;
+      var RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
+      if (ringArc) {
+        ringArc.style.strokeDasharray = String(RING_CIRCUMFERENCE);
+        ringArc.style.strokeDashoffset = String(RING_CIRCUMFERENCE);
+      }
       var FAB_TIMER_IDLE_SRC = "vacant.png";
       var FAB_TIMER_RUNNING_SRC = "occupied.png";
       var firstSessionCoach = document.getElementById("firstSessionCoach");
@@ -3546,6 +3852,14 @@
       var statAvgTime = document.getElementById("statAvgTime");
       var statAvgEarnings = document.getElementById("statAvgEarnings");
       var statToday = document.getElementById("statToday");
+      var statAnnualYield = document.getElementById("statAnnualYield");
+      var statAnnualYieldInline = document.getElementById("statAnnualYieldInline");
+      var statPercentile = document.getElementById("statPercentile");
+      var statPercentileTop = document.getElementById("statPercentileTop");
+      var statPercentileFill = document.getElementById("statPercentileFill");
+      var statTokens = document.getElementById("statTokens");
+      var statStreak = document.getElementById("statStreak");
+      var dockInd = document.getElementById("dockInd");
 
       var trendCanvas = document.getElementById("trendCanvas");
       var trendRangeLabel = document.getElementById("trendRangeLabel");
@@ -3606,10 +3920,7 @@
       var MILESTONE_SECONDS = [60, 180, 300, 600, 900];
       var wageModeCollapsed = state.wageModeCollapsed === false ? false : true;
       var statsRangeMode = "all";
-      var QUICK_RANGE_DAY_COUNTS = {
-        last7: 7,
-        last30: 30
-      };
+      var CALENDAR_RANGE_MODES = ["week", "month", "year"];
       var pendingShareText = "";
       var activeSheetModal = null;
       var tutorialHelpButton = document.getElementById("tutorialHelpButton");
@@ -3634,7 +3945,7 @@
         {
           title: "Welcome to Poop Profit",
           body: "Quick Tour: Learn how to track how much you get paid to poop at work!",
-          target: ".top-banner",
+          target: ".head .logo",
           tab: "calculator",
           mascotSrc: "OnboardingMascot_20260419_095122_00000.jpg"
         },
@@ -3886,6 +4197,10 @@
         if (pulse) {
           pulseWalletCoin();
         }
+
+        if (statTokens || statStreak) {
+          renderStats();
+        }
       }
 
       function getWalletToastHtml(windowDayCount) {
@@ -3992,6 +4307,14 @@
       renderWageMode();
       wireEvents();
       setupBottomSheets();
+      window.addEventListener("resize", function () {
+        var activeDock = document.querySelector(".nav-btn.active[data-tab]");
+        if (activeDock) moveDockIndicator(activeDock);
+      });
+      requestAnimationFrame(function () {
+        var activeDock = document.querySelector(".nav-btn.active[data-tab]");
+        if (activeDock) moveDockIndicator(activeDock);
+      });
       unlockBodyScrollIfNoSheetsOpen();
       renderAll();
       restoreRunningSession();
@@ -4420,11 +4743,21 @@
         return nextIndex > previousIndex ? "tab-enter-from-right" : "tab-enter-from-left";
       }
 
+      function moveDockIndicator(button) {
+        if (!dockInd || !button) return;
+        dockInd.style.width = button.offsetWidth + "px";
+        dockInd.style.transform = "translateX(" + button.offsetLeft + "px)";
+      }
+
       function renderTabs() {
         var active = state.activeTab || "calculator";
+        var activeDockButton = null;
         tabButtons.forEach(function (button) {
-          button.classList.toggle("active", button.getAttribute("data-tab") === active);
+          var isActive = button.getAttribute("data-tab") === active;
+          button.classList.toggle("active", isActive);
+          if (isActive) activeDockButton = button;
         });
+        if (activeDockButton) moveDockIndicator(activeDockButton);
         mobileTabButtons.forEach(function (button) {
           button.classList.toggle("active", button.getAttribute("data-mobile-tab") === active);
         });
@@ -4763,10 +5096,23 @@
 
       function setTimerMascotState(running) {
         if (!timerMascotImage) return;
-        timerMascotImage.src = running ? TIMER_MASCOT_RUNNING_SRC : TIMER_MASCOT_IDLE_SRC;
-        timerMascotImage.alt = running
-          ? "PoopProfit mascot animation while timer is running"
-          : "PoopProfit mascot idle in timer";
+        try {
+          if (running) {
+            timerMascotImage.play();
+          } else {
+            timerMascotImage.pause();
+            timerMascotImage.currentTime = 0;
+          }
+        } catch (error) {}
+        var ringWrap = document.querySelector(".ring-wrap");
+        if (ringWrap) ringWrap.classList.toggle("live", !!running);
+      }
+
+      function updateTimerRing(elapsedSeconds) {
+        if (!ringArc) return;
+        var elapsed = typeof elapsedSeconds === "number" ? elapsedSeconds : 0;
+        var frac = Math.min(Math.max(elapsed, 0) / 60, 1);
+        ringArc.style.strokeDashoffset = String(RING_CIRCUMFERENCE * (1 - frac));
       }
 
       function renderTimerButton() {
@@ -4785,16 +5131,6 @@
         if (timerCard) {
           timerCard.classList.toggle("running", running);
         }
-      }
-
-      if (timerMascotImage) {
-        timerMascotImage.addEventListener("error", function () {
-          var fallback = timerMascotImage.src.includes(TIMER_MASCOT_FALLBACK_SRC)
-            ? "poopemojifinal.jpeg"
-            : TIMER_MASCOT_FALLBACK_SRC;
-          timerMascotImage.src = fallback;
-          timerMascotImage.alt = "PoopProfit mascot timer fallback image";
-        });
       }
 
       function renderAll() {
@@ -4844,6 +5180,28 @@
         insightLongest.textContent = formatDuration(longestSession);
         insightBestDay.textContent = "$" + bestDayEarnings.toFixed(2);
         insightProfitRate.textContent = "$" + profitRate.toFixed(2) + " / hr";
+
+        var allSessions = Array.isArray(state.sessions) ? state.sessions.slice() : sessions;
+        var activeDays = new Set(allSessions.map(function (s) {
+          return new Date(s.endedAtMs).toDateString();
+        })).size || 1;
+        var allTimeEarnings = allSessions.reduce(function (sum, s) { return sum + s.earnings; }, 0);
+        var perDay = allTimeEarnings / activeDays;
+        var projectedAnnual = perDay * 365;
+        if (statAnnualYield) statAnnualYield.textContent = "$" + Math.round(projectedAnnual).toLocaleString("en-US");
+        if (statAnnualYieldInline) statAnnualYieldInline.textContent = "$" + Math.round(projectedAnnual).toLocaleString("en-US");
+
+        // TODO: replace with live Supabase rank query
+        var pct = Math.min(99, Math.max(1, Math.round(100 * (1 - Math.exp(-totalEarnings / 250)))));
+        if (statPercentile) statPercentile.textContent = pct + "%";
+        if (statPercentileTop) statPercentileTop.textContent = String(100 - pct);
+        if (statPercentileFill) statPercentileFill.style.width = pct + "%";
+
+        if (statTokens) statTokens.textContent = String(Math.max(0, Math.floor(Number(walletSnapshot.new_balance) || 0)));
+        if (statStreak) {
+          var streakDays = Math.max(0, Math.floor(Number(walletSnapshot.window_day_count) || 0));
+          statStreak.textContent = streakDays + " days";
+        }
 
         renderTrend(sessions);
       }
@@ -5401,10 +5759,10 @@
           });
         }
 
-        if (Object.prototype.hasOwnProperty.call(QUICK_RANGE_DAY_COUNTS, statsRangeMode)) {
-          var quickBounds = getQuickRangeBounds(QUICK_RANGE_DAY_COUNTS[statsRangeMode]);
+        if (CALENDAR_RANGE_MODES.indexOf(statsRangeMode) !== -1) {
+          var calendarBounds = getCalendarRangeBounds(statsRangeMode);
           return state.sessions.filter(function (session) {
-            return session.endedAtMs >= quickBounds.startMs && session.endedAtMs <= quickBounds.endMs;
+            return session.endedAtMs >= calendarBounds.startMs && session.endedAtMs <= calendarBounds.endMs;
           });
         }
 
@@ -5428,13 +5786,9 @@
         if (statsRangeMode === "today") {
           return "Showing: Today (" + formatDateForSummary(Date.now()) + ")";
         }
-        if (statsRangeMode === "last7" || statsRangeMode === "last30") {
-          var days = QUICK_RANGE_DAY_COUNTS[statsRangeMode];
-          var quickBounds = getQuickRangeBounds(days);
-          return "Showing: Last " + days + " Days (" +
-            formatDateForSummary(quickBounds.startMs) + " - " +
-            formatDateForSummary(quickBounds.endMs) + ")";
-        }
+        if (statsRangeMode === "week") return "Showing: This Week";
+        if (statsRangeMode === "month") return "Showing: This Month";
+        if (statsRangeMode === "year") return "Showing: This Year";
 
         var startMs = parseDateInputStart(statsStartDateInput ? statsStartDateInput.value : "");
         var endMs = parseDateInputEnd(statsEndDateInput ? statsEndDateInput.value : "");
@@ -5487,6 +5841,26 @@
           startMs: startDate.getTime(),
           endMs: endDate.getTime()
         };
+      }
+
+      function getCalendarRangeBounds(kind) {
+        var now = new Date();
+        var start = new Date(now);
+        var end = new Date(now);
+        end.setHours(23, 59, 59, 999);
+        if (kind === "week") {
+          start.setDate(start.getDate() - start.getDay());
+          start.setHours(0, 0, 0, 0);
+        } else if (kind === "month") {
+          start.setDate(1);
+          start.setHours(0, 0, 0, 0);
+        } else if (kind === "year") {
+          start.setMonth(0, 1);
+          start.setHours(0, 0, 0, 0);
+        } else if (kind === "today") {
+          start.setHours(0, 0, 0, 0);
+        }
+        return { startMs: start.getTime(), endMs: end.getTime() };
       }
 
       function ensureCustomRangeDefaults() {
@@ -5608,6 +5982,7 @@
       function renderTimerRuntimeUI(elapsedSeconds, currentEarnings) {
         if (!state.activeSessionStartMs) {
           timerProgressBar.style.width = "0%";
+          updateTimerRing(0);
           sessionProjection.textContent = "Projection: start a session to estimate 5m and 10m outcomes.";
           timerMilestone.textContent = "Next milestone: 1 minute.";
           hideMilestoneCelebration();
@@ -5628,6 +6003,7 @@
 
         var progressPercent = Math.min(100, (elapsed / 900) * 100);
         timerProgressBar.style.width = progressPercent.toFixed(1) + "%";
+        updateTimerRing(elapsed);
 
         var nextMilestone = MILESTONE_SECONDS.find(function (value) { return elapsed < value; });
         if (nextMilestone) {
@@ -6218,95 +6594,6 @@
           String(seconds).padStart(2, "0");
       }
 
-      (function initStatCarousel() {
-        var track = document.getElementById('statCarouselTrack');
-        var dotsWrap = document.getElementById('statCarouselDots');
-        if (!track || !dotsWrap) return;
-
-        var cards = track.querySelectorAll('.stat-card');
-        var totalCards = cards.length;
-        var currentIndex = 0;
-        var touchStartX = 0;
-        var touchEndX = 0;
-
-        for (var i = 0; i < totalCards; i++) {
-          var dot = document.createElement('button');
-          dot.className = 'stat-carousel-dot';
-          dot.setAttribute('type', 'button');
-          dot.setAttribute('data-dot-index', i);
-          dot.setAttribute('aria-label', 'Show stat ' + (i + 1));
-          dotsWrap.appendChild(dot);
-        }
-        var dots = dotsWrap.querySelectorAll('.stat-carousel-dot');
-
-        function goToIndex(index) {
-          currentIndex = Math.max(0, Math.min(totalCards - 1, index));
-          var cardWidth = cards[0].offsetWidth;
-          var gap = 24;
-          var viewport = track.parentElement;
-          var viewportWidth = viewport.offsetWidth;
-          var offset = (viewportWidth / 2) - (cardWidth / 2) - (currentIndex * (cardWidth + gap));
-          track.style.transform = 'translateX(' + offset + 'px)';
-          cards.forEach(function (card, i) {
-            card.classList.toggle('active', i === currentIndex);
-          });
-          dots.forEach(function (dot, i) {
-            dot.classList.toggle('active', i === currentIndex);
-          });
-        }
-
-        function next() { goToIndex(currentIndex + 1); }
-        function prev() { goToIndex(currentIndex - 1); }
-
-        track.addEventListener('touchstart', function (e) {
-          touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-        track.addEventListener('touchend', function (e) {
-          touchEndX = e.changedTouches[0].screenX;
-          var diff = touchStartX - touchEndX;
-          if (Math.abs(diff) > 40) {
-            if (diff > 0) next(); else prev();
-          }
-        }, { passive: true });
-
-        var isDragging = false;
-        var dragStartX = 0;
-        track.addEventListener('mousedown', function (e) {
-          isDragging = true;
-          dragStartX = e.clientX;
-        });
-        track.addEventListener('mouseup', function (e) {
-          if (!isDragging) return;
-          isDragging = false;
-          var diff = dragStartX - e.clientX;
-          if (Math.abs(diff) > 40) {
-            if (diff > 0) next(); else prev();
-          }
-        });
-        track.addEventListener('mouseleave', function () { isDragging = false; });
-
-        dots.forEach(function (dot, i) {
-          dot.addEventListener('click', function () {
-            goToIndex(i);
-          });
-        });
-
-        window.addEventListener('resize', function () {
-          goToIndex(currentIndex);
-        });
-
-        var statsTabPanel = document.getElementById('panel-stats');
-        if (statsTabPanel) {
-          var observer = new MutationObserver(function () {
-            if (statsTabPanel.classList.contains('active')) {
-              setTimeout(function () { goToIndex(currentIndex); }, 50);
-            }
-          });
-          observer.observe(statsTabPanel, { attributes: true, attributeFilter: ['class'] });
-        }
-
-        setTimeout(function () { goToIndex(0); }, 100);
-      })();
     })();
   </script>
 </body>
