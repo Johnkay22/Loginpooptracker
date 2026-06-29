@@ -4177,6 +4177,7 @@ html, body {
         rafId: null
       };
       var statsCountUpGeneration = 0;
+      var statsCountUpTimerId = null;
       var RETURN_VISIT_LAST_SEEN_KEY = "pp_core_last_seen_ms_v1";
       var RETURN_VISIT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
       var RETURN_VISIT_MIN_GAP_MS = 60 * 1000;
@@ -4370,8 +4371,11 @@ html, body {
           pulseWalletCoin();
         }
 
-        if (statTokens || statStreak) {
-          renderStats();
+        if (state.activeTab === "stats") {
+          var tokenBalance = Math.max(0, Math.floor(Number(resolved.new_balance) || 0));
+          var streakDays = Math.max(0, Math.floor(Number(resolved.window_day_count) || 0));
+          if (statTokens) statTokens.textContent = String(tokenBalance);
+          if (statStreak) statStreak.textContent = streakDays + " days";
         }
       }
 
@@ -4489,6 +4493,9 @@ html, body {
       });
       unlockBodyScrollIfNoSheetsOpen();
       renderAll();
+      if (state.activeTab === "stats") {
+        scheduleStatsCountUp();
+      }
       restoreRunningSession();
       setupTutorial();
       trackReturnVisitWithin7Days();
@@ -4893,19 +4900,38 @@ html, body {
         });
       }
 
+      function scheduleStatsCountUp() {
+        if (statsCountUpTimerId !== null) {
+          window.clearTimeout(statsCountUpTimerId);
+        }
+        statsCountUpTimerId = window.setTimeout(function () {
+          statsCountUpTimerId = null;
+          window.requestAnimationFrame(function () {
+            window.requestAnimationFrame(function () {
+              renderStats({ animate: true });
+            });
+          });
+        }, 16);
+      }
+
+      function resetStatsCountUpTimer() {
+        if (statsCountUpTimerId !== null) {
+          window.clearTimeout(statsCountUpTimerId);
+          statsCountUpTimerId = null;
+        }
+      }
+
       function setActiveTab(tabName) {
         if (!tabPanels[tabName]) return;
         var previousTab = state.activeTab || "calculator";
-        var shouldAnimateStats = tabName === "stats" && previousTab !== "stats";
         tabTransitionClass = getTabTransitionClass(previousTab, tabName);
         state.activeTab = tabName;
         persist();
         renderTabs();
         if (tabName === "stats") {
-          window.setTimeout(function () {
-            renderStats({ animate: shouldAnimateStats });
-            renderTrend(getFilteredSessions());
-          }, 30);
+          scheduleStatsCountUp();
+        } else {
+          resetStatsCountUpTimer();
         }
       }
 
@@ -4957,11 +4983,6 @@ html, body {
           }, 320);
         }
 
-        if (active === "stats") {
-          window.setTimeout(function () {
-            renderTrend(getFilteredSessions());
-          }, 30);
-        }
       }
 
       function setupBottomSheets() {
@@ -5321,8 +5342,23 @@ html, body {
         renderFirstSessionCoach();
         renderTimerRuntimeUI();
         renderTimerButton();
-        renderStats();
+        if (state.activeTab === "stats") {
+          renderStats();
+        }
         renderLog();
+      }
+
+      function resetStatDisplaysForCountUp() {
+        if (statEarnings) statEarnings.innerHTML = formatStatHeroMoney(0);
+        if (statAnnualYield) statAnnualYield.textContent = "$0";
+        if (statAnnualYieldInline) statAnnualYieldInline.textContent = "$0";
+        if (statTime) statTime.textContent = formatDuration(0);
+        if (statSessions) statSessions.textContent = "0";
+        if (statAvgEarnings) statAvgEarnings.textContent = "$0.00";
+        if (statAvgTime) statAvgTime.textContent = formatDuration(0);
+        if (statToday) statToday.textContent = "0";
+        if (statTokens) statTokens.textContent = "0";
+        if (statPercentileFill) statPercentileFill.style.width = "0%";
       }
 
       function renderStats(options) {
@@ -5362,6 +5398,7 @@ html, body {
         if (animate) {
           statsCountUpGeneration += 1;
           var countGen = statsCountUpGeneration;
+          resetStatDisplaysForCountUp();
           countUpStatValue(statEarnings, totalEarnings, formatStatHeroMoney, countGen);
           countUpStatValue(statAnnualYield, projectedAnnual, formatStatMoneyRounded, countGen);
           countUpStatValue(statAnnualYieldInline, projectedAnnual, formatStatMoneyRounded, countGen);
@@ -5381,7 +5418,9 @@ html, body {
             });
           }
         } else {
-          statsCountUpGeneration += 1;
+          if (state.activeTab === "stats") {
+            statsCountUpGeneration += 1;
+          }
           if (statEarnings) statEarnings.textContent = "$" + totalEarnings.toFixed(2);
           if (statAnnualYield) statAnnualYield.textContent = "$" + Math.round(projectedAnnual).toLocaleString("en-US");
           if (statAnnualYieldInline) statAnnualYieldInline.textContent = "$" + Math.round(projectedAnnual).toLocaleString("en-US");
