@@ -15,7 +15,7 @@ const corsHeaders: Record<string, string> = {
 type WalletMode = "peek" | "claim";
 
 interface WalletRequestBody {
-  anon_id: string;
+  anon_id?: string;
   mode: WalletMode;
   tz_offset_minutes: number;
 }
@@ -29,6 +29,7 @@ interface WalletPayload {
   days_to_goal: number;
   goals_completed: number;
   is_first_ever: boolean;
+  merged_balance?: number;
 }
 
 function jsonResponse(status: number, payload: Record<string, unknown>) {
@@ -43,12 +44,8 @@ function validateInput(body: unknown): WalletRequestBody {
     throw new Error("invalid_request_body");
   }
 
-  const anonId = typeof (body as { anon_id?: unknown }).anon_id === "string"
-    ? (body as { anon_id: string }).anon_id.trim()
-    : "";
-  if (!anonId) {
-    throw new Error("anon_id_required");
-  }
+  const rawAnonId = (body as { anon_id?: unknown }).anon_id;
+  const anonId = typeof rawAnonId === "string" ? rawAnonId.trim() : "";
 
   const mode = (body as { mode?: unknown }).mode;
   if (mode !== "peek" && mode !== "claim") {
@@ -61,7 +58,7 @@ function validateInput(body: unknown): WalletRequestBody {
   }
 
   return {
-    anon_id: anonId,
+    anon_id: anonId || undefined,
     mode,
     tz_offset_minutes: tzOffset,
   };
@@ -82,7 +79,7 @@ function normalizeWalletPayload(payload: unknown): WalletPayload {
   const source = (payload && typeof payload === "object") ? payload as Record<string, unknown> : {};
   const windowDayCount = Math.min(7, Math.max(0, toSafeInteger(source.window_day_count)));
   const tier = tierForWindowDay(windowDayCount);
-  return {
+  const normalized: WalletPayload = {
     status: typeof source.status === "string" ? source.status : "claimed",
     tokens_awarded: toSafeInteger(source.tokens_awarded),
     new_balance: toSafeInteger(source.new_balance),
@@ -92,6 +89,17 @@ function normalizeWalletPayload(payload: unknown): WalletPayload {
     goals_completed: toSafeInteger(source.goals_completed),
     is_first_ever: Boolean(source.is_first_ever),
   };
+  if (source.merged_balance !== undefined) {
+    normalized.merged_balance = toSafeInteger(source.merged_balance);
+  }
+  return normalized;
+}
+
+function extractBearerToken(req: Request): string | null {
+  const authHeader = req.headers.get("Authorization") || req.headers.get("authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
+  const token = authHeader.slice("Bearer ".length).trim();
+  return token || null;
 }
 
 Deno.serve(async (req: Request) => {
@@ -118,6 +126,103 @@ Deno.serve(async (req: Request) => {
         autoRefreshToken: false,
       },
     });
+
+    const jwt = extractBearerToken(req);
+    let userId: string | null = null;
+    let mergedBalance: number | undefined;
+
+    if (jwt) {
+      const { data: userData, error: userError } = await supabase.auth.getUser(jwt);
+      if (userError || !userData?.user?.id) {
+        return jsonResponse(401, { error: "invalid_token" });
+      }
+      userId = userData.user.id;
+
+      if (parsedBody.anon_id) {
+        const { data: attachData, error: attachError } = await supabase.rpc("wallet_attach_user", {
+          p_anon_id: parsedBody.anon_id,
+          p_user_id: userId,
+        });
+
+        if (attachError) {
+          return jsonResponse(500, { error: "database_error" });
+        }
+
+        const attachedWallet = Array.isArray(attachData) ? attachData[0] : attachData;
+        if (attachedWallet && typeof attachedWallet === "object") {
+          mergedBalance = toSafeInteger((attachedWallet as Record<string, unknown>).token_balance);
+        }
+      }
+    }
+
+    if (userId) {
+      if (parsedBody.mode === "peek") {
+        const { error: upsertError } = await supabase
+          .from("wallets")
+          .upsert(
+            { anon_id: `user:${userId}`, user_id: userId },
+            { onConflict: "user_id", ignoreDuplicates: true },
+          );
+
+        if (upsertError) {
+          return jsonResponse(500, { error: "database_error" });
+        }
+
+        const { data: wallet, error: selectError } = await supabase
+          .from("wallets")
+          .select("token_balance, window_log_count, goals_completed, first_claim_at")
+          .eq("user_id", userId)
+          .single();
+
+        if (selectError || !wallet) {
+          return jsonResponse(500, { error: "database_error" });
+        }
+
+        const windowDayCount = Math.min(7, Math.max(0, toSafeInteger(wallet.window_log_count)));
+        const payload = normalizeWalletPayload({
+          status: "peek",
+          tokens_awarded: 0,
+          new_balance: wallet.token_balance,
+          window_day_count: windowDayCount,
+          tier: tierForWindowDay(windowDayCount),
+          days_to_goal: Math.max(0, 5 - windowDayCount),
+          goals_completed: wallet.goals_completed,
+          is_first_ever: !wallet.first_claim_at,
+        });
+        if (mergedBalance !== undefined) {
+          payload.merged_balance = mergedBalance;
+        }
+        return jsonResponse(200, payload);
+      }
+
+      const { data: claimData, error: claimError } = await supabase.rpc("wallet_claim_user", {
+        p_user_id: userId,
+        p_tz_offset_minutes: parsedBody.tz_offset_minutes,
+        p_normal_reward: NORMAL_REWARD,
+        p_day5_reward: DAY5_REWARD,
+        p_day7_reward: DAY7_REWARD,
+        p_min_hours_between_claims: MIN_HOURS_BETWEEN_CLAIMS,
+      });
+
+      if (claimError) {
+        return jsonResponse(500, { error: "database_error" });
+      }
+
+      const rawPayload = Array.isArray(claimData) ? claimData[0] : claimData;
+      if (!rawPayload || typeof rawPayload !== "object") {
+        return jsonResponse(500, { error: "database_error" });
+      }
+
+      const payload = normalizeWalletPayload(rawPayload);
+      if (mergedBalance !== undefined) {
+        payload.merged_balance = mergedBalance;
+      }
+      return jsonResponse(200, payload);
+    }
+
+    if (!parsedBody.anon_id) {
+      return jsonResponse(400, { error: "anon_id_required" });
+    }
 
     if (parsedBody.mode === "peek") {
       const { error: upsertError } = await supabase
@@ -174,7 +279,6 @@ Deno.serve(async (req: Request) => {
     if (error instanceof Error) {
       if (
         error.message === "invalid_request_body" ||
-        error.message === "anon_id_required" ||
         error.message === "invalid_mode" ||
         error.message === "invalid_tz_offset_minutes"
       ) {
