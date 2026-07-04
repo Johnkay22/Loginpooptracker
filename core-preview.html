@@ -50,6 +50,7 @@
     gtag('js', new Date());
     gtag('config', 'G-R1E17DCKNC');
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/html-to-image"></script>
 
   <script type="application/ld+json">
@@ -194,6 +195,124 @@
     body.wallet-modal-open {
       overflow: hidden;
       touch-action: none;
+    }
+
+    body.auth-pending {
+      visibility: hidden;
+    }
+
+    .head-auth {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .head-username {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .head-signout {
+      border: 1px solid var(--line-2);
+      background: var(--field);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .head-signout:hover {
+      color: var(--text);
+      border-color: var(--blue-line);
+    }
+
+    .profile-setup-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(4, 8, 18, 0.82);
+      backdrop-filter: blur(6px);
+    }
+
+    .profile-setup-modal.open {
+      display: flex;
+    }
+
+    .profile-setup-panel {
+      width: min(420px, 100%);
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, var(--panel-top), var(--panel-bot));
+      box-shadow: var(--shadow);
+      padding: 24px 22px;
+    }
+
+    .profile-setup-panel h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .profile-setup-panel p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .profile-setup-field {
+      margin-bottom: 14px;
+    }
+
+    .profile-setup-field label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .profile-setup-field input {
+      width: 100%;
+      background: var(--field);
+      border: 1px solid var(--line-2);
+      color: var(--text);
+      border-radius: 11px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .profile-setup-field input:focus {
+      outline: none;
+      border-color: var(--blue-line);
+      box-shadow: 0 0 0 3px var(--blue-soft);
+    }
+
+    .profile-setup-error {
+      min-height: 18px;
+      margin: 4px 0 12px;
+      color: #ff8f8f;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .profile-setup-submit {
+      width: 100%;
     }
 
     @media (max-width: 760px) {
@@ -3573,7 +3692,7 @@ html, body {
 
   </style>
 </head>
-<body>
+<body class="auth-pending">
   <main class="page">
     <section class="shell">
       <h1 class="sr-only">PoopProfit Core Preview Calculator, Session Timer, and Stats</h1>
@@ -3581,6 +3700,10 @@ html, body {
         <header class="head">
           <img class="logo" src="poopprofit_logo.png" alt="PoopProfit.com — Get Paid To Poop">
           <button id="tutorialHelpButton" class="tutorial-help-button" type="button" aria-label="Open quick tour">?</button>
+          <div id="headAuth" class="head-auth" hidden>
+            <span id="headUsername" class="head-username"></span>
+            <button id="signOutButton" class="head-signout" type="button">Sign out</button>
+          </div>
         </header>
         <div class="wallet-banner-row">
           <aside id="walletCorner" class="wallet-corner" aria-live="polite" aria-label="Turd Token wallet">
@@ -4028,6 +4151,29 @@ html, body {
     <p id="walletRewardToastText" class="wallet-reward-text"></p>
   </div>
 
+  <div id="profileSetupModal" class="profile-setup-modal" aria-hidden="true">
+    <div class="profile-setup-panel" role="dialog" aria-modal="true" aria-labelledby="profileSetupTitle">
+      <h2 id="profileSetupTitle">Choose your username</h2>
+      <p>Pick a public handle for your account. You can add work details now or skip them.</p>
+      <form id="profileSetupForm">
+        <div class="profile-setup-field">
+          <label for="profileUsernameInput">Username</label>
+          <input id="profileUsernameInput" name="username" type="text" autocomplete="username" maxlength="20" required>
+        </div>
+        <div class="profile-setup-field">
+          <label for="profileIndustryInput">Industry (optional)</label>
+          <input id="profileIndustryInput" name="industry" type="text" autocomplete="organization-title">
+        </div>
+        <div class="profile-setup-field">
+          <label for="profileJobTitleInput">Job title (optional)</label>
+          <input id="profileJobTitleInput" name="job_title" type="text" autocomplete="organization">
+        </div>
+        <p id="profileSetupError" class="profile-setup-error" aria-live="polite"></p>
+        <button id="profileSetupSubmitButton" class="button profile-setup-submit" type="submit">Continue</button>
+      </form>
+    </div>
+  </div>
+
   <div id="milestoneToast" class="milestone-toast" role="status" aria-live="polite"></div>
 
   <div class="page-bottom-links">
@@ -4090,6 +4236,28 @@ html, body {
   <script>
     (function () {
       "use strict";
+
+      var SUPABASE_URL = "https://ukfboxemqwuwkvfglzfq.supabase.co";
+      var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrZmJveGVtcXd1d2t2ZmdsemZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MDk0OTQsImV4cCI6MjA5NjI4NTQ5NH0.nXvi3ZEimwuZHfWR2DZlxX1YYzrdMe_UvZa6NkKN4Og";
+      var USERNAME_PATTERN = /^[a-zA-Z0-9_]{3,20}$/;
+      var authContext = {
+        supabase: null,
+        session: null,
+        userId: null,
+        username: null,
+        accessToken: null
+      };
+
+      var headAuth = document.getElementById("headAuth");
+      var headUsername = document.getElementById("headUsername");
+      var signOutButton = document.getElementById("signOutButton");
+      var profileSetupModal = document.getElementById("profileSetupModal");
+      var profileSetupForm = document.getElementById("profileSetupForm");
+      var profileUsernameInput = document.getElementById("profileUsernameInput");
+      var profileIndustryInput = document.getElementById("profileIndustryInput");
+      var profileJobTitleInput = document.getElementById("profileJobTitleInput");
+      var profileSetupError = document.getElementById("profileSetupError");
+      var profileSetupSubmitButton = document.getElementById("profileSetupSubmitButton");
 
       var STORAGE_KEY = "pp_core_tabs_v1";
       var DEFAULT_STATE = {
@@ -4349,6 +4517,165 @@ html, body {
         gtag("event", eventName, params || {});
       }
 
+      function renderAuthHeader() {
+        if (!headAuth || !headUsername || !authContext.username) return;
+        headUsername.textContent = authContext.username;
+        headAuth.hidden = false;
+      }
+
+      function openProfileSetupModal() {
+        if (!profileSetupModal) return;
+        profileSetupModal.classList.add("open");
+        profileSetupModal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("wallet-modal-open");
+        if (profileUsernameInput) profileUsernameInput.focus();
+      }
+
+      function closeProfileSetupModal() {
+        if (!profileSetupModal) return;
+        profileSetupModal.classList.remove("open");
+        profileSetupModal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("wallet-modal-open");
+      }
+
+      function setProfileSetupError(message) {
+        if (profileSetupError) profileSetupError.textContent = message || "";
+      }
+
+      function validateProfileUsername(value) {
+        return USERNAME_PATTERN.test(String(value || "").trim());
+      }
+
+      function fetchProfileForUser(userId) {
+        if (!authContext.supabase || !userId) return Promise.resolve(null);
+        return authContext.supabase
+          .from("profiles")
+          .select("user_id, username, industry, job_title")
+          .eq("user_id", userId)
+          .maybeSingle()
+          .then(function (result) {
+            if (result.error) throw result.error;
+            return result.data || null;
+          });
+      }
+
+      function createProfileForUser(payload) {
+        if (!authContext.supabase || !authContext.userId) {
+          return Promise.reject(new Error("auth_unavailable"));
+        }
+        return authContext.supabase
+          .from("profiles")
+          .insert({
+            user_id: authContext.userId,
+            username: payload.username,
+            industry: payload.industry || null,
+            job_title: payload.job_title || null
+          })
+          .select("user_id, username, industry, job_title")
+          .single()
+          .then(function (result) {
+            if (result.error) throw result.error;
+            return result.data;
+          });
+      }
+
+      function ensureProfileReady() {
+        return fetchProfileForUser(authContext.userId).then(function (profile) {
+          if (profile && profile.username) {
+            authContext.username = profile.username;
+            renderAuthHeader();
+            return profile;
+          }
+
+          return new Promise(function (resolve, reject) {
+            if (!profileSetupForm) {
+              reject(new Error("profile_ui_missing"));
+              return;
+            }
+
+            openProfileSetupModal();
+            setProfileSetupError("");
+
+            function handleSubmit(event) {
+              event.preventDefault();
+              var username = profileUsernameInput ? profileUsernameInput.value.trim() : "";
+              var industry = profileIndustryInput ? profileIndustryInput.value.trim() : "";
+              var jobTitle = profileJobTitleInput ? profileJobTitleInput.value.trim() : "";
+
+              if (!validateProfileUsername(username)) {
+                setProfileSetupError("Username must be 3-20 characters and use letters, numbers, or underscores.");
+                return;
+              }
+
+              if (profileSetupSubmitButton) profileSetupSubmitButton.disabled = true;
+              setProfileSetupError("");
+
+              createProfileForUser({
+                username: username,
+                industry: industry,
+                job_title: jobTitle
+              }).then(function (createdProfile) {
+                authContext.username = createdProfile.username;
+                renderAuthHeader();
+                closeProfileSetupModal();
+                trackCoreEvent("profile_created", {
+                  has_industry: Boolean(industry),
+                  has_job_title: Boolean(jobTitle)
+                });
+                profileSetupForm.removeEventListener("submit", handleSubmit);
+                resolve(createdProfile);
+              }).catch(function (error) {
+                var message = "Could not save profile. Please try again.";
+                if (error && error.code === "23505") {
+                  message = "That username is taken. Try another one.";
+                }
+                setProfileSetupError(message);
+              }).finally(function () {
+                if (profileSetupSubmitButton) profileSetupSubmitButton.disabled = false;
+              });
+            }
+
+            profileSetupForm.addEventListener("submit", handleSubmit);
+          });
+        });
+      }
+
+      function bootstrapAuth() {
+        if (!window.supabase || typeof window.supabase.createClient !== "function") {
+          window.location.replace("/auth.html");
+          return Promise.resolve(false);
+        }
+
+        authContext.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        return authContext.supabase.auth.getSession().then(function (result) {
+          var session = result.data && result.data.session;
+          if (!session) {
+            window.location.replace("/auth.html");
+            return false;
+          }
+
+          authContext.session = session;
+          authContext.userId = session.user.id;
+          authContext.accessToken = session.access_token;
+
+          if (signOutButton) {
+            signOutButton.addEventListener("click", function () {
+              authContext.supabase.auth.signOut().finally(function () {
+                window.location.replace("/auth.html");
+              });
+            });
+          }
+
+          return ensureProfileReady().then(function () {
+            document.body.classList.remove("auth-pending");
+            return true;
+          });
+        }).catch(function () {
+          window.location.replace("/auth.html");
+          return false;
+        });
+      }
+
       function trackReturnVisitWithin7Days() {
         var now = Date.now();
         var previousVisitMs = null;
@@ -4571,24 +4898,47 @@ html, body {
       }
 
       function walletFunctionPayload(mode) {
-        return {
+        var payload = {
           anon_id: getWalletAnonId(),
           mode: mode,
           tz_offset_minutes: new Date().getTimezoneOffset()
         };
+        return payload;
       }
 
       function callWalletFunction(mode) {
+        var headers = {
+          "Content-Type": "application/json"
+        };
+        if (authContext.accessToken) {
+          headers.Authorization = "Bearer " + authContext.accessToken;
+        }
+
         return fetch(WALLET_FUNCTION_URL, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: headers,
           body: JSON.stringify(walletFunctionPayload(mode))
         }).then(function (response) {
           if (!response.ok) throw new Error("wallet_request_failed");
           return response.json();
         }).then(function (payload) {
+          if (payload && payload.merged_balance !== undefined) {
+            var mergedCount = Math.max(0, Math.floor(Number(payload.merged_balance) || 0));
+            if (mergedCount > 0) {
+              trackCoreEvent("wallet_merged", { count: mergedCount });
+              if (walletRewardToastText && walletRewardToast) {
+                walletRewardToastText.textContent = "Your guest tokens came with you";
+                walletRewardToast.classList.add("show");
+                if (walletRewardToastTimerId !== null) {
+                  window.clearTimeout(walletRewardToastTimerId);
+                }
+                walletRewardToastTimerId = window.setTimeout(function () {
+                  walletRewardToast.classList.remove("show");
+                  walletRewardToastTimerId = null;
+                }, 4000);
+              }
+            }
+          }
           return normalizeWalletPayload(payload);
         });
       }
@@ -4631,32 +4981,38 @@ html, body {
         }
       }
 
-      hydrateInputs();
-      renderTabs();
-      renderWageMode();
-      wireEvents();
-      setupBottomSheets();
-      setupFabVisibilityObserver();
-      window.addEventListener("resize", function () {
-        var activeDock = document.querySelector(".nav-btn.active[data-tab]");
-        if (activeDock) moveDockIndicator(activeDock);
-      });
-      requestAnimationFrame(function () {
-        var activeDock = document.querySelector(".nav-btn.active[data-tab]");
-        if (activeDock) moveDockIndicator(activeDock);
-      });
-      unlockBodyScrollIfNoSheetsOpen();
-      renderAll();
-      if (state.activeTab === "stats") {
-        scheduleStatsCountUp();
+      function startApp() {
+        hydrateInputs();
+        renderTabs();
+        renderWageMode();
+        wireEvents();
+        setupBottomSheets();
+        setupFabVisibilityObserver();
+        window.addEventListener("resize", function () {
+          var activeDock = document.querySelector(".nav-btn.active[data-tab]");
+          if (activeDock) moveDockIndicator(activeDock);
+        });
+        requestAnimationFrame(function () {
+          var activeDock = document.querySelector(".nav-btn.active[data-tab]");
+          if (activeDock) moveDockIndicator(activeDock);
+        });
+        unlockBodyScrollIfNoSheetsOpen();
+        renderAll();
+        if (state.activeTab === "stats") {
+          scheduleStatsCountUp();
+        }
+        restoreRunningSession();
+        setupTutorial();
+        trackReturnVisitWithin7Days();
+        initializeWallet();
+        window.generateShareCardPng = generateShareCardPng;
+        preloadShareCardAssets().catch(function () {
+          // Keep startup silent; generateShareCardPng will report failures when invoked.
+        });
       }
-      restoreRunningSession();
-      setupTutorial();
-      trackReturnVisitWithin7Days();
-      initializeWallet();
-      window.generateShareCardPng = generateShareCardPng;
-      preloadShareCardAssets().catch(function () {
-        // Keep startup silent; generateShareCardPng will report failures when invoked.
+
+      bootstrapAuth().then(function (ready) {
+        if (ready) startApp();
       });
 
       function wireEvents() {
