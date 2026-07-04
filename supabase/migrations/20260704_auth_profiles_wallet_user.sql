@@ -59,8 +59,10 @@ declare
   v_anon_wallet public.wallets%rowtype;
   v_user_wallet public.wallets%rowtype;
   v_result public.wallets%rowtype;
-  v_primary_last_claim timestamptz;
-  v_secondary_last_claim timestamptz;
+  v_claim_source public.wallets%rowtype;
+  v_user_claim_at timestamptz;
+  v_anon_claim_at timestamptz;
+  v_merged_last_claim_at timestamptz;
   v_has_anon boolean := false;
   v_has_user boolean := false;
 begin
@@ -89,33 +91,35 @@ begin
 
   if v_has_anon and v_has_user
      and v_anon_wallet.anon_id <> v_user_wallet.anon_id then
-    v_primary_last_claim := coalesce(v_user_wallet.last_claim_at, '-infinity'::timestamptz);
-    v_secondary_last_claim := coalesce(v_anon_wallet.last_claim_at, '-infinity'::timestamptz);
+    v_user_claim_at := coalesce(v_user_wallet.last_claim_at, '-infinity'::timestamptz);
+    v_anon_claim_at := coalesce(v_anon_wallet.last_claim_at, '-infinity'::timestamptz);
+
+    if v_anon_claim_at > v_user_claim_at then
+      v_claim_source := v_anon_wallet;
+    elsif v_user_claim_at > v_anon_claim_at then
+      v_claim_source := v_user_wallet;
+    elsif coalesce(v_anon_wallet.last_claim_date, '-infinity'::date)
+          > coalesce(v_user_wallet.last_claim_date, '-infinity'::date) then
+      v_claim_source := v_anon_wallet;
+    else
+      v_claim_source := v_user_wallet;
+    end if;
+
+    if v_user_wallet.last_claim_at is null and v_anon_wallet.last_claim_at is null then
+      v_merged_last_claim_at := null;
+    else
+      v_merged_last_claim_at := greatest(v_user_claim_at, v_anon_claim_at);
+    end if;
 
     update public.wallets as w
        set token_balance = v_user_wallet.token_balance + v_anon_wallet.token_balance,
            total_earned = v_user_wallet.total_earned + v_anon_wallet.total_earned,
            longest_streak = greatest(v_user_wallet.longest_streak, v_anon_wallet.longest_streak),
-           current_streak = case
-             when v_secondary_last_claim > v_primary_last_claim then v_anon_wallet.current_streak
-             else v_user_wallet.current_streak
-           end,
-           last_claim_date = case
-             when v_secondary_last_claim > v_primary_last_claim then v_anon_wallet.last_claim_date
-             else v_user_wallet.last_claim_date
-           end,
-           last_claim_at = case
-             when v_secondary_last_claim > v_primary_last_claim then v_anon_wallet.last_claim_at
-             else v_user_wallet.last_claim_at
-           end,
-           window_anchor_date = case
-             when v_secondary_last_claim > v_primary_last_claim then v_anon_wallet.window_anchor_date
-             else v_user_wallet.window_anchor_date
-           end,
-           window_log_count = case
-             when v_secondary_last_claim > v_primary_last_claim then v_anon_wallet.window_log_count
-             else v_user_wallet.window_log_count
-           end,
+           current_streak = v_claim_source.current_streak,
+           last_claim_date = v_claim_source.last_claim_date,
+           last_claim_at = v_merged_last_claim_at,
+           window_anchor_date = v_claim_source.window_anchor_date,
+           window_log_count = v_claim_source.window_log_count,
            goals_completed = greatest(v_user_wallet.goals_completed, v_anon_wallet.goals_completed),
            first_claim_at = least(
              coalesce(v_user_wallet.first_claim_at, v_anon_wallet.first_claim_at),
