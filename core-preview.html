@@ -4504,6 +4504,7 @@ html, body {
       var RETURN_VISIT_MIN_GAP_MS = 60 * 1000;
       var lastTrackedHourlyWageValue = null;
       var WALLET_ANON_ID_KEY = "pp_wallet_anon_id_v1";
+      var WALLET_MERGE_ACK_KEY = "pp_wallet_merge_ack_v1";
       var WALLET_FUNCTION_URL = "https://ukfboxemqwuwkvfglzfq.supabase.co/functions/v1/wallet";
       var walletSnapshot = {
         new_balance: 0,
@@ -4897,12 +4898,32 @@ html, body {
         document.body.classList.remove("wallet-modal-open");
       }
 
+      function isWalletMergeComplete() {
+        try {
+          return window.localStorage && window.localStorage.getItem(WALLET_MERGE_ACK_KEY) === "1";
+        } catch (_error) {
+          return false;
+        }
+      }
+
+      function markWalletMergeComplete() {
+        try {
+          if (window.localStorage) {
+            window.localStorage.setItem(WALLET_MERGE_ACK_KEY, "1");
+          }
+        } catch (_error) {
+          // Ignore storage failures.
+        }
+      }
+
       function walletFunctionPayload(mode) {
         var payload = {
-          anon_id: getWalletAnonId(),
           mode: mode,
           tz_offset_minutes: new Date().getTimezoneOffset()
         };
+        if (!isWalletMergeComplete()) {
+          payload.anon_id = getWalletAnonId();
+        }
         return payload;
       }
 
@@ -4922,9 +4943,9 @@ html, body {
           if (!response.ok) throw new Error("wallet_request_failed");
           return response.json();
         }).then(function (payload) {
-          if (payload && payload.merged_balance !== undefined) {
+          if (authContext.accessToken && payload && payload.merged_balance !== undefined) {
             var mergedCount = Math.max(0, Math.floor(Number(payload.merged_balance) || 0));
-            if (mergedCount > 0) {
+            if (mergedCount > 0 && !isWalletMergeComplete()) {
               trackCoreEvent("wallet_merged", { count: mergedCount });
               if (walletRewardToastText && walletRewardToast) {
                 walletRewardToastText.textContent = "Your guest tokens came with you";
@@ -4938,6 +4959,9 @@ html, body {
                 }, 4000);
               }
             }
+            markWalletMergeComplete();
+          } else if (authContext.accessToken && !isWalletMergeComplete()) {
+            markWalletMergeComplete();
           }
           return normalizeWalletPayload(payload);
         });

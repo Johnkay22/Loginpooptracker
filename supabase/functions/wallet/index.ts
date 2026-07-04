@@ -139,7 +139,28 @@ Deno.serve(async (req: Request) => {
       userId = userData.user.id;
 
       if (parsedBody.anon_id) {
-        const { data: attachData, error: attachError } = await supabase.rpc("wallet_attach_user", {
+        const { data: anonWalletBefore } = await supabase
+          .from("wallets")
+          .select("anon_id, user_id, token_balance")
+          .eq("anon_id", parsedBody.anon_id)
+          .maybeSingle();
+
+        const { data: userWalletBefore } = await supabase
+          .from("wallets")
+          .select("anon_id, user_id")
+          .eq("user_id", userId)
+          .maybeSingle();
+
+        const hadSeparateAnonWallet = Boolean(
+          anonWalletBefore &&
+            (!anonWalletBefore.user_id || anonWalletBefore.user_id !== userId) &&
+            (!userWalletBefore || userWalletBefore.anon_id !== parsedBody.anon_id),
+        );
+        const guestTokensMerged = hadSeparateAnonWallet
+          ? toSafeInteger(anonWalletBefore?.token_balance)
+          : 0;
+
+        const { error: attachError } = await supabase.rpc("wallet_attach_user", {
           p_anon_id: parsedBody.anon_id,
           p_user_id: userId,
         });
@@ -148,9 +169,8 @@ Deno.serve(async (req: Request) => {
           return jsonResponse(500, { error: "database_error" });
         }
 
-        const attachedWallet = Array.isArray(attachData) ? attachData[0] : attachData;
-        if (attachedWallet && typeof attachedWallet === "object") {
-          mergedBalance = toSafeInteger((attachedWallet as Record<string, unknown>).token_balance);
+        if (hadSeparateAnonWallet && guestTokensMerged > 0) {
+          mergedBalance = guestTokensMerged;
         }
       }
     }
