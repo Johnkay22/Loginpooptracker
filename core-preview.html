@@ -201,6 +201,185 @@
       visibility: hidden;
     }
 
+    body.guest-mode #headAuth {
+      display: none !important;
+    }
+
+    .soft-locked {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      border-color: rgba(73, 159, 255, 0.45) !important;
+    }
+
+    .soft-locked > *:not(.soft-lock-overlay) {
+      pointer-events: none !important;
+      user-select: none !important;
+      filter: blur(4px) saturate(0.78);
+      transition: filter 0.2s ease;
+    }
+
+    .soft-lock-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      background:
+        radial-gradient(130% 70% at 50% 50%, rgba(19, 40, 75, 0.28), rgba(4, 8, 18, 0.64)),
+        linear-gradient(180deg, rgba(4, 10, 24, 0.25), rgba(4, 10, 24, 0.6));
+      cursor: pointer;
+    }
+
+    .soft-lock-overlay::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(73, 159, 255, 0.42);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    .soft-lock-overlay button {
+      border: 1px solid rgba(77, 164, 255, 0.65);
+      background: rgba(10, 22, 45, 0.82);
+      color: #e8f3ff;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: inherit;
+      letter-spacing: 0.02em;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 18px -8px rgba(89, 177, 255, 0.8);
+    }
+
+    .soft-lock-overlay button:hover {
+      border-color: rgba(119, 194, 255, 0.9);
+      color: #ffffff;
+    }
+
+    .soft-lock-icon {
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+    }
+
+    .guest-cta-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 130;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(3, 7, 16, 0.8);
+      backdrop-filter: blur(8px);
+    }
+
+    .guest-cta-modal.open {
+      display: flex;
+    }
+
+    .guest-cta-sheet {
+      width: min(460px, 100%);
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(10, 19, 38, 0.97), rgba(7, 13, 28, 0.97));
+      box-shadow: 0 20px 60px -28px rgba(0, 0, 0, 0.86), 0 0 0 1px rgba(78, 164, 255, 0.22) inset;
+      padding: 24px 20px 20px;
+      position: relative;
+    }
+
+    .guest-cta-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      border: 1px solid var(--line-2);
+      background: rgba(12, 24, 48, 0.8);
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .guest-cta-close:hover {
+      color: var(--text);
+      border-color: var(--blue-line);
+    }
+
+    .guest-cta-title {
+      margin: 0 0 8px;
+      font-size: 25px;
+      line-height: 1.12;
+    }
+
+    .guest-cta-subtitle {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .guest-cta-bullets {
+      margin: 0 0 18px;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 9px;
+    }
+
+    .guest-cta-bullets li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #d8ecff;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .guest-cta-bullets li::before {
+      content: "⚡";
+      color: #66beff;
+      font-size: 12px;
+    }
+
+    .guest-cta-primary,
+    .guest-cta-secondary {
+      width: 100%;
+      justify-content: center;
+      text-decoration: none;
+      margin-top: 8px;
+    }
+
+    .guest-cta-primary-note {
+      margin: 6px 0 4px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 760px) {
+      .guest-cta-modal {
+        align-items: flex-end;
+        padding: 0;
+      }
+
+      .guest-cta-sheet {
+        width: 100%;
+        border-radius: 22px 22px 0 0;
+        padding: 20px 16px 16px;
+      }
+    }
+
     .head-auth {
       margin-left: auto;
       display: flex;
@@ -3692,7 +3871,7 @@ html, body {
 
   </style>
 </head>
-<body class="auth-pending">
+<body>
   <main class="page">
     <section class="shell">
       <h1 class="sr-only">PoopProfit Core Preview Calculator, Session Timer, and Stats</h1>
@@ -4174,6 +4353,22 @@ html, body {
     </div>
   </div>
 
+  <div id="guestCtaModal" class="guest-cta-modal" aria-hidden="true">
+    <div class="guest-cta-sheet" role="dialog" aria-modal="true" aria-labelledby="guestCtaTitle">
+      <button id="guestCtaCloseButton" class="guest-cta-close" type="button" aria-label="Close unlock card">×</button>
+      <h3 id="guestCtaTitle" class="guest-cta-title">Unlock the full porcelain portfolio.</h3>
+      <p id="guestCtaSubtitle" class="guest-cta-subtitle">Save your sessions and turn each stop into streaks, stats, and token glory.</p>
+      <ul class="guest-cta-bullets">
+        <li>Save your sessions</li>
+        <li>Earn Turd Tokens</li>
+        <li>Unlock stats + share cards</li>
+      </ul>
+      <a id="guestCtaCreateButton" class="button full guest-cta-primary" href="/auth.html">Create free account</a>
+      <p class="guest-cta-primary-note">Always free.</p>
+      <a id="guestCtaSigninButton" class="button ghost guest-cta-secondary" href="/auth.html">Sign in</a>
+    </div>
+  </div>
+
   <div id="milestoneToast" class="milestone-toast" role="status" aria-live="polite"></div>
 
   <div class="page-bottom-links">
@@ -4245,7 +4440,8 @@ html, body {
         session: null,
         userId: null,
         username: null,
-        accessToken: null
+        accessToken: null,
+        mode: "signed_out"
       };
 
       var headAuth = document.getElementById("headAuth");
@@ -4258,6 +4454,12 @@ html, body {
       var profileJobTitleInput = document.getElementById("profileJobTitleInput");
       var profileSetupError = document.getElementById("profileSetupError");
       var profileSetupSubmitButton = document.getElementById("profileSetupSubmitButton");
+      var guestCtaModal = document.getElementById("guestCtaModal");
+      var guestCtaSheet = guestCtaModal ? guestCtaModal.querySelector(".guest-cta-sheet") : null;
+      var guestCtaCloseButton = document.getElementById("guestCtaCloseButton");
+      var guestCtaCreateButton = document.getElementById("guestCtaCreateButton");
+      var guestCtaSigninButton = document.getElementById("guestCtaSigninButton");
+      var guestCtaSubtitle = document.getElementById("guestCtaSubtitle");
 
       var STORAGE_KEY = "pp_core_tabs_v1";
       var DEFAULT_STATE = {
@@ -4506,22 +4708,208 @@ html, body {
       var WALLET_ANON_ID_KEY = "pp_wallet_anon_id_v1";
       var WALLET_MERGE_ACK_KEY = "pp_wallet_merge_ack_v1";
       var WALLET_FUNCTION_URL = "https://ukfboxemqwuwkvfglzfq.supabase.co/functions/v1/wallet";
+      var LOCK_IMPRESSION_SESSION_KEY = "pp_core_lock_impression_v1";
+      var TEASER_STOP_LOCAL_KEY = "pp_core_teaser_session_stop_v1";
+      var SIGNED_UNLOCK_TRACKED_KEY = "pp_core_signed_in_unlock_v1";
+      var SOFT_LOCK_CONFIG = [
+        { selector: "#walletCorner", region: "wallet_banner" },
+        { selector: ".log-card", region: "session_log" },
+        { selector: "#panel-stats", region: "stats_tab" },
+        { selector: "#panel-coming", region: "coming_tab" }
+      ];
       var walletSnapshot = {
         new_balance: 0,
         window_day_count: 0,
         goals_completed: 0
       };
       var walletBalanceAnimationFrameId = null;
+      var activeLockRegion = "locked_region";
 
       function trackCoreEvent(eventName, params) {
         if (typeof gtag !== "function" || !eventName) return;
         gtag("event", eventName, params || {});
       }
 
+      function isSignedInMode() {
+        return authContext.mode === "signed_in";
+      }
+
+      function readLocalFlag(key) {
+        try {
+          return window.localStorage && window.localStorage.getItem(key) === "1";
+        } catch (_error) {
+          return false;
+        }
+      }
+
+      function writeLocalFlag(key) {
+        try {
+          if (window.localStorage) {
+            window.localStorage.setItem(key, "1");
+          }
+        } catch (_error) {
+          // Ignore localStorage write failures.
+        }
+      }
+
+      function clearLocalFlag(key) {
+        try {
+          if (window.localStorage) {
+            window.localStorage.removeItem(key);
+          }
+        } catch (_error) {
+          // Ignore localStorage remove failures.
+        }
+      }
+
+      function trackLockImpressionOnce() {
+        try {
+          if (!window.sessionStorage) return;
+          if (window.sessionStorage.getItem(LOCK_IMPRESSION_SESSION_KEY) === "1") return;
+          window.sessionStorage.setItem(LOCK_IMPRESSION_SESSION_KEY, "1");
+          trackCoreEvent("core_lock_impression");
+        } catch (_error) {
+          // Ignore sessionStorage failures.
+        }
+      }
+
+      function describeGuestCta(regionName) {
+        if (regionName === "session_stop") {
+          return "Sign in to save this session and start earning Turd Tokens.";
+        }
+        return "Save your sessions and turn each stop into streaks, stats, and token glory.";
+      }
+
+      function openGuestCta(regionName) {
+        if (!guestCtaModal) return;
+        activeLockRegion = regionName || "locked_region";
+        if (guestCtaSubtitle) {
+          guestCtaSubtitle.textContent = describeGuestCta(activeLockRegion);
+        }
+        guestCtaModal.classList.add("open");
+        guestCtaModal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("wallet-modal-open");
+      }
+
+      function closeGuestCta() {
+        if (!guestCtaModal) return;
+        guestCtaModal.classList.remove("open");
+        guestCtaModal.setAttribute("aria-hidden", "true");
+        if (!walletFirstModal || !walletFirstModal.classList.contains("open")) {
+          document.body.classList.remove("wallet-modal-open");
+        }
+      }
+
+      function createSoftLockOverlay(regionName) {
+        var overlay = document.createElement("div");
+        overlay.className = "soft-lock-overlay";
+        overlay.setAttribute("data-lock-region", regionName);
+        var button = document.createElement("button");
+        button.type = "button";
+        button.innerHTML = "<svg class=\"soft-lock-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M7 10V8a5 5 0 0 1 10 0v2h1.25A1.75 1.75 0 0 1 20 11.75v8.5A1.75 1.75 0 0 1 18.25 22h-12.5A1.75 1.75 0 0 1 4 20.25v-8.5A1.75 1.75 0 0 1 5.75 10H7Zm2 0h6V8a3 3 0 1 0-6 0v2Z\"/></svg><span>Unlock</span>";
+        overlay.appendChild(button);
+        overlay.addEventListener("click", function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          trackCoreEvent("core_lock_click", { region_name: regionName });
+          openGuestCta(regionName);
+        });
+        return overlay;
+      }
+
+      function lockElementRegion(target, regionName) {
+        if (!target) return;
+        target.classList.add("soft-locked");
+        target.setAttribute("data-soft-lock-region", regionName);
+        var overlay = target.querySelector(".soft-lock-overlay");
+        if (!overlay) {
+          overlay = createSoftLockOverlay(regionName);
+          target.appendChild(overlay);
+        }
+        Array.prototype.forEach.call(target.children, function (child) {
+          if (child === overlay) return;
+          if (!child.hasAttribute("data-soft-lock-prev-inert")) {
+            child.setAttribute("data-soft-lock-prev-inert", child.inert ? "1" : "0");
+          }
+          child.inert = true;
+        });
+        var focusables = target.querySelectorAll("a, button, input, select, textarea, [tabindex]");
+        focusables.forEach(function (node) {
+          if (node.closest(".soft-lock-overlay")) return;
+          if (!node.hasAttribute("data-soft-lock-prev-tabindex")) {
+            var previous = node.getAttribute("tabindex");
+            node.setAttribute("data-soft-lock-prev-tabindex", previous === null ? "__none__" : previous);
+          }
+          node.setAttribute("tabindex", "-1");
+          if ("disabled" in node && !node.hasAttribute("data-soft-lock-prev-disabled")) {
+            node.setAttribute("data-soft-lock-prev-disabled", node.disabled ? "1" : "0");
+            node.disabled = true;
+          }
+        });
+      }
+
+      function unlockElementRegion(target) {
+        if (!target) return;
+        target.classList.remove("soft-locked");
+        target.removeAttribute("data-soft-lock-region");
+        var overlay = target.querySelector(".soft-lock-overlay");
+        if (overlay) overlay.remove();
+        target.querySelectorAll("[data-soft-lock-prev-inert]").forEach(function (node) {
+          var previousInert = node.getAttribute("data-soft-lock-prev-inert") === "1";
+          node.inert = previousInert;
+          node.removeAttribute("data-soft-lock-prev-inert");
+        });
+        target.querySelectorAll("[data-soft-lock-prev-tabindex]").forEach(function (node) {
+          var previous = node.getAttribute("data-soft-lock-prev-tabindex");
+          if (previous === "__none__") node.removeAttribute("tabindex");
+          else node.setAttribute("tabindex", previous || "-1");
+          node.removeAttribute("data-soft-lock-prev-tabindex");
+        });
+        target.querySelectorAll("[data-soft-lock-prev-disabled]").forEach(function (node) {
+          var previousDisabled = node.getAttribute("data-soft-lock-prev-disabled") === "1";
+          node.disabled = previousDisabled;
+          node.removeAttribute("data-soft-lock-prev-disabled");
+        });
+      }
+
+      function applyGuestLocks() {
+        SOFT_LOCK_CONFIG.forEach(function (config) {
+          lockElementRegion(document.querySelector(config.selector), config.region);
+        });
+        trackLockImpressionOnce();
+      }
+
+      function clearGuestLocks() {
+        SOFT_LOCK_CONFIG.forEach(function (config) {
+          unlockElementRegion(document.querySelector(config.selector));
+        });
+      }
+
       function renderAuthHeader() {
-        if (!headAuth || !headUsername || !authContext.username) return;
+        if (!headAuth || !headUsername || !isSignedInMode() || !authContext.username) {
+          if (headAuth) headAuth.hidden = true;
+          return;
+        }
         headUsername.textContent = authContext.username;
         headAuth.hidden = false;
+      }
+
+      function applyAuthMode(mode) {
+        authContext.mode = mode;
+        document.body.classList.toggle("guest-mode", mode === "signed_out");
+        if (mode === "signed_out") {
+          authContext.session = null;
+          authContext.userId = null;
+          authContext.accessToken = null;
+          authContext.username = null;
+          renderAuthHeader();
+          closeProfileSetupModal();
+          applyGuestLocks();
+        } else {
+          clearGuestLocks();
+          closeGuestCta();
+          renderAuthHeader();
+        }
       }
 
       function openProfileSetupModal() {
@@ -4641,40 +5029,61 @@ html, body {
         });
       }
 
+      function maybeTrackSignedInUnlock() {
+        if (!readLocalFlag(TEASER_STOP_LOCAL_KEY)) return;
+        if (readLocalFlag(SIGNED_UNLOCK_TRACKED_KEY)) return;
+        trackCoreEvent("core_signed_in_unlock");
+        writeLocalFlag(SIGNED_UNLOCK_TRACKED_KEY);
+      }
+
       function bootstrapAuth() {
         if (!window.supabase || typeof window.supabase.createClient !== "function") {
-          window.location.replace("/auth.html");
-          return Promise.resolve(false);
+          applyAuthMode("signed_out");
+          document.body.classList.remove("auth-pending");
+          return Promise.resolve("signed_out");
         }
 
         authContext.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        return authContext.supabase.auth.getSession().then(function (result) {
-          var session = result.data && result.data.session;
-          if (!session) {
-            window.location.replace("/auth.html");
-            return false;
-          }
+        return authContext.supabase.auth.getSession()
+          .then(function (result) {
+            var session = result.data && result.data.session;
+            if (!session) {
+              applyAuthMode("signed_out");
+              return "signed_out";
+            }
 
-          authContext.session = session;
-          authContext.userId = session.user.id;
-          authContext.accessToken = session.access_token;
+            authContext.session = session;
+            authContext.userId = session.user.id;
+            authContext.accessToken = session.access_token;
 
-          if (signOutButton) {
-            signOutButton.addEventListener("click", function () {
-              authContext.supabase.auth.signOut().finally(function () {
-                window.location.replace("/auth.html");
+            if (signOutButton && !signOutButton.hasAttribute("data-signout-bound")) {
+              signOutButton.setAttribute("data-signout-bound", "1");
+              signOutButton.addEventListener("click", function () {
+                authContext.supabase.auth.signOut().finally(function () {
+                  applyAuthMode("signed_out");
+                  window.location.replace("/auth.html");
+                });
               });
-            });
-          }
+            }
 
-          return ensureProfileReady().then(function () {
+            return ensureProfileReady()
+              .then(function () {
+                applyAuthMode("signed_in");
+                maybeTrackSignedInUnlock();
+                return "signed_in";
+              })
+              .catch(function () {
+                applyAuthMode("signed_out");
+                return "signed_out";
+              });
+          })
+          .catch(function () {
+            applyAuthMode("signed_out");
+            return "signed_out";
+          })
+          .finally(function () {
             document.body.classList.remove("auth-pending");
-            return true;
           });
-        }).catch(function () {
-          window.location.replace("/auth.html");
-          return false;
-        });
       }
 
       function trackReturnVisitWithin7Days() {
@@ -4921,7 +5330,7 @@ html, body {
           mode: mode,
           tz_offset_minutes: new Date().getTimezoneOffset()
         };
-        if (!isWalletMergeComplete()) {
+        if (isSignedInMode() && !isWalletMergeComplete()) {
           payload.anon_id = getWalletAnonId();
         }
         return payload;
@@ -5005,7 +5414,38 @@ html, body {
         }
       }
 
+      function setupGuestCtaEvents() {
+        if (!guestCtaModal || guestCtaModal.hasAttribute("data-guest-cta-bound")) return;
+        guestCtaModal.setAttribute("data-guest-cta-bound", "1");
+        if (guestCtaCloseButton) {
+          guestCtaCloseButton.addEventListener("click", function () {
+            closeGuestCta();
+          });
+        }
+        guestCtaModal.addEventListener("click", function (event) {
+          if (event.target === guestCtaModal) {
+            closeGuestCta();
+          }
+        });
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape" && guestCtaModal.classList.contains("open")) {
+            closeGuestCta();
+          }
+        });
+        if (guestCtaCreateButton) {
+          guestCtaCreateButton.addEventListener("click", function () {
+            trackCoreEvent("core_lock_cta_click", { choice: "create", region_name: activeLockRegion });
+          });
+        }
+        if (guestCtaSigninButton) {
+          guestCtaSigninButton.addEventListener("click", function () {
+            trackCoreEvent("core_lock_cta_click", { choice: "signin", region_name: activeLockRegion });
+          });
+        }
+      }
+
       function startApp() {
+        setupGuestCtaEvents();
         hydrateInputs();
         renderTabs();
         renderWageMode();
@@ -5028,15 +5468,20 @@ html, body {
         restoreRunningSession();
         setupTutorial();
         trackReturnVisitWithin7Days();
-        initializeWallet();
+        if (isSignedInMode()) {
+          initializeWallet();
+        } else {
+          renderWalletSnapshot(walletSnapshot);
+          applyGuestLocks();
+        }
         window.generateShareCardPng = generateShareCardPng;
         preloadShareCardAssets().catch(function () {
           // Keep startup silent; generateShareCardPng will report failures when invoked.
         });
       }
 
-      bootstrapAuth().then(function (ready) {
-        if (ready) startApp();
+      bootstrapAuth().then(function () {
+        startApp();
       });
 
       function wireEvents() {
@@ -5760,26 +6205,14 @@ html, body {
         if (!state.activeSessionStartMs) return;
         var stopSource = source || "timer_button";
 
+        var startedAt = state.activeSessionStartMs;
         var endedAt = Date.now();
-        var durationSeconds = Math.max(1, Math.floor((endedAt - state.activeSessionStartMs) / 1000));
+        var durationSeconds = Math.max(1, Math.floor((endedAt - startedAt) / 1000));
         var hourly = getEffectiveHourlyWage();
         var earnings = (hourly / 3600) * durationSeconds;
-
-        state.sessions.unshift({
-          id: String(Date.now()),
-          startedAtMs: state.activeSessionStartMs,
-          endedAtMs: endedAt,
-          durationSeconds: durationSeconds,
-          hourlyWageSnapshot: hourly,
-          earnings: roundCurrency(earnings),
-          rating: 0
-        });
-
-        pendingSessionRatingId = state.sessions[0].id;
         state.activeSessionStartMs = null;
         lastMilestoneAnnounced = 0;
         hideMilestoneCelebration();
-        persist();
         trackCoreEvent("core_session_stop", {
           duration_seconds: durationSeconds,
           earnings: Number(roundCurrency(earnings).toFixed(2))
@@ -5795,6 +6228,37 @@ html, body {
           earnings: Number(roundCurrency(earnings).toFixed(2))
         });
         clearIntervalIfRunning();
+
+        if (!isSignedInMode()) {
+          persist();
+          renderAll();
+          setStatus(
+            statusMessage,
+            "Session done: $" + roundCurrency(earnings).toFixed(2) + ". Sign in to save it and start earning Turd Tokens.",
+            "ok"
+          );
+          writeLocalFlag(TEASER_STOP_LOCAL_KEY);
+          trackCoreEvent("core_teaser_session_stop", {
+            source: stopSource,
+            duration_seconds: durationSeconds,
+            earnings: Number(roundCurrency(earnings).toFixed(2))
+          });
+          openGuestCta("session_stop");
+          return;
+        }
+
+        state.sessions.unshift({
+          id: String(Date.now()),
+          startedAtMs: startedAt,
+          endedAtMs: endedAt,
+          durationSeconds: durationSeconds,
+          hourlyWageSnapshot: hourly,
+          earnings: roundCurrency(earnings),
+          rating: 0
+        });
+
+        pendingSessionRatingId = state.sessions[0].id;
+        persist();
         openRatingModal();
         renderAll();
         setStatus(statusMessage, "Session saved. Rate your poop.", "ok");
