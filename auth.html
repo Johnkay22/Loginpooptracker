@@ -194,7 +194,10 @@ body{
 var GOOGLE_CLIENT_ID = "818996284466-8m14ddvs91vmad2lkao11p56g1drttpe.apps.googleusercontent.com";
 var SUPABASE_URL     = "https://ukfboxemqwuwkvfglzfq.supabase.co";
 var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrZmJveGVtcXd1d2t2ZmdsemZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MDk0OTQsImV4cCI6MjA5NjI4NTQ5NH0.nXvi3ZEimwuZHfWR2DZlxX1YYzrdMe_UvZa6NkKN4Og";
-var APP_URL = "/core-preview.html";
+var APP_URL = "core-preview.html";
+function appRedirectUrl() {
+  return new URL(APP_URL, window.location.href).href;
+}
 /* ========================================== */
 
 var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -204,7 +207,7 @@ function track(ev, params){ if (typeof gtag === "function") gtag("event", ev, pa
 
 /* Already signed in? Straight to the app. */
 sb.auth.getSession().then(function(res){
-  if (res.data && res.data.session) window.location.replace(APP_URL);
+  if (res.data && res.data.session) window.location.replace(appRedirectUrl());
 });
 
 /* Responsive art swap (portrait under 900px, landscape above) */
@@ -230,7 +233,7 @@ async function handleGoogle(response){
   var res = await sb.auth.signInWithIdToken({ provider: "google", token: response.credential });
   if (res.error) { setStatus("Google sign-in failed: " + res.error.message, false); return; }
   track("auth_signin_success", { method: "google" });
-  window.location.replace(APP_URL);
+  window.location.replace(appRedirectUrl());
 }
 window.addEventListener("load", function(){
   if (!window.google || !google.accounts) return; /* script blocked; visible button still shows guidance */
@@ -273,7 +276,7 @@ async function sendMagic(){
   var email = (emailInput.value || "").trim();
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setStatus("Enter a valid email address.", false); return; }
   sendBtn.disabled = true; setStatus("Sending your link...", true);
-  var res = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: window.location.origin + APP_URL } });
+  var res = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: appRedirectUrl() } });
   sendBtn.disabled = false;
   if (res.error) { setStatus("Could not send the link: " + res.error.message, false); return; }
   setStatus("Link sent. Check your inbox (and spam) and click it on this device.", true);

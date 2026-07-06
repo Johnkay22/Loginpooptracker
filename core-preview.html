@@ -288,6 +288,8 @@
 
     .guest-cta-sheet {
       width: min(460px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
       border-radius: 22px;
       border: 1px solid var(--line);
       background: linear-gradient(180deg, rgba(10, 19, 38, 0.97), rgba(7, 13, 28, 0.97));
@@ -354,8 +356,11 @@
 
     .guest-cta-primary,
     .guest-cta-secondary {
-      width: 100%;
+      display: flex;
+      align-items: center;
       justify-content: center;
+      width: 100%;
+      box-sizing: border-box;
       text-decoration: none;
       margin-top: 8px;
     }
@@ -365,6 +370,45 @@
       text-align: center;
       font-size: 12px;
       color: var(--muted);
+    }
+
+    .guest-result-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0 18px;
+    }
+
+    .guest-result-metric {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 16px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line-2);
+      background: rgba(12, 24, 48, 0.55);
+      text-align: center;
+    }
+
+    .guest-result-label {
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .guest-result-amount {
+      font-size: 26px;
+      font-weight: 800;
+      color: #7cc8ff;
+      line-height: 1.1;
+    }
+
+    .guest-result-time {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.1;
     }
 
     @media (max-width: 760px) {
@@ -380,11 +424,18 @@
       }
     }
 
-    .head-auth {
-      margin-left: auto;
+    .head-controls {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .head-auth {
+      margin-left: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       min-width: 0;
     }
 
@@ -392,7 +443,7 @@
       font-size: 13px;
       font-weight: 700;
       color: var(--text);
-      max-width: 120px;
+      max-width: 96px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -408,6 +459,8 @@
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
+      white-space: nowrap;
+      flex: none;
     }
 
     .head-signout:hover {
@@ -602,7 +655,7 @@
       min-height: 56px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       gap: 12px;
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
@@ -2687,6 +2740,9 @@
     .tutorial-card {
       position: fixed;
       width: min(380px, calc(100vw - 20px));
+      max-height: calc(100vh - 24px);
+      max-height: calc(100dvh - 24px);
+      overflow-y: auto;
       border-radius: 16px;
       border: 1px solid rgba(101, 202, 255, 0.38);
       background: linear-gradient(180deg, rgba(17, 28, 52, 0.98), rgba(9, 14, 28, 0.98));
@@ -3878,10 +3934,12 @@ html, body {
       <div class="fixed-nav-stack">
         <header class="head">
           <img class="logo" src="poopprofit_logo.png" alt="PoopProfit.com — Get Paid To Poop">
-          <button id="tutorialHelpButton" class="tutorial-help-button" type="button" aria-label="Open quick tour">?</button>
-          <div id="headAuth" class="head-auth" hidden>
-            <span id="headUsername" class="head-username"></span>
-            <button id="signOutButton" class="head-signout" type="button">Sign out</button>
+          <div class="head-controls">
+            <button id="tutorialHelpButton" class="tutorial-help-button" type="button" aria-label="Open quick tour">?</button>
+            <div id="headAuth" class="head-auth" hidden>
+              <span id="headUsername" class="head-username"></span>
+              <button id="signOutButton" class="head-signout" type="button">Sign out</button>
+            </div>
           </div>
         </header>
         <div class="wallet-banner-row">
@@ -4353,6 +4411,23 @@ html, body {
     </div>
   </div>
 
+  <div id="guestResultModal" class="guest-cta-modal" aria-hidden="true">
+    <div class="guest-cta-sheet guest-result-sheet" role="dialog" aria-modal="true" aria-labelledby="guestResultTitle">
+      <h3 id="guestResultTitle" class="guest-cta-title">Session complete</h3>
+      <div class="guest-result-metrics">
+        <div class="guest-result-metric">
+          <span class="guest-result-label">You earned</span>
+          <span id="guestResultEarnings" class="guest-result-amount">$0.00</span>
+        </div>
+        <div class="guest-result-metric">
+          <span class="guest-result-label">Time on the throne</span>
+          <span id="guestResultDuration" class="guest-result-time">0:00</span>
+        </div>
+      </div>
+      <button id="guestResultOkButton" class="button full guest-cta-primary" type="button">OK</button>
+    </div>
+  </div>
+
   <div id="guestCtaModal" class="guest-cta-modal" aria-hidden="true">
     <div class="guest-cta-sheet" role="dialog" aria-modal="true" aria-labelledby="guestCtaTitle">
       <button id="guestCtaCloseButton" class="guest-cta-close" type="button" aria-label="Close unlock card">×</button>
@@ -4363,9 +4438,9 @@ html, body {
         <li>Earn Turd Tokens</li>
         <li>Unlock stats + share cards</li>
       </ul>
-      <a id="guestCtaCreateButton" class="button full guest-cta-primary" href="/auth.html">Create free account</a>
+      <a id="guestCtaCreateButton" class="button full guest-cta-primary" href="auth.html">Create free account</a>
       <p class="guest-cta-primary-note">Always free.</p>
-      <a id="guestCtaSigninButton" class="button ghost guest-cta-secondary" href="/auth.html">Sign in</a>
+      <a id="guestCtaSigninButton" class="button ghost guest-cta-secondary" href="auth.html">Sign in</a>
     </div>
   </div>
 
@@ -4460,6 +4535,11 @@ html, body {
       var guestCtaCreateButton = document.getElementById("guestCtaCreateButton");
       var guestCtaSigninButton = document.getElementById("guestCtaSigninButton");
       var guestCtaSubtitle = document.getElementById("guestCtaSubtitle");
+      var guestCtaTitle = document.getElementById("guestCtaTitle");
+      var guestResultModal = document.getElementById("guestResultModal");
+      var guestResultEarnings = document.getElementById("guestResultEarnings");
+      var guestResultDuration = document.getElementById("guestResultDuration");
+      var guestResultOkButton = document.getElementById("guestResultOkButton");
 
       var STORAGE_KEY = "pp_core_tabs_v1";
       var DEFAULT_STATE = {
@@ -4692,6 +4772,20 @@ html, body {
           mascotSrc: "OnboardingMascot_20260419_095122_00000.jpg"
         }
       ];
+      var GUEST_TUTORIAL_STEPS = [
+        TUTORIAL_STEPS[0],
+        TUTORIAL_STEPS[1],
+        TUTORIAL_STEPS[2],
+        TUTORIAL_STEPS[3],
+        {
+          title: "Save & Unlock More",
+          body: "Sign in free to save your logs, earn Turd Tokens, and unlock streaks, stats, and share cards.",
+          target: "#tutorialHelpButton",
+          tab: "calculator",
+          mascotSrc: "OnboardingMascot_20260419_095122_00000.jpg"
+        }
+      ];
+      var activeTutorialSteps = TUTORIAL_STEPS;
       var tutorialState = {
         open: false,
         stepIndex: 0,
@@ -4773,9 +4867,16 @@ html, body {
         }
       }
 
+      function describeGuestCtaTitle(regionName) {
+        if (regionName === "session_stop") {
+          return "That's just one poop in a lifetime of more poops.";
+        }
+        return "Unlock the full porcelain portfolio.";
+      }
+
       function describeGuestCta(regionName) {
         if (regionName === "session_stop") {
-          return "Sign in to save this session and start earning Turd Tokens.";
+          return "Log in now to save your logs, share your stats with friends, and view detailed analytics.";
         }
         return "Save your sessions and turn each stop into streaks, stats, and token glory.";
       }
@@ -4783,12 +4884,41 @@ html, body {
       function openGuestCta(regionName) {
         if (!guestCtaModal) return;
         activeLockRegion = regionName || "locked_region";
+        if (guestCtaTitle) {
+          guestCtaTitle.textContent = describeGuestCtaTitle(activeLockRegion);
+        }
         if (guestCtaSubtitle) {
           guestCtaSubtitle.textContent = describeGuestCta(activeLockRegion);
         }
         guestCtaModal.classList.add("open");
         guestCtaModal.setAttribute("aria-hidden", "false");
         document.body.classList.add("wallet-modal-open");
+      }
+
+      function openGuestResult(earnings, durationSeconds) {
+        if (!guestResultModal) {
+          openGuestCta("session_stop");
+          return;
+        }
+        if (guestResultEarnings) {
+          guestResultEarnings.textContent = "$" + roundCurrency(earnings).toFixed(2);
+        }
+        if (guestResultDuration) {
+          guestResultDuration.textContent = formatDuration(Math.max(0, Math.floor(durationSeconds || 0)));
+        }
+        guestResultModal.classList.add("open");
+        guestResultModal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("wallet-modal-open");
+      }
+
+      function closeGuestResult(showCta) {
+        if (!guestResultModal) return;
+        guestResultModal.classList.remove("open");
+        guestResultModal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("wallet-modal-open");
+        if (showCta) {
+          openGuestCta("session_stop");
+        }
       }
 
       function closeGuestCta() {
@@ -5061,7 +5191,7 @@ html, body {
               signOutButton.addEventListener("click", function () {
                 authContext.supabase.auth.signOut().finally(function () {
                   applyAuthMode("signed_out");
-                  window.location.replace("/auth.html");
+                  window.location.replace(new URL("auth.html", window.location.href).href);
                 });
               });
             }
@@ -5440,6 +5570,23 @@ html, body {
         if (guestCtaSigninButton) {
           guestCtaSigninButton.addEventListener("click", function () {
             trackCoreEvent("core_lock_cta_click", { choice: "signin", region_name: activeLockRegion });
+          });
+        }
+        if (guestResultModal) {
+          if (guestResultOkButton) {
+            guestResultOkButton.addEventListener("click", function () {
+              closeGuestResult(true);
+            });
+          }
+          guestResultModal.addEventListener("click", function (event) {
+            if (event.target === guestResultModal) {
+              closeGuestResult(true);
+            }
+          });
+          document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape" && guestResultModal.classList.contains("open")) {
+              closeGuestResult(true);
+            }
           });
         }
       }
@@ -6243,7 +6390,7 @@ html, body {
             duration_seconds: durationSeconds,
             earnings: Number(roundCurrency(earnings).toFixed(2))
           });
-          openGuestCta("session_stop");
+          openGuestResult(earnings, durationSeconds);
           return;
         }
 
@@ -7633,7 +7780,7 @@ html, body {
       function buildTutorialProgressDots() {
         if (!tutorialProgress) return;
         tutorialProgress.innerHTML = "";
-        TUTORIAL_STEPS.forEach(function (_step, index) {
+        activeTutorialSteps.forEach(function (_step, index) {
           var dot = document.createElement("span");
           dot.className = "tutorial-dot";
           dot.setAttribute("data-tutorial-dot", String(index));
@@ -7643,6 +7790,8 @@ html, body {
 
       function startTutorial(fromReplay) {
         if (!tutorialOverlay) return;
+        activeTutorialSteps = isSignedInMode() ? TUTORIAL_STEPS : GUEST_TUTORIAL_STEPS;
+        buildTutorialProgressDots();
         tutorialState.open = true;
         tutorialState.stepIndex = 0;
         tutorialOverlay.classList.add("open");
@@ -7677,10 +7826,10 @@ html, body {
         if (nextIndex < 0) {
           nextIndex = 0;
         }
-        if (nextIndex >= TUTORIAL_STEPS.length) {
+        if (nextIndex >= activeTutorialSteps.length) {
           closeTutorial(true);
           openTutorialCompleteModal();
-          trackCoreEvent("core_tutorial_complete", { steps_completed: TUTORIAL_STEPS.length });
+          trackCoreEvent("core_tutorial_complete", { steps_completed: activeTutorialSteps.length });
           setStatus(statusMessage, "Quick tour complete. Happy pooping.", "ok");
           return;
         }
@@ -7689,9 +7838,9 @@ html, body {
 
       function showTutorialStep(index) {
         if (!tutorialState.open) return;
-        var safeIndex = Math.max(0, Math.min(TUTORIAL_STEPS.length - 1, index));
+        var safeIndex = Math.max(0, Math.min(activeTutorialSteps.length - 1, index));
         tutorialState.stepIndex = safeIndex;
-        var step = TUTORIAL_STEPS[safeIndex];
+        var step = activeTutorialSteps[safeIndex];
 
         if (step.tab && state.activeTab !== step.tab) {
           setActiveTab(step.tab);
@@ -7703,7 +7852,7 @@ html, body {
           renderWageStrip();
         }
 
-        tutorialStepPill.textContent = "Step " + String(safeIndex + 1) + " of " + String(TUTORIAL_STEPS.length);
+        tutorialStepPill.textContent = "Step " + String(safeIndex + 1) + " of " + String(activeTutorialSteps.length);
         tutorialTitle.textContent = step.title;
         tutorialBody.textContent = step.body;
         if (tutorialMascotImage) {
@@ -7721,7 +7870,7 @@ html, body {
           tutorialBackButton.disabled = safeIndex === 0;
         }
         if (tutorialNextButton) {
-          tutorialNextButton.textContent = safeIndex === TUTORIAL_STEPS.length - 1 ? "Finish Tour" : "Next";
+          tutorialNextButton.textContent = safeIndex === activeTutorialSteps.length - 1 ? "Finish Tour" : "Next";
         }
 
         if (tutorialProgress) {
@@ -7767,7 +7916,7 @@ html, body {
 
       function positionTutorialToTarget() {
         if (!tutorialState.open || !tutorialCard || !tutorialHighlight) return;
-        var step = TUTORIAL_STEPS[tutorialState.stepIndex];
+        var step = activeTutorialSteps[tutorialState.stepIndex];
         var target = step && step.target ? document.querySelector(step.target) : null;
         var viewportWidth = window.innerWidth;
         var viewportHeight = window.innerHeight;
