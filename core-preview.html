@@ -4363,9 +4363,9 @@ html, body {
         <li>Earn Turd Tokens</li>
         <li>Unlock stats + share cards</li>
       </ul>
-      <a id="guestCtaCreateButton" class="button full guest-cta-primary" href="/auth.html">Create free account</a>
+      <a id="guestCtaCreateButton" class="button full guest-cta-primary" href="auth.html">Create free account</a>
       <p class="guest-cta-primary-note">Always free.</p>
-      <a id="guestCtaSigninButton" class="button ghost guest-cta-secondary" href="/auth.html">Sign in</a>
+      <a id="guestCtaSigninButton" class="button ghost guest-cta-secondary" href="auth.html">Sign in</a>
     </div>
   </div>
 
@@ -5061,7 +5061,7 @@ html, body {
               signOutButton.addEventListener("click", function () {
                 authContext.supabase.auth.signOut().finally(function () {
                   applyAuthMode("signed_out");
-                  window.location.replace("/auth.html");
+                  window.location.replace(new URL("auth.html", window.location.href).href);
                 });
               });
             }

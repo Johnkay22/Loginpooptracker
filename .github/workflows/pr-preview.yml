@@ -28,10 +28,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Prepare preview source
+        run: |
+          mkdir -p /tmp/preview-src
+          rsync -a \
+            --exclude pr-preview \
+            --exclude .git \
+            --exclude CNAME \
+            ./ /tmp/preview-src/
+
       - name: Deploy preview
         uses: rossjrw/pr-preview-action@v1
         with:
-          source-dir: .
+          source-dir: /tmp/preview-src
           preview-branch: main
           umbrella-dir: pr-preview
           pr-number: ${{ github.event.pull_request.number || inputs.pr_number }}
