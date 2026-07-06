@@ -424,11 +424,18 @@
       }
     }
 
+    .head-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
     .head-auth {
       margin-left: 0;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       min-width: 0;
     }
 
@@ -436,7 +443,7 @@
       font-size: 13px;
       font-weight: 700;
       color: var(--text);
-      max-width: 120px;
+      max-width: 96px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -452,6 +459,8 @@
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
+      white-space: nowrap;
+      flex: none;
     }
 
     .head-signout:hover {
@@ -2731,6 +2740,9 @@
     .tutorial-card {
       position: fixed;
       width: min(380px, calc(100vw - 20px));
+      max-height: calc(100vh - 24px);
+      max-height: calc(100dvh - 24px);
+      overflow-y: auto;
       border-radius: 16px;
       border: 1px solid rgba(101, 202, 255, 0.38);
       background: linear-gradient(180deg, rgba(17, 28, 52, 0.98), rgba(9, 14, 28, 0.98));
@@ -3579,7 +3591,7 @@ html, body {
   -webkit-backdrop-filter: blur(14px);
 }
 .head { display: flex; align-items: center; justify-content: space-between; gap: 11px; margin-bottom: 8px; padding: 0 2px; width: 100%; }
-.head .logo { height: 56px; width: auto; display: block; flex: none; margin-right: auto; }
+.head .logo { height: 56px; width: auto; display: block; flex: none; }
 .head .tutorial-help-button { position: static; top: auto; right: auto; flex: none; }
 .wallet-banner-row { width: 100%; margin-bottom: 0; }
 .wallet-corner { border-radius: 999px; padding: 10px 14px; background: linear-gradient(180deg, var(--panel-top), var(--panel-bot)); border: 1px solid var(--line); box-shadow: var(--shadow); min-height: 48px; }
@@ -3922,10 +3934,12 @@ html, body {
       <div class="fixed-nav-stack">
         <header class="head">
           <img class="logo" src="poopprofit_logo.png" alt="PoopProfit.com — Get Paid To Poop">
-          <button id="tutorialHelpButton" class="tutorial-help-button" type="button" aria-label="Open quick tour">?</button>
-          <div id="headAuth" class="head-auth" hidden>
-            <span id="headUsername" class="head-username"></span>
-            <button id="signOutButton" class="head-signout" type="button">Sign out</button>
+          <div class="head-controls">
+            <button id="tutorialHelpButton" class="tutorial-help-button" type="button" aria-label="Open quick tour">?</button>
+            <div id="headAuth" class="head-auth" hidden>
+              <span id="headUsername" class="head-username"></span>
+              <button id="signOutButton" class="head-signout" type="button">Sign out</button>
+            </div>
           </div>
         </header>
         <div class="wallet-banner-row">
