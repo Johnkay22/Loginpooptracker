@@ -45,4 +45,4 @@ jobs:
           umbrella-dir: pr-preview
           pr-number: ${{ github.event.pull_request.number || inputs.pr_number }}
           qr-code: true
-          wait-for-pages-deployment: true
+          wait-for-pages-deployment: false
