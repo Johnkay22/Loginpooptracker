@@ -3989,6 +3989,182 @@ html, body {
   }
 }
 
+  /* === Desktop layout (>=1024px): dashboard version of the mobile app === */
+  @media (min-width: 1024px) {
+    html,
+    body {
+      min-height: 100vh !important;
+      background-color: var(--bg) !important;
+      background-image:
+        linear-gradient(135deg, rgba(6, 11, 22, 0.72), rgba(6, 11, 22, 0.78)),
+        url("corepreviewdesktopbg.jpg") !important;
+      background-position: center center !important;
+      background-size: cover !important;
+      background-repeat: no-repeat !important;
+      background-attachment: fixed !important;
+    }
+
+    /* Top app bar: the phone's floating 460px header becomes a full-width bar */
+    .fixed-nav-stack {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      transform: none;
+      width: 100%;
+      max-width: none;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 20px;
+      margin: 0;
+      padding: 12px clamp(20px, 4vw, 56px);
+      background: linear-gradient(180deg, rgba(6, 10, 18, 0.96), rgba(6, 10, 18, 0.82));
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 12px 30px -20px rgba(0, 0, 0, 0.9);
+      z-index: 80;
+    }
+
+    .fixed-nav-stack .head {
+      flex: 1 1 auto;
+      width: auto;
+      margin: 0;
+      gap: 14px;
+    }
+
+    .fixed-nav-stack .head .logo {
+      height: 46px;
+      max-width: none;
+    }
+
+    .fixed-nav-stack .wallet-banner-row {
+      flex: 0 0 auto;
+      width: auto;
+      margin: 0;
+    }
+
+    .fixed-nav-stack .wallet-corner {
+      min-height: 44px;
+    }
+
+    /* Tab nav: the bottom-center pill dock moves into the top bar's center */
+    #appDock.dock {
+      position: fixed;
+      top: 13px;
+      bottom: auto;
+      left: 50%;
+      transform: translateX(-50%);
+      width: auto;
+      padding: 6px;
+      border-radius: 16px;
+      background: rgba(10, 17, 30, 0.66);
+      box-shadow: 0 10px 26px -14px rgba(0, 0, 0, 0.8);
+      z-index: 81;
+    }
+
+    #appDock .nav-btn {
+      flex: 0 0 auto;
+      padding: 11px 30px;
+    }
+
+    /* Page + shell open up to a real desktop width */
+    .page {
+      width: 100%;
+      max-width: min(1240px, 94vw);
+      margin: 96px auto 40px;
+      padding: 0;
+    }
+
+    .shell {
+      padding: 28px 30px 32px;
+      padding-top: 28px;
+      border-radius: 26px;
+    }
+
+    /* Calculator tab -> two-column dashboard with the timer as the hero */
+    #panel-calculator .panel-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    #panel-calculator .panel-grid > .wage-card {
+      grid-column: 1 !important;
+      grid-row: 1;
+      margin: 0;
+    }
+
+    #panel-calculator .panel-grid > .log-card {
+      grid-column: 1 !important;
+      grid-row: 2;
+      margin: 0;
+    }
+
+    #panel-calculator .panel-grid > .timer-card {
+      grid-column: 2 !important;
+      grid-row: 1 / span 2;
+      max-width: none;
+      width: auto;
+      margin: 0;
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    #panel-calculator .log-list {
+      max-height: 420px;
+    }
+
+    /* Stats tab -> multi-column grid (override the inline span-12 on each card) */
+    #panel-stats .panel-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      align-items: start;
+    }
+
+    #panel-stats .panel-grid > .card {
+      grid-column: 1 / -1 !important;
+      margin: 0;
+    }
+
+    /* Performance + Share Report sit side by side */
+    #panel-stats .panel-grid > .card:nth-child(6),
+    #panel-stats .panel-grid > .card:nth-child(7) {
+      grid-column: span 1 !important;
+    }
+
+    /* Coming soon -> two-column grid */
+    #panel-coming .coming-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 32px;
+    }
+
+    #panel-coming .coming-list .coming-row {
+      border-top: 1px solid var(--line);
+    }
+
+    #panel-coming .coming-list .coming-row:nth-child(1),
+    #panel-coming .coming-list .coming-row:nth-child(2) {
+      border-top: 0;
+    }
+
+    /* Footer no longer needs to clear a bottom dock */
+    .preview-footnote {
+      margin-bottom: 12px !important;
+    }
+
+    /* No floating action button on desktop */
+    .mobile-fab {
+      display: none !important;
+    }
+  }
+
   </style>
 </head>
 <body>
