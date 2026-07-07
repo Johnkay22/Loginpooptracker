@@ -318,10 +318,38 @@
       border-color: var(--blue-line);
     }
 
+    .guest-cta-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0 0 12px;
+      padding: 5px 11px 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(73, 159, 255, 0.4);
+      background: rgba(68, 172, 255, 0.12);
+      color: #8fd0ff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .guest-cta-eyebrow svg {
+      width: 13px;
+      height: 13px;
+      flex: none;
+    }
+
     .guest-cta-title {
       margin: 0 0 8px;
-      font-size: 25px;
-      line-height: 1.12;
+      padding-right: 42px;
+      font-size: 24px;
+      line-height: 1.16;
+      letter-spacing: -0.01em;
+    }
+
+    .guest-result-sheet .guest-cta-title {
+      padding-right: 0;
     }
 
     .guest-cta-subtitle {
@@ -4467,6 +4495,10 @@ html, body {
   <div id="guestCtaModal" class="guest-cta-modal" aria-hidden="true">
     <div class="guest-cta-sheet" role="dialog" aria-modal="true" aria-labelledby="guestCtaTitle">
       <button id="guestCtaCloseButton" class="guest-cta-close" type="button" aria-label="Close unlock card">×</button>
+      <span class="guest-cta-eyebrow">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10V8a5 5 0 0 1 10 0v2h1.25A1.75 1.75 0 0 1 20 11.75v8.5A1.75 1.75 0 0 1 18.25 22h-12.5A1.75 1.75 0 0 1 4 20.25v-8.5A1.75 1.75 0 0 1 5.75 10H7Zm2 0h6V8a3 3 0 1 0-6 0v2Z"/></svg>
+        <span id="guestCtaEyebrowText">Members only</span>
+      </span>
       <h3 id="guestCtaTitle" class="guest-cta-title">Unlock the full porcelain portfolio.</h3>
       <p id="guestCtaSubtitle" class="guest-cta-subtitle">Save your sessions and turn each stop into streaks, stats, and token glory.</p>
       <ul class="guest-cta-bullets">
@@ -4572,6 +4604,7 @@ html, body {
       var guestCtaSigninButton = document.getElementById("guestCtaSigninButton");
       var guestCtaSubtitle = document.getElementById("guestCtaSubtitle");
       var guestCtaTitle = document.getElementById("guestCtaTitle");
+      var guestCtaEyebrowText = document.getElementById("guestCtaEyebrowText");
       var guestResultModal = document.getElementById("guestResultModal");
       var guestResultEarnings = document.getElementById("guestResultEarnings");
       var guestResultDuration = document.getElementById("guestResultDuration");
@@ -4903,6 +4936,23 @@ html, body {
         }
       }
 
+      function describeGuestCtaEyebrow(regionName) {
+        switch (regionName) {
+          case "wallet_banner":
+            return "Turd Token wallet";
+          case "session_log":
+            return "Session history";
+          case "stats_tab":
+            return "Stats & analytics";
+          case "coming_tab":
+            return "Shop & unlockables";
+          case "session_stop":
+            return "Save this session";
+          default:
+            return "Members only";
+        }
+      }
+
       function describeGuestCtaTitle(regionName) {
         if (regionName === "session_stop") {
           return "That's just one poop in a lifetime of more poops.";
@@ -4920,6 +4970,9 @@ html, body {
       function openGuestCta(regionName) {
         if (!guestCtaModal) return;
         activeLockRegion = regionName || "locked_region";
+        if (guestCtaEyebrowText) {
+          guestCtaEyebrowText.textContent = describeGuestCtaEyebrow(activeLockRegion);
+        }
         if (guestCtaTitle) {
           guestCtaTitle.textContent = describeGuestCtaTitle(activeLockRegion);
         }
