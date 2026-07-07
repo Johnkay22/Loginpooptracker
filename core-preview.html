@@ -318,10 +318,38 @@
       border-color: var(--blue-line);
     }
 
+    .guest-cta-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0 0 12px;
+      padding: 5px 11px 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(73, 159, 255, 0.4);
+      background: rgba(68, 172, 255, 0.12);
+      color: #8fd0ff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .guest-cta-eyebrow svg {
+      width: 13px;
+      height: 13px;
+      flex: none;
+    }
+
     .guest-cta-title {
       margin: 0 0 8px;
-      font-size: 25px;
-      line-height: 1.12;
+      padding-right: 42px;
+      font-size: 24px;
+      line-height: 1.16;
+      letter-spacing: -0.01em;
+    }
+
+    .guest-result-sheet .guest-cta-title {
+      padding-right: 0;
     }
 
     .guest-cta-subtitle {
@@ -429,6 +457,8 @@
       align-items: center;
       gap: 8px;
       min-width: 0;
+      margin-left: auto;
+      flex-shrink: 0;
     }
 
     .head-auth {
@@ -706,6 +736,10 @@
       letter-spacing: 0.01em;
       text-shadow: 0 0 8px rgba(255, 162, 76, 0.26);
       white-space: nowrap;
+      flex-shrink: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .wallet-first-modal {
@@ -2743,6 +2777,8 @@
       max-height: calc(100vh - 24px);
       max-height: calc(100dvh - 24px);
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
       border-radius: 16px;
       border: 1px solid rgba(101, 202, 255, 0.38);
       background: linear-gradient(180deg, rgba(17, 28, 52, 0.98), rgba(9, 14, 28, 0.98));
@@ -3223,7 +3259,22 @@
       }
 
       .tutorial-body {
-        grid-template-columns: 96px 1fr;
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .tutorial-mascot-wrap {
+        max-width: 88px;
+        margin: 0 auto;
+      }
+
+      .tutorial-card.tutorial-card--dock {
+        left: 10px !important;
+        right: 10px;
+        width: auto !important;
+        top: auto !important;
+        bottom: calc(10px + env(safe-area-inset-bottom));
+        max-height: min(58vh, calc(100dvh - 120px));
       }
 
       .tutorial-controls {
@@ -3861,6 +3912,19 @@ html, body {
 
   .head .logo {
     height: 52px;
+    max-width: min(138px, 40vw);
+    width: auto;
+    object-fit: contain;
+    object-position: left center;
+  }
+
+  .head-username {
+    display: none;
+  }
+
+  .head-signout {
+    padding: 7px 10px;
+    font-size: 11px;
   }
 
   .head .tutorial-help-button {
@@ -4431,6 +4495,10 @@ html, body {
   <div id="guestCtaModal" class="guest-cta-modal" aria-hidden="true">
     <div class="guest-cta-sheet" role="dialog" aria-modal="true" aria-labelledby="guestCtaTitle">
       <button id="guestCtaCloseButton" class="guest-cta-close" type="button" aria-label="Close unlock card">×</button>
+      <span class="guest-cta-eyebrow">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10V8a5 5 0 0 1 10 0v2h1.25A1.75 1.75 0 0 1 20 11.75v8.5A1.75 1.75 0 0 1 18.25 22h-12.5A1.75 1.75 0 0 1 4 20.25v-8.5A1.75 1.75 0 0 1 5.75 10H7Zm2 0h6V8a3 3 0 1 0-6 0v2Z"/></svg>
+        <span id="guestCtaEyebrowText">Members only</span>
+      </span>
       <h3 id="guestCtaTitle" class="guest-cta-title">Unlock the full porcelain portfolio.</h3>
       <p id="guestCtaSubtitle" class="guest-cta-subtitle">Save your sessions and turn each stop into streaks, stats, and token glory.</p>
       <ul class="guest-cta-bullets">
@@ -4536,6 +4604,7 @@ html, body {
       var guestCtaSigninButton = document.getElementById("guestCtaSigninButton");
       var guestCtaSubtitle = document.getElementById("guestCtaSubtitle");
       var guestCtaTitle = document.getElementById("guestCtaTitle");
+      var guestCtaEyebrowText = document.getElementById("guestCtaEyebrowText");
       var guestResultModal = document.getElementById("guestResultModal");
       var guestResultEarnings = document.getElementById("guestResultEarnings");
       var guestResultDuration = document.getElementById("guestResultDuration");
@@ -4867,6 +4936,23 @@ html, body {
         }
       }
 
+      function describeGuestCtaEyebrow(regionName) {
+        switch (regionName) {
+          case "wallet_banner":
+            return "Turd Token wallet";
+          case "session_log":
+            return "Session history";
+          case "stats_tab":
+            return "Stats & analytics";
+          case "coming_tab":
+            return "Shop & unlockables";
+          case "session_stop":
+            return "Save this session";
+          default:
+            return "Members only";
+        }
+      }
+
       function describeGuestCtaTitle(regionName) {
         if (regionName === "session_stop") {
           return "That's just one poop in a lifetime of more poops.";
@@ -4884,6 +4970,9 @@ html, body {
       function openGuestCta(regionName) {
         if (!guestCtaModal) return;
         activeLockRegion = regionName || "locked_region";
+        if (guestCtaEyebrowText) {
+          guestCtaEyebrowText.textContent = describeGuestCtaEyebrow(activeLockRegion);
+        }
         if (guestCtaTitle) {
           guestCtaTitle.textContent = describeGuestCtaTitle(activeLockRegion);
         }
@@ -7920,10 +8009,22 @@ html, body {
         var target = step && step.target ? document.querySelector(step.target) : null;
         var viewportWidth = window.innerWidth;
         var viewportHeight = window.innerHeight;
+        var useMobileDock = viewportWidth <= 760;
 
         if (!target) {
-          tutorialCard.style.left = Math.max(10, (viewportWidth - tutorialCard.offsetWidth) / 2) + "px";
-          tutorialCard.style.top = Math.max(18, (viewportHeight - tutorialCard.offsetHeight) / 2) + "px";
+          tutorialCard.classList.toggle("tutorial-card--dock", useMobileDock);
+          if (useMobileDock) {
+            tutorialCard.style.left = "10px";
+            tutorialCard.style.right = "10px";
+            tutorialCard.style.width = "auto";
+            tutorialCard.style.top = "auto";
+            tutorialCard.style.bottom = "calc(10px + env(safe-area-inset-bottom))";
+          } else {
+            tutorialCard.style.left = Math.max(10, (viewportWidth - tutorialCard.offsetWidth) / 2) + "px";
+            tutorialCard.style.top = Math.max(18, (viewportHeight - tutorialCard.offsetHeight) / 2) + "px";
+            tutorialCard.style.right = "";
+            tutorialCard.style.bottom = "";
+          }
           tutorialHighlight.style.width = "0px";
           tutorialHighlight.style.height = "0px";
           return;
@@ -7936,6 +8037,17 @@ html, body {
         tutorialHighlight.style.width = Math.max(0, targetRect.width + targetPadding * 2) + "px";
         tutorialHighlight.style.height = Math.max(0, targetRect.height + targetPadding * 2) + "px";
 
+        if (useMobileDock) {
+          tutorialCard.classList.add("tutorial-card--dock");
+          tutorialCard.style.left = "10px";
+          tutorialCard.style.right = "10px";
+          tutorialCard.style.width = "auto";
+          tutorialCard.style.top = "auto";
+          tutorialCard.style.bottom = "calc(10px + env(safe-area-inset-bottom))";
+          return;
+        }
+
+        tutorialCard.classList.remove("tutorial-card--dock");
         var cardWidth = tutorialCard.offsetWidth;
         var cardHeight = tutorialCard.offsetHeight;
         var placeBelow = (viewportHeight - targetRect.bottom) >= (cardHeight + 22) || targetRect.top < cardHeight + 20;
@@ -7947,6 +8059,8 @@ html, body {
 
         tutorialCard.style.left = left + "px";
         tutorialCard.style.top = top + "px";
+        tutorialCard.style.right = "";
+        tutorialCard.style.bottom = "";
       }
 
       function openTutorialStartModal() {
