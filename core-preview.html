@@ -5058,7 +5058,9 @@ html, body {
       var tutorialState = {
         open: false,
         stepIndex: 0,
-        rafId: null
+        rafId: null,
+        scrollRafId: null,
+        scrollEndTimerId: null
       };
       var statsCountUpGeneration = 0;
       var statsCountUpTimerId = null;
@@ -8096,6 +8098,7 @@ html, body {
 
       function closeTutorial(markSeen) {
         tutorialState.open = false;
+        clearTutorialScrollWait();
         if (markSeen) {
           localStorage.setItem(TUTORIAL_SEEN_KEY, "1");
         }
@@ -8170,26 +8173,162 @@ html, body {
           });
         }
 
-        ensureTutorialTargetVisibility(step);
-        var positionDelay = step.target && step.target.indexOf("appDock") !== -1 ? 160 : 80;
-        window.setTimeout(function () {
-          queueTutorialPositionUpdate();
-        }, positionDelay);
+        window.requestAnimationFrame(function () {
+          window.requestAnimationFrame(function () {
+            ensureTutorialTargetVisibility(step, function () {
+              queueTutorialPositionUpdate();
+              var settleDelay = step.expandWage ? 140 : step.target && step.target.indexOf("appDock") !== -1 ? 80 : 60;
+              window.setTimeout(function () {
+                queueTutorialPositionUpdate();
+              }, settleDelay);
+            });
+          });
+        });
       }
 
-      function ensureTutorialTargetVisibility(step) {
-        if (!step || !step.target) return;
-        var target = document.querySelector(step.target);
-        if (!target) return;
+      function isFixedTutorialTarget(target) {
+        var node = target;
+        while (node && node !== document.body) {
+          var position = window.getComputedStyle(node).position;
+          if (position === "fixed" || position === "sticky") {
+            return true;
+          }
+          node = node.parentElement;
+        }
+        return false;
+      }
+
+      function getTutorialScrollInsets() {
+        var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        var useMobileDock = (window.innerWidth || 0) <= 760;
+        var topInset = 18;
+        var bottomInset = 18;
+        var headerEl = document.querySelector(".fixed-nav-stack");
+        if (headerEl) {
+          topInset = Math.max(topInset, headerEl.getBoundingClientRect().bottom + 14);
+        }
+        var dockEl = document.getElementById("appDock");
+        if (dockEl) {
+          var dockRect = dockEl.getBoundingClientRect();
+          if (dockRect.top < viewportHeight) {
+            bottomInset = Math.max(bottomInset, viewportHeight - dockRect.top + 14);
+          }
+        }
+        if (useMobileDock && tutorialCard) {
+          var cardHeight = tutorialCard.offsetHeight;
+          if (cardHeight > 0) {
+            bottomInset = Math.max(bottomInset, cardHeight + 24);
+          } else {
+            bottomInset = Math.max(bottomInset, 220);
+          }
+        }
+        return { top: topInset, bottom: bottomInset, side: 18 };
+      }
+
+      function isTutorialTargetComfortablyVisible(target) {
         var rect = target.getBoundingClientRect();
+        var insets = getTutorialScrollInsets();
         var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
         var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-        var margin = 18;
-        var needsVerticalAdjust = rect.top < margin || rect.bottom > (viewportHeight - margin);
-        var needsHorizontalAdjust = rect.left < margin || rect.right > (viewportWidth - margin);
-        if (needsVerticalAdjust || needsHorizontalAdjust) {
-          target.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        return rect.top >= insets.top &&
+          rect.bottom <= (viewportHeight - insets.bottom) &&
+          rect.left >= insets.side &&
+          rect.right <= (viewportWidth - insets.side);
+      }
+
+      function scrollTutorialTargetIntoView(target) {
+        var insets = getTutorialScrollInsets();
+        var rect = target.getBoundingClientRect();
+        var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        var scrollRoot = document.scrollingElement || document.documentElement;
+        var visibleHeight = Math.max(120, viewportHeight - insets.top - insets.bottom);
+        var targetCenter = rect.top + rect.height / 2;
+        var desiredCenter = insets.top + visibleHeight / 2;
+        var delta = targetCenter - desiredCenter;
+        if (Math.abs(delta) < 10) {
+          return false;
         }
+        scrollRoot.scrollTo({
+          top: Math.max(0, scrollRoot.scrollTop + delta),
+          behavior: "smooth"
+        });
+        return true;
+      }
+
+      function clearTutorialScrollWait() {
+        if (tutorialState.scrollEndTimerId !== null) {
+          window.clearTimeout(tutorialState.scrollEndTimerId);
+          tutorialState.scrollEndTimerId = null;
+        }
+        if (tutorialState.scrollRafId !== null) {
+          window.cancelAnimationFrame(tutorialState.scrollRafId);
+          tutorialState.scrollRafId = null;
+        }
+      }
+
+      function waitForTutorialScrollEnd(callback) {
+        clearTutorialScrollWait();
+        var done = false;
+        var scrollRoot = document.scrollingElement || document.documentElement;
+        var lastY = scrollRoot.scrollTop;
+        var stableFrames = 0;
+        var startedAt = Date.now();
+        var maxWaitMs = 900;
+
+        function finish() {
+          if (done) return;
+          done = true;
+          clearTutorialScrollWait();
+          if (callback) callback();
+        }
+
+        function check() {
+          if (!tutorialState.open) {
+            finish();
+            return;
+          }
+          var currentY = scrollRoot.scrollTop;
+          if (currentY === lastY) {
+            stableFrames += 1;
+          } else {
+            stableFrames = 0;
+            lastY = currentY;
+          }
+          if (stableFrames >= 3 || Date.now() - startedAt >= maxWaitMs) {
+            finish();
+            return;
+          }
+          tutorialState.scrollRafId = window.requestAnimationFrame(check);
+        }
+
+        tutorialState.scrollEndTimerId = window.setTimeout(finish, maxWaitMs);
+        tutorialState.scrollRafId = window.requestAnimationFrame(check);
+      }
+
+      function ensureTutorialTargetVisibility(step, callback) {
+        if (!step || !step.target) {
+          if (callback) callback();
+          return;
+        }
+        var target = document.querySelector(step.target);
+        if (!target) {
+          if (callback) callback();
+          return;
+        }
+        if (isFixedTutorialTarget(target)) {
+          if (callback) callback();
+          return;
+        }
+        if (isTutorialTargetComfortablyVisible(target)) {
+          if (callback) callback();
+          return;
+        }
+        var didScroll = scrollTutorialTargetIntoView(target);
+        if (didScroll) {
+          waitForTutorialScrollEnd(callback);
+          return;
+        }
+        if (callback) callback();
       }
 
       function queueTutorialPositionUpdate() {
