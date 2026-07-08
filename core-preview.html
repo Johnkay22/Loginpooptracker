@@ -3989,8 +3989,10 @@ html, body {
   }
 }
 
-  /* === Desktop layout (>=1024px): dashboard version of the mobile app === */
-  @media (min-width: 1024px) {
+  /* === Desktop layout: dashboard version of the mobile app.
+     Breakpoint is 980px (not 1024px) because mobile browsers' "Request
+     desktop site" mode lays pages out at a 980px virtual viewport. === */
+  @media (min-width: 980px) {
     html,
     body {
       min-height: 100vh !important;
