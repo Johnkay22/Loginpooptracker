@@ -3081,8 +3081,9 @@
 
       .wallet-corner {
         min-height: 48px;
-        padding: 10px 12px;
+        padding: 10px 14px;
         gap: 10px;
+        justify-content: space-between;
       }
 
       .wallet-coin {
@@ -3996,6 +3997,14 @@ html, body {
     html,
     body {
       min-height: 100vh !important;
+      /* The base styles put overflow-y:auto on BOTH html and body, which turns
+         the document into a nested inner scroller. That breaks programmatic
+         scrolling (e.g. the tutorial scrolling to a highlighted element). Let
+         the document scroll normally instead; overflow-x:clip still prevents a
+         horizontal scrollbar (and, unlike "hidden", does not coerce y to auto). */
+      height: auto !important;
+      overflow-x: clip !important;
+      overflow-y: visible !important;
       background-color: var(--bg) !important;
       background-image:
         linear-gradient(135deg, rgba(6, 11, 22, 0.72), rgba(6, 11, 22, 0.78)),
@@ -4056,22 +4065,40 @@ html, body {
       width: auto;
       margin: 0;
       gap: 14px;
-      min-height: 48px;
+      min-height: 52px;
     }
 
     .fixed-nav-stack .head .logo {
-      height: 44px;
+      height: 54px;
       max-width: none;
     }
 
+    /* Right-side account cluster: even spacing, help icon last */
+    .fixed-nav-stack .head-controls {
+      gap: 12px;
+    }
+
+    .fixed-nav-stack #tutorialHelpButton {
+      order: 3;
+    }
+
+    .fixed-nav-stack .head-username {
+      max-width: 220px;
+      font-size: 14px;
+    }
+
+    /* Wallet is grouped as its own unit, divided from the account controls */
     .fixed-nav-stack .wallet-banner-row {
       flex: 0 0 auto;
       width: auto;
       margin: 0;
+      padding-left: 18px;
+      border-left: 1px solid var(--line-2);
     }
 
     .fixed-nav-stack .wallet-corner {
-      min-height: 42px;
+      min-height: 44px;
+      width: auto;
     }
 
     /* Tab nav: centered on the header's second row */
@@ -4109,11 +4136,14 @@ html, body {
     }
 
     /* Calculator tab -> two columns: wage + log stacked left, timer hero right.
-       A flexible spacer row keeps the tall timer from inflating the left rows. */
+       Rows are max-content/max-content/auto: the wage and log rows stay at
+       their natural height (no gap between them), and the trailing auto row
+       absorbs the tall timer's overflow so the grid — and therefore the page —
+       actually grows to the timer's height and stays scrollable. */
     #panel-calculator .panel-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-      grid-template-rows: auto auto 1fr;
+      grid-template-rows: max-content max-content auto;
       gap: 22px;
       align-content: start;
     }
@@ -8210,7 +8240,12 @@ html, body {
         var dockEl = document.getElementById("appDock");
         if (dockEl) {
           var dockRect = dockEl.getBoundingClientRect();
-          if (dockRect.top < viewportHeight) {
+          var dockCenter = dockRect.top + dockRect.height / 2;
+          if (dockCenter < viewportHeight / 2) {
+            // Desktop: the tab dock sits at the top, so reserve space above.
+            topInset = Math.max(topInset, dockRect.bottom + 14);
+          } else if (dockRect.top < viewportHeight) {
+            // Mobile: the tab dock sits at the bottom, so reserve space below.
             bottomInset = Math.max(bottomInset, viewportHeight - dockRect.top + 14);
           }
         }
