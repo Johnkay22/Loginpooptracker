@@ -8170,26 +8170,111 @@ html, body {
           });
         }
 
-        ensureTutorialTargetVisibility(step);
+        // Place the card/highlight first so obstruction-aware scrolling can
+        // measure the docked card, then move the target into the clear area.
+        queueTutorialPositionUpdate();
         var positionDelay = step.target && step.target.indexOf("appDock") !== -1 ? 160 : 80;
         window.setTimeout(function () {
-          queueTutorialPositionUpdate();
+          positionTutorialToTarget();
+          ensureTutorialTargetVisibility(step);
+          // Snap the highlight/card to the target's final resting place once
+          // the smooth scroll settles (scroll events keep it in sync too).
+          window.setTimeout(queueTutorialPositionUpdate, 380);
         }, positionDelay);
+      }
+
+      function getTutorialScrollContainer() {
+        var candidates = [document.scrollingElement, document.documentElement, document.body];
+        for (var i = 0; i < candidates.length; i++) {
+          var el = candidates[i];
+          if (el && el.scrollHeight > el.clientHeight + 1) {
+            return el;
+          }
+        }
+        return document.scrollingElement || document.documentElement || document.body;
+      }
+
+      function isElementInFixedLayer(el) {
+        var node = el;
+        while (node && node !== document.body && node !== document.documentElement) {
+          var position = getComputedStyle(node).position;
+          if (position === "fixed" || position === "sticky") {
+            return true;
+          }
+          node = node.parentElement;
+        }
+        return false;
       }
 
       function ensureTutorialTargetVisibility(step) {
         if (!step || !step.target) return;
         var target = document.querySelector(step.target);
         if (!target) return;
+        // Targets that live inside a fixed/sticky header (logo, tab dock, help
+        // button) never move when the page scrolls, so they are always visible.
+        if (isElementInFixedLayer(target)) return;
+
+        var scroller = getTutorialScrollContainer();
         var rect = target.getBoundingClientRect();
         var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-        var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-        var margin = 18;
-        var needsVerticalAdjust = rect.top < margin || rect.bottom > (viewportHeight - margin);
-        var needsHorizontalAdjust = rect.left < margin || rect.right > (viewportWidth - margin);
-        if (needsVerticalAdjust || needsHorizontalAdjust) {
-          target.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        var margin = 16;
+
+        // Account for the fixed navigation header at the top of the viewport.
+        var obstructTop = 0;
+        var fixedNav = document.querySelector(".fixed-nav-stack");
+        if (fixedNav) {
+          var navStyle = getComputedStyle(fixedNav);
+          if ((navStyle.position === "fixed" || navStyle.position === "sticky") && navStyle.display !== "none") {
+            obstructTop = Math.max(0, fixedNav.getBoundingClientRect().bottom);
+          }
         }
+
+        // On mobile the tutorial card is docked at the bottom, covering the
+        // lower part of the screen. Reserve that space so the highlighted
+        // element is never scrolled to sit behind the card.
+        var obstructBottom = 0;
+        if (tutorialCard && tutorialCard.classList.contains("tutorial-card--dock")) {
+          var cardRect = tutorialCard.getBoundingClientRect();
+          if (cardRect.height > 0) {
+            obstructBottom = Math.max(0, viewportHeight - cardRect.top);
+          }
+        }
+
+        var safeTop = obstructTop + margin;
+        var safeBottom = viewportHeight - obstructBottom - margin;
+        // If the card leaves almost no room (very short screens), fall back to
+        // using the whole area below the header.
+        if (safeBottom - safeTop < 80) {
+          safeBottom = viewportHeight - margin;
+        }
+        var safeHeight = safeBottom - safeTop;
+
+        var delta;
+        if (rect.height <= safeHeight) {
+          // Center the target within the visible (unobstructed) band.
+          var targetCenter = rect.top + rect.height / 2;
+          var bandCenter = safeTop + safeHeight / 2;
+          delta = targetCenter - bandCenter;
+        } else {
+          // Target is taller than the visible band: align its top edge.
+          delta = rect.top - safeTop;
+        }
+
+        if (Math.abs(delta) < 4) return;
+
+        var nextTop = scroller.scrollTop + delta;
+        var maxTop = scroller.scrollHeight - scroller.clientHeight;
+        nextTop = Math.max(0, Math.min(maxTop, nextTop));
+
+        if (typeof scroller.scrollTo === "function") {
+          try {
+            scroller.scrollTo({ top: nextTop, behavior: "smooth" });
+            return;
+          } catch (_error) {
+            // Older engines: fall through to the direct assignment below.
+          }
+        }
+        scroller.scrollTop = nextTop;
       }
 
       function queueTutorialPositionUpdate() {
