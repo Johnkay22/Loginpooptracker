@@ -8271,11 +8271,25 @@ html, body {
           rect.right <= (viewportWidth - insets.side);
       }
 
+      function getTutorialScrollRoot() {
+        // Depending on the CSS overflow model, the page can scroll on either the
+        // documentElement (html) or the body. Pick whichever actually overflows
+        // so programmatic scrolling works on both mobile and desktop.
+        var docEl = document.scrollingElement || document.documentElement;
+        if (docEl && docEl.scrollHeight > docEl.clientHeight + 1) {
+          return docEl;
+        }
+        if (document.body && document.body.scrollHeight > document.body.clientHeight + 1) {
+          return document.body;
+        }
+        return docEl;
+      }
+
       function scrollTutorialTargetIntoView(target) {
         var insets = getTutorialScrollInsets();
         var rect = target.getBoundingClientRect();
         var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-        var scrollRoot = document.scrollingElement || document.documentElement;
+        var scrollRoot = getTutorialScrollRoot();
         var visibleHeight = Math.max(120, viewportHeight - insets.top - insets.bottom);
         var targetCenter = rect.top + rect.height / 2;
         var desiredCenter = insets.top + visibleHeight / 2;
@@ -8304,7 +8318,7 @@ html, body {
       function waitForTutorialScrollEnd(callback) {
         clearTutorialScrollWait();
         var done = false;
-        var scrollRoot = document.scrollingElement || document.documentElement;
+        var scrollRoot = getTutorialScrollRoot();
         var lastY = scrollRoot.scrollTop;
         var stableFrames = 0;
         var startedAt = Date.now();
