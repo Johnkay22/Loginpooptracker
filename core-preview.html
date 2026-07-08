@@ -2911,6 +2911,20 @@
       gap: 8px;
     }
 
+    /* Tutorial Complete has a single action, so center its text and button */
+    #tutorialCompleteModal .tutorial-confirm-panel {
+      text-align: center;
+    }
+
+    #tutorialCompleteModal .tutorial-confirm-actions {
+      grid-template-columns: 1fr;
+      justify-items: center;
+    }
+
+    #tutorialCompleteModal .tutorial-confirm-actions .button {
+      width: 100%;
+    }
+
     .tutorial-card[data-pose] .tutorial-mascot-image {
       transform: none;
       filter: none;
@@ -8430,8 +8444,17 @@ html, body {
           tutorialCard.style.left = "10px";
           tutorialCard.style.right = "10px";
           tutorialCard.style.width = "auto";
-          tutorialCard.style.top = "auto";
-          tutorialCard.style.bottom = "calc(10px + env(safe-area-inset-bottom))";
+          // Dock the card on the half of the screen AWAY from the highlighted
+          // target so it never sits on top of what it's pointing at (e.g. the
+          // bottom nav tabs, which would otherwise be hidden behind the card).
+          var targetCenterY = targetRect.top + targetRect.height / 2;
+          if (targetCenterY > viewportHeight / 2) {
+            tutorialCard.style.bottom = "auto";
+            tutorialCard.style.top = "calc(10px + env(safe-area-inset-top))";
+          } else {
+            tutorialCard.style.top = "auto";
+            tutorialCard.style.bottom = "calc(10px + env(safe-area-inset-bottom))";
+          }
           return;
         }
 
