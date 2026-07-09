@@ -5849,6 +5849,35 @@ html, body {
         return callWalletFunction("claim");
       }
 
+      function logPoopSession(earnings, durationSeconds) {
+        try {
+          var client = authContext.supabase;
+          if (!client || typeof client.from !== "function") {
+            console.warn("poop_sessions insert skipped: Supabase client unavailable.");
+            return;
+          }
+
+          var row = {
+            earnings: roundCurrency(Number(earnings) || 0),
+            duration_seconds: Math.max(0, Math.floor(Number(durationSeconds) || 0)),
+            anon_id: getWalletAnonId(),
+            user_id: authContext.userId || null
+          };
+
+          Promise.resolve(client.from("poop_sessions").insert(row))
+            .then(function (result) {
+              if (result && result.error) {
+                console.warn("poop_sessions insert failed:", result.error.message || result.error);
+              }
+            })
+            .catch(function (error) {
+              console.warn("poop_sessions insert error:", error && error.message ? error.message : error);
+            });
+        } catch (error) {
+          console.warn("poop_sessions insert threw:", error && error.message ? error.message : error);
+        }
+      }
+
       function initializeWallet() {
         renderWalletSnapshot(walletSnapshot);
         if (walletFirstDismissButton) {
@@ -6725,6 +6754,7 @@ html, body {
             duration_seconds: durationSeconds,
             earnings: Number(roundCurrency(earnings).toFixed(2))
           });
+          logPoopSession(earnings, durationSeconds);
           openGuestResult(earnings, durationSeconds);
           return;
         }
@@ -6744,6 +6774,7 @@ html, body {
         openRatingModal();
         renderAll();
         setStatus(statusMessage, "Session saved. Rate your poop.", "ok");
+        logPoopSession(earnings, durationSeconds);
         claimWallet()
           .then(function (walletResult) {
             if (!walletResult) return;
