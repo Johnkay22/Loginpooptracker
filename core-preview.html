@@ -3822,6 +3822,25 @@ html, body {
 .stats-filter-bar .segmented-control { overflow-x: auto; scrollbar-width: none; margin-bottom: 9px; background: linear-gradient(180deg, var(--panel-top), var(--panel-bot)); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: var(--r-md); padding: 4px; gap: 4px; }
 .stats-filter-bar .segmented-control button { flex: none; white-space: nowrap; padding: 9px 15px; border-radius: 10px; }
 .range-summary { font-size: 11.5px; color: var(--muted-2); padding-left: 4px; margin-bottom: 16px; }
+
+.tp-field { text-align: left; margin: 14px 0 16px; }
+.tp-field label { margin-bottom: 6px; }
+.tp-optional { color: var(--muted-2); font-weight: 500; }
+.tp-live-savings { margin: 8px 0 0; font-size: 13px; font-weight: 600; color: var(--muted); }
+.tp-live-savings b { color: var(--text); font-weight: 800; }
+
+.tp-info-modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(3, 8, 16, 0.72); backdrop-filter: blur(2px); z-index: 280; }
+.tp-info-modal.open { display: flex; }
+.tp-info-panel { width: min(420px, 100%); border-radius: 14px; border: 1px solid rgba(101, 202, 255, 0.4); background: linear-gradient(180deg, rgba(17, 28, 52, 0.98), rgba(9, 14, 28, 0.98)); box-shadow: var(--shadow); padding: 20px; }
+.tp-info-panel h3 { margin: 0 0 10px; font-size: 1.12rem; color: #eaf6ff; }
+.tp-info-panel p { margin: 0 0 14px; color: #c6daf6; line-height: 1.5; font-size: 0.93rem; }
+.tp-info-checkbox { display: flex; align-items: center; gap: 8px; margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; cursor: pointer; }
+.tp-info-checkbox input { width: auto; margin: 0; flex: none; }
+
+.tp-stat-value { font-size: 32px; font-weight: 800; letter-spacing: -.02em; line-height: 1; margin-top: 6px; }
+.tp-card { display: flex; align-items: stretch; justify-content: space-between; gap: 16px; min-height: clamp(130px, 28vw, 180px); }
+.tp-card-copy { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.tp-card-icon { align-self: stretch; width: auto; height: auto; max-width: 50%; object-fit: contain; flex: none; }
 .custom-range { gap: 10px; margin: 10px 0 0; padding: 13px; border-radius: var(--r-md); background: var(--field); border: 1px solid var(--line); flex-wrap: wrap; align-items: flex-end; }
 .custom-range:not([hidden]) { display: flex; }
 #applyCustomRangeButton { background: linear-gradient(180deg, #4aa6ff, #2f7fe0); color: #fff; border: 0; border-radius: 9px; padding: 9px 15px; font-weight: 700; }
@@ -4412,6 +4431,14 @@ html, body {
             </div>
           </article>
 
+          <article class="card tp-card" style="grid-column: span 12;">
+            <div class="tp-card-copy">
+              <div class="eyebrow" style="margin-bottom:6px">TP Savings</div>
+              <div class="tp-stat-value num" id="statTpSavings">$0.00</div>
+            </div>
+            <img class="tp-card-icon" src="TPSavingsIcon.png" alt="" aria-hidden="true">
+          </article>
+
           <article class="card" style="grid-column: span 12;">
             <div class="trend-panel">
               <div class="trend-head"><span class="tt">Earnings Trend</span><span class="ts" id="trendSubtitle">Last 14 sessions</span></div>
@@ -4594,6 +4621,11 @@ html, body {
           <button type="button" data-rating="4" aria-label="4 poops">💩</button>
           <button type="button" data-rating="5" aria-label="5 poops">💩</button>
         </div>
+        <div class="tp-field">
+          <label for="ratingTpInput">TP squares used <span class="tp-optional">(optional)</span></label>
+          <input id="ratingTpInput" type="number" min="0" step="1" inputmode="numeric" placeholder="e.g. 12">
+          <p id="ratingTpHint" class="tp-live-savings" hidden></p>
+        </div>
         <div class="rating-actions">
           <button id="skipRatingButton" class="button ghost" type="button">Skip</button>
           <button id="saveRatingButton" class="button" type="button">Save Rating</button>
@@ -4607,6 +4639,18 @@ html, body {
           <button id="ratingShareCardButton" class="button" type="button">Share Card</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div id="tpInfoModal" class="tp-info-modal" aria-hidden="true">
+    <div class="tp-info-panel" role="dialog" aria-modal="true" aria-labelledby="tpInfoTitle">
+      <h3 id="tpInfoTitle">Really Love Value?</h3>
+      <p>Every square of TP you use at work is a square you don't have to front the bill for! That's on the company's dime too! Do a quick count of the number of TP squares you use when you're finishing up and input the number at the end of the session to see how much you saved!</p>
+      <label class="tp-info-checkbox">
+        <input id="tpInfoDontShow" type="checkbox">
+        <span>Don't show this again</span>
+      </label>
+      <button id="tpInfoDismissButton" class="button full" type="button">Got it!</button>
     </div>
   </div>
 
@@ -4732,6 +4776,11 @@ html, body {
           <span id="guestResultDuration" class="guest-result-time">0:00</span>
         </div>
       </div>
+      <div class="tp-field">
+        <label for="guestResultTpInput">TP squares used <span class="tp-optional">(optional)</span></label>
+        <input id="guestResultTpInput" type="number" min="0" step="1" inputmode="numeric" placeholder="e.g. 12">
+        <p id="guestResultTpHint" class="tp-live-savings" hidden></p>
+      </div>
       <button id="guestResultOkButton" class="button full guest-cta-primary" type="button">OK</button>
     </div>
   </div>
@@ -4821,6 +4870,15 @@ html, body {
 
       var SUPABASE_URL = "https://ukfboxemqwuwkvfglzfq.supabase.co";
       var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrZmJveGVtcXd1d2t2ZmdsemZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MDk0OTQsImV4cCI6MjA5NjI4NTQ5NH0.nXvi3ZEimwuZHfWR2DZlxX1YYzrdMe_UvZa6NkKN4Og";
+
+      // All company toilet-paper savings math references this single source of truth.
+      var TP_CONFIG = {
+        pricePerRoll: 1.09,        // average USD price per roll
+        sheetsPerRoll: 244,        // average sheets per roll
+        get costPerSquare() { return this.pricePerRoll / this.sheetsPerRoll; }
+      };
+      var TP_SQUARES_LAST_KEY = "pp_core_tp_squares_last_v1";
+      var TP_INFO_DISMISSED_KEY = "pp_core_tp_info_dismissed_v1";
       var USERNAME_PATTERN = /^[a-zA-Z0-9_]{3,20}$/;
       var authContext = {
         supabase: null,
@@ -4853,6 +4911,15 @@ html, body {
       var guestResultEarnings = document.getElementById("guestResultEarnings");
       var guestResultDuration = document.getElementById("guestResultDuration");
       var guestResultOkButton = document.getElementById("guestResultOkButton");
+      var guestResultTpInput = document.getElementById("guestResultTpInput");
+      var guestResultTpHint = document.getElementById("guestResultTpHint");
+      var ratingTpInput = document.getElementById("ratingTpInput");
+      var ratingTpHint = document.getElementById("ratingTpHint");
+      var tpInfoModal = document.getElementById("tpInfoModal");
+      var tpInfoDontShow = document.getElementById("tpInfoDontShow");
+      var tpInfoDismissButton = document.getElementById("tpInfoDismissButton");
+      var statTpSavings = document.getElementById("statTpSavings");
+      var pendingTpContext = null;
 
       var STORAGE_KEY = "pp_core_tabs_v1";
       var DEFAULT_STATE = {
@@ -5241,6 +5308,8 @@ html, body {
         if (guestResultDuration) {
           guestResultDuration.textContent = formatDuration(Math.max(0, Math.floor(durationSeconds || 0)));
         }
+        prefillTpInput(guestResultTpInput);
+        updateTpLiveHint(guestResultTpInput, guestResultTpHint);
         guestResultModal.classList.add("open");
         guestResultModal.setAttribute("aria-hidden", "false");
         document.body.classList.add("wallet-modal-open");
@@ -5248,6 +5317,7 @@ html, body {
 
       function closeGuestResult(showCta) {
         if (!guestResultModal) return;
+        finalizePendingSession();
         guestResultModal.classList.remove("open");
         guestResultModal.setAttribute("aria-hidden", "true");
         document.body.classList.remove("wallet-modal-open");
@@ -5849,7 +5919,130 @@ html, body {
         return callWalletFunction("claim");
       }
 
-      function logPoopSession(earnings, durationSeconds) {
+      function readTpSquaresValue(inputEl) {
+        if (!inputEl) return null;
+        var raw = String(inputEl.value || "").trim();
+        if (!raw) return null;
+        var squares = Math.floor(Number(raw));
+        if (!Number.isFinite(squares) || squares < 1) return null;
+        return squares;
+      }
+
+      function saveTpSquaresLast(rawValue) {
+        try {
+          if (!window.localStorage) return;
+          var value = rawValue === undefined || rawValue === null ? "" : String(rawValue).trim();
+          if (value) {
+            window.localStorage.setItem(TP_SQUARES_LAST_KEY, value);
+          } else {
+            window.localStorage.removeItem(TP_SQUARES_LAST_KEY);
+          }
+        } catch (_error) {
+          // Ignore storage failures; TP prefill is a convenience only.
+        }
+      }
+
+      function loadTpSquaresLast() {
+        try {
+          if (!window.localStorage) return "";
+          return window.localStorage.getItem(TP_SQUARES_LAST_KEY) || "";
+        } catch (_error) {
+          return "";
+        }
+      }
+
+      function prefillTpInput(inputEl) {
+        if (!inputEl) return;
+        inputEl.value = loadTpSquaresLast();
+      }
+
+      function computeTpSavings(squares) {
+        var count = Math.max(0, Math.floor(Number(squares) || 0));
+        return count * TP_CONFIG.costPerSquare;
+      }
+
+      function formatTpSummaryText(squares, savings) {
+        var count = Math.max(0, Math.floor(Number(squares) || 0));
+        var unit = count === 1 ? "square" : "squares";
+        return "You saved $" + roundCurrency(Number(savings) || 0).toFixed(2) +
+          " in company toilet paper (" + count + " " + unit + ")";
+      }
+
+      function updateTpLiveHint(inputEl, hintEl) {
+        if (!hintEl) return;
+        var squares = readTpSquaresValue(inputEl);
+        if (squares === null) {
+          hintEl.hidden = true;
+          hintEl.textContent = "";
+          return;
+        }
+        hintEl.textContent = formatTpSummaryText(squares, computeTpSavings(squares));
+        hintEl.hidden = false;
+      }
+
+      function isTpInfoDismissed() {
+        try {
+          return window.localStorage && window.localStorage.getItem(TP_INFO_DISMISSED_KEY) === "1";
+        } catch (_error) {
+          return false;
+        }
+      }
+
+      function openTpInfoModal() {
+        if (!tpInfoModal || isTpInfoDismissed()) return;
+        if (tpInfoDontShow) tpInfoDontShow.checked = false;
+        tpInfoModal.classList.add("open");
+        tpInfoModal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeTpInfoModal() {
+        if (!tpInfoModal) return;
+        if (tpInfoDontShow && tpInfoDontShow.checked) {
+          try {
+            if (window.localStorage) window.localStorage.setItem(TP_INFO_DISMISSED_KEY, "1");
+          } catch (_error) {
+            // Ignore storage failures.
+          }
+        }
+        tpInfoModal.classList.remove("open");
+        tpInfoModal.setAttribute("aria-hidden", "true");
+      }
+
+      // Reads the TP input the user filled in at the end of the session, updates the
+      // saved local record (signed-in) and writes the poop_sessions row exactly once.
+      function finalizePendingSession() {
+        if (!pendingTpContext) return;
+        var ctx = pendingTpContext;
+        pendingTpContext = null;
+
+        var inputEl = ctx.sessionId ? ratingTpInput : guestResultTpInput;
+        var tpSquares = readTpSquaresValue(inputEl);
+        var tpSavings = tpSquares !== null ? computeTpSavings(tpSquares) : null;
+        saveTpSquaresLast(inputEl ? inputEl.value : "");
+
+        if (ctx.sessionId) {
+          var changed = false;
+          state.sessions = state.sessions.map(function (session) {
+            if (session.id !== ctx.sessionId) return session;
+            changed = true;
+            var copy = {};
+            Object.keys(session).forEach(function (key) { copy[key] = session[key]; });
+            if (tpSquares !== null) {
+              copy.tp_squares = tpSquares;
+              copy.tp_savings = tpSavings;
+            }
+            return copy;
+          });
+          if (changed) {
+            persist();
+            renderAll();
+          }
+        }
+
+        logPoopSession(ctx.earnings, ctx.durationSeconds, tpSquares, tpSavings);
+      }
+
+      function logPoopSession(earnings, durationSeconds, tpSquares, tpSavings) {
         try {
           var client = authContext.supabase;
           if (!client || typeof client.from !== "function") {
@@ -5857,11 +6050,14 @@ html, body {
             return;
           }
 
+          var hasTp = tpSquares !== null && tpSquares !== undefined;
           var row = {
             earnings: roundCurrency(Number(earnings) || 0),
             duration_seconds: Math.max(0, Math.floor(Number(durationSeconds) || 0)),
             anon_id: getWalletAnonId(),
-            user_id: authContext.userId || null
+            user_id: authContext.userId || null,
+            tp_squares: hasTp ? Math.max(0, Math.floor(Number(tpSquares) || 0)) : null,
+            tp_savings: hasTp ? (Number(tpSavings) || 0) : null
           };
 
           Promise.resolve(client.from("poop_sessions").insert(row))
@@ -6054,6 +6250,34 @@ html, body {
           persist();
           renderAll();
         });
+
+        if (ratingTpInput) {
+          ratingTpInput.addEventListener("input", function () {
+            saveTpSquaresLast(ratingTpInput.value);
+            updateTpLiveHint(ratingTpInput, ratingTpHint);
+          });
+        }
+
+        if (guestResultTpInput) {
+          guestResultTpInput.addEventListener("input", function () {
+            saveTpSquaresLast(guestResultTpInput.value);
+            updateTpLiveHint(guestResultTpInput, guestResultTpHint);
+          });
+        }
+
+        if (tpInfoDismissButton) {
+          tpInfoDismissButton.addEventListener("click", function () {
+            closeTpInfoModal();
+          });
+        }
+
+        if (tpInfoModal) {
+          tpInfoModal.addEventListener("click", function (event) {
+            if (event.target === tpInfoModal) {
+              closeTpInfoModal();
+            }
+          });
+        }
 
         timerButton.addEventListener("click", function () {
           toggleSession("timer_button");
@@ -6710,6 +6934,7 @@ html, body {
         renderFirstSessionCoach();
         runTimerTick();
         timerIntervalId = window.setInterval(runTimerTick, 1000);
+        openTpInfoModal();
       }
 
       function stopSession(source) {
@@ -6754,12 +6979,14 @@ html, body {
             duration_seconds: durationSeconds,
             earnings: Number(roundCurrency(earnings).toFixed(2))
           });
-          logPoopSession(earnings, durationSeconds);
+          // TP squares are captured at the end of the session inside the result
+          // modal, so defer the poop_sessions insert until it closes.
+          pendingTpContext = { earnings: earnings, durationSeconds: durationSeconds, sessionId: null };
           openGuestResult(earnings, durationSeconds);
           return;
         }
 
-        state.sessions.unshift({
+        var savedSession = {
           id: String(Date.now()),
           startedAtMs: startedAt,
           endedAtMs: endedAt,
@@ -6767,14 +6994,17 @@ html, body {
           hourlyWageSnapshot: hourly,
           earnings: roundCurrency(earnings),
           rating: 0
-        });
+        };
+        state.sessions.unshift(savedSession);
 
         pendingSessionRatingId = state.sessions[0].id;
+        // TP squares are captured in the rating modal; the row is inserted (and the
+        // local record updated) when the modal closes via finalizePendingSession().
+        pendingTpContext = { earnings: earnings, durationSeconds: durationSeconds, sessionId: savedSession.id };
         persist();
         openRatingModal();
         renderAll();
         setStatus(statusMessage, "Session saved. Rate your poop.", "ok");
-        logPoopSession(earnings, durationSeconds);
         claimWallet()
           .then(function (walletResult) {
             if (!walletResult) return;
@@ -6979,6 +7209,13 @@ html, body {
         }
 
         if (statStreak) statStreak.textContent = streakDays + " days";
+
+        var lifetimeTpSavings = allSessions.reduce(function (sum, s) {
+          return sum + (Number(s.tp_savings) || 0);
+        }, 0);
+        if (statTpSavings) {
+          statTpSavings.textContent = "$" + roundCurrency(lifetimeTpSavings).toFixed(2);
+        }
 
         insightLongest.textContent = formatDuration(longestSession);
         insightBestDay.textContent = "$" + bestDayEarnings.toFixed(2);
@@ -7747,6 +7984,8 @@ html, body {
         selectedRating = 0;
         pendingRatingShareSession = null;
         applyRatingSelection(0);
+        prefillTpInput(ratingTpInput);
+        updateTpLiveHint(ratingTpInput, ratingTpHint);
         showRatingInputStep();
         ratingModal.setAttribute("aria-hidden", "false");
         openBottomSheet(ratingModal);
@@ -7754,6 +7993,7 @@ html, body {
 
       function closeRatingModal() {
         if (!ratingModal) return;
+        finalizePendingSession();
         ratingModal.setAttribute("aria-hidden", "true");
         closeBottomSheet(ratingModal);
         selectedRating = 0;
@@ -7804,6 +8044,10 @@ html, body {
             earnings: session.earnings,
             rating: safeRating
           };
+          if (session.tp_squares !== undefined && session.tp_squares !== null) {
+            updatedSession.tp_squares = session.tp_squares;
+            updatedSession.tp_savings = session.tp_savings;
+          }
           return updatedSession;
         });
         if (updated) {
@@ -8563,7 +8807,7 @@ html, body {
               var hourlyWageSnapshot = roundCurrency(normalizeNumber(session.hourlyWageSnapshot));
               var rating = Math.max(0, Math.min(5, Math.floor(normalizeNumber(session.rating))));
               if (!isFiniteNumber(endedAtMs) || endedAtMs <= 0) return null;
-              return {
+              var normalized = {
                 id: String(session.id || Date.now() + Math.random()),
                 startedAtMs: startedAtMs,
                 endedAtMs: endedAtMs,
@@ -8572,6 +8816,14 @@ html, body {
                 earnings: earnings,
                 rating: rating
               };
+              if (session.tp_squares !== undefined && session.tp_squares !== null) {
+                var tpSquares = Math.max(0, Math.floor(normalizeNumber(session.tp_squares)));
+                normalized.tp_squares = tpSquares;
+                normalized.tp_savings = session.tp_savings !== undefined && session.tp_savings !== null
+                  ? normalizeNumber(session.tp_savings)
+                  : computeTpSavings(tpSquares);
+              }
+              return normalized;
             })
             .filter(Boolean);
         }
