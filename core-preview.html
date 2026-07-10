@@ -3831,7 +3831,9 @@ html, body {
 .tp-summary-line b { color: var(--text); font-weight: 800; }
 
 .tp-stat-value { font-size: 32px; font-weight: 800; letter-spacing: -.02em; line-height: 1; margin-top: 6px; }
-.tp-stat-sub { font-size: 11.5px; color: var(--muted-2); margin-top: 8px; line-height: 1.35; }
+.tp-card { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.tp-card-copy { min-width: 0; }
+.tp-card-icon { width: 72px; height: 72px; object-fit: contain; flex: none; }
 .custom-range { gap: 10px; margin: 10px 0 0; padding: 13px; border-radius: var(--r-md); background: var(--field); border: 1px solid var(--line); flex-wrap: wrap; align-items: flex-end; }
 .custom-range:not([hidden]) { display: flex; }
 #applyCustomRangeButton { background: linear-gradient(180deg, #4aa6ff, #2f7fe0); color: #fff; border: 0; border-radius: 9px; padding: 9px 15px; font-weight: 700; }
@@ -4427,6 +4429,14 @@ html, body {
             </div>
           </article>
 
+          <article class="card tp-card" style="grid-column: span 12;">
+            <div class="tp-card-copy">
+              <div class="eyebrow" style="margin-bottom:6px">TP Savings</div>
+              <div class="tp-stat-value num" id="statTpSavings">$0.00</div>
+            </div>
+            <img class="tp-card-icon" src="TPSavingsIcon.png" alt="" aria-hidden="true">
+          </article>
+
           <article class="card" style="grid-column: span 12;">
             <div class="trend-panel">
               <div class="trend-head"><span class="tt">Earnings Trend</span><span class="ts" id="trendSubtitle">Last 14 sessions</span></div>
@@ -4446,12 +4456,6 @@ html, body {
             <div class="ins-row"><span class="il">Best Day</span><span class="iv num" id="insightBestDay">$0.00</span></div>
             <div class="ins-row"><span class="il">Profit Rate</span><span class="iv num" id="insightProfitRate">$0.00 / hr</span></div>
             <div class="ins-row"><span class="il">Throne Streak</span><span class="iv num acc" id="statStreak">0 days</span></div>
-          </article>
-
-          <article class="card" style="grid-column: span 12;">
-            <div class="eyebrow" style="margin-bottom:6px">Company TP Savings</div>
-            <div class="tp-stat-value num" id="statTpSavings">$0.00</div>
-            <div class="tp-stat-sub" id="statTpSavingsSub">Based on avg roll price of $1.09 and 244 sheets per roll</div>
           </article>
 
           <article class="card" style="grid-column: span 12;">
@@ -4888,7 +4892,6 @@ html, body {
       var tpSquaresInput = document.getElementById("tpSquaresInput");
       var ratingTpLine = document.getElementById("ratingTpLine");
       var statTpSavings = document.getElementById("statTpSavings");
-      var statTpSavingsSub = document.getElementById("statTpSavingsSub");
 
       var STORAGE_KEY = "pp_core_tabs_v1";
       var DEFAULT_STATE = {
@@ -5934,11 +5937,6 @@ html, body {
         var unit = count === 1 ? "square" : "squares";
         return "+ $" + roundCurrency(Number(savings) || 0).toFixed(2) +
           " in company toilet paper (" + count + " " + unit + ")";
-      }
-
-      function tpSubLabelText() {
-        return "Based on avg roll price of $" + TP_CONFIG.pricePerRoll.toFixed(2) +
-          " and " + TP_CONFIG.sheetsPerRoll + " sheets per roll";
       }
 
       function renderTpSummaryLine(element, squares, savings) {
@@ -7105,16 +7103,8 @@ html, body {
         var lifetimeTpSavings = allSessions.reduce(function (sum, s) {
           return sum + (Number(s.tp_savings) || 0);
         }, 0);
-        var hasTpData = allSessions.some(function (s) {
-          return s.tp_squares !== undefined && s.tp_squares !== null;
-        });
         if (statTpSavings) {
           statTpSavings.textContent = "$" + roundCurrency(lifetimeTpSavings).toFixed(2);
-        }
-        if (statTpSavingsSub) {
-          statTpSavingsSub.textContent = (!hasTpData && roundCurrency(lifetimeTpSavings) === 0)
-            ? "Log your squares to start tracking"
-            : tpSubLabelText();
         }
 
         insightLongest.textContent = formatDuration(longestSession);
