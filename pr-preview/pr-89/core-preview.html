@@ -3825,10 +3825,17 @@ html, body {
 
 .tp-field { text-align: left; margin: 14px 0 16px; }
 .tp-field label { margin-bottom: 6px; }
-.tp-field-hint { margin: 6px 0 0; font-size: 11.5px; color: var(--muted-2); line-height: 1.35; }
+.tp-optional { color: var(--muted-2); font-weight: 500; }
+.tp-live-savings { margin: 8px 0 0; font-size: 13px; font-weight: 600; color: var(--muted); }
+.tp-live-savings b { color: var(--text); font-weight: 800; }
 
-.tp-summary-line { margin: 8px 0 0; font-size: 13px; font-weight: 600; color: var(--muted); }
-.tp-summary-line b { color: var(--text); font-weight: 800; }
+.tp-info-modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(3, 8, 16, 0.72); backdrop-filter: blur(2px); z-index: 280; }
+.tp-info-modal.open { display: flex; }
+.tp-info-panel { width: min(420px, 100%); border-radius: 14px; border: 1px solid rgba(101, 202, 255, 0.4); background: linear-gradient(180deg, rgba(17, 28, 52, 0.98), rgba(9, 14, 28, 0.98)); box-shadow: var(--shadow); padding: 20px; }
+.tp-info-panel h3 { margin: 0 0 10px; font-size: 1.12rem; color: #eaf6ff; }
+.tp-info-panel p { margin: 0 0 14px; color: #c6daf6; line-height: 1.5; font-size: 0.93rem; }
+.tp-info-checkbox { display: flex; align-items: center; gap: 8px; margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; cursor: pointer; }
+.tp-info-checkbox input { width: auto; margin: 0; flex: none; }
 
 .tp-stat-value { font-size: 32px; font-weight: 800; letter-spacing: -.02em; line-height: 1; margin-top: 6px; }
 .tp-card { display: flex; align-items: stretch; justify-content: space-between; gap: 16px; min-height: clamp(130px, 28vw, 180px); }
@@ -4342,11 +4349,6 @@ html, body {
                 <div id="timerProgressBar"></div>
               </div>
               <div id="timerMilestone" class="timer-subline"></div>
-              <div class="tp-field">
-                <label for="tpSquaresInput">TP squares used (optional)</label>
-                <input id="tpSquaresInput" type="number" min="0" step="1" inputmode="numeric" placeholder="e.g. 12">
-                <p class="tp-field-hint">Track how much company toilet paper you cashed in.</p>
-              </div>
               <button id="timerButton" class="button full" type="button">Start Poop!</button>
               <div id="statusMessage" class="status"></div>
               <div id="firstSessionCoach" class="first-session-coach" hidden>
@@ -4612,13 +4614,17 @@ html, body {
       <div id="ratingInputStep" class="rating-step">
         <h3 id="ratingTitle">Rate Your Poop</h3>
         <p>How would you rate that session?</p>
-        <p id="ratingTpLine" class="tp-summary-line" hidden></p>
         <div id="poopRatingButtons" class="poop-rating" aria-label="Poop rating">
           <button type="button" data-rating="1" aria-label="1 poop">💩</button>
           <button type="button" data-rating="2" aria-label="2 poops">💩</button>
           <button type="button" data-rating="3" aria-label="3 poops">💩</button>
           <button type="button" data-rating="4" aria-label="4 poops">💩</button>
           <button type="button" data-rating="5" aria-label="5 poops">💩</button>
+        </div>
+        <div class="tp-field">
+          <label for="ratingTpInput">TP squares used <span class="tp-optional">(optional)</span></label>
+          <input id="ratingTpInput" type="number" min="0" step="1" inputmode="numeric" placeholder="e.g. 12">
+          <p id="ratingTpHint" class="tp-live-savings" hidden></p>
         </div>
         <div class="rating-actions">
           <button id="skipRatingButton" class="button ghost" type="button">Skip</button>
@@ -4633,6 +4639,18 @@ html, body {
           <button id="ratingShareCardButton" class="button" type="button">Share Card</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div id="tpInfoModal" class="tp-info-modal" aria-hidden="true">
+    <div class="tp-info-panel" role="dialog" aria-modal="true" aria-labelledby="tpInfoTitle">
+      <h3 id="tpInfoTitle">Really Love Value?</h3>
+      <p>Every squares of TP you use at work is a square you don't have to front the bill for! That's on the company's dime too! Do a quick count of the number of TP squares you use when you're finishing up and input the number at the end of the session to see how much you saved!</p>
+      <label class="tp-info-checkbox">
+        <input id="tpInfoDontShow" type="checkbox">
+        <span>Don't show this again</span>
+      </label>
+      <button id="tpInfoDismissButton" class="button full" type="button">Got it!</button>
     </div>
   </div>
 
@@ -4758,7 +4776,11 @@ html, body {
           <span id="guestResultDuration" class="guest-result-time">0:00</span>
         </div>
       </div>
-      <p id="guestResultTpLine" class="tp-summary-line" hidden></p>
+      <div class="tp-field">
+        <label for="guestResultTpInput">TP squares used <span class="tp-optional">(optional)</span></label>
+        <input id="guestResultTpInput" type="number" min="0" step="1" inputmode="numeric" placeholder="e.g. 12">
+        <p id="guestResultTpHint" class="tp-live-savings" hidden></p>
+      </div>
       <button id="guestResultOkButton" class="button full guest-cta-primary" type="button">OK</button>
     </div>
   </div>
@@ -4856,6 +4878,7 @@ html, body {
         get costPerSquare() { return this.pricePerRoll / this.sheetsPerRoll; }
       };
       var TP_SQUARES_LAST_KEY = "pp_core_tp_squares_last_v1";
+      var TP_INFO_DISMISSED_KEY = "pp_core_tp_info_dismissed_v1";
       var USERNAME_PATTERN = /^[a-zA-Z0-9_]{3,20}$/;
       var authContext = {
         supabase: null,
@@ -4888,10 +4911,15 @@ html, body {
       var guestResultEarnings = document.getElementById("guestResultEarnings");
       var guestResultDuration = document.getElementById("guestResultDuration");
       var guestResultOkButton = document.getElementById("guestResultOkButton");
-      var guestResultTpLine = document.getElementById("guestResultTpLine");
-      var tpSquaresInput = document.getElementById("tpSquaresInput");
-      var ratingTpLine = document.getElementById("ratingTpLine");
+      var guestResultTpInput = document.getElementById("guestResultTpInput");
+      var guestResultTpHint = document.getElementById("guestResultTpHint");
+      var ratingTpInput = document.getElementById("ratingTpInput");
+      var ratingTpHint = document.getElementById("ratingTpHint");
+      var tpInfoModal = document.getElementById("tpInfoModal");
+      var tpInfoDontShow = document.getElementById("tpInfoDontShow");
+      var tpInfoDismissButton = document.getElementById("tpInfoDismissButton");
       var statTpSavings = document.getElementById("statTpSavings");
+      var pendingTpContext = null;
 
       var STORAGE_KEY = "pp_core_tabs_v1";
       var DEFAULT_STATE = {
@@ -5269,7 +5297,7 @@ html, body {
         document.body.classList.add("wallet-modal-open");
       }
 
-      function openGuestResult(earnings, durationSeconds, tpSquares, tpSavings) {
+      function openGuestResult(earnings, durationSeconds) {
         if (!guestResultModal) {
           openGuestCta("session_stop");
           return;
@@ -5280,7 +5308,8 @@ html, body {
         if (guestResultDuration) {
           guestResultDuration.textContent = formatDuration(Math.max(0, Math.floor(durationSeconds || 0)));
         }
-        renderTpSummaryLine(guestResultTpLine, tpSquares === undefined ? null : tpSquares, tpSavings);
+        prefillTpInput(guestResultTpInput);
+        updateTpLiveHint(guestResultTpInput, guestResultTpHint);
         guestResultModal.classList.add("open");
         guestResultModal.setAttribute("aria-hidden", "false");
         document.body.classList.add("wallet-modal-open");
@@ -5288,6 +5317,7 @@ html, body {
 
       function closeGuestResult(showCta) {
         if (!guestResultModal) return;
+        finalizePendingSession();
         guestResultModal.classList.remove("open");
         guestResultModal.setAttribute("aria-hidden", "true");
         document.body.classList.remove("wallet-modal-open");
@@ -5889,9 +5919,9 @@ html, body {
         return callWalletFunction("claim");
       }
 
-      function readTpSquaresInput() {
-        if (!tpSquaresInput) return null;
-        var raw = String(tpSquaresInput.value || "").trim();
+      function readTpSquaresValue(inputEl) {
+        if (!inputEl) return null;
+        var raw = String(inputEl.value || "").trim();
         if (!raw) return null;
         var squares = Math.floor(Number(raw));
         if (!Number.isFinite(squares) || squares < 1) return null;
@@ -5921,10 +5951,9 @@ html, body {
         }
       }
 
-      function prefillTpSquaresInput() {
-        if (!tpSquaresInput) return;
-        var stored = loadTpSquaresLast();
-        if (stored) tpSquaresInput.value = stored;
+      function prefillTpInput(inputEl) {
+        if (!inputEl) return;
+        inputEl.value = loadTpSquaresLast();
       }
 
       function computeTpSavings(squares) {
@@ -5935,19 +5964,82 @@ html, body {
       function formatTpSummaryText(squares, savings) {
         var count = Math.max(0, Math.floor(Number(squares) || 0));
         var unit = count === 1 ? "square" : "squares";
-        return "+ $" + roundCurrency(Number(savings) || 0).toFixed(2) +
+        return "You saved $" + roundCurrency(Number(savings) || 0).toFixed(2) +
           " in company toilet paper (" + count + " " + unit + ")";
       }
 
-      function renderTpSummaryLine(element, squares, savings) {
-        if (!element) return;
-        if (squares === null || squares === undefined) {
-          element.hidden = true;
-          element.textContent = "";
+      function updateTpLiveHint(inputEl, hintEl) {
+        if (!hintEl) return;
+        var squares = readTpSquaresValue(inputEl);
+        if (squares === null) {
+          hintEl.hidden = true;
+          hintEl.textContent = "";
           return;
         }
-        element.textContent = formatTpSummaryText(squares, savings);
-        element.hidden = false;
+        hintEl.textContent = formatTpSummaryText(squares, computeTpSavings(squares));
+        hintEl.hidden = false;
+      }
+
+      function isTpInfoDismissed() {
+        try {
+          return window.localStorage && window.localStorage.getItem(TP_INFO_DISMISSED_KEY) === "1";
+        } catch (_error) {
+          return false;
+        }
+      }
+
+      function openTpInfoModal() {
+        if (!tpInfoModal || isTpInfoDismissed()) return;
+        if (tpInfoDontShow) tpInfoDontShow.checked = false;
+        tpInfoModal.classList.add("open");
+        tpInfoModal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeTpInfoModal() {
+        if (!tpInfoModal) return;
+        if (tpInfoDontShow && tpInfoDontShow.checked) {
+          try {
+            if (window.localStorage) window.localStorage.setItem(TP_INFO_DISMISSED_KEY, "1");
+          } catch (_error) {
+            // Ignore storage failures.
+          }
+        }
+        tpInfoModal.classList.remove("open");
+        tpInfoModal.setAttribute("aria-hidden", "true");
+      }
+
+      // Reads the TP input the user filled in at the end of the session, updates the
+      // saved local record (signed-in) and writes the poop_sessions row exactly once.
+      function finalizePendingSession() {
+        if (!pendingTpContext) return;
+        var ctx = pendingTpContext;
+        pendingTpContext = null;
+
+        var inputEl = ctx.sessionId ? ratingTpInput : guestResultTpInput;
+        var tpSquares = readTpSquaresValue(inputEl);
+        var tpSavings = tpSquares !== null ? computeTpSavings(tpSquares) : null;
+        saveTpSquaresLast(inputEl ? inputEl.value : "");
+
+        if (ctx.sessionId) {
+          var changed = false;
+          state.sessions = state.sessions.map(function (session) {
+            if (session.id !== ctx.sessionId) return session;
+            changed = true;
+            var copy = {};
+            Object.keys(session).forEach(function (key) { copy[key] = session[key]; });
+            if (tpSquares !== null) {
+              copy.tp_squares = tpSquares;
+              copy.tp_savings = tpSavings;
+            }
+            return copy;
+          });
+          if (changed) {
+            persist();
+            renderAll();
+          }
+        }
+
+        logPoopSession(ctx.earnings, ctx.durationSeconds, tpSquares, tpSavings);
       }
 
       function logPoopSession(earnings, durationSeconds, tpSquares, tpSavings) {
@@ -6159,9 +6251,31 @@ html, body {
           renderAll();
         });
 
-        if (tpSquaresInput) {
-          tpSquaresInput.addEventListener("input", function () {
-            saveTpSquaresLast(tpSquaresInput.value);
+        if (ratingTpInput) {
+          ratingTpInput.addEventListener("input", function () {
+            saveTpSquaresLast(ratingTpInput.value);
+            updateTpLiveHint(ratingTpInput, ratingTpHint);
+          });
+        }
+
+        if (guestResultTpInput) {
+          guestResultTpInput.addEventListener("input", function () {
+            saveTpSquaresLast(guestResultTpInput.value);
+            updateTpLiveHint(guestResultTpInput, guestResultTpHint);
+          });
+        }
+
+        if (tpInfoDismissButton) {
+          tpInfoDismissButton.addEventListener("click", function () {
+            closeTpInfoModal();
+          });
+        }
+
+        if (tpInfoModal) {
+          tpInfoModal.addEventListener("click", function (event) {
+            if (event.target === tpInfoModal) {
+              closeTpInfoModal();
+            }
           });
         }
 
@@ -6735,7 +6849,6 @@ html, body {
         hourlyWageInput.value = state.hourlyWage;
         annualSalaryInput.value = state.annualSalary;
         weeklyHoursInput.value = state.weeklyHours;
-        prefillTpSquaresInput();
       }
 
       function renderWageMode() {
@@ -6821,6 +6934,7 @@ html, body {
         renderFirstSessionCoach();
         runTimerTick();
         timerIntervalId = window.setInterval(runTimerTick, 1000);
+        openTpInfoModal();
       }
 
       function stopSession(source) {
@@ -6832,9 +6946,6 @@ html, body {
         var durationSeconds = Math.max(1, Math.floor((endedAt - startedAt) / 1000));
         var hourly = getEffectiveHourlyWage();
         var earnings = (hourly / 3600) * durationSeconds;
-        var tpSquares = readTpSquaresInput();
-        var tpSavings = tpSquares !== null ? computeTpSavings(tpSquares) : null;
-        saveTpSquaresLast(tpSquaresInput ? tpSquaresInput.value : "");
         state.activeSessionStartMs = null;
         lastMilestoneAnnounced = 0;
         hideMilestoneCelebration();
@@ -6868,8 +6979,10 @@ html, body {
             duration_seconds: durationSeconds,
             earnings: Number(roundCurrency(earnings).toFixed(2))
           });
-          logPoopSession(earnings, durationSeconds, tpSquares, tpSavings);
-          openGuestResult(earnings, durationSeconds, tpSquares, tpSavings);
+          // TP squares are captured at the end of the session inside the result
+          // modal, so defer the poop_sessions insert until it closes.
+          pendingTpContext = { earnings: earnings, durationSeconds: durationSeconds, sessionId: null };
+          openGuestResult(earnings, durationSeconds);
           return;
         }
 
@@ -6882,19 +6995,16 @@ html, body {
           earnings: roundCurrency(earnings),
           rating: 0
         };
-        if (tpSquares !== null) {
-          savedSession.tp_squares = tpSquares;
-          savedSession.tp_savings = tpSavings;
-        }
         state.sessions.unshift(savedSession);
 
         pendingSessionRatingId = state.sessions[0].id;
+        // TP squares are captured in the rating modal; the row is inserted (and the
+        // local record updated) when the modal closes via finalizePendingSession().
+        pendingTpContext = { earnings: earnings, durationSeconds: durationSeconds, sessionId: savedSession.id };
         persist();
         openRatingModal();
-        renderTpSummaryLine(ratingTpLine, tpSquares, tpSavings);
         renderAll();
         setStatus(statusMessage, "Session saved. Rate your poop.", "ok");
-        logPoopSession(earnings, durationSeconds, tpSquares, tpSavings);
         claimWallet()
           .then(function (walletResult) {
             if (!walletResult) return;
@@ -7874,7 +7984,8 @@ html, body {
         selectedRating = 0;
         pendingRatingShareSession = null;
         applyRatingSelection(0);
-        renderTpSummaryLine(ratingTpLine, null);
+        prefillTpInput(ratingTpInput);
+        updateTpLiveHint(ratingTpInput, ratingTpHint);
         showRatingInputStep();
         ratingModal.setAttribute("aria-hidden", "false");
         openBottomSheet(ratingModal);
@@ -7882,6 +7993,7 @@ html, body {
 
       function closeRatingModal() {
         if (!ratingModal) return;
+        finalizePendingSession();
         ratingModal.setAttribute("aria-hidden", "true");
         closeBottomSheet(ratingModal);
         selectedRating = 0;
