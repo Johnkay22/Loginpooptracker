@@ -3831,9 +3831,9 @@ html, body {
 .tp-summary-line b { color: var(--text); font-weight: 800; }
 
 .tp-stat-value { font-size: 32px; font-weight: 800; letter-spacing: -.02em; line-height: 1; margin-top: 6px; }
-.tp-card { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.tp-card-copy { min-width: 0; }
-.tp-card-icon { width: 120px; height: 120px; object-fit: contain; flex: none; }
+.tp-card { display: flex; align-items: stretch; justify-content: space-between; gap: 16px; min-height: clamp(130px, 28vw, 180px); }
+.tp-card-copy { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.tp-card-icon { align-self: stretch; width: auto; height: auto; max-width: 50%; object-fit: contain; flex: none; }
 .custom-range { gap: 10px; margin: 10px 0 0; padding: 13px; border-radius: var(--r-md); background: var(--field); border: 1px solid var(--line); flex-wrap: wrap; align-items: flex-end; }
 .custom-range:not([hidden]) { display: flex; }
 #applyCustomRangeButton { background: linear-gradient(180deg, #4aa6ff, #2f7fe0); color: #fff; border: 0; border-radius: 9px; padding: 9px 15px; font-weight: 700; }
