@@ -3816,6 +3816,8 @@ html, body {
 .log-entry .log-date { font-size: 13px; font-weight: 700; color: var(--text); min-width: 0; flex: 1; line-height: 1.35; }
 .log-entry .log-earnings { font-weight: 800; font-size: 16px; color: var(--green); flex: none; white-space: nowrap; }
 .log-entry .log-meta { font-size: 11.5px; color: var(--muted-2); line-height: 1.45; word-break: break-word; }
+.log-entry .log-tp { display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 600; color: var(--green); line-height: 1.4; }
+.log-entry .log-tp .log-tp-icon { width: 18px; height: 18px; flex: none; object-fit: contain; }
 .log-entry .log-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 .log-entry .icon-button { flex: none; }
 
@@ -7332,6 +7334,18 @@ html, body {
           var ratingPoops = ratingValue > 0 ? " | Rating: " + "💩".repeat(ratingValue) : "";
           meta.textContent = "Duration: " + formatDuration(session.durationSeconds) + " | Wage used: $" + session.hourlyWageSnapshot.toFixed(2) + "/hr" + ratingPoops;
 
+          var tpLine = null;
+          if (session.tp_squares !== undefined && session.tp_squares !== null) {
+            var tpSquaresValue = Math.max(0, Math.floor(Number(session.tp_squares) || 0));
+            var tpSavingsValue = session.tp_savings !== undefined && session.tp_savings !== null
+              ? Number(session.tp_savings) || 0
+              : computeTpSavings(tpSquaresValue);
+            tpLine = document.createElement("div");
+            tpLine.className = "log-tp";
+            tpLine.innerHTML = "<img class=\"log-tp-icon\" src=\"TPSavingsIcon.png\" alt=\"\" aria-hidden=\"true\">" +
+              "<span>" + formatTpSummaryText(tpSquaresValue, tpSavingsValue) + "</span>";
+          }
+
           var actions = document.createElement("div");
           actions.className = "log-actions";
 
@@ -7358,6 +7372,7 @@ html, body {
           actions.appendChild(remove);
           row.appendChild(top);
           row.appendChild(meta);
+          if (tpLine) row.appendChild(tpLine);
           row.appendChild(actions);
           logList.appendChild(row);
         });
