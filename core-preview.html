@@ -2682,6 +2682,32 @@
       cursor: grabbing;
     }
 
+    .rating-profit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin: 2px 0 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line-2);
+    }
+
+    .rating-profit-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--blue);
+    }
+
+    .rating-profit-amount {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1.05;
+      color: var(--cyan);
+      text-shadow: 0 0 18px rgba(121, 226, 255, 0.35);
+    }
+
     .rating-panel h3,
     .share-picker-panel h3 {
       margin: 0 0 8px;
@@ -4612,6 +4638,10 @@ html, body {
     <div class="rating-panel sheet-panel" role="dialog" aria-modal="true" aria-labelledby="ratingTitle">
       <div class="sheet-grabber" aria-hidden="true"><span></span></div>
       <div id="ratingInputStep" class="rating-step">
+        <div class="rating-profit">
+          <span class="rating-profit-label">Your Poop Profit</span>
+          <span id="ratingProfitValue" class="rating-profit-amount">$0.00</span>
+        </div>
         <h3 id="ratingTitle">Rate Your Poop</h3>
         <p>How would you rate that session?</p>
         <div id="poopRatingButtons" class="poop-rating" aria-label="Poop rating">
@@ -4915,6 +4945,7 @@ html, body {
       var guestResultTpHint = document.getElementById("guestResultTpHint");
       var ratingTpInput = document.getElementById("ratingTpInput");
       var ratingTpHint = document.getElementById("ratingTpHint");
+      var ratingProfitValue = document.getElementById("ratingProfitValue");
       var tpInfoModal = document.getElementById("tpInfoModal");
       var tpInfoDontShow = document.getElementById("tpInfoDontShow");
       var tpInfoDismissButton = document.getElementById("tpInfoDismissButton");
@@ -7983,6 +8014,10 @@ html, body {
         if (!ratingModal) return;
         selectedRating = 0;
         pendingRatingShareSession = null;
+        if (ratingProfitValue) {
+          var profitEarnings = pendingTpContext ? Number(pendingTpContext.earnings) || 0 : 0;
+          ratingProfitValue.textContent = "$" + roundCurrency(profitEarnings).toFixed(2);
+        }
         applyRatingSelection(0);
         prefillTpInput(ratingTpInput);
         updateTpLiveHint(ratingTpInput, ratingTpHint);
