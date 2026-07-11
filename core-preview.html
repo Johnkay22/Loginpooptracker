@@ -3859,11 +3859,29 @@ html, body {
 
 .tp-info-modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(3, 8, 16, 0.72); backdrop-filter: blur(2px); z-index: 280; }
 .tp-info-modal.open { display: flex; }
-.tp-info-panel { width: min(420px, 100%); border-radius: 14px; border: 1px solid rgba(101, 202, 255, 0.4); background: linear-gradient(180deg, rgba(17, 28, 52, 0.98), rgba(9, 14, 28, 0.98)); box-shadow: var(--shadow); padding: 20px; }
-.tp-info-panel h3 { margin: 0 0 10px; font-size: 1.12rem; color: #eaf6ff; }
-.tp-info-panel p { margin: 0 0 14px; color: #c6daf6; line-height: 1.5; font-size: 0.93rem; }
-.tp-info-checkbox { display: flex; align-items: center; gap: 8px; margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; cursor: pointer; }
+.tp-info-panel { position: relative; width: min(540px, 100%); border-radius: 18px; border: 1px solid rgba(101, 202, 255, 0.4); background: radial-gradient(130% 130% at 12% 0%, rgba(24, 44, 82, 0.99), rgba(7, 12, 26, 0.99)); box-shadow: 0 26px 64px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(59, 157, 255, 0.06) inset; padding: 24px 22px 18px; overflow: hidden; }
+.tp-info-corner { position: absolute; width: 18px; height: 18px; border: 2px solid rgba(96, 182, 255, 0.7); pointer-events: none; }
+.tp-info-corner-tl { top: 11px; left: 11px; border-right: 0; border-bottom: 0; border-top-left-radius: 6px; }
+.tp-info-corner-tr { top: 11px; right: 11px; border-left: 0; border-bottom: 0; border-top-right-radius: 6px; }
+.tp-info-corner-bl { bottom: 11px; left: 11px; border-right: 0; border-top: 0; border-bottom-left-radius: 6px; }
+.tp-info-corner-br { bottom: 11px; right: 11px; border-left: 0; border-top: 0; border-bottom-right-radius: 6px; }
+.tp-info-howto { position: absolute; top: 16px; right: 18px; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue-2); }
+.tp-info-howto svg { width: 16px; height: 16px; flex: none; }
+.tp-info-body { display: flex; align-items: center; gap: 18px; margin: 6px 0 4px; }
+.tp-info-art { flex: none; width: 120px; }
+.tp-info-art img { width: 100%; height: auto; display: block; filter: drop-shadow(0 8px 20px rgba(59, 157, 255, 0.28)); }
+.tp-info-copy { flex: 1; min-width: 0; text-align: left; }
+.tp-info-panel h3 { margin: 0; font-size: 1.6rem; line-height: 1.05; font-weight: 800; letter-spacing: 0.01em; text-transform: uppercase; color: #f2f8ff; }
+.tp-info-divider { display: block; height: 2px; margin: 12px 0; background: linear-gradient(90deg, var(--blue) 0%, rgba(59, 157, 255, 0.35) 55%, rgba(59, 157, 255, 0) 100%); border-radius: 2px; }
+.tp-info-panel p { margin: 0; color: #c6daf6; line-height: 1.5; font-size: 0.94rem; }
+.tp-info-checkbox { display: flex; align-items: center; gap: 9px; margin: 18px 0 4px; color: var(--muted); font-size: 0.92rem; cursor: pointer; }
 .tp-info-checkbox input { width: auto; margin: 0; flex: none; }
+@media (max-width: 460px) {
+  .tp-info-body { gap: 14px; }
+  .tp-info-art { width: 92px; }
+  .tp-info-panel h3 { font-size: 1.35rem; }
+  .tp-info-howto span { display: none; }
+}
 
 .tp-stat-value { font-size: 32px; font-weight: 800; letter-spacing: -.02em; line-height: 1; margin-top: 6px; }
 .tp-card { display: flex; align-items: stretch; justify-content: space-between; gap: 16px; min-height: clamp(130px, 28vw, 180px); }
@@ -4676,13 +4694,29 @@ html, body {
 
   <div id="tpInfoModal" class="tp-info-modal" aria-hidden="true">
     <div class="tp-info-panel" role="dialog" aria-modal="true" aria-labelledby="tpInfoTitle">
-      <h3 id="tpInfoTitle">Really Love Value?</h3>
-      <p>Every square of TP you use at work is a square you don't have to front the bill for! That's on the company's dime too! Do a quick count of the number of TP squares you use when you're finishing up and input the number at the end of the session to see how much you saved!</p>
+      <span class="tp-info-corner tp-info-corner-tl" aria-hidden="true"></span>
+      <span class="tp-info-corner tp-info-corner-tr" aria-hidden="true"></span>
+      <span class="tp-info-corner tp-info-corner-bl" aria-hidden="true"></span>
+      <span class="tp-info-corner tp-info-corner-br" aria-hidden="true"></span>
+      <span class="tp-info-howto" aria-hidden="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><rect x="11" y="10.5" width="2" height="6" rx="1" fill="#08152c"/><circle cx="12" cy="7.6" r="1.25" fill="#08152c"/></svg>
+        <span>How it works</span>
+      </span>
+      <div class="tp-info-body">
+        <div class="tp-info-art">
+          <img src="TPSavingsIcon.png" alt="" aria-hidden="true">
+        </div>
+        <div class="tp-info-copy">
+          <h3 id="tpInfoTitle">Track Your TP Savings</h3>
+          <span class="tp-info-divider" aria-hidden="true"></span>
+          <p>Count the squares used during this session. Enter the total at the end to add your estimated savings to your stats.</p>
+        </div>
+      </div>
       <label class="tp-info-checkbox">
         <input id="tpInfoDontShow" type="checkbox">
-        <span>Don't show this again</span>
+        <span>Hide this tip next time</span>
       </label>
-      <button id="tpInfoDismissButton" class="button full" type="button">Got it!</button>
+      <button id="tpInfoDismissButton" class="button full" type="button">Got it</button>
     </div>
   </div>
 
