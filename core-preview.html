@@ -8944,6 +8944,26 @@ html, body {
         return false;
       }
 
+      function isFixedTopTutorialTarget(target) {
+        if (!target) return false;
+        if (target.closest && target.closest(".fixed-nav-stack")) {
+          return true;
+        }
+        if (!isFixedTutorialTarget(target)) return false;
+        var rect = target.getBoundingClientRect();
+        var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        return (rect.top + rect.height / 2) < viewportHeight * 0.42;
+      }
+
+      function scrollTutorialPageToTop() {
+        var scrollRoot = document.scrollingElement || document.documentElement;
+        if (scrollRoot.scrollTop <= 8) {
+          return false;
+        }
+        scrollRoot.scrollTo({ top: 0, behavior: "smooth" });
+        return true;
+      }
+
       function getTutorialScrollInsets() {
         var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
         var useMobileDock = (window.innerWidth || 0) <= 760;
@@ -9080,6 +9100,14 @@ html, body {
           if (callback) callback();
           return;
         }
+        if (isFixedTopTutorialTarget(target)) {
+          if (scrollTutorialPageToTop()) {
+            waitForTutorialScrollEnd(callback);
+            return;
+          }
+          if (callback) callback();
+          return;
+        }
         if (isFixedTutorialTarget(target)) {
           if (callback) callback();
           return;
@@ -9113,11 +9141,11 @@ html, body {
         var target = step && step.target ? document.querySelector(step.target) : null;
         var viewportWidth = window.innerWidth;
         var viewportHeight = window.innerHeight;
-        var useMobileDock = viewportWidth <= 760;
+        var useMobileLayout = viewportWidth <= 760;
 
         if (!target) {
-          tutorialCard.classList.toggle("tutorial-card--dock", useMobileDock);
-          if (useMobileDock) {
+          tutorialCard.classList.toggle("tutorial-card--dock", useMobileLayout);
+          if (useMobileLayout) {
             tutorialCard.style.left = "10px";
             tutorialCard.style.right = "10px";
             tutorialCard.style.width = "auto";
@@ -9141,7 +9169,9 @@ html, body {
         tutorialHighlight.style.width = Math.max(0, targetRect.width + targetPadding * 2) + "px";
         tutorialHighlight.style.height = Math.max(0, targetRect.height + targetPadding * 2) + "px";
 
-        if (useMobileDock) {
+        var anchorCardToTopChrome = useMobileLayout && isFixedTopTutorialTarget(target);
+
+        if (useMobileLayout && !anchorCardToTopChrome) {
           tutorialCard.classList.add("tutorial-card--dock");
           tutorialCard.style.left = "10px";
           tutorialCard.style.right = "10px";
@@ -9157,6 +9187,30 @@ html, body {
             tutorialCard.style.top = "auto";
             tutorialCard.style.bottom = "calc(10px + env(safe-area-inset-bottom))";
           }
+          return;
+        }
+
+        if (anchorCardToTopChrome) {
+          tutorialCard.classList.remove("tutorial-card--dock");
+          var anchoredCardWidth = tutorialCard.offsetWidth;
+          var anchoredCardHeight = tutorialCard.offsetHeight;
+          var headerEl = document.querySelector(".fixed-nav-stack");
+          var anchorTop = headerEl
+            ? headerEl.getBoundingClientRect().bottom + 14
+            : targetRect.bottom + 14;
+          var anchoredTop = Math.min(
+            viewportHeight - anchoredCardHeight - 10,
+            Math.max(anchorTop, 10)
+          );
+          var anchoredLeft = Math.max(
+            10,
+            Math.min(viewportWidth - anchoredCardWidth - 10, (viewportWidth - anchoredCardWidth) / 2)
+          );
+          tutorialCard.style.left = anchoredLeft + "px";
+          tutorialCard.style.top = anchoredTop + "px";
+          tutorialCard.style.right = "";
+          tutorialCard.style.bottom = "";
+          tutorialCard.style.width = "auto";
           return;
         }
 
