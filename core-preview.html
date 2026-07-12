@@ -5007,6 +5007,7 @@ html, body {
       var state = cloneDefaultState();
       var profileWageDefaults = null;
       var saveWageToProfileTimerId = null;
+      var pendingInsertPromise = null;
       var timerIntervalId = null;
       var resizeTimerId = null;
 
@@ -5600,6 +5601,13 @@ html, body {
         }, 800);
       }
 
+      function wageValueOrNull(raw) {
+        var text = String(raw === undefined || raw === null ? "" : raw).trim();
+        if (!text) return null;
+        var value = normalizeNumber(text);
+        return value > 0 ? value : null;
+      }
+
       function flushWageToProfile() {
         if (!isSignedInMode()) return;
         try {
@@ -5607,9 +5615,9 @@ html, body {
           if (!client || typeof client.from !== "function" || !authContext.userId) return;
           var patch = {
             pay_mode: state.wageMode === "salary" ? "salary" : "hourly",
-            hourly_wage: normalizeNumber(state.hourlyWage),
-            annual_salary: normalizeNumber(state.annualSalary),
-            hours_per_week: normalizeNumber(state.weeklyHours)
+            hourly_wage: wageValueOrNull(state.hourlyWage),
+            annual_salary: wageValueOrNull(state.annualSalary),
+            hours_per_week: wageValueOrNull(state.weeklyHours)
           };
           Promise.resolve(client.from("profiles").update(patch).eq("user_id", authContext.userId))
             .then(function (result) {
@@ -6199,7 +6207,8 @@ html, body {
           };
 
           // Authenticated users have a SELECT policy, so RETURNING is safe here.
-          return Promise.resolve(client.from("poop_sessions").insert(row).select("id").single())
+          // Track the in-flight insert so updates can wait for session.dbId.
+          var insertPromise = Promise.resolve(client.from("poop_sessions").insert(row).select("id").single())
             .then(function (result) {
               if (result && result.error) {
                 console.warn("poop_sessions insert failed:", result.error.message || result.error);
@@ -6213,6 +6222,8 @@ html, body {
             .catch(function (error) {
               console.warn("poop_sessions insert error:", error && error.message ? error.message : error);
             });
+          pendingInsertPromise = insertPromise;
+          return insertPromise;
         } catch (error) {
           console.warn("poop_sessions insert threw:", error && error.message ? error.message : error);
           return Promise.resolve();
@@ -6264,22 +6275,26 @@ html, body {
 
       function pushSessionUpdate(session, patch) {
         if (!isSignedInMode() || !session) return;
-        try {
-          var client = authContext.supabase;
-          if (!client || typeof client.from !== "function") return;
-          var query = applySessionRowTarget(client.from("poop_sessions").update(patch), session);
-          Promise.resolve(query)
-            .then(function (result) {
-              if (result && result.error) {
-                console.warn("poop_sessions update failed:", result.error.message || result.error);
-              }
-            })
-            .catch(function (error) {
-              console.warn("poop_sessions update error:", error && error.message ? error.message : error);
-            });
-        } catch (error) {
-          console.warn("poop_sessions update threw:", error && error.message ? error.message : error);
-        }
+        // Wait for any in-flight insert so session.dbId is populated before the
+        // update targets the row; a failed insert still lets the update attempt run.
+        Promise.resolve(pendingInsertPromise).catch(function () {}).then(function () {
+          try {
+            var client = authContext.supabase;
+            if (!client || typeof client.from !== "function") return;
+            var query = applySessionRowTarget(client.from("poop_sessions").update(patch), session);
+            Promise.resolve(query)
+              .then(function (result) {
+                if (result && result.error) {
+                  console.warn("poop_sessions update failed:", result.error.message || result.error);
+                }
+              })
+              .catch(function (error) {
+                console.warn("poop_sessions update error:", error && error.message ? error.message : error);
+              });
+          } catch (error) {
+            console.warn("poop_sessions update threw:", error && error.message ? error.message : error);
+          }
+        });
       }
 
       function softDeleteAllSessions() {
@@ -6374,6 +6389,11 @@ html, body {
             console.warn("legacy session migration read failed:", error && error.message ? error.message : error);
           }
           writeLocalFlag(legacyFlag);
+          try {
+            if (window.localStorage) window.localStorage.removeItem("pp_core_tabs_v1");
+          } catch (_error) {
+            // Legacy bucket removal is best-effort.
+          }
         }
 
         return candidates;
@@ -7374,7 +7394,9 @@ html, body {
         pendingSessionRatingId = state.sessions[0].id;
         // Insert the row immediately so a closed tab never loses the session; TP
         // squares captured in the rating modal are pushed as an update on close.
-        pendingTpContext = { sessionId: savedSession.id };
+        // earnings/durationSeconds are read by openRatingModal() for display; the
+        // signed-in finalize path ignores them (branches on ctx.sessionId).
+        pendingTpContext = { earnings: earnings, durationSeconds: durationSeconds, sessionId: savedSession.id };
         persist();
         insertSessionRow(savedSession);
         openRatingModal();
