@@ -4878,7 +4878,7 @@ html, body {
     <span aria-hidden="true"> · </span>
     <a href="https://www.poopprofit.com/core-preview.html">Core Preview</a>
     <div class="legal-bottom">
-      <span>Data is stored locally on this browser/device until cleared.</span>
+      <span>Signed in? Your sessions sync across all your devices. Signed out? Data stays on this device only.</span>
       <span>&copy; 2026 PoopProfit. All rights reserved.</span>
     </div>
   </div>
@@ -4988,7 +4988,11 @@ html, body {
       var statTpSavings = document.getElementById("statTpSavings");
       var pendingTpContext = null;
 
-      var STORAGE_KEY = "pp_core_tabs_v1";
+      function getStorageKey() {
+        return authContext && authContext.userId
+          ? ("pp_core_tabs_v1_u_" + authContext.userId)
+          : "pp_core_tabs_v1_guest";
+      }
       var DEFAULT_STATE = {
         activeTab: "calculator",
         wageMode: "hourly",
@@ -5000,7 +5004,9 @@ html, body {
         activeSessionStartMs: null
       };
 
-      var state = loadState();
+      var state = cloneDefaultState();
+      var profileWageDefaults = null;
+      var saveWageToProfileTimerId = null;
       var timerIntervalId = null;
       var resizeTimerId = null;
 
@@ -5541,7 +5547,7 @@ html, body {
         if (!authContext.supabase || !userId) return Promise.resolve(null);
         return authContext.supabase
           .from("profiles")
-          .select("user_id, username, industry, job_title")
+          .select("user_id, username, industry, job_title, pay_mode, annual_salary, hours_per_week, hourly_wage")
           .eq("user_id", userId)
           .maybeSingle()
           .then(function (result) {
@@ -5570,8 +5576,58 @@ html, body {
           });
       }
 
+      function applyProfileWageDefaults(profile) {
+        if (!profile) return;
+        var hasWage = profile.pay_mode != null
+          || profile.hourly_wage != null
+          || profile.annual_salary != null
+          || profile.hours_per_week != null;
+        if (!hasWage) return;
+        profileWageDefaults = {
+          wageMode: profile.pay_mode === "salary" ? "salary" : (profile.pay_mode === "hourly" ? "hourly" : null),
+          hourlyWage: profile.hourly_wage != null ? String(profile.hourly_wage) : null,
+          annualSalary: profile.annual_salary != null ? String(profile.annual_salary) : null,
+          weeklyHours: profile.hours_per_week != null ? String(profile.hours_per_week) : null
+        };
+      }
+
+      function saveWageToProfile() {
+        if (!isSignedInMode()) return;
+        if (saveWageToProfileTimerId) window.clearTimeout(saveWageToProfileTimerId);
+        saveWageToProfileTimerId = window.setTimeout(function () {
+          saveWageToProfileTimerId = null;
+          flushWageToProfile();
+        }, 800);
+      }
+
+      function flushWageToProfile() {
+        if (!isSignedInMode()) return;
+        try {
+          var client = authContext.supabase;
+          if (!client || typeof client.from !== "function" || !authContext.userId) return;
+          var patch = {
+            pay_mode: state.wageMode === "salary" ? "salary" : "hourly",
+            hourly_wage: normalizeNumber(state.hourlyWage),
+            annual_salary: normalizeNumber(state.annualSalary),
+            hours_per_week: normalizeNumber(state.weeklyHours)
+          };
+          Promise.resolve(client.from("profiles").update(patch).eq("user_id", authContext.userId))
+            .then(function (result) {
+              if (result && result.error) {
+                console.warn("profile wage save failed:", result.error.message || result.error);
+              }
+            })
+            .catch(function (error) {
+              console.warn("profile wage save error:", error && error.message ? error.message : error);
+            });
+        } catch (error) {
+          console.warn("profile wage save threw:", error && error.message ? error.message : error);
+        }
+      }
+
       function ensureProfileReady() {
         return fetchProfileForUser(authContext.userId).then(function (profile) {
+          applyProfileWageDefaults(profile);
           if (profile && profile.username) {
             authContext.username = profile.username;
             renderAuthHeader();
@@ -6075,8 +6131,9 @@ html, body {
         tpInfoModal.setAttribute("aria-hidden", "true");
       }
 
-      // Reads the TP input the user filled in at the end of the session, updates the
-      // saved local record (signed-in) and writes the poop_sessions row exactly once.
+      // Reads the TP input the user filled in at the end of the session. Signed-in
+      // rows already exist (inserted at stop) so TP is pushed as an update; guests
+      // have no row yet, so their row is inserted here.
       function finalizePendingSession() {
         if (!pendingTpContext) return;
         var ctx = pendingTpContext;
@@ -6089,6 +6146,7 @@ html, body {
 
         if (ctx.sessionId) {
           var changed = false;
+          var updatedSession = null;
           state.sessions = state.sessions.map(function (session) {
             if (session.id !== ctx.sessionId) return session;
             changed = true;
@@ -6098,39 +6156,58 @@ html, body {
               copy.tp_squares = tpSquares;
               copy.tp_savings = tpSavings;
             }
+            updatedSession = copy;
             return copy;
           });
           if (changed) {
             persist();
             renderAll();
           }
+          // Row already exists (inserted at stop); push TP as an update.
+          if (isSignedInMode() && tpSquares !== null && updatedSession) {
+            pushSessionUpdate(updatedSession, { tp_squares: tpSquares, tp_savings: tpSavings });
+          }
+          return;
         }
 
-        logPoopSession(ctx.earnings, ctx.durationSeconds, tpSquares, tpSavings);
+        // Guests have no row yet; insert now that TP is known (fire and forget).
+        insertGuestSessionRow(ctx.earnings, ctx.durationSeconds, tpSquares, tpSavings);
       }
 
-      function logPoopSession(earnings, durationSeconds, tpSquares, tpSavings) {
+      function insertSessionRow(session) {
+        if (!isSignedInMode() || !session) return Promise.resolve();
         try {
           var client = authContext.supabase;
           if (!client || typeof client.from !== "function") {
             console.warn("poop_sessions insert skipped: Supabase client unavailable.");
-            return;
+            return Promise.resolve();
           }
 
-          var hasTp = tpSquares !== null && tpSquares !== undefined;
+          var hasTp = session.tp_squares !== null && session.tp_squares !== undefined;
+          var ratingValue = Math.max(0, Math.min(5, Math.floor(Number(session.rating) || 0)));
           var row = {
-            earnings: roundCurrency(Number(earnings) || 0),
-            duration_seconds: Math.max(0, Math.floor(Number(durationSeconds) || 0)),
+            user_id: authContext.userId,
             anon_id: getWalletAnonId(),
-            user_id: authContext.userId || null,
-            tp_squares: hasTp ? Math.max(0, Math.floor(Number(tpSquares) || 0)) : null,
-            tp_savings: hasTp ? (Number(tpSavings) || 0) : null
+            client_id: session.id,
+            earnings: roundCurrency(Number(session.earnings) || 0),
+            duration_seconds: Math.max(0, Math.floor(Number(session.durationSeconds) || 0)),
+            hourly_wage_snapshot: roundCurrency(Number(session.hourlyWageSnapshot) || 0),
+            ended_at: new Date(Number(session.endedAtMs) || Date.now()).toISOString(),
+            rating: ratingValue > 0 ? ratingValue : null,
+            tp_squares: hasTp ? Math.max(0, Math.floor(Number(session.tp_squares) || 0)) : null,
+            tp_savings: hasTp ? (Number(session.tp_savings) || 0) : null
           };
 
-          Promise.resolve(client.from("poop_sessions").insert(row))
+          // Authenticated users have a SELECT policy, so RETURNING is safe here.
+          return Promise.resolve(client.from("poop_sessions").insert(row).select("id").single())
             .then(function (result) {
               if (result && result.error) {
                 console.warn("poop_sessions insert failed:", result.error.message || result.error);
+                return;
+              }
+              if (result && result.data && result.data.id) {
+                session.dbId = result.data.id;
+                persist();
               }
             })
             .catch(function (error) {
@@ -6138,7 +6215,216 @@ html, body {
             });
         } catch (error) {
           console.warn("poop_sessions insert threw:", error && error.message ? error.message : error);
+          return Promise.resolve();
         }
+      }
+
+      function insertGuestSessionRow(earnings, durationSeconds, tpSquares, tpSavings) {
+        try {
+          var client = authContext.supabase;
+          if (!client || typeof client.from !== "function") {
+            console.warn("poop_sessions guest insert skipped: Supabase client unavailable.");
+            return;
+          }
+
+          var hasTp = tpSquares !== null && tpSquares !== undefined;
+          var row = {
+            user_id: null,
+            anon_id: getWalletAnonId(),
+            earnings: roundCurrency(Number(earnings) || 0),
+            duration_seconds: Math.max(0, Math.floor(Number(durationSeconds) || 0)),
+            ended_at: new Date().toISOString(),
+            tp_squares: hasTp ? Math.max(0, Math.floor(Number(tpSquares) || 0)) : null,
+            tp_savings: hasTp ? (Number(tpSavings) || 0) : null
+          };
+
+          // Anonymous role has no SELECT policy; never chain .select()/.single() here.
+          Promise.resolve(client.from("poop_sessions").insert(row))
+            .then(function (result) {
+              if (result && result.error) {
+                console.warn("poop_sessions guest insert failed:", result.error.message || result.error);
+              }
+            })
+            .catch(function (error) {
+              console.warn("poop_sessions guest insert error:", error && error.message ? error.message : error);
+            });
+        } catch (error) {
+          console.warn("poop_sessions guest insert threw:", error && error.message ? error.message : error);
+        }
+      }
+
+      function applySessionRowTarget(query, session) {
+        if (session && session.dbId) {
+          return query.eq("id", session.dbId);
+        }
+        return query
+          .eq("user_id", authContext.userId)
+          .eq("client_id", session ? session.id : null);
+      }
+
+      function pushSessionUpdate(session, patch) {
+        if (!isSignedInMode() || !session) return;
+        try {
+          var client = authContext.supabase;
+          if (!client || typeof client.from !== "function") return;
+          var query = applySessionRowTarget(client.from("poop_sessions").update(patch), session);
+          Promise.resolve(query)
+            .then(function (result) {
+              if (result && result.error) {
+                console.warn("poop_sessions update failed:", result.error.message || result.error);
+              }
+            })
+            .catch(function (error) {
+              console.warn("poop_sessions update error:", error && error.message ? error.message : error);
+            });
+        } catch (error) {
+          console.warn("poop_sessions update threw:", error && error.message ? error.message : error);
+        }
+      }
+
+      function softDeleteAllSessions() {
+        try {
+          var client = authContext.supabase;
+          if (!client || typeof client.from !== "function" || !authContext.userId) return;
+          Promise.resolve(
+            client
+              .from("poop_sessions")
+              .update({ deleted_at: new Date().toISOString() })
+              .eq("user_id", authContext.userId)
+              .is("deleted_at", null)
+          )
+            .then(function (result) {
+              if (result && result.error) {
+                console.warn("poop_sessions clear-all failed:", result.error.message || result.error);
+              }
+            })
+            .catch(function (error) {
+              console.warn("poop_sessions clear-all error:", error && error.message ? error.message : error);
+            });
+        } catch (error) {
+          console.warn("poop_sessions clear-all threw:", error && error.message ? error.message : error);
+        }
+      }
+
+      function fetchRemoteSessions() {
+        return Promise.resolve(
+          authContext.supabase
+            .from("poop_sessions")
+            .select("id, client_id, earnings, duration_seconds, hourly_wage_snapshot, ended_at, created_at, rating, tp_squares, tp_savings")
+            .eq("user_id", authContext.userId)
+            .is("deleted_at", null)
+            .order("ended_at", { ascending: false })
+        ).then(function (result) {
+          if (result && result.error) throw result.error;
+          return (result && result.data) ? result.data : [];
+        });
+      }
+
+      function mapSupabaseSessionRow(row) {
+        var durationSeconds = Math.max(1, Math.floor(Number(row.duration_seconds) || 0));
+        var endedSource = row.ended_at || row.created_at;
+        var endedAtMs = endedSource ? new Date(endedSource).getTime() : Date.now();
+        if (!isFiniteNumber(endedAtMs) || endedAtMs <= 0) endedAtMs = Date.now();
+        var startedAtMs = endedAtMs - durationSeconds * 1000;
+        var mapped = {
+          id: row.client_id || row.id,
+          dbId: row.id,
+          startedAtMs: startedAtMs,
+          endedAtMs: endedAtMs,
+          durationSeconds: durationSeconds,
+          hourlyWageSnapshot: roundCurrency(Number(row.hourly_wage_snapshot) || 0),
+          earnings: roundCurrency(Number(row.earnings) || 0),
+          rating: Math.max(0, Math.min(5, Math.floor(Number(row.rating) || 0)))
+        };
+        if (row.tp_squares !== undefined && row.tp_squares !== null) {
+          var tpSquares = Math.max(0, Math.floor(Number(row.tp_squares) || 0));
+          mapped.tp_squares = tpSquares;
+          mapped.tp_savings = row.tp_savings !== undefined && row.tp_savings !== null
+            ? Number(row.tp_savings)
+            : computeTpSavings(tpSquares);
+        }
+        return mapped;
+      }
+
+      function collectLocalSessionCandidates() {
+        var candidates = [];
+        var seen = {};
+        (Array.isArray(state.sessions) ? state.sessions : []).forEach(function (session) {
+          if (session && session.id && !session.dbId && !seen[session.id]) {
+            seen[session.id] = true;
+            candidates.push(session);
+          }
+        });
+
+        // One-time migration of the legacy shared bucket into this account.
+        var legacyFlag = "pp_sessions_legacy_migrated_" + authContext.userId;
+        if (!readLocalFlag(legacyFlag)) {
+          try {
+            var raw = window.localStorage ? window.localStorage.getItem("pp_core_tabs_v1") : null;
+            if (raw) {
+              var legacy = sanitizeState(JSON.parse(raw));
+              (Array.isArray(legacy.sessions) ? legacy.sessions : []).forEach(function (session) {
+                if (session && session.id && !seen[session.id]) {
+                  seen[session.id] = true;
+                  candidates.push(session);
+                }
+              });
+            }
+          } catch (error) {
+            console.warn("legacy session migration read failed:", error && error.message ? error.message : error);
+          }
+          writeLocalFlag(legacyFlag);
+        }
+
+        return candidates;
+      }
+
+      function syncSessionsFromSupabase() {
+        if (!isSignedInMode()) return Promise.resolve();
+        var client = authContext.supabase;
+        if (!client || typeof client.from !== "function") return Promise.resolve();
+
+        var localCandidates = collectLocalSessionCandidates();
+
+        return Promise.resolve(client.rpc("claim_anon_sessions", { p_anon_id: getWalletAnonId() }))
+          .then(function (result) {
+            if (result && result.error) {
+              console.warn("claim_anon_sessions failed:", result.error.message || result.error);
+            }
+          })
+          .catch(function (error) {
+            console.warn("claim_anon_sessions error:", error && error.message ? error.message : error);
+          })
+          .then(function () {
+            return fetchRemoteSessions();
+          })
+          .then(function (rows) {
+            var existingClientIds = {};
+            rows.forEach(function (row) {
+              if (row.client_id) existingClientIds[row.client_id] = true;
+            });
+            // Plain inserts for the missing rows only; unique indexes are partial
+            // so PostgREST upsert cannot infer them.
+            var missing = localCandidates.filter(function (session) {
+              return !existingClientIds[session.id];
+            });
+            if (!missing.length) return rows;
+            return Promise.all(missing.map(function (session) {
+              return insertSessionRow(session);
+            })).then(function () {
+              return fetchRemoteSessions();
+            });
+          })
+          .then(function (rows) {
+            state.sessions = rows
+              .map(mapSupabaseSessionRow)
+              .sort(function (a, b) { return b.endedAtMs - a.endedAtMs; });
+            persist();
+            renderAll();
+          })
+          .catch(function (error) {
+            console.warn("syncSessionsFromSupabase failed:", error && error.message ? error.message : error);
+          });
       }
 
       function initializeWallet() {
@@ -6219,6 +6505,15 @@ html, body {
       }
 
       function startApp() {
+        state = loadState();
+        wageModeCollapsed = state.wageModeCollapsed === false ? false : true;
+        if (profileWageDefaults) {
+          if (profileWageDefaults.wageMode) state.wageMode = profileWageDefaults.wageMode;
+          if (profileWageDefaults.hourlyWage !== null) state.hourlyWage = profileWageDefaults.hourlyWage;
+          if (profileWageDefaults.annualSalary !== null) state.annualSalary = profileWageDefaults.annualSalary;
+          if (profileWageDefaults.weeklyHours !== null) state.weeklyHours = profileWageDefaults.weeklyHours;
+          persist();
+        }
         setupGuestCtaEvents();
         hydrateInputs();
         renderTabs();
@@ -6244,6 +6539,7 @@ html, body {
         trackReturnVisitWithin7Days();
         if (isSignedInMode()) {
           initializeWallet();
+          syncSessionsFromSupabase();
         } else {
           renderWalletSnapshot(walletSnapshot);
           applyGuestLocks();
@@ -6287,6 +6583,7 @@ html, body {
           persist();
           renderWageMode();
           renderAll();
+          saveWageToProfile();
         });
 
         salaryModeButton.addEventListener("click", function () {
@@ -6294,12 +6591,14 @@ html, body {
           persist();
           renderWageMode();
           renderAll();
+          saveWageToProfile();
         });
 
         hourlyWageInput.addEventListener("input", function () {
           state.hourlyWage = hourlyWageInput.value;
           persist();
           renderAll();
+          saveWageToProfile();
         });
 
         hourlyWageInput.addEventListener("change", function () {
@@ -6310,12 +6609,14 @@ html, body {
           state.annualSalary = annualSalaryInput.value;
           persist();
           renderAll();
+          saveWageToProfile();
         });
 
         weeklyHoursInput.addEventListener("input", function () {
           state.weeklyHours = weeklyHoursInput.value;
           persist();
           renderAll();
+          saveWageToProfile();
         });
 
         if (ratingTpInput) {
@@ -6378,13 +6679,19 @@ html, body {
             return;
           }
 
-          var approved = window.confirm("Clear all saved sessions from this device?");
+          var signedIn = isSignedInMode();
+          var approved = window.confirm(signedIn
+            ? "Clear all saved sessions from your account? This removes them on every device."
+            : "Clear all saved sessions from this device?");
           if (!approved) return;
 
           state.sessions = [];
           persist();
           renderAll();
           setStatus(statusMessage, "All sessions cleared.", "warn");
+          if (signedIn) {
+            softDeleteAllSessions();
+          }
         });
 
         if (wageStripToggleButton) {
@@ -7065,10 +7372,11 @@ html, body {
         state.sessions.unshift(savedSession);
 
         pendingSessionRatingId = state.sessions[0].id;
-        // TP squares are captured in the rating modal; the row is inserted (and the
-        // local record updated) when the modal closes via finalizePendingSession().
-        pendingTpContext = { earnings: earnings, durationSeconds: durationSeconds, sessionId: savedSession.id };
+        // Insert the row immediately so a closed tab never loses the session; TP
+        // squares captured in the rating modal are pushed as an update on close.
+        pendingTpContext = { sessionId: savedSession.id };
         persist();
+        insertSessionRow(savedSession);
         openRatingModal();
         renderAll();
         setStatus(statusMessage, "Session saved. Rate your poop.", "ok");
@@ -7444,10 +7752,17 @@ html, body {
       }
 
       function deleteSession(sessionId) {
+        var target = null;
+        (Array.isArray(state.sessions) ? state.sessions : []).forEach(function (s) {
+          if (s && s.id === sessionId) target = s;
+        });
         state.sessions = state.sessions.filter(function (s) { return s.id !== sessionId; });
         persist();
         renderAll();
         setStatus(statusMessage, "Session deleted.", "warn");
+        if (isSignedInMode() && target) {
+          pushSessionUpdate(target, { deleted_at: new Date().toISOString() });
+        }
       }
 
       function handleShare(target) {
@@ -8128,6 +8443,9 @@ html, body {
             earnings: session.earnings,
             rating: safeRating
           };
+          if (session.dbId !== undefined && session.dbId !== null) {
+            updatedSession.dbId = session.dbId;
+          }
           if (session.tp_squares !== undefined && session.tp_squares !== null) {
             updatedSession.tp_squares = session.tp_squares;
             updatedSession.tp_savings = session.tp_savings;
@@ -8138,6 +8456,9 @@ html, body {
           persist();
           trackCoreEvent("core_rating_saved", { rating: safeRating });
           renderAll();
+          if (isSignedInMode() && updatedSession) {
+            pushSessionUpdate(updatedSession, { rating: safeRating > 0 ? safeRating : null });
+          }
         }
         return updated ? updatedSession : null;
       }
@@ -8859,7 +9180,7 @@ html, body {
 
       function loadState() {
         try {
-          var raw = localStorage.getItem(STORAGE_KEY);
+          var raw = localStorage.getItem(getStorageKey());
           if (!raw) return cloneDefaultState();
           var parsed = JSON.parse(raw);
           return sanitizeState(parsed);
@@ -8900,6 +9221,9 @@ html, body {
                 earnings: earnings,
                 rating: rating
               };
+              if (session.dbId !== undefined && session.dbId !== null && session.dbId !== "") {
+                normalized.dbId = String(session.dbId);
+              }
               if (session.tp_squares !== undefined && session.tp_squares !== null) {
                 var tpSquares = Math.max(0, Math.floor(normalizeNumber(session.tp_squares)));
                 normalized.tp_squares = tpSquares;
@@ -8916,7 +9240,7 @@ html, body {
       }
 
       function persist() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        localStorage.setItem(getStorageKey(), JSON.stringify(state));
       }
 
       function cloneDefaultState() {
