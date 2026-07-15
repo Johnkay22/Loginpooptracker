@@ -912,20 +912,20 @@
       outline-offset: 2px;
     }
 
-    /* "Let's go" button: bottom band, full width minus side margin. */
+    /* "Let's go" button: bottom band (drawn button occupies ~y 85-95%). */
     .signup-bonus-hit-cta {
-      left: 6%;
-      right: 6%;
-      bottom: 5%;
-      height: 12%;
+      left: 5%;
+      right: 5%;
+      bottom: 4.5%;
+      height: 11%;
     }
 
-    /* Close X: small square over the top-right circle. */
+    /* Close X: over the top-right circle (drawn X at ~x 89-97%, y 2-10%). */
     .signup-bonus-hit-close {
-      top: 6%;
-      right: 6%;
-      width: 12%;
-      height: 8%;
+      top: 2%;
+      right: 2%;
+      width: 11%;
+      height: 9%;
     }
 
     .wallet-reward-toast {
@@ -4937,12 +4937,14 @@ html, body {
   <div id="signupBonusModal" class="wallet-first-modal" aria-hidden="true">
     <div class="signup-bonus-panel" role="dialog" aria-modal="true" aria-label="Poop Profit sign up gift">
       <div class="signup-bonus-media">
-        <img class="signup-bonus-image" src="signup-bonus-popup.png"
-          width="1080" height="1440" decoding="async" loading="lazy"
-          alt="Welcome to Poop Profit. Sign up gift: 3 Turd Tokens sent to your wallet. Earn more by logging daily and keeping streaks. Soon redeemable for exclusive merch, only available to poop profiters. Happy pooping!">
-        <!-- Invisible hit targets over the baked-in artwork. Percentages are relative
-             to the image box and scale with it. Verify/adjust against the real
-             signup-bonus-popup.png so they land exactly on the drawn button and X. -->
+        <picture>
+          <source srcset="signup-bonus-popup.webp" type="image/webp">
+          <img class="signup-bonus-image" src="signup-bonus-popup.png"
+            width="900" height="966" decoding="async" loading="lazy"
+            alt="Welcome to Poop Profit. Sign up gift: 3 Turd Tokens sent to your wallet. Earn more by logging daily and keeping streaks. Soon redeemable for exclusive merch, only available to poop profiters. Happy pooping!">
+        </picture>
+        <!-- Invisible hit targets tuned to the real artwork: button spans y 85-95%,
+             the X circle sits at x 89-97% / y 2-10%. Percentages scale with the image. -->
         <button id="signupBonusDismissButton" type="button" class="signup-bonus-hit signup-bonus-hit-cta" aria-label="Let's go"></button>
         <button id="signupBonusCloseButton" type="button" class="signup-bonus-hit signup-bonus-hit-close" aria-label="Close"></button>
       </div>
