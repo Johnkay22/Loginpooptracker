@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>PoopProfit Ops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7F4EF;
+    --surface:#FFFFFF;
+    --ink:#292018;
+    --muted:#94867A;
+    --line:#E9E2D8;
+    --brown:#6B4A2E;
+    --gold:#D9A441;
+    --green:#2E7D5B;
+    --green-bg:#EAF3EE;
+    --radius:14px;
+    --shadow:0 1px 2px rgba(41,32,24,.05), 0 4px 16px rgba(41,32,24,.05);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.5;min-height:100vh;
+  }
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky;top:0;z-index:10;
+    background:rgba(247,244,239,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .header-in{max-width:1180px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:12px}
+  .coin{
+    width:26px;height:26px;border-radius:50%;flex:none;
+    background:radial-gradient(circle at 35% 30%, #F0C36B, var(--gold) 60%, #A9782B);
+    box-shadow:inset 0 -2px 3px rgba(0,0,0,.18);
+  }
+  .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;letter-spacing:-.01em}
+  .brand small{color:var(--muted);font-weight:500;font-family:'Inter',sans-serif;font-size:12px;margin-left:8px}
+  .header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .stamp{color:var(--muted);font-size:12px;white-space:nowrap}
+  button{
+    font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
+    border:1px solid var(--line);background:var(--surface);color:var(--ink);
+    padding:7px 14px;border-radius:9px;cursor:pointer;transition:border-color .15s, background .15s;
+  }
+  button:hover{border-color:var(--brown)}
+  button:focus-visible{outline:2px solid var(--brown);outline-offset:2px}
+  button.primary{background:var(--brown);border-color:var(--brown);color:#fff}
+  button.primary:hover{background:#573B24}
+  button.ghost{border:none;background:transparent;color:var(--muted)}
+  button.ghost:hover{color:var(--ink)}
+
+  main{max-width:1180px;margin:0 auto;padding:28px 20px 60px}
+  section{margin-bottom:36px}
+  h2{
+    font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:12px;
+  }
+  h2 .sub{font-family:'Inter',sans-serif;text-transform:none;letter-spacing:0;font-weight:400;font-size:12px;margin-left:8px}
+
+  /* ---------- stat cards ---------- */
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:16px 18px;
+  }
+  .card.clickable{cursor:pointer;transition:border-color .15s, transform .12s}
+  .card.clickable:hover{border-color:var(--brown)}
+  .card.clickable:active{transform:scale(.99)}
+  .card .label{font-size:13px;font-weight:600}
+  .card .value{
+    font-family:'Space Grotesk',sans-serif;font-size:31px;font-weight:700;
+    letter-spacing:-.02em;line-height:1.15;margin:4px 0 6px;
+  }
+  .card .value .unit{font-size:15px;font-weight:600;color:var(--muted);margin-left:2px}
+  .card .hint{font-size:12px;color:var(--muted);line-height:1.45}
+  .card .go{font-size:11px;font-weight:600;color:var(--brown);margin-top:8px;display:block}
+  .card.gold .value{color:var(--brown)}
+  .card.green .value{color:var(--green)}
+
+  /* ---------- activity feed ---------- */
+  .feed{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);overflow:hidden;
+  }
+  .feed-item{
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    padding:12px 18px;border-bottom:1px solid var(--line);font-size:13.5px;
+  }
+  .feed-item:last-child{border-bottom:none}
+  .feed-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex:none}
+  .feed-who{font-weight:600}
+  .feed-meta{color:var(--muted)}
+  .feed-time{margin-left:auto;color:var(--muted);font-size:12px;white-space:nowrap}
+  .feed-empty{padding:22px 18px;color:var(--muted);font-size:13px}
+
+  /* ---------- users table ---------- */
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+  .search{
+    flex:1;min-width:180px;max-width:320px;font-family:'Inter',sans-serif;font-size:13px;
+    border:1px solid var(--line);border-radius:9px;background:var(--surface);
+    padding:8px 12px;color:var(--ink);
+  }
+  .search:focus{outline:2px solid var(--brown);outline-offset:-1px;border-color:var(--brown)}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{
+    font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:99px;
+    border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer;
+  }
+  .chip.active{background:var(--brown);border-color:var(--brown);color:#fff}
+  .count-note{font-size:12px;color:var(--muted);margin-left:auto}
+
+  .table-wrap{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);overflow-x:auto;
+  }
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:920px}
+  thead th{
+    text-align:left;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--muted);padding:12px 14px;border-bottom:1px solid var(--line);
+    cursor:pointer;user-select:none;white-space:nowrap;background:var(--surface);
+  }
+  thead th:hover{color:var(--ink)}
+  thead th .arrow{font-size:10px;margin-left:3px}
+  tbody td{padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:middle}
+  tbody tr.u-row{cursor:pointer}
+  tbody tr.u-row:hover td{background:#FBF9F5}
+  tbody tr.u-row.open td{background:#FBF7EF}
+  .caret{display:inline-block;color:var(--muted);font-size:10px;margin-right:8px;transition:transform .15s}
+  tr.open .caret{transform:rotate(90deg)}
+  .uname{font-weight:600}
+  .uid{color:var(--muted);font-size:12px}
+  .pill{display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px}
+  .pill.reg{background:#F3EAD9;color:var(--brown)}
+  .pill.guest{background:#EFEDE8;color:var(--muted)}
+  .pill.active{background:var(--green-bg);color:var(--green)}
+  td.num-cell{font-family:'Space Grotesk',sans-serif;font-weight:600;font-variant-numeric:tabular-nums}
+  .dim{color:var(--muted)}
+
+  /* ---------- dossier (expanded row) ---------- */
+  tr.detail-row > td{background:#FCFAF6;padding:0;white-space:normal}
+  .dossier{padding:18px 20px 22px;border-left:3px solid var(--gold)}
+  .dossier h3{
+    font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;
+  }
+  .dossier h3:first-child{margin-top:0}
+  .facts{display:grid;gap:10px 24px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .fact .k{font-size:11.5px;color:var(--muted);font-weight:500}
+  .fact .v{font-size:13.5px;font-weight:600;word-break:break-word}
+  .fact .v.mono{font-family:'Space Grotesk',sans-serif}
+  .mini{width:100%;border-collapse:collapse;font-size:13px;min-width:0}
+  .mini th{
+    text-align:left;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--muted);padding:7px 10px;border-bottom:1px solid var(--line);cursor:default;background:transparent;
+  }
+  .mini td{padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  .mini tr:last-child td{border-bottom:none}
+  .none-note{font-size:12.5px;color:var(--muted)}
+
+  /* ---------- signup chart ---------- */
+  .chart-card{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:18px;
+  }
+  .chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:8px;border-bottom:1px solid var(--line)}
+  .bar-col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;min-width:0;height:100%}
+  .bar{width:70%;max-width:34px;border-radius:5px 5px 0 0;min-height:4px}
+  .bar.google{background:var(--gold)}
+  .bar.email{background:var(--brown)}
+  .bar-count{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px}
+  .chart-x{display:flex;gap:6px;margin-top:6px}
+  .chart-x span{flex:1;text-align:center;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .legend{display:flex;gap:16px;margin-top:12px;font-size:12px;color:var(--muted)}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .legend i.google{background:var(--gold)}
+  .legend i.email{background:var(--brown)}
+  .chart-empty{color:var(--muted);font-size:13px;padding:20px 0}
+
+  /* ---------- auth states ---------- */
+  .state{
+    max-width:420px;margin:80px auto;text-align:center;
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:40px 32px;
+  }
+  .state .coin{width:40px;height:40px;margin:0 auto 16px}
+  .state h1{font-family:'Space Grotesk',sans-serif;font-size:20px;margin-bottom:8px}
+  .state p{color:var(--muted);font-size:14px;margin-bottom:20px}
+  .spinner{
+    width:26px;height:26px;margin:0 auto;border-radius:50%;
+    border:3px solid var(--line);border-top-color:var(--brown);animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion: reduce){.spinner{animation-duration:2s}}
+
+  .hidden{display:none!important}
+  @media (max-width:640px){
+    .card .value{font-size:25px}
+    .stamp{display:none}
+    .dossier{padding:14px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-in">
+    <div class="coin" aria-hidden="true"></div>
+    <div class="brand">PoopProfit Ops<small>private dashboard</small></div>
+    <div class="header-right">
+      <span class="stamp" id="stamp"></span>
+      <button id="refreshBtn" class="hidden">Refresh</button>
+      <button id="signOutBtn" class="ghost hidden">Sign out</button>
+    </div>
+  </div>
+</header>
+
+<div class="state" id="stateLoading">
+  <div class="spinner" role="status" aria-label="Loading"></div>
+</div>
+
+<div class="state hidden" id="stateSignedOut">
+  <div class="coin" aria-hidden="true"></div>
+  <h1>PoopProfit Ops</h1>
+  <p>Sign in with the same Google account you use on PoopProfit to open the dashboard.</p>
+  <button class="primary" id="signInBtn">Sign in with Google</button>
+  <p style="margin-top:16px;font-size:12px">Already signed in on the main app? <a href="#" id="retryLink">Reload this page</a>.</p>
+</div>
+
+<div class="state hidden" id="stateDenied">
+  <div class="coin" aria-hidden="true"></div>
+  <h1>Not your throne</h1>
+  <p>This account doesn't have access to the ops dashboard.</p>
+  <button id="deniedSignOut">Sign out</button>
+</div>
+
+<div class="state hidden" id="stateError">
+  <div class="coin" aria-hidden="true"></div>
+  <h1>Couldn't load stats</h1>
+  <p id="errorMsg">Something went wrong.</p>
+  <button class="primary" id="errorRetry">Try again</button>
+</div>
+
+<main class="hidden" id="dash">
+
+  <!-- 1. PULSE: is anything happening? Click a card to jump to the matching user list. -->
+  <section>
+    <h2>Pulse<span class="sub">click a card to see the people behind the number</span></h2>
+    <div class="grid">
+      <div class="card clickable" data-jump="all" role="button" tabindex="0">
+        <div class="label">Total users</div>
+        <div class="value" id="s-total"></div>
+        <div class="hint">Every wallet ever created, guests and registered combined.</div>
+        <span class="go">View all &rarr;</span>
+      </div>
+      <div class="card clickable gold" data-jump="registered" role="button" tabindex="0">
+        <div class="label">Registered</div>
+        <div class="value" id="s-registered"></div>
+        <div class="hint">Signed up with Google or a magic link. Your real accounts.</div>
+        <span class="go">View registered &rarr;</span>
+      </div>
+      <div class="card clickable" data-jump="guest" role="button" tabindex="0">
+        <div class="label">Guests</div>
+        <div class="value" id="s-guests"></div>
+        <div class="hint">Used the app without signing up. Conversion targets.</div>
+        <span class="go">View guests &rarr;</span>
+      </div>
+      <div class="card clickable green" data-jump="active" role="button" tabindex="0">
+        <div class="label">Active last 7 days</div>
+        <div class="value" id="s-active"></div>
+        <div class="hint">Claimed tokens at least once in the past week.</div>
+        <span class="go">View active &rarr;</span>
+      </div>
+      <div class="card">
+        <div class="label">Sessions today</div>
+        <div class="value" id="s-sess-today"></div>
+        <div class="hint">Bathroom sessions logged since midnight UTC.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. WHAT ARE PEOPLE DOING -->
+  <section>
+    <h2>Recent activity<span class="sub">latest 25 logged sessions, newest first</span></h2>
+    <div class="feed" id="feed"></div>
+  </section>
+
+  <!-- 3. WHO EXACTLY IS THIS PERSON -->
+  <section id="usersSection">
+    <h2>Every user<span class="sub">click any row for the full dossier: identity, wallet, session history</span></h2>
+    <div class="toolbar">
+      <input class="search" id="search" type="search" placeholder="Search name, email, or ID" aria-label="Search users">
+      <div class="chips" role="group" aria-label="Filter users">
+        <button class="chip active" data-filter="all">All</button>
+        <button class="chip" data-filter="registered">Registered</button>
+        <button class="chip" data-filter="guest">Guests</button>
+        <button class="chip" data-filter="active">Active 7d</button>
+      </div>
+      <span class="count-note" id="countNote"></span>
+    </div>
+    <div class="table-wrap">
+      <table id="usersTable">
+        <thead>
+          <tr>
+            <th data-key="username">User</th>
+            <th data-key="registered">Type</th>
+            <th data-key="signed_up_at">Signed up</th>
+            <th data-key="token_balance">Tokens</th>
+            <th data-key="current_streak">Streak</th>
+            <th data-key="window_log_count">Logs (wk)</th>
+            <th data-key="session_count">Sessions</th>
+            <th data-key="last_claim_at">Last active</th>
+          </tr>
+        </thead>
+        <tbody id="usersBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 4. ECONOMY -->
+  <section>
+    <h2>Token economy</h2>
+    <div class="grid">
+      <div class="card gold">
+        <div class="label">Tokens outstanding</div>
+        <div class="value" id="s-outstanding"></div>
+        <div class="hint">Turd Tokens users hold right now. Your future merch and game liability.</div>
+      </div>
+      <div class="card">
+        <div class="label">Tokens ever earned</div>
+        <div class="value" id="s-earned"></div>
+        <div class="hint">All tokens issued since launch, including any already spent.</div>
+      </div>
+      <div class="card">
+        <div class="label">Weekly goals completed</div>
+        <div class="value" id="s-goals"></div>
+        <div class="hint">Times any user finished a full 5-day weekly goal.</div>
+      </div>
+      <div class="card">
+        <div class="label">Best streak ever</div>
+        <div class="value" id="s-streak"></div>
+        <div class="hint">The longest daily logging streak anyone has hit.</div>
+      </div>
+      <div class="card">
+        <div class="label">Earnings revealed</div>
+        <div class="value" id="s-sess-earn"></div>
+        <div class="hint">Total pay users discovered they earned on the clock. Includes test data until cleaned.</div>
+      </div>
+      <div class="card">
+        <div class="label">Company TP savings</div>
+        <div class="value" id="s-tp"></div>
+        <div class="hint">Value of toilet paper used on the company dime, across all sessions.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. GROWTH -->
+  <section>
+    <h2>Signups by day</h2>
+    <div class="chart-card">
+      <div id="chartArea"></div>
+      <div class="legend">
+        <span><i class="google"></i>Google</span>
+        <span><i class="email"></i>Magic link</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function () {
+  "use strict";
+
+  var SUPABASE_URL = "https://ukfboxemqwuwkvfglzfq.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_Y9C_oKYFQwJmxrd218ckdQ_IyrPrGCI";
+  var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  var el = function (id) { return document.getElementById(id); };
+  var states = ["stateLoading", "stateSignedOut", "stateDenied", "stateError", "dash"];
+  function show(id) {
+    states.forEach(function (s) { el(s).classList.toggle("hidden", s !== id); });
+    var onDash = id === "dash";
+    el("refreshBtn").classList.toggle("hidden", !onDash);
+    el("signOutBtn").classList.toggle("hidden", !onDash);
+  }
+
+  /* ---------- formatting ---------- */
+  function fmtInt(n) { return Number(n || 0).toLocaleString("en-US"); }
+  function fmtMoney(n) {
+    var v = Number(n || 0);
+    if (v >= 1000000) return "$" + (v / 1000000).toFixed(2) + "M";
+    if (v >= 10000) return "$" + Math.round(v / 1000) + "K";
+    return "$" + v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function fmtDur(sec) {
+    sec = Math.round(Number(sec || 0));
+    if (sec < 60) return sec + "s";
+    var m = Math.floor(sec / 60), s = sec % 60;
+    if (m < 60) return m + "m" + (s ? " " + s + "s" : "");
+    var h = Math.floor(m / 60);
+    return h + "h " + (m % 60) + "m";
+  }
+  function fmtDate(iso) {
+    if (!iso) return null;
+    return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+  function fmtDateTime(iso) {
+    if (!iso) return null;
+    return new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  }
+  function fmtAgo(iso) {
+    if (!iso) return null;
+    var ms = Date.now() - new Date(iso).getTime();
+    var mins = Math.floor(ms / 60000);
+    if (mins < 1) return "just now";
+    if (mins < 60) return mins + "m ago";
+    var hrs = Math.floor(mins / 60);
+    if (hrs < 24) return hrs + "h ago";
+    var days = Math.floor(hrs / 24);
+    if (days === 1) return "yesterday";
+    if (days < 30) return days + "d ago";
+    return Math.floor(days / 30) + "mo ago";
+  }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function shortId(id) {
+    id = String(id || "");
+    return id.length > 20 ? id.slice(0, 17) + "…" : id;
+  }
+  function displayName(u) { return u.username || shortId(u.anon_id); }
+
+  /* ---------- state ---------- */
+  var data = null;
+  var sortKey = "token_balance";
+  var sortDir = -1;
+  var filter = "all";
+  var openKey = null; /* anon_id of expanded row */
+
+  function setVal(id, html) { el(id).innerHTML = html; }
+  function unit(t) { return ' <span class="unit">' + t + "</span>"; }
+
+  /* ---------- pulse + economy ---------- */
+  function renderStats() {
+    var t = data.totals, e = data.economy, s = data.sessions;
+    setVal("s-total", fmtInt(t.total_wallets));
+    setVal("s-registered", fmtInt(t.registered));
+    setVal("s-guests", fmtInt(t.guests));
+    setVal("s-active", fmtInt(t.active_7d));
+    setVal("s-sess-today", fmtInt(s.today));
+
+    setVal("s-outstanding", fmtInt(e.tokens_outstanding) + unit("TT"));
+    setVal("s-earned", fmtInt(e.tokens_ever_earned) + unit("TT"));
+    setVal("s-goals", fmtInt(e.goals_completed));
+    setVal("s-streak", fmtInt(e.best_streak) + unit(e.best_streak === 1 ? "day" : "days"));
+    setVal("s-sess-earn", esc(fmtMoney(s.total_earnings)));
+    setVal("s-tp", esc(fmtMoney(s.tp_savings_total)) + unit(fmtInt(s.tp_squares_total) + " squares"));
+
+    el("stamp").textContent = "Updated " + new Date(data.generated_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  }
+
+  /* ---------- activity feed ---------- */
+  function renderFeed() {
+    var rows = data.recent_activity || [];
+    if (!rows.length) {
+      el("feed").innerHTML = '<div class="feed-empty">No sessions logged yet. This feed fills in as users log bathroom breaks.</div>';
+      return;
+    }
+    var html = "";
+    rows.forEach(function (r) {
+      html += '<div class="feed-item">'
+        + '<span class="feed-dot"></span>'
+        + '<span class="feed-who">' + esc(r.registered ? r.who : shortId(r.who)) + "</span>"
+        + '<span class="feed-meta">logged ' + esc(fmtDur(r.sec)) + " &middot; revealed " + esc(fmtMoney(r.earn))
+        + (r.tp ? " &middot; " + fmtInt(r.tp) + " TP squares" : "") + "</span>"
+        + '<span class="feed-time">' + esc(fmtAgo(r.at)) + "</span>"
+        + "</div>";
+    });
+    el("feed").innerHTML = html;
+  }
+
+  /* ---------- users table ---------- */
+  function filteredUsers() {
+    var q = el("search").value.trim().toLowerCase();
+    var rows = (data.users || []).filter(function (u) {
+      if (filter === "registered" && !u.registered) return false;
+      if (filter === "guest" && u.registered) return false;
+      if (filter === "active" && !u.active_7d) return false;
+      if (q) {
+        var hay = ((u.username || "") + " " + (u.email || "") + " " + (u.anon_id || "")).toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+    rows.sort(function (a, b) {
+      var av = a[sortKey], bv = b[sortKey];
+      if (av == null && bv == null) return 0;
+      if (av == null) return 1;
+      if (bv == null) return -1;
+      if (typeof av === "string") return av.localeCompare(bv) * sortDir;
+      return (av < bv ? -1 : av > bv ? 1 : 0) * sortDir;
+    });
+    return rows;
+  }
+
+  function fact(k, v, mono) {
+    return '<div class="fact"><div class="k">' + esc(k) + '</div><div class="v' + (mono ? " mono" : "") + '">' + (v == null || v === "" ? '<span class="dim">—</span>' : esc(v)) + "</div></div>";
+  }
+
+  function dossierHTML(u) {
+    var identity =
+      fact("Email", u.email) +
+      fact("Sign-in method", u.registered ? (u.provider === "google" ? "Google" : "Magic link") : "Guest, never signed up") +
+      fact("Signed up", fmtDate(u.signed_up_at)) +
+      fact("Industry", u.industry) +
+      fact("Job title", u.job_title) +
+      fact("Wallet ID", u.anon_id, true);
+
+    var wallet =
+      fact("Token balance", fmtInt(u.token_balance) + " TT", true) +
+      fact("Ever earned", fmtInt(u.total_earned) + " TT", true) +
+      fact("Current streak", fmtInt(u.current_streak) + " days", true) +
+      fact("Longest streak", fmtInt(u.longest_streak) + " days", true) +
+      fact("Weekly goals done", fmtInt(u.goals_completed), true) +
+      fact("Logs this window", fmtInt(u.window_log_count), true) +
+      fact("First claim", fmtDate(u.first_claim_at)) +
+      fact("Last active", fmtAgo(u.last_claim_at));
+
+    var totals =
+      fact("Sessions", fmtInt(u.session_count), true) +
+      fact("Total time", u.session_count ? fmtDur(u.total_session_seconds) : null, true) +
+      fact("Avg session", u.session_count ? fmtDur(u.avg_session_seconds) : null, true) +
+      fact("Earnings revealed", u.session_count ? fmtMoney(u.session_earnings) : null, true) +
+      fact("TP squares", u.tp_squares ? fmtInt(u.tp_squares) : null, true) +
+      fact("TP savings", u.tp_savings ? fmtMoney(u.tp_savings) : null, true);
+
+    var hist = "";
+    var sessions = u.sessions || [];
+    if (!sessions.length) {
+      hist = '<p class="none-note">No sessions logged yet. Guests before July 10 predate session tracking, so their history starts from that date.</p>';
+    } else {
+      var rows = "";
+      sessions.forEach(function (s) {
+        rows += "<tr>"
+          + "<td>" + esc(fmtDateTime(s.at)) + "</td>"
+          + '<td class="num-cell">' + esc(fmtDur(s.sec)) + "</td>"
+          + '<td class="num-cell">' + esc(fmtMoney(s.earn)) + "</td>"
+          + '<td class="num-cell dim">' + (s.tp != null ? fmtInt(s.tp) : "—") + "</td>"
+          + "</tr>";
+      });
+      hist = '<table class="mini"><thead><tr><th>When</th><th>Duration</th><th>Revealed</th><th>TP squares</th></tr></thead><tbody>' + rows + "</tbody></table>";
+    }
+
+    return '<div class="dossier">'
+      + "<h3>Identity</h3><div class='facts'>" + identity + "</div>"
+      + "<h3>Wallet &amp; engagement</h3><div class='facts'>" + wallet + "</div>"
+      + "<h3>Session totals</h3><div class='facts'>" + totals + "</div>"
+      + "<h3>Session history" + (sessions.length ? " (" + sessions.length + (sessions.length === 50 ? ", latest 50" : "") + ")" : "") + "</h3>" + hist
+      + "</div>";
+  }
+
+  function renderTable() {
+    var rows = filteredUsers();
+    var html = "";
+    rows.forEach(function (u) {
+      var isOpen = openKey === u.anon_id;
+      var name = u.username
+        ? '<span class="uname">' + esc(u.username) + "</span>"
+        : '<span class="uid">' + esc(shortId(u.anon_id)) + "</span>";
+      var type = u.registered
+        ? '<span class="pill reg">' + esc(u.provider === "google" ? "Google" : "Magic link") + "</span>"
+        : '<span class="pill guest">Guest</span>';
+      var activePill = u.active_7d ? ' <span class="pill active">active</span>' : "";
+      html += '<tr class="u-row' + (isOpen ? " open" : "") + '" data-id="' + esc(u.anon_id) + '">'
+        + '<td><span class="caret">&#9654;</span>' + name + "</td>"
+        + "<td>" + type + activePill + "</td>"
+        + '<td class="dim">' + (fmtDate(u.signed_up_at) || "—") + "</td>"
+        + '<td class="num-cell">' + fmtInt(u.token_balance) + "</td>"
+        + '<td class="num-cell">' + fmtInt(u.current_streak) + "</td>"
+        + '<td class="num-cell">' + fmtInt(u.window_log_count) + "</td>"
+        + '<td class="num-cell">' + fmtInt(u.session_count) + "</td>"
+        + '<td class="dim">' + (fmtAgo(u.last_claim_at) || "never") + "</td>"
+        + "</tr>";
+      if (isOpen) {
+        html += '<tr class="detail-row"><td colspan="8">' + dossierHTML(u) + "</td></tr>";
+      }
+    });
+    el("usersBody").innerHTML = html || '<tr><td colspan="8" class="dim" style="padding:24px">No users match.</td></tr>';
+    el("countNote").textContent = rows.length + " of " + (data.users || []).length + " users";
+
+    document.querySelectorAll("#usersTable thead th").forEach(function (th) {
+      var base = th.textContent.replace(/[▲▼]\s*$/, "").trim();
+      th.innerHTML = esc(base) + (th.dataset.key === sortKey
+        ? ' <span class="arrow">' + (sortDir === -1 ? "▼" : "▲") + "</span>" : "");
+    });
+
+    /* row click = toggle dossier */
+    document.querySelectorAll("tr.u-row").forEach(function (tr) {
+      tr.addEventListener("click", function () {
+        var id = tr.dataset.id;
+        openKey = (openKey === id) ? null : id;
+        renderTable();
+      });
+    });
+  }
+
+  /* ---------- signup chart ---------- */
+  function renderChart() {
+    var area = el("chartArea");
+    var rows = data.signups || [];
+    if (!rows.length) {
+      area.innerHTML = '<div class="chart-empty">No signups yet. This fills in as people register.</div>';
+      return;
+    }
+    var byDay = {};
+    rows.forEach(function (r) {
+      byDay[r.day] = byDay[r.day] || { google: 0, email: 0 };
+      byDay[r.day][r.provider === "google" ? "google" : "email"] += r.count;
+    });
+    var days = Object.keys(byDay).sort();
+    var max = 1;
+    days.forEach(function (d) { max = Math.max(max, byDay[d].google + byDay[d].email); });
+    var bars = "", labels = "";
+    days.forEach(function (d) {
+      var g = byDay[d].google, m = byDay[d].email, tot = g + m;
+      bars += '<div class="bar-col">'
+        + '<span class="bar-count">' + tot + "</span>"
+        + (g ? '<div class="bar google" style="height:' + Math.round((g / max) * 100) + '%"></div>' : "")
+        + (m ? '<div class="bar email" style="height:' + Math.round((m / max) * 100) + "%" + (g ? ";border-radius:0" : "") + '"></div>' : "")
+        + "</div>";
+      labels += "<span>" + esc(new Date(d + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })) + "</span>";
+    });
+    area.innerHTML = '<div class="chart">' + bars + '</div><div class="chart-x">' + labels + "</div>";
+  }
+
+  function renderAll() { renderStats(); renderFeed(); renderTable(); renderChart(); }
+
+  /* ---------- data ---------- */
+  function load() {
+    show("stateLoading");
+    client.rpc("admin_dashboard_stats").then(function (res) {
+      if (res.error) {
+        var msg = res.error.message || "";
+        if (msg.indexOf("not_authorized") !== -1) { show("stateDenied"); return; }
+        el("errorMsg").textContent = msg || "Unknown error.";
+        show("stateError");
+        return;
+      }
+      data = res.data;
+      renderAll();
+      show("dash");
+    }).catch(function (err) {
+      el("errorMsg").textContent = (err && err.message) || "Network error.";
+      show("stateError");
+    });
+  }
+
+  /* ---------- auth ---------- */
+  function init() {
+    client.auth.getSession().then(function (res) {
+      var session = res.data ? res.data.session : null;
+      if (session) { load(); } else { show("stateSignedOut"); }
+    });
+  }
+  el("signInBtn").addEventListener("click", function () {
+    client.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin + window.location.pathname }
+    });
+  });
+  el("retryLink").addEventListener("click", function (e) { e.preventDefault(); window.location.reload(); });
+  el("refreshBtn").addEventListener("click", load);
+  el("errorRetry").addEventListener("click", load);
+  function signOut() { client.auth.signOut().then(function () { window.location.reload(); }); }
+  el("signOutBtn").addEventListener("click", signOut);
+  el("deniedSignOut").addEventListener("click", signOut);
+
+  /* pulse cards jump to filtered user list */
+  document.querySelectorAll(".card.clickable").forEach(function (card) {
+    function jump() {
+      filter = card.dataset.jump;
+      document.querySelectorAll(".chip").forEach(function (c) {
+        c.classList.toggle("active", c.dataset.filter === filter);
+      });
+      renderTable();
+      el("usersSection").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    card.addEventListener("click", jump);
+    card.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); jump(); } });
+  });
+
+  /* table controls */
+  el("search").addEventListener("input", renderTable);
+  document.querySelectorAll(".chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      document.querySelectorAll(".chip").forEach(function (c) { c.classList.remove("active"); });
+      chip.classList.add("active");
+      filter = chip.dataset.filter;
+      renderTable();
+    });
+  });
+  document.querySelectorAll("#usersTable thead th").forEach(function (th) {
+    th.addEventListener("click", function () {
+      var key = th.dataset.key;
+      if (sortKey === key) { sortDir = -sortDir; }
+      else { sortKey = key; sortDir = -1; }
+      renderTable();
+    });
+  });
+
+  client.auth.onAuthStateChange(function (event, session) {
+    if (event === "SIGNED_IN" && session && !data) { load(); }
+  });
+  init();
+})();
+</script>
+</body>
+</html>
