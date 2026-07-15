@@ -99,6 +99,10 @@
     .preview-footnote-links{margin-top:14px;text-align:center;font-size:13px}
     .preview-footnote-links a{color:#8fa0bd;text-decoration:none;font-weight:600}
     .preview-footnote-links a:hover{color:#f2f5fb;text-decoration:underline}
+    .bathroom-gdp-line{margin-top:10px;font-size:12.5px;line-height:1.4;color:#9ad8ff;opacity:.9;text-align:center;font-weight:600}
+    .bathroom-gdp-line[hidden]{display:none}
+    .wallet-guest-label{margin:4px 0 0;font-size:11px;line-height:1.35;color:#9ad8ff;opacity:.92;max-width:180px}
+    .wallet-guest-label[hidden]{display:none}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/html-to-image"></script>
@@ -4372,6 +4376,7 @@ html, body {
               <span id="walletBalanceValue" class="wallet-balance-value">0</span>
             </div>
             <p id="walletStreakValue" class="wallet-streak">🔥 0 day streak</p>
+            <p id="walletGuestLabel" class="wallet-guest-label" hidden>0 unclaimed Turd Tokens. Sign in to start your real balance.</p>
           </aside>
         </div>
 
@@ -4447,6 +4452,7 @@ html, body {
               <div id="timerMilestone" class="timer-subline"></div>
               <button id="timerButton" class="button full" type="button">Start Poop!</button>
               <div id="statusMessage" class="status"></div>
+              <div id="bathroomGdpLine" class="bathroom-gdp-line" hidden></div>
               <div id="firstSessionCoach" class="first-session-coach" hidden>
                 <p id="firstSessionCoachBody">Step 1: add your wage so your earnings are calculated correctly.</p>
                 <div class="coach-actions">
@@ -4851,6 +4857,20 @@ html, body {
         </div>
       </div>
       <button id="walletFirstDismissButton" class="button wallet-first-dismiss" type="button">Awesome</button>
+    </div>
+  </div>
+
+  <div id="signupBonusModal" class="wallet-first-modal" aria-hidden="true">
+    <div class="wallet-first-panel" role="dialog" aria-modal="true" aria-labelledby="signupBonusTitle">
+      <button id="signupBonusCloseButton" class="wallet-first-close" type="button" aria-label="Close welcome">×</button>
+      <div class="wallet-first-content">
+        <img class="wallet-first-token" src="turdtoken2026.png" alt="Turd Token">
+        <div class="wallet-first-copy">
+          <h3 id="signupBonusTitle">Welcome to the payroll.</h3>
+          <p id="signupBonusBody">I'm Herman. That's all.</p>
+        </div>
+      </div>
+      <button id="signupBonusDismissButton" class="button wallet-first-dismiss" type="button">Let's go</button>
     </div>
   </div>
 
@@ -5309,13 +5329,14 @@ html, body {
       var RETURN_VISIT_MIN_GAP_MS = 60 * 1000;
       var lastTrackedHourlyWageValue = null;
       var WALLET_ANON_ID_KEY = "pp_wallet_anon_id_v1";
-      var WALLET_MERGE_ACK_KEY = "pp_wallet_merge_ack_v1";
+      var GUEST_TOKENS_KEY = "pp_guest_tokens_v1";
       var WALLET_FUNCTION_URL = "https://ukfboxemqwuwkvfglzfq.supabase.co/functions/v1/wallet";
       var LOCK_IMPRESSION_SESSION_KEY = "pp_core_lock_impression_v1";
       var TEASER_STOP_LOCAL_KEY = "pp_core_teaser_session_stop_v1";
       var SIGNED_UNLOCK_TRACKED_KEY = "pp_core_signed_in_unlock_v1";
+      // #walletCorner is intentionally NOT locked for guests: it now shows the
+      // local-only "unclaimed" token counter with a sign-in nudge.
       var SOFT_LOCK_CONFIG = [
-        { selector: "#walletCorner", region: "wallet_banner" },
         { selector: ".log-card", region: "session_log" },
         { selector: "#panel-stats", region: "stats_tab" },
         { selector: "#panel-coming", region: "coming_tab" }
@@ -5610,6 +5631,7 @@ html, body {
           renderAuthHeader();
           closeProfileSetupModal();
           applyGuestLocks();
+          renderGuestWallet();
         } else {
           clearGuestLocks();
           closeGuestCta();
@@ -5921,6 +5943,112 @@ html, body {
         return generated;
       }
 
+      // ---- IP-based approximate location (city/region/country only) ----
+      // No browser Geolocation API, no permission prompt, no precise coordinates.
+      // Resolved once, cached in localStorage, and used to tag poop_sessions rows
+      // so the city_leaderboard has data. A failed lookup NEVER blocks a session.
+      var GEO_CACHE_KEY = "pp_geo_v1";
+      var GEO_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+      var geoLocation = null;
+      var geoResolvePromise = null;
+
+      function normalizeGeoString(value) {
+        if (typeof value !== "string") return null;
+        var trimmed = value.trim();
+        if (!trimmed) return null;
+        return trimmed.slice(0, 120);
+      }
+
+      function readGeoCache() {
+        try {
+          if (!window.localStorage) return null;
+          var raw = window.localStorage.getItem(GEO_CACHE_KEY);
+          if (!raw) return null;
+          var parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed !== "object") return null;
+          if (!parsed.ts || (Date.now() - Number(parsed.ts)) > GEO_CACHE_TTL_MS) return null;
+          return {
+            city: parsed.city || null,
+            region: parsed.region || null,
+            country: parsed.country || null
+          };
+        } catch (_error) {
+          return null;
+        }
+      }
+
+      function writeGeoCache(geo) {
+        try {
+          if (!window.localStorage) return;
+          window.localStorage.setItem(GEO_CACHE_KEY, JSON.stringify({
+            city: geo.city || null,
+            region: geo.region || null,
+            country: geo.country || null,
+            ts: Date.now()
+          }));
+        } catch (_error) {
+          // Ignore storage failures; geo is best-effort.
+        }
+      }
+
+      function currentGeo() {
+        return geoLocation || readGeoCache() || { city: null, region: null, country: null };
+      }
+
+      function updateBathroomGdpLine() {
+        var el = document.getElementById("bathroomGdpLine");
+        if (!el) return;
+        var geo = currentGeo();
+        if (geo && geo.city) {
+          el.textContent = "Your session automatically funds " + geo.city + "'s Bathroom GDP.";
+          el.hidden = false;
+        } else {
+          el.textContent = "";
+          el.hidden = true;
+        }
+      }
+
+      function resolveGeo() {
+        if (geoResolvePromise) return geoResolvePromise;
+
+        var cached = readGeoCache();
+        if (cached && (cached.city || cached.region || cached.country)) {
+          geoLocation = cached;
+          updateBathroomGdpLine();
+          geoResolvePromise = Promise.resolve(cached);
+          return geoResolvePromise;
+        }
+
+        geoResolvePromise = Promise.resolve()
+          .then(function () {
+            if (typeof fetch !== "function") return null;
+            return fetch("https://ipwho.is/", { method: "GET" })
+              .then(function (response) { return response && response.ok ? response.json() : null; })
+              .catch(function () { return null; });
+          })
+          .then(function (data) {
+            if (!data || data.success === false) return null;
+            var geo = {
+              city: normalizeGeoString(data.city),
+              region: normalizeGeoString(data.region),
+              country: normalizeGeoString(data.country)
+            };
+            if (geo.city || geo.region || geo.country) {
+              geoLocation = geo;
+              writeGeoCache(geo);
+              updateBathroomGdpLine();
+              return geo;
+            }
+            return null;
+          })
+          .catch(function () {
+            // Best-effort only; never surface geo failures to the user.
+            return null;
+          });
+
+        return geoResolvePromise;
+      }
+
       function normalizeWalletPayload(data) {
         var source = data || {};
         var dayCount = Math.max(
@@ -6069,33 +6197,13 @@ html, body {
         document.body.classList.remove("wallet-modal-open");
       }
 
-      function isWalletMergeComplete() {
-        try {
-          return window.localStorage && window.localStorage.getItem(WALLET_MERGE_ACK_KEY) === "1";
-        } catch (_error) {
-          return false;
-        }
-      }
-
-      function markWalletMergeComplete() {
-        try {
-          if (window.localStorage) {
-            window.localStorage.setItem(WALLET_MERGE_ACK_KEY, "1");
-          }
-        } catch (_error) {
-          // Ignore storage failures.
-        }
-      }
-
       function walletFunctionPayload(mode) {
-        var payload = {
+        // The server no longer supports guest wallets. The request body is just
+        // mode + tz_offset_minutes; anon_id is never sent.
+        return {
           mode: mode,
           tz_offset_minutes: new Date().getTimezoneOffset()
         };
-        if (isSignedInMode() && !isWalletMergeComplete()) {
-          payload.anon_id = getWalletAnonId();
-        }
-        return payload;
       }
 
       function callWalletFunction(mode) {
@@ -6111,28 +6219,25 @@ html, body {
           headers: headers,
           body: JSON.stringify(walletFunctionPayload(mode))
         }).then(function (response) {
+          if (response.status === 401) {
+            // A wallet call fired without a valid session. Never surface an error
+            // toast; convert it into the sign-in overlay instead.
+            return response.json().catch(function () { return {}; }).then(function (body) {
+              if (body && body.error === "sign_in_required") {
+                openGuestCta("wallet_banner");
+              }
+              var handled = new Error("sign_in_required");
+              handled.handled = true;
+              throw handled;
+            });
+          }
           if (!response.ok) throw new Error("wallet_request_failed");
           return response.json();
         }).then(function (payload) {
-          if (authContext.accessToken && payload && payload.merged_balance !== undefined) {
-            var mergedCount = Math.max(0, Math.floor(Number(payload.merged_balance) || 0));
-            if (mergedCount > 0 && !isWalletMergeComplete()) {
-              trackCoreEvent("wallet_merged", { count: mergedCount });
-              if (walletRewardToastText && walletRewardToast) {
-                walletRewardToastText.textContent = "Your guest tokens came with you";
-                walletRewardToast.classList.add("show");
-                if (walletRewardToastTimerId !== null) {
-                  window.clearTimeout(walletRewardToastTimerId);
-                }
-                walletRewardToastTimerId = window.setTimeout(function () {
-                  walletRewardToast.classList.remove("show");
-                  walletRewardToastTimerId = null;
-                }, 4000);
-              }
-            }
-            markWalletMergeComplete();
-          } else if (authContext.accessToken && !isWalletMergeComplete()) {
-            markWalletMergeComplete();
+          // First-ever authenticated wallet call grants a one-time signup bonus.
+          if (payload && payload.signup_bonus !== undefined && Number(payload.signup_bonus) > 0) {
+            showSignupBonusCelebration(Math.floor(Number(payload.signup_bonus)));
+            clearGuestTokens();
           }
           return normalizeWalletPayload(payload);
         });
@@ -6144,6 +6249,111 @@ html, body {
 
       function claimWallet() {
         return callWalletFunction("claim");
+      }
+
+      // ---- Guest ("unclaimed") token counter ----
+      // Purely local + motivational. NEVER sent to the server. Guests do not call
+      // the wallet edge function at all; this counter just mirrors the daily rule
+      // the UI communicates (one claim per day) to give guests a reason to sign in.
+      function localDayKey() {
+        var now = new Date();
+        return now.getFullYear() + "-" +
+          String(now.getMonth() + 1).padStart(2, "0") + "-" +
+          String(now.getDate()).padStart(2, "0");
+      }
+
+      function readGuestTokenState() {
+        try {
+          if (!window.localStorage) return { count: 0, lastClaimDay: null };
+          var raw = window.localStorage.getItem(GUEST_TOKENS_KEY);
+          if (!raw) return { count: 0, lastClaimDay: null };
+          var parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed !== "object") return { count: 0, lastClaimDay: null };
+          return {
+            count: Math.max(0, Math.floor(Number(parsed.count) || 0)),
+            lastClaimDay: typeof parsed.lastClaimDay === "string" ? parsed.lastClaimDay : null
+          };
+        } catch (_error) {
+          return { count: 0, lastClaimDay: null };
+        }
+      }
+
+      function writeGuestTokenState(state) {
+        try {
+          if (!window.localStorage) return;
+          window.localStorage.setItem(GUEST_TOKENS_KEY, JSON.stringify({
+            count: Math.max(0, Math.floor(Number(state.count) || 0)),
+            lastClaimDay: state.lastClaimDay || null
+          }));
+        } catch (_error) {
+          // Ignore storage failures; the guest counter is best-effort.
+        }
+      }
+
+      function getGuestTokenCount() {
+        return readGuestTokenState().count;
+      }
+
+      function incrementGuestTokenForToday() {
+        var state = readGuestTokenState();
+        var today = localDayKey();
+        if (state.lastClaimDay === today) {
+          return state.count; // already earned today's unclaimed token
+        }
+        state.count = Math.max(0, Math.floor(Number(state.count) || 0)) + 1;
+        state.lastClaimDay = today;
+        writeGuestTokenState(state);
+        return state.count;
+      }
+
+      function clearGuestTokens() {
+        try {
+          if (window.localStorage) window.localStorage.removeItem(GUEST_TOKENS_KEY);
+        } catch (_error) {
+          // Ignore storage failures.
+        }
+      }
+
+      function renderGuestWallet() {
+        if (!walletCorner) return;
+        var count = getGuestTokenCount();
+        if (walletBalanceValue) {
+          walletBalanceValue.textContent = String(count);
+        }
+        var label = document.getElementById("walletGuestLabel");
+        if (label) {
+          label.textContent = count + " unclaimed Turd Tokens. Sign in to start your real balance.";
+          label.hidden = false;
+        }
+        if (walletStreakValue) {
+          walletStreakValue.hidden = true;
+        }
+        walletCorner.setAttribute("aria-label", count + " unclaimed Turd Tokens. Sign in to start your real balance.");
+        if (statTokens) statTokens.textContent = String(count);
+      }
+
+      function showSignupBonusCelebration(count) {
+        var safeCount = Math.max(1, Math.floor(Number(count) || 0));
+        var body = document.getElementById("signupBonusBody");
+        if (body) {
+          body.textContent = "I'm Herman. I run this operation. You just signed in, so I dropped " +
+            safeCount + " Turd Tokens into your real balance. A signing bonus. Nobody negotiated it, nobody " +
+            "approved it, and nobody can take it back. This is the single best financial decision you will make " +
+            "sitting down today. You're welcome. That's all.";
+        }
+        var modal = document.getElementById("signupBonusModal");
+        if (!modal) return;
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("wallet-modal-open");
+      }
+
+      function closeSignupBonusCelebration() {
+        var modal = document.getElementById("signupBonusModal");
+        if (!modal) return;
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("wallet-modal-open");
       }
 
       function readTpSquaresValue(inputEl) {
@@ -6289,6 +6499,7 @@ html, body {
 
           var hasTp = session.tp_squares !== null && session.tp_squares !== undefined;
           var ratingValue = Math.max(0, Math.min(5, Math.floor(Number(session.rating) || 0)));
+          var geo = currentGeo();
           var row = {
             user_id: authContext.userId,
             anon_id: getWalletAnonId(),
@@ -6299,7 +6510,10 @@ html, body {
             ended_at: new Date(Number(session.endedAtMs) || Date.now()).toISOString(),
             rating: ratingValue > 0 ? ratingValue : null,
             tp_squares: hasTp ? Math.max(0, Math.floor(Number(session.tp_squares) || 0)) : null,
-            tp_savings: hasTp ? (Number(session.tp_savings) || 0) : null
+            tp_savings: hasTp ? (Number(session.tp_savings) || 0) : null,
+            city: geo.city,
+            region: geo.region,
+            country: geo.country
           };
 
           // Authenticated users have a SELECT policy, so RETURNING is safe here.
@@ -6335,6 +6549,7 @@ html, body {
           }
 
           var hasTp = tpSquares !== null && tpSquares !== undefined;
+          var geo = currentGeo();
           var row = {
             user_id: null,
             anon_id: getWalletAnonId(),
@@ -6342,7 +6557,10 @@ html, body {
             duration_seconds: Math.max(0, Math.floor(Number(durationSeconds) || 0)),
             ended_at: new Date().toISOString(),
             tp_squares: hasTp ? Math.max(0, Math.floor(Number(tpSquares) || 0)) : null,
-            tp_savings: hasTp ? (Number(tpSavings) || 0) : null
+            tp_savings: hasTp ? (Number(tpSavings) || 0) : null,
+            city: geo.city,
+            region: geo.region,
+            country: geo.country
           };
 
           // Anonymous role has no SELECT policy; never chain .select()/.single() here.
@@ -6555,6 +6773,14 @@ html, body {
             closeWalletFirstModal();
           });
         }
+        var signupBonusDismiss = document.getElementById("signupBonusDismissButton");
+        var signupBonusClose = document.getElementById("signupBonusCloseButton");
+        if (signupBonusDismiss) {
+          signupBonusDismiss.addEventListener("click", closeSignupBonusCelebration);
+        }
+        if (signupBonusClose) {
+          signupBonusClose.addEventListener("click", closeSignupBonusCelebration);
+        }
         peekWallet()
           .then(function (snapshot) {
             renderWalletSnapshot(snapshot);
@@ -6653,11 +6879,13 @@ html, body {
         restoreRunningSession();
         setupTutorial();
         trackReturnVisitWithin7Days();
+        updateBathroomGdpLine();
+        resolveGeo();
         if (isSignedInMode()) {
           initializeWallet();
           syncSessionsFromSupabase();
         } else {
-          renderWalletSnapshot(walletSnapshot);
+          renderGuestWallet();
           applyGuestLocks();
         }
         window.generateShareCardPng = generateShareCardPng;
@@ -7464,6 +7692,10 @@ html, body {
             "ok"
           );
           writeLocalFlag(TEASER_STOP_LOCAL_KEY);
+          // Motivational local-only counter (never sent to the server): one
+          // "unclaimed" token per day, mirroring the daily claim rule.
+          incrementGuestTokenForToday();
+          renderGuestWallet();
           trackCoreEvent("core_teaser_session_stop", {
             source: stopSource,
             duration_bucket: bucketize(durationSeconds, "duration"),
