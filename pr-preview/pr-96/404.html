@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page Not Found | PoopProfit</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    (function () {
+      var GA_ID = 'G-R1E17DCKNC';
+      var CONSENT_KEY = 'pp_analytics_consent_v1';
+      var gaLoaded = false;
+      function loadGA() {
+        if (gaLoaded) return;
+        gaLoaded = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+        document.head.appendChild(s);
+        gtag('js', new Date());
+        gtag('config', GA_ID);
+      }
+      function consentGiven() {
+        try { return !!(window.localStorage && localStorage.getItem(CONSENT_KEY) === '1'); } catch (e) { return false; }
+      }
+      function storeConsent() {
+        try { if (window.localStorage) localStorage.setItem(CONSENT_KEY, '1'); } catch (e) {}
+      }
+      function accept() {
+        storeConsent();
+        var b = document.getElementById('cookieConsent');
+        if (b) b.style.display = 'none';
+        loadGA();
+      }
+      function init() {
+        if (consentGiven()) { loadGA(); return; }
+        var banner = document.getElementById('cookieConsent');
+        if (!banner) return;
+        banner.style.display = 'flex';
+        var btn = document.getElementById('cookieConsentAccept');
+        if (btn) btn.addEventListener('click', accept);
+      }
+      window.__ppAcceptAnalytics = accept;
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else { init(); }
+    })();
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #010818;
+      color: #e8f6ff;
+      font-family: 'Inter', system-ui, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 2rem;
+    }
+    .container { max-width: 420px; }
+    h1 { font-size: 4rem; margin-bottom: 0.5rem; }
+    p { font-size: 1.25rem; color: #8eb8d6; margin-bottom: 2rem; }
+    a {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    a:hover { opacity: 0.85; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>404</h1>
+    <p>This page got flushed.</p>
+    <a href="https://www.poopprofit.com/">Back to Home</a>
+  </div>
+  <div id="cookieConsent" role="dialog" aria-live="polite" aria-label="Analytics notice" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:9999;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;padding:14px 18px;background:rgba(8,14,32,.96);border-top:1px solid #1b2a4a;backdrop-filter:blur(10px);color:#f2f5fb;font-size:14px;text-align:left">
+    <p style="margin:0;max-width:760px;line-height:1.5">We use analytics to understand how PoopProfit gets used. We never send your exact wage. <a href="/privacy.html" style="color:#2f8bff;font-weight:600;padding:0;background:none">Privacy Policy</a></p>
+    <button id="cookieConsentAccept" type="button" style="flex:0 0 auto;background:#2f8bff;color:#04122b;border:none;border-radius:10px;padding:10px 20px;font-weight:700;font-size:14px;cursor:pointer">Got it</button>
+  </div>
+</body>
+</html>
