@@ -873,6 +873,61 @@
       width: 100%;
     }
 
+    /* Signup bonus popup: the PNG is the entire design; tap zones sit over it. */
+    .signup-bonus-panel {
+      position: relative;
+      width: min(420px, 92vw);
+      max-width: 420px;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      padding: 0;
+    }
+
+    .signup-bonus-media {
+      position: relative;
+      width: 100%;
+    }
+
+    .signup-bonus-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 16px;
+    }
+
+    .signup-bonus-hit {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .signup-bonus-hit:focus-visible {
+      outline: 2px solid rgba(128, 207, 255, 0.9);
+      outline-offset: 2px;
+    }
+
+    /* "Let's go" button: bottom band, full width minus side margin. */
+    .signup-bonus-hit-cta {
+      left: 6%;
+      right: 6%;
+      bottom: 5%;
+      height: 12%;
+    }
+
+    /* Close X: small square over the top-right circle. */
+    .signup-bonus-hit-close {
+      top: 6%;
+      right: 6%;
+      width: 12%;
+      height: 8%;
+    }
+
     .wallet-reward-toast {
       position: fixed;
       left: 50%;
@@ -4510,7 +4565,7 @@ html, body {
             <div class="hero-herman" aria-hidden="true"></div>
             <div class="lab">All-Time Earnings</div>
             <div class="big"><span class="num" id="statEarnings">$0.00</span></div>
-            <p class="hline">You're up <b id="statAnnualYieldInline">$0</b> a year at this pace. <b>That's all.</b></p>
+            <p class="hline">You're up <b id="statAnnualYieldInline">$0</b> a year at this pace. <b>Keep going.</b></p>
             <div class="hero-foot">
               <div>
                 <div class="sl">Projected Annual Yield</div>
@@ -4880,16 +4935,17 @@ html, body {
   </div>
 
   <div id="signupBonusModal" class="wallet-first-modal" aria-hidden="true">
-    <div class="wallet-first-panel" role="dialog" aria-modal="true" aria-labelledby="signupBonusTitle">
-      <button id="signupBonusCloseButton" class="wallet-first-close" type="button" aria-label="Close welcome">×</button>
-      <div class="wallet-first-content">
-        <img class="wallet-first-token" src="turdtoken2026.png" width="160" height="160" loading="lazy" decoding="async" alt="Turd Token">
-        <div class="wallet-first-copy">
-          <h3 id="signupBonusTitle">Welcome to the payroll.</h3>
-          <p id="signupBonusBody">I'm Herman. That's all.</p>
-        </div>
+    <div class="signup-bonus-panel" role="dialog" aria-modal="true" aria-label="Poop Profit sign up gift">
+      <div class="signup-bonus-media">
+        <img class="signup-bonus-image" src="signup-bonus-popup.png"
+          width="1080" height="1440" decoding="async" loading="lazy"
+          alt="Welcome to Poop Profit. Sign up gift: 3 Turd Tokens sent to your wallet. Earn more by logging daily and keeping streaks. Soon redeemable for exclusive merch, only available to poop profiters. Happy pooping!">
+        <!-- Invisible hit targets over the baked-in artwork. Percentages are relative
+             to the image box and scale with it. Verify/adjust against the real
+             signup-bonus-popup.png so they land exactly on the drawn button and X. -->
+        <button id="signupBonusDismissButton" type="button" class="signup-bonus-hit signup-bonus-hit-cta" aria-label="Let's go"></button>
+        <button id="signupBonusCloseButton" type="button" class="signup-bonus-hit signup-bonus-hit-close" aria-label="Close"></button>
       </div>
-      <button id="signupBonusDismissButton" class="button wallet-first-dismiss" type="button">Let's go</button>
     </div>
   </div>
 
@@ -6352,14 +6408,9 @@ html, body {
       }
 
       function showSignupBonusCelebration(count) {
-        var safeCount = Math.max(1, Math.floor(Number(count) || 0));
-        var body = document.getElementById("signupBonusBody");
-        if (body) {
-          body.textContent = "I'm Herman. I run this operation. You just signed in, so I dropped " +
-            safeCount + " Turd Tokens into your real balance. A signing bonus. Nobody negotiated it, nobody " +
-            "approved it, and nobody can take it back. This is the single best financial decision you will make " +
-            "sitting down today. You're welcome. That's all.";
-        }
+        // The popup is a single baked-in image (signup-bonus-popup.png); all copy,
+        // Herman, coins, and the "Let's go" button live in the artwork. Nothing to
+        // populate here beyond opening the gated modal. Trigger logic is unchanged.
         var modal = document.getElementById("signupBonusModal");
         if (!modal) return;
         modal.classList.add("open");
