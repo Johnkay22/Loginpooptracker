@@ -99,6 +99,8 @@
     .preview-footnote-links{margin-top:14px;text-align:center;font-size:13px}
     .preview-footnote-links a{color:#8fa0bd;text-decoration:none;font-weight:600}
     .preview-footnote-links a:hover{color:#f2f5fb;text-decoration:underline}
+    .bathroom-gdp-line{margin-top:10px;font-size:12.5px;line-height:1.4;color:#9ad8ff;opacity:.9;text-align:center;font-weight:600}
+    .bathroom-gdp-line[hidden]{display:none}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/html-to-image"></script>
@@ -4447,6 +4449,7 @@ html, body {
               <div id="timerMilestone" class="timer-subline"></div>
               <button id="timerButton" class="button full" type="button">Start Poop!</button>
               <div id="statusMessage" class="status"></div>
+              <div id="bathroomGdpLine" class="bathroom-gdp-line" hidden></div>
               <div id="firstSessionCoach" class="first-session-coach" hidden>
                 <p id="firstSessionCoachBody">Step 1: add your wage so your earnings are calculated correctly.</p>
                 <div class="coach-actions">
@@ -5921,6 +5924,112 @@ html, body {
         return generated;
       }
 
+      // ---- IP-based approximate location (city/region/country only) ----
+      // No browser Geolocation API, no permission prompt, no precise coordinates.
+      // Resolved once, cached in localStorage, and used to tag poop_sessions rows
+      // so the city_leaderboard has data. A failed lookup NEVER blocks a session.
+      var GEO_CACHE_KEY = "pp_geo_v1";
+      var GEO_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+      var geoLocation = null;
+      var geoResolvePromise = null;
+
+      function normalizeGeoString(value) {
+        if (typeof value !== "string") return null;
+        var trimmed = value.trim();
+        if (!trimmed) return null;
+        return trimmed.slice(0, 120);
+      }
+
+      function readGeoCache() {
+        try {
+          if (!window.localStorage) return null;
+          var raw = window.localStorage.getItem(GEO_CACHE_KEY);
+          if (!raw) return null;
+          var parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed !== "object") return null;
+          if (!parsed.ts || (Date.now() - Number(parsed.ts)) > GEO_CACHE_TTL_MS) return null;
+          return {
+            city: parsed.city || null,
+            region: parsed.region || null,
+            country: parsed.country || null
+          };
+        } catch (_error) {
+          return null;
+        }
+      }
+
+      function writeGeoCache(geo) {
+        try {
+          if (!window.localStorage) return;
+          window.localStorage.setItem(GEO_CACHE_KEY, JSON.stringify({
+            city: geo.city || null,
+            region: geo.region || null,
+            country: geo.country || null,
+            ts: Date.now()
+          }));
+        } catch (_error) {
+          // Ignore storage failures; geo is best-effort.
+        }
+      }
+
+      function currentGeo() {
+        return geoLocation || readGeoCache() || { city: null, region: null, country: null };
+      }
+
+      function updateBathroomGdpLine() {
+        var el = document.getElementById("bathroomGdpLine");
+        if (!el) return;
+        var geo = currentGeo();
+        if (geo && geo.city) {
+          el.textContent = "Your session automatically funds " + geo.city + "'s Bathroom GDP.";
+          el.hidden = false;
+        } else {
+          el.textContent = "";
+          el.hidden = true;
+        }
+      }
+
+      function resolveGeo() {
+        if (geoResolvePromise) return geoResolvePromise;
+
+        var cached = readGeoCache();
+        if (cached && (cached.city || cached.region || cached.country)) {
+          geoLocation = cached;
+          updateBathroomGdpLine();
+          geoResolvePromise = Promise.resolve(cached);
+          return geoResolvePromise;
+        }
+
+        geoResolvePromise = Promise.resolve()
+          .then(function () {
+            if (typeof fetch !== "function") return null;
+            return fetch("https://ipwho.is/", { method: "GET" })
+              .then(function (response) { return response && response.ok ? response.json() : null; })
+              .catch(function () { return null; });
+          })
+          .then(function (data) {
+            if (!data || data.success === false) return null;
+            var geo = {
+              city: normalizeGeoString(data.city),
+              region: normalizeGeoString(data.region),
+              country: normalizeGeoString(data.country)
+            };
+            if (geo.city || geo.region || geo.country) {
+              geoLocation = geo;
+              writeGeoCache(geo);
+              updateBathroomGdpLine();
+              return geo;
+            }
+            return null;
+          })
+          .catch(function () {
+            // Best-effort only; never surface geo failures to the user.
+            return null;
+          });
+
+        return geoResolvePromise;
+      }
+
       function normalizeWalletPayload(data) {
         var source = data || {};
         var dayCount = Math.max(
@@ -6289,6 +6398,7 @@ html, body {
 
           var hasTp = session.tp_squares !== null && session.tp_squares !== undefined;
           var ratingValue = Math.max(0, Math.min(5, Math.floor(Number(session.rating) || 0)));
+          var geo = currentGeo();
           var row = {
             user_id: authContext.userId,
             anon_id: getWalletAnonId(),
@@ -6299,7 +6409,10 @@ html, body {
             ended_at: new Date(Number(session.endedAtMs) || Date.now()).toISOString(),
             rating: ratingValue > 0 ? ratingValue : null,
             tp_squares: hasTp ? Math.max(0, Math.floor(Number(session.tp_squares) || 0)) : null,
-            tp_savings: hasTp ? (Number(session.tp_savings) || 0) : null
+            tp_savings: hasTp ? (Number(session.tp_savings) || 0) : null,
+            city: geo.city,
+            region: geo.region,
+            country: geo.country
           };
 
           // Authenticated users have a SELECT policy, so RETURNING is safe here.
@@ -6335,6 +6448,7 @@ html, body {
           }
 
           var hasTp = tpSquares !== null && tpSquares !== undefined;
+          var geo = currentGeo();
           var row = {
             user_id: null,
             anon_id: getWalletAnonId(),
@@ -6342,7 +6456,10 @@ html, body {
             duration_seconds: Math.max(0, Math.floor(Number(durationSeconds) || 0)),
             ended_at: new Date().toISOString(),
             tp_squares: hasTp ? Math.max(0, Math.floor(Number(tpSquares) || 0)) : null,
-            tp_savings: hasTp ? (Number(tpSavings) || 0) : null
+            tp_savings: hasTp ? (Number(tpSavings) || 0) : null,
+            city: geo.city,
+            region: geo.region,
+            country: geo.country
           };
 
           // Anonymous role has no SELECT policy; never chain .select()/.single() here.
@@ -6653,6 +6770,8 @@ html, body {
         restoreRunningSession();
         setupTutorial();
         trackReturnVisitWithin7Days();
+        updateBathroomGdpLine();
+        resolveGeo();
         if (isSignedInMode()) {
           initializeWallet();
           syncSessionsFromSupabase();
