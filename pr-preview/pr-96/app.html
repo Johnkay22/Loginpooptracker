@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>PoopProfit App — Calculator, Timer, and Stats</title>
+  <title>Poop Profit App — Calculator, Timer, and Stats</title>
   <meta
     name="description"
-    content="Use PoopProfit App to calculate wage-based poop earnings, run session timers, log activity, and view shareable stats."
+    content="Use Poop Profit App to calculate wage-based poop earnings, run session timers, log activity, and view shareable stats."
   >
   <link rel="canonical" href="https://www.poopprofit.com/app.html">
   <meta name="robots" content="index,follow,max-image-preview:large">
@@ -17,27 +17,27 @@
   <link rel="manifest" href="/site.webmanifest">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-  <meta property="og:title" content="PoopProfit App — Calculator, Timer, and Stats">
+  <meta property="og:title" content="Poop Profit App — Calculator, Timer, and Stats">
   <meta
     property="og:description"
-    content="Track poop sessions, calculate earnings, and review trends in the PoopProfit App."
+    content="Track poop sessions, calculate earnings, and review trends in the Poop Profit App."
   >
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.poopprofit.com/app.html">
   <meta property="og:image" content="https://www.poopprofit.com/Metatagimage.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="PoopProfit app dashboard">
+  <meta property="og:image:alt" content="Poop Profit app dashboard">
   <meta property="og:site_name" content="PoopProfit.com">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="PoopProfit App — Calculator, Timer, and Stats">
+  <meta name="twitter:title" content="Poop Profit App — Calculator, Timer, and Stats">
   <meta
     name="twitter:description"
-    content="Track poop sessions, calculate earnings, and review trends in the PoopProfit App."
+    content="Track poop sessions, calculate earnings, and review trends in the Poop Profit App."
   >
   <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg">
-  <meta name="twitter:image:alt" content="PoopProfit app dashboard">
+  <meta name="twitter:image:alt" content="Poop Profit app dashboard">
   <link rel="preload" as="image" href="corepreviewdesktopbg.webp" media="(min-width: 761px)">
   <link rel="preload" as="image" href="corepreviewmobilebg.webp" media="(max-width: 760px)">
 
@@ -115,7 +115,7 @@
         {
           "@type": "WebPage",
           "@id": "https://www.poopprofit.com/app.html#webpage",
-          "name": "PoopProfit App",
+          "name": "Poop Profit App",
           "description": "Poop earnings calculator, timer, session log, and statistics preview.",
           "url": "https://www.poopprofit.com/app.html",
           "inLanguage": "en",
@@ -149,7 +149,7 @@
         {
           "@type": "SoftwareApplication",
           "@id": "https://www.poopprofit.com/app.html#softwareapplication",
-          "name": "PoopProfit App",
+          "name": "Poop Profit App",
           "applicationCategory": "WebApplication",
           "operatingSystem": "All",
           "url": "https://www.poopprofit.com/app.html",
@@ -166,7 +166,7 @@
         {
           "@type": "Organization",
           "@id": "https://www.poopprofit.com/#organization",
-          "name": "PoopProfit",
+          "name": "Poop Profit",
           "url": "https://www.poopprofit.com/",
           "logo": "https://www.poopprofit.com/apple-touch-icon.png",
           "sameAs": [
@@ -871,6 +871,61 @@
     .wallet-first-dismiss {
       margin-top: 14px;
       width: 100%;
+    }
+
+    /* Signup bonus popup: the PNG is the entire design; tap zones sit over it. */
+    .signup-bonus-panel {
+      position: relative;
+      width: min(420px, 92vw);
+      max-width: 420px;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      padding: 0;
+    }
+
+    .signup-bonus-media {
+      position: relative;
+      width: 100%;
+    }
+
+    .signup-bonus-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 16px;
+    }
+
+    .signup-bonus-hit {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .signup-bonus-hit:focus-visible {
+      outline: 2px solid rgba(128, 207, 255, 0.9);
+      outline-offset: 2px;
+    }
+
+    /* "Let's go" button: bottom band, full width minus side margin. */
+    .signup-bonus-hit-cta {
+      left: 6%;
+      right: 6%;
+      bottom: 5%;
+      height: 12%;
+    }
+
+    /* Close X: small square over the top-right circle. */
+    .signup-bonus-hit-close {
+      top: 6%;
+      right: 6%;
+      width: 12%;
+      height: 8%;
     }
 
     .wallet-reward-toast {
@@ -4358,7 +4413,7 @@ html, body {
 <body>
   <main class="page">
     <section class="shell">
-      <h1 class="sr-only">PoopProfit App Calculator, Session Timer, and Stats</h1>
+      <h1 class="sr-only">Poop Profit App Calculator, Session Timer, and Stats</h1>
       <div class="fixed-nav-stack">
         <header class="head">
           <picture>
@@ -4442,7 +4497,7 @@ html, body {
                 <circle class="ring-ticks" cx="100" cy="100" r="92"/>
                 <circle class="ring-arc" id="ringArc" cx="100" cy="100" r="92" transform="rotate(-90 100 100)"/>
               </svg>
-              <video id="timerMascotImage" class="ring-herman" muted loop playsinline preload="metadata" poster="herman_poster.jpg" aria-label="PoopProfit mascot timer">
+              <video id="timerMascotImage" class="ring-herman" muted loop playsinline preload="metadata" poster="herman_poster.jpg" aria-label="Poop Profit mascot timer">
                 <source src="herman_loop.mp4" type="video/mp4">
               </video>
             </div>
@@ -4510,7 +4565,7 @@ html, body {
             <div class="hero-herman" aria-hidden="true"></div>
             <div class="lab">All-Time Earnings</div>
             <div class="big"><span class="num" id="statEarnings">$0.00</span></div>
-            <p class="hline">You're up <b id="statAnnualYieldInline">$0</b> a year at this pace. <b>That's all.</b></p>
+            <p class="hline">You're up <b id="statAnnualYieldInline">$0</b> a year at this pace. <b>Keep going.</b></p>
             <div class="hero-foot">
               <div>
                 <div class="sl">Projected Annual Yield</div>
@@ -4589,7 +4644,7 @@ html, body {
           <header class="coming-screen-head">
             <button id="comingBackButton" class="coming-back-btn" type="button" aria-label="Back to calculator">‹</button>
             <div class="coming-title-wrap">
-              <h2>What's Coming to PoopProfit</h2>
+              <h2>What's Coming to Poop Profit</h2>
               <p>Exciting new features on the way.</p>
             </div>
           </header>
@@ -4692,7 +4747,7 @@ html, body {
             target="_blank"
             rel="noopener noreferrer"
             class="social-icon-link instagram-follow-link"
-            aria-label="Follow PoopProfit on Instagram"
+            aria-label="Follow Poop Profit on Instagram"
           >
             <svg aria-hidden="true" viewBox="0 0 24 24">
               <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 1.8A3.7 3.7 0 0 0 3.8 7.5v9a3.7 3.7 0 0 0 3.7 3.7h9a3.7 3.7 0 0 0 3.7-3.7v-9a3.7 3.7 0 0 0-3.7-3.7h-9Zm9.75 1.35a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4Z"></path>
@@ -4704,7 +4759,7 @@ html, body {
             target="_blank"
             rel="noopener noreferrer"
             class="social-icon-link tiktok-follow-link"
-            aria-label="Follow PoopProfit on TikTok"
+            aria-label="Follow Poop Profit on TikTok"
           >
             <svg aria-hidden="true" viewBox="0 0 24 24">
               <path d="M19.56 8.77a7.7 7.7 0 0 1-4.63-1.54v6.95a5.67 5.67 0 1 1-4.89-5.61v2.8a2.93 2.93 0 1 0 2.15 2.81V2h2.72a4.9 4.9 0 0 0 4.65 4.38v2.39Z"></path>
@@ -4737,7 +4792,7 @@ html, body {
       <div class="sheet-grabber" aria-hidden="true"><span></span></div>
       <div id="ratingInputStep" class="rating-step">
         <div class="rating-profit">
-          <span class="rating-profit-label">Your PoopProfit</span>
+          <span class="rating-profit-label">Your Poop Profit</span>
           <span id="ratingProfitValue" class="rating-profit-amount">$0.00</span>
         </div>
         <h3 id="ratingTitle">Rate Your Poop</h3>
@@ -4801,7 +4856,7 @@ html, body {
   <div id="sharePickerModal" class="share-picker-modal" aria-hidden="true">
     <div class="share-picker-panel sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sharePickerTitle">
       <div class="sheet-grabber" aria-hidden="true"><span></span></div>
-      <h3 id="sharePickerTitle">Share your PoopProfit</h3>
+      <h3 id="sharePickerTitle">Share your Poop Profit</h3>
       <p id="sharePickerDescription">Choose where to share.</p>
       <div class="share-channel-grid" aria-label="Share channels">
         <button type="button" data-share-channel="facebook">
@@ -4831,7 +4886,7 @@ html, body {
           <img id="tutorialMascotImage" class="tutorial-mascot-image" src="OnboardingMascot_20260419_095122_00000.jpg" width="75" height="75" loading="lazy" decoding="async" alt="Onboarding mascot pose 1">
         </div>
         <div class="tutorial-copy">
-          <h3 id="tutorialTitle">Welcome to PoopProfit</h3>
+          <h3 id="tutorialTitle">Welcome to Poop Profit</h3>
           <p id="tutorialBody">Quick Tour: Learn how to track how much you get paid to poop at work!</p>
         </div>
       </div>
@@ -4880,16 +4935,17 @@ html, body {
   </div>
 
   <div id="signupBonusModal" class="wallet-first-modal" aria-hidden="true">
-    <div class="wallet-first-panel" role="dialog" aria-modal="true" aria-labelledby="signupBonusTitle">
-      <button id="signupBonusCloseButton" class="wallet-first-close" type="button" aria-label="Close welcome">×</button>
-      <div class="wallet-first-content">
-        <img class="wallet-first-token" src="turdtoken2026.png" width="160" height="160" loading="lazy" decoding="async" alt="Turd Token">
-        <div class="wallet-first-copy">
-          <h3 id="signupBonusTitle">Welcome to the payroll.</h3>
-          <p id="signupBonusBody">I'm Herman. That's all.</p>
-        </div>
+    <div class="signup-bonus-panel" role="dialog" aria-modal="true" aria-label="Poop Profit sign up gift">
+      <div class="signup-bonus-media">
+        <img class="signup-bonus-image" src="signup-bonus-popup.png"
+          width="1080" height="1440" decoding="async" loading="lazy"
+          alt="Welcome to Poop Profit. Sign up gift: 3 Turd Tokens sent to your wallet. Earn more by logging daily and keeping streaks. Soon redeemable for exclusive merch, only available to poop profiters. Happy pooping!">
+        <!-- Invisible hit targets over the baked-in artwork. Percentages are relative
+             to the image box and scale with it. Verify/adjust against the real
+             signup-bonus-popup.png so they land exactly on the drawn button and X. -->
+        <button id="signupBonusDismissButton" type="button" class="signup-bonus-hit signup-bonus-hit-cta" aria-label="Let's go"></button>
+        <button id="signupBonusCloseButton" type="button" class="signup-bonus-hit signup-bonus-hit-close" aria-label="Close"></button>
       </div>
-      <button id="signupBonusDismissButton" class="button wallet-first-dismiss" type="button">Let's go</button>
     </div>
   </div>
 
@@ -4971,7 +5027,7 @@ html, body {
     <a href="https://www.poopprofit.com/app.html">App</a>
     <div class="legal-bottom">
       <span>Signed in? Your sessions sync across all your devices. Signed out? Data stays on this device only.</span>
-      <span>&copy; 2026 PoopProfit. All rights reserved.</span>
+      <span>&copy; 2026 Poop Profit. All rights reserved.</span>
     </div>
   </div>
 
@@ -5003,7 +5059,7 @@ html, body {
         <img id="shareCardMascotImage" class="share-card-mascot" data-src="herman-cash-suit.webp" alt="Herman mascot holding cash" />
       </section>
 
-      <section class="share-card-panel share-card-footer-panel" aria-label="PoopProfit call to action">
+      <section class="share-card-panel share-card-footer-panel" aria-label="Poop Profit call to action">
         <div class="share-card-footer-left">
           <img id="shareCardToiletImage" data-src="icon-toilet.webp" alt="Toilet icon" />
           <p class="share-card-footer-text">Track yours at <strong>PoopProfit.com</strong></p>
@@ -5261,7 +5317,7 @@ html, body {
       var TUTORIAL_SEEN_KEY = "pp_core_tutorial_seen_v1";
       var TUTORIAL_STEPS = [
         {
-          title: "Welcome to PoopProfit",
+          title: "Welcome to Poop Profit",
           body: "Quick Tour: Learn how to track how much you get paid to poop at work!",
           target: ".head .logo",
           tab: "calculator",
@@ -6352,14 +6408,9 @@ html, body {
       }
 
       function showSignupBonusCelebration(count) {
-        var safeCount = Math.max(1, Math.floor(Number(count) || 0));
-        var body = document.getElementById("signupBonusBody");
-        if (body) {
-          body.textContent = "I'm Herman. I run this operation. You just signed in, so I dropped " +
-            safeCount + " Turd Tokens into your real balance. A signing bonus. Nobody negotiated it, nobody " +
-            "approved it, and nobody can take it back. This is the single best financial decision you will make " +
-            "sitting down today. You're welcome. That's all.";
-        }
+        // The popup is a single baked-in image (signup-bonus-popup.png); all copy,
+        // Herman, coins, and the "Let's go" button live in the artwork. Nothing to
+        // populate here beyond opening the gated modal. Trigger logic is unchanged.
         var modal = document.getElementById("signupBonusModal");
         if (!modal) return;
         modal.classList.add("open");
@@ -8197,7 +8248,7 @@ html, body {
             var file = new File([blob], fileName, { type: "image/png" });
             if (canNativeShareFile(file)) {
               return navigator.share({
-                title: "PoopProfit",
+                title: "Poop Profit",
                 text: caption,
                 files: [file]
               }).then(function () {
@@ -8251,7 +8302,7 @@ html, body {
 
         if (shareTarget === "native") {
           if (navigator.share) {
-            navigator.share({ title: "PoopProfit", text: text, url: url })
+            navigator.share({ title: "Poop Profit", text: text, url: url })
               .then(function () {
                 trackCoreEvent("core_shared_result", { channel: "native", share_type: "text" });
                 announceShareStatus("Shared successfully.", "ok");
@@ -8302,7 +8353,7 @@ html, body {
           if (!sessions.length) return "";
           var latest = sessions[0];
           return "I just earned $" + latest.earnings.toFixed(2) + " in " + formatDuration(latest.durationSeconds) +
-            " with PoopProfit. Track your poop profits at poopprofit.com";
+            " with Poop Profit. Track your poop profits at poopprofit.com";
         }
 
         if (!sessions.length) return "";
@@ -8311,7 +8362,7 @@ html, body {
         var totalEarnings = sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
         var totalTimeSeconds = sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
 
-        return "My PoopProfit stats: " + totalSessions + " sessions, $" + totalEarnings.toFixed(2) +
+        return "My Poop Profit stats: " + totalSessions + " sessions, $" + totalEarnings.toFixed(2) +
           " earned, " + formatDuration(totalTimeSeconds) + " total time. Check yours at poopprofit.com";
       }
 
@@ -9721,7 +9772,7 @@ html, body {
     })();
   </script>
   <div id="cookieConsent" class="cookie-consent" role="dialog" aria-live="polite" aria-label="Analytics notice">
-    <p class="cookie-consent-text">We use analytics to understand how PoopProfit gets used. We never send your exact wage. <a href="/privacy.html">Privacy Policy</a></p>
+    <p class="cookie-consent-text">We use analytics to understand how Poop Profit gets used. We never send your exact wage. <a href="/privacy.html">Privacy Policy</a></p>
     <button id="cookieConsentAccept" type="button" class="cookie-consent-btn">Got it</button>
   </div>
 </body>
