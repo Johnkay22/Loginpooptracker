@@ -1,12 +1,7 @@
 User-agent: *
 Allow: /
-Disallow: /archive/
 Disallow: /supabase/
-Disallow: /loggedout.html
-Disallow: /guestmodeindex.html
 Disallow: /TurdRaceGame.html
-Disallow: /poopprofit-redesign-v5-4.html
-Disallow: /12345678910111513141516171819202122.html
 
 User-agent: GPTBot
 Allow: /

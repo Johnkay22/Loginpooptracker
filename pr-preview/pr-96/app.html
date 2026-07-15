@@ -10,10 +10,12 @@
   >
   <link rel="canonical" href="https://www.poopprofit.com/app.html">
   <meta name="robots" content="index,follow,max-image-preview:large">
-  <link rel="icon" href="favicon.png">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="/favicon-16.png" sizes="16x16" type="image/png">
   <meta name="theme-color" content="#010818">
   <link rel="manifest" href="/site.webmanifest">
-  <link rel="apple-touch-icon" href="newpplogo.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
   <meta property="og:title" content="PoopProfit App — Calculator, Timer, and Stats">
   <meta
@@ -36,9 +38,8 @@
   >
   <meta name="twitter:image" content="https://www.poopprofit.com/PPTwittercard.jpg">
   <meta name="twitter:image:alt" content="PoopProfit app dashboard">
-  <link rel="preload" as="image" href="banner.png">
-  <link rel="preload" as="image" href="corepreviewdesktopbg.jpg">
-  <link rel="preload" as="image" href="corepreviewmobilebg.png" media="(max-width: 760px)">
+  <link rel="preload" as="image" href="corepreviewdesktopbg.webp" media="(min-width: 761px)">
+  <link rel="preload" as="image" href="corepreviewmobilebg.webp" media="(max-width: 760px)">
 
   <link rel="preconnect" href="https://www.googletagmanager.com">
   <link rel="preconnect" href="https://unpkg.com">
@@ -167,7 +168,7 @@
           "@id": "https://www.poopprofit.com/#organization",
           "name": "PoopProfit",
           "url": "https://www.poopprofit.com/",
-          "logo": "https://www.poopprofit.com/newpplogo.png",
+          "logo": "https://www.poopprofit.com/apple-touch-icon.png",
           "sameAs": [
             "https://www.instagram.com/poopprofit",
             "https://www.tiktok.com/@poopprofit"
@@ -231,7 +232,7 @@
       background-color: var(--bg);
       background-image:
         linear-gradient(135deg, rgba(6, 11, 22, 0.68), rgba(6, 11, 22, 0.72)),
-        url("corepreviewdesktopbg.jpg");
+        image-set(url("corepreviewdesktopbg.webp") type("image/webp"), url("corepreviewdesktopbg.jpg") type("image/jpeg"));
       background-position: center center;
       background-size: cover;
       background-repeat: no-repeat;
@@ -636,7 +637,7 @@
       body {
         background-image:
           linear-gradient(135deg, rgba(6, 11, 22, 0.58), rgba(6, 11, 22, 0.64)),
-          url("corepreviewmobilebg.png");
+          image-set(url("corepreviewmobilebg.webp") type("image/webp"), url("corepreviewmobilebg.jpg") type("image/jpeg"));
         background-position: center top;
         background-size: cover;
         background-repeat: no-repeat;
@@ -4141,7 +4142,7 @@ html, body {
       background-color: var(--bg) !important;
       background-image:
         linear-gradient(135deg, rgba(6, 11, 22, 0.72), rgba(6, 11, 22, 0.78)),
-        url("corepreviewdesktopbg.jpg") !important;
+        image-set(url("corepreviewdesktopbg.webp") type("image/webp"), url("corepreviewdesktopbg.jpg") type("image/jpeg")) !important;
       background-position: center center !important;
       background-size: cover !important;
       background-repeat: no-repeat !important;
@@ -4360,7 +4361,10 @@ html, body {
       <h1 class="sr-only">PoopProfit App Calculator, Session Timer, and Stats</h1>
       <div class="fixed-nav-stack">
         <header class="head">
-          <img class="logo" src="poopprofit_logo.png" alt="PoopProfit.com — Get Paid To Poop">
+          <picture>
+            <source srcset="poopprofit_logo.webp" type="image/webp">
+            <img class="logo" src="poopprofit_logo.png" width="560" height="148" alt="PoopProfit.com — Get Paid To Poop">
+          </picture>
           <div class="head-controls">
             <button id="tutorialHelpButton" class="tutorial-help-button" type="button" aria-label="Open quick tour">?</button>
             <div id="headAuth" class="head-auth" hidden>
@@ -4372,7 +4376,7 @@ html, body {
         <div class="wallet-banner-row">
           <aside id="walletCorner" class="wallet-corner" aria-live="polite" aria-label="Turd Token wallet">
             <div class="wallet-balance-row">
-              <img id="walletCoinImage" class="wallet-coin" src="turdtoken2026.png" alt="Turd Token coin">
+              <img id="walletCoinImage" class="wallet-coin" src="turdtoken2026.png" width="160" height="160" decoding="async" alt="Turd Token coin">
               <span id="walletBalanceValue" class="wallet-balance-value">0</span>
             </div>
             <p id="walletStreakValue" class="wallet-streak">🔥 0 day streak</p>
@@ -4438,7 +4442,7 @@ html, body {
                 <circle class="ring-ticks" cx="100" cy="100" r="92"/>
                 <circle class="ring-arc" id="ringArc" cx="100" cy="100" r="92" transform="rotate(-90 100 100)"/>
               </svg>
-              <video id="timerMascotImage" class="ring-herman" muted loop playsinline preload="auto" poster="herman_poster.jpg" aria-label="PoopProfit mascot timer">
+              <video id="timerMascotImage" class="ring-herman" muted loop playsinline preload="metadata" poster="herman_poster.jpg" aria-label="PoopProfit mascot timer">
                 <source src="herman_loop.mp4" type="video/mp4">
               </video>
             </div>
@@ -4538,7 +4542,7 @@ html, body {
               <div class="eyebrow" style="margin-bottom:6px">TP Savings</div>
               <div class="tp-stat-value num" id="statTpSavings">$0.00</div>
             </div>
-            <img class="tp-card-icon" src="TPSavingsIcon.png" alt="" aria-hidden="true">
+            <img class="tp-card-icon" src="TPSavingsIcon.png" width="112" height="112" decoding="async" alt="" aria-hidden="true">
           </article>
 
           <article class="card" style="grid-column: span 12;">
@@ -4593,7 +4597,10 @@ html, body {
           <div class="coming-list">
             <article class="coming-row coming-row--accounts">
               <div class="coming-media">
-                <img src="POOPPROFITMASCOT1.png" alt="Poop mascot with cloud sync visual">
+                <picture>
+                  <source srcset="POOPPROFITMASCOT1.webp" type="image/webp">
+                  <img src="POOPPROFITMASCOT1.png" loading="lazy" decoding="async" width="640" height="640" alt="Poop mascot with cloud sync visual">
+                </picture>
               </div>
               <div class="coming-copy">
                 <span class="coming-pill">Coming Soon</span>
@@ -4605,7 +4612,10 @@ html, body {
 
             <article class="coming-row coming-row--wallet">
               <div class="coming-media">
-                <img src="Turdtoken.png" alt="Turd token wallet preview">
+                <picture>
+                  <source srcset="Turdtoken.webp" type="image/webp">
+                  <img src="Turdtoken.png" loading="lazy" decoding="async" width="640" height="636" alt="Turd token wallet preview">
+                </picture>
               </div>
               <div class="coming-copy">
                 <span class="coming-pill">Coming Soon</span>
@@ -4617,7 +4627,10 @@ html, body {
 
             <article class="coming-row coming-row--games">
               <div class="coming-media">
-                <img src="games.png" alt="Games and leaderboard preview">
+                <picture>
+                  <source srcset="games.webp" type="image/webp">
+                  <img src="games.png" loading="lazy" decoding="async" width="640" height="640" alt="Games and leaderboard preview">
+                </picture>
               </div>
               <div class="coming-copy">
                 <span class="coming-pill">Coming Soon</span>
@@ -4629,7 +4642,10 @@ html, body {
 
             <article class="coming-row coming-row--shop">
               <div class="coming-media">
-                <img src="Storecomingsoon.png" alt="Shop and unlockables preview">
+                <picture>
+                  <source srcset="Storecomingsoon.webp" type="image/webp">
+                  <img src="Storecomingsoon.png" loading="lazy" decoding="async" width="540" height="960" alt="Shop and unlockables preview">
+                </picture>
               </div>
               <div class="coming-copy">
                 <span class="coming-pill">Coming Soon</span>
@@ -4641,7 +4657,10 @@ html, body {
 
             <article class="coming-row coming-row--analytics">
               <div class="coming-media">
-                <img src="stats.png" alt="Analytics dashboard preview">
+                <picture>
+                  <source srcset="stats.webp" type="image/webp">
+                  <img src="stats.png" loading="lazy" decoding="async" width="640" height="640" alt="Analytics dashboard preview">
+                </picture>
               </div>
               <div class="coming-copy">
                 <span class="coming-pill">Coming Soon</span>
@@ -4653,7 +4672,7 @@ html, body {
 
             <article class="coming-row coming-row--community">
               <div class="coming-media">
-                <img src="b7a9e867-016b-415e-8b4f-6477ef9d6cdc.webp" alt="Community features preview">
+                <img src="b7a9e867-016b-415e-8b4f-6477ef9d6cdc.webp" loading="lazy" decoding="async" width="600" height="600" alt="Community features preview">
               </div>
               <div class="coming-copy">
                 <span class="coming-pill">Coming Soon</span>
@@ -4710,7 +4729,7 @@ html, body {
   </nav>
 
   <button id="fabTimerButton" class="mobile-fab" type="button" aria-label="Start session">
-    <img id="fabTimerIcon" class="fab-icon" src="vacant.png" alt="">
+      <img id="fabTimerIcon" class="fab-icon" src="vacant.png" width="128" height="128" decoding="async" alt="">
   </button>
 
   <div id="ratingModal" class="rating-modal" aria-hidden="true">
@@ -4763,7 +4782,7 @@ html, body {
       </span>
       <div class="tp-info-body">
         <div class="tp-info-art">
-          <img src="TPSavingsIcon.png" alt="" aria-hidden="true">
+          <img src="TPSavingsIcon.png" width="112" height="112" loading="lazy" decoding="async" alt="" aria-hidden="true">
         </div>
         <div class="tp-info-copy">
           <h3 id="tpInfoTitle">Track Your TP Savings</h3>
@@ -4786,15 +4805,15 @@ html, body {
       <p id="sharePickerDescription">Choose where to share.</p>
       <div class="share-channel-grid" aria-label="Share channels">
         <button type="button" data-share-channel="facebook">
-          <img src="fbicon.png" alt="">
+          <img src="fbicon.png" width="96" height="96" loading="lazy" decoding="async" alt="">
           <span>Facebook</span>
         </button>
         <button type="button" data-share-channel="x">
-          <img src="xicon.png" alt="">
+          <img src="xicon.png" width="96" height="96" loading="lazy" decoding="async" alt="">
           <span>X</span>
         </button>
         <button type="button" data-share-channel="sms">
-          <img src="txticon.png" alt="">
+          <img src="txticon.png" width="96" height="96" loading="lazy" decoding="async" alt="">
           <span>Text</span>
         </button>
       </div>
@@ -4809,7 +4828,7 @@ html, body {
       <div id="tutorialStepPill" class="tutorial-step-pill">Step 1 of 8</div>
       <div class="tutorial-body">
         <div class="tutorial-mascot-wrap">
-          <img id="tutorialMascotImage" class="tutorial-mascot-image" src="OnboardingMascot_20260419_095122_00000.jpg" alt="Onboarding mascot pose 1">
+          <img id="tutorialMascotImage" class="tutorial-mascot-image" src="OnboardingMascot_20260419_095122_00000.jpg" width="75" height="75" loading="lazy" decoding="async" alt="Onboarding mascot pose 1">
         </div>
         <div class="tutorial-copy">
           <h3 id="tutorialTitle">Welcome to PoopProfit</h3>
@@ -4850,7 +4869,7 @@ html, body {
     <div class="wallet-first-panel" role="dialog" aria-modal="true" aria-labelledby="walletFirstTitle">
       <button id="walletFirstCloseButton" class="wallet-first-close" type="button" aria-label="Close wallet welcome">×</button>
       <div class="wallet-first-content">
-        <img class="wallet-first-token" src="turdtoken2026.png" alt="Turd Token">
+        <img class="wallet-first-token" src="turdtoken2026.png" width="160" height="160" loading="lazy" decoding="async" alt="Turd Token">
         <div class="wallet-first-copy">
           <h3 id="walletFirstTitle">You've earned your first Turd Token!</h3>
           <p>Collect a Token after your first poop logged each day, and earn bonus Tokens for keeping your brown streak alive.</p>
@@ -4864,7 +4883,7 @@ html, body {
     <div class="wallet-first-panel" role="dialog" aria-modal="true" aria-labelledby="signupBonusTitle">
       <button id="signupBonusCloseButton" class="wallet-first-close" type="button" aria-label="Close welcome">×</button>
       <div class="wallet-first-content">
-        <img class="wallet-first-token" src="turdtoken2026.png" alt="Turd Token">
+        <img class="wallet-first-token" src="turdtoken2026.png" width="160" height="160" loading="lazy" decoding="async" alt="Turd Token">
         <div class="wallet-first-copy">
           <h3 id="signupBonusTitle">Welcome to the payroll.</h3>
           <p id="signupBonusBody">I'm Herman. That's all.</p>
@@ -4875,7 +4894,7 @@ html, body {
   </div>
 
   <div id="walletRewardToast" class="wallet-reward-toast" role="status" aria-live="polite">
-    <img class="wallet-reward-token" src="turdtoken2026.png" alt="Turd Token">
+    <img class="wallet-reward-token" src="turdtoken2026.png" width="160" height="160" loading="lazy" decoding="async" alt="Turd Token">
     <p id="walletRewardToastText" class="wallet-reward-text"></p>
   </div>
 
@@ -4959,7 +4978,7 @@ html, body {
   <div id="shareCardTemplate" class="share-card-template" aria-hidden="true">
     <div class="share-card-canvas">
       <header class="share-card-top">
-        <img id="shareCardLogoImage" src="newpplogo.png" alt="PoopProfit.com logo and wordmark" />
+        <img id="shareCardLogoImage" data-src="icon-512.webp" alt="PoopProfit.com logo and wordmark" />
       </header>
 
       <section class="share-card-panel share-card-headline-panel" aria-label="Session earnings headline">
@@ -4981,12 +5000,12 @@ html, body {
           </svg>
           <p id="shareCardDurationValue" class="share-card-duration-value">0hr 0min</p>
         </div>
-        <img id="shareCardMascotImage" class="share-card-mascot" src="herman-cash-suit.png" alt="Herman mascot holding cash" />
+        <img id="shareCardMascotImage" class="share-card-mascot" data-src="herman-cash-suit.webp" alt="Herman mascot holding cash" />
       </section>
 
       <section class="share-card-panel share-card-footer-panel" aria-label="PoopProfit call to action">
         <div class="share-card-footer-left">
-          <img id="shareCardToiletImage" src="icon-toilet.png" alt="Toilet icon" />
+          <img id="shareCardToiletImage" data-src="icon-toilet.webp" alt="Toilet icon" />
           <p class="share-card-footer-text">Track yours at <strong>PoopProfit.com</strong></p>
         </div>
         <div class="share-card-arrow" aria-hidden="true">→</div>
@@ -6889,9 +6908,8 @@ html, body {
           applyGuestLocks();
         }
         window.generateShareCardPng = generateShareCardPng;
-        preloadShareCardAssets().catch(function () {
-          // Keep startup silent; generateShareCardPng will report failures when invoked.
-        });
+        // Share-card assets are intentionally NOT preloaded at startup; they load
+        // lazily the first time generateShareCardPng() runs (share flow opened).
       }
 
       bootstrapAuth().then(function () {
@@ -8065,7 +8083,7 @@ html, body {
               : computeTpSavings(tpSquaresValue);
             tpLine = document.createElement("div");
             tpLine.className = "log-tp";
-            tpLine.innerHTML = "<img class=\"log-tp-icon\" src=\"TPSavingsIcon.png\" alt=\"\" aria-hidden=\"true\">" +
+            tpLine.innerHTML = "<img class=\"log-tp-icon\" src=\"TPSavingsIcon.png\" width=\"112\" height=\"112\" loading=\"lazy\" decoding=\"async\" alt=\"\" aria-hidden=\"true\">" +
               "<span>" + formatTpSummaryText(tpSquaresValue, tpSavingsValue) + "</span>";
           }
 
@@ -8414,12 +8432,26 @@ html, body {
         });
       }
 
+      function activateDeferredSrc(imageElement) {
+        // Share-card assets carry their URL in data-src so the browser does not
+        // fetch them until the user actually opens the share flow.
+        if (!imageElement) return null;
+        var deferred = imageElement.getAttribute("data-src");
+        if (deferred && !imageElement.getAttribute("src")) {
+          imageElement.setAttribute("src", deferred);
+        }
+        return imageElement.getAttribute("src");
+      }
+
       function preloadShareCardAssets() {
         if (shareCardAssetsPromise) return shareCardAssetsPromise;
         var sources = [];
-        if (shareCardLogoImage) sources.push(shareCardLogoImage.getAttribute("src"));
-        if (shareCardMascotImage) sources.push(shareCardMascotImage.getAttribute("src"));
-        if (shareCardToiletImage) sources.push(shareCardToiletImage.getAttribute("src"));
+        var logoSrc = activateDeferredSrc(shareCardLogoImage);
+        var mascotSrc = activateDeferredSrc(shareCardMascotImage);
+        var toiletSrc = activateDeferredSrc(shareCardToiletImage);
+        if (logoSrc) sources.push(logoSrc);
+        if (mascotSrc) sources.push(mascotSrc);
+        if (toiletSrc) sources.push(toiletSrc);
         shareCardAssetsPromise = Promise.all(
           sources.filter(Boolean).map(function (source) {
             return preloadImageAsset(source);
