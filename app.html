@@ -9369,8 +9369,11 @@ html, body {
       }
 
       function scrollTutorialPageToTop() {
-        var scrollRoot = document.scrollingElement || document.documentElement;
-        if (scrollRoot.scrollTop <= 8) {
+        // Use the element that actually scrolls (often <body> here, not
+        // document.scrollingElement) so the fixed top chrome — and the "?" help
+        // button the final step points at — is scrolled back into view.
+        var scrollRoot = getTutorialScrollRoot();
+        if (!scrollRoot || scrollRoot.scrollTop <= 8) {
           return false;
         }
         scrollRoot.scrollTo({ top: 0, behavior: "smooth" });
@@ -9604,26 +9607,18 @@ html, body {
         }
 
         if (anchorCardToTopChrome) {
-          tutorialCard.classList.remove("tutorial-card--dock");
-          var anchoredCardWidth = tutorialCard.offsetWidth;
-          var anchoredCardHeight = tutorialCard.offsetHeight;
-          var headerEl = document.querySelector(".fixed-nav-stack");
-          var anchorTop = headerEl
-            ? headerEl.getBoundingClientRect().bottom + 14
-            : targetRect.bottom + 14;
-          var anchoredTop = Math.min(
-            viewportHeight - anchoredCardHeight - 10,
-            Math.max(anchorTop, 10)
-          );
-          var anchoredLeft = Math.max(
-            10,
-            Math.min(viewportWidth - anchoredCardWidth - 10, (viewportWidth - anchoredCardWidth) / 2)
-          );
-          tutorialCard.style.left = anchoredLeft + "px";
-          tutorialCard.style.top = anchoredTop + "px";
-          tutorialCard.style.right = "";
-          tutorialCard.style.bottom = "";
+          // The highlighted control lives in the fixed top chrome (e.g. the "?"
+          // help button on the final step). Its highlight always sits in the top
+          // region, so dock the card at the BOTTOM where it can never cover it.
+          // The header's own rect is unreliable here: an ancestor backdrop-filter
+          // establishes a containing block, so the "fixed" header can render off
+          // the viewport, which previously anchored the card on top of the "?".
+          tutorialCard.classList.add("tutorial-card--dock");
+          tutorialCard.style.left = "10px";
+          tutorialCard.style.right = "10px";
           tutorialCard.style.width = "auto";
+          tutorialCard.style.top = "auto";
+          tutorialCard.style.bottom = "calc(10px + env(safe-area-inset-bottom))";
           return;
         }
 
@@ -9641,6 +9636,28 @@ html, body {
         tutorialCard.style.top = top + "px";
         tutorialCard.style.right = "";
         tutorialCard.style.bottom = "";
+
+        // Safety net: never let the card cover the highlight ring. If they still
+        // overlap (e.g. an off-viewport fixed target clamps its highlight to an
+        // edge), dock the card to whichever side of the highlight has more room.
+        var hlRect = tutorialHighlight.getBoundingClientRect();
+        var cardRect = tutorialCard.getBoundingClientRect();
+        var cardOverlapsHighlight = hlRect.width > 0 && hlRect.height > 0 &&
+          !(cardRect.right <= hlRect.left || cardRect.left >= hlRect.right ||
+            cardRect.bottom <= hlRect.top || cardRect.top >= hlRect.bottom);
+        if (cardOverlapsHighlight) {
+          tutorialCard.classList.add("tutorial-card--dock");
+          tutorialCard.style.left = "10px";
+          tutorialCard.style.right = "10px";
+          tutorialCard.style.width = "auto";
+          if ((viewportHeight - hlRect.bottom) >= hlRect.top) {
+            tutorialCard.style.top = "auto";
+            tutorialCard.style.bottom = "calc(10px + env(safe-area-inset-bottom))";
+          } else {
+            tutorialCard.style.bottom = "auto";
+            tutorialCard.style.top = "calc(10px + env(safe-area-inset-top))";
+          }
+        }
       }
 
       function openTutorialStartModal() {
