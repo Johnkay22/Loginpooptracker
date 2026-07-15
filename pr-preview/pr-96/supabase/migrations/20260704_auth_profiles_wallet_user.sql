@@ -1,3 +1,13 @@
+-- =====================================================================
+-- PARTIALLY SUPERSEDED BY 20260714000000_baseline_production_schema.sql
+-- This migration created `profiles_select_authenticated` (for select to
+-- authenticated USING (true)), which lets any signed-in user read every
+-- profile row. That policy does NOT exist in production. The live database
+-- restricts profile reads to the owner via `profiles_select_own`
+-- (USING (auth.uid() = user_id)). Treat the baseline as the source of truth
+-- for RLS. Kept here for history only; do not re-run this policy against prod.
+-- =====================================================================
+
 -- Part 1: profiles + wallet user rekey (additive)
 
 create table if not exists public.profiles (

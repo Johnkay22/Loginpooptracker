@@ -1,6 +1,6 @@
-# PoopProfit
+# Poop Profit
 
-> PoopProfit is a free, no-account web app that calculates and tracks how much money you earn during bathroom breaks at work, based on your existing wage. Start a timer when you go, and it shows your real-time "poop earnings."
+> Poop Profit is a free, no-account web app that calculates and tracks how much money you earn during bathroom breaks at work, based on your existing wage. Start a timer when you go, and it shows your real-time "poop earnings."
 
 ## What it does
 
