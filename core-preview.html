@@ -5333,6 +5333,49 @@ html, body {
         gtag("event", eventName, params || {});
       }
 
+      // Convert an exact numeric value into a coarse bucket string before it is
+      // ever sent to Google Analytics. Exact financial and duration values must
+      // NEVER leave the browser; only these bucket labels do. This does not
+      // touch calculator math or anything written to Supabase.
+      // type: "wage" ($/hr), "earnings" ($), "duration" (seconds), "salary" ($/yr)
+      function bucketize(value, type) {
+        var n = Number(value);
+        if (!isFinite(n) || n < 0) n = 0;
+        if (type === "wage") {
+          if (n < 15) return "under_15";
+          if (n < 25) return "15_25";
+          if (n < 40) return "25_40";
+          if (n < 60) return "40_60";
+          if (n < 100) return "60_100";
+          return "100_plus";
+        }
+        if (type === "earnings") {
+          if (n < 1) return "under_1";
+          if (n < 3) return "1_3";
+          if (n < 5) return "3_5";
+          if (n < 10) return "5_10";
+          if (n < 25) return "10_25";
+          return "25_plus";
+        }
+        if (type === "duration") {
+          var mins = n / 60;
+          if (mins < 2) return "under_2min";
+          if (mins < 5) return "2_5min";
+          if (mins < 10) return "5_10min";
+          if (mins < 20) return "10_20min";
+          return "20_plus";
+        }
+        if (type === "salary") {
+          if (n < 40000) return "under_40k";
+          if (n < 60000) return "40k_60k";
+          if (n < 85000) return "60k_85k";
+          if (n < 120000) return "85k_120k";
+          if (n < 200000) return "120k_200k";
+          return "200k_plus";
+        }
+        return "unknown";
+      }
+
       function isSignedInMode() {
         return authContext.mode === "signed_in";
       }
@@ -5845,7 +5888,7 @@ html, body {
         if (lastTrackedHourlyWageValue === roundedWage) return;
         lastTrackedHourlyWageValue = roundedWage;
         trackCoreEvent("core_entered_hourly_wage", {
-          hourly_wage: roundedWage,
+          wage_bucket: bucketize(roundedWage, "wage"),
           source: source || "input"
         });
       }
@@ -7369,12 +7412,12 @@ html, body {
         persist();
         trackCoreEvent("core_session_start", {
           wage_mode: state.wageMode,
-          hourly_rate: Number(hourly.toFixed(2))
+          wage_bucket: bucketize(hourly, "wage")
         });
         trackCoreEvent("core_started_timer", {
           source: startSource,
           wage_mode: state.wageMode,
-          hourly_rate: Number(hourly.toFixed(2))
+          wage_bucket: bucketize(hourly, "wage")
         });
         setStatus(statusMessage, "Session started. Let the profits flow.", "ok");
         renderTimerButton();
@@ -7397,18 +7440,18 @@ html, body {
         lastMilestoneAnnounced = 0;
         hideMilestoneCelebration();
         trackCoreEvent("core_session_stop", {
-          duration_seconds: durationSeconds,
-          earnings: Number(roundCurrency(earnings).toFixed(2))
+          duration_bucket: bucketize(durationSeconds, "duration"),
+          earnings_bucket: bucketize(earnings, "earnings")
         });
         trackCoreEvent("core_stopped_timer", {
           source: stopSource,
-          duration_seconds: durationSeconds,
-          earnings: Number(roundCurrency(earnings).toFixed(2))
+          duration_bucket: bucketize(durationSeconds, "duration"),
+          earnings_bucket: bucketize(earnings, "earnings")
         });
         trackCoreEvent("core_saved_result", {
           source: stopSource,
-          duration_seconds: durationSeconds,
-          earnings: Number(roundCurrency(earnings).toFixed(2))
+          duration_bucket: bucketize(durationSeconds, "duration"),
+          earnings_bucket: bucketize(earnings, "earnings")
         });
         clearIntervalIfRunning();
 
@@ -7423,8 +7466,8 @@ html, body {
           writeLocalFlag(TEASER_STOP_LOCAL_KEY);
           trackCoreEvent("core_teaser_session_stop", {
             source: stopSource,
-            duration_seconds: durationSeconds,
-            earnings: Number(roundCurrency(earnings).toFixed(2))
+            duration_bucket: bucketize(durationSeconds, "duration"),
+            earnings_bucket: bucketize(earnings, "earnings")
           });
           // TP squares are captured at the end of the session inside the result
           // modal, so defer the poop_sessions insert until it closes.
