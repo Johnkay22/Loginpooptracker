@@ -14,7 +14,7 @@
 ## Pages
 
 - [Home](https://www.poopprofit.com/): Overview, FAQ, and intro to the poop salary calculator
-- [Core Preview](https://www.poopprofit.com/core-preview.html): The live app — calculator, timer, session log, and stats dashboard
+- [App](https://www.poopprofit.com/app.html): The live app — calculator, timer, session log, and stats dashboard
 
 ## Common questions
 

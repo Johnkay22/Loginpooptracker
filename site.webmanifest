@@ -2,7 +2,7 @@
   "name": "PoopProfit",
   "short_name": "PoopProfit",
   "description": "Calculate and track how much you get paid to poop at work.",
-  "start_url": "/core-preview.html",
+  "start_url": "/app.html",
   "display": "standalone",
   "background_color": "#010818",
   "theme_color": "#010818",
