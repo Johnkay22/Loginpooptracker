@@ -43,13 +43,63 @@
   <link rel="preconnect" href="https://www.googletagmanager.com">
   <link rel="preconnect" href="https://unpkg.com">
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1E17DCKNC"></script>
   <script>
+    // GA4 is gated behind the cookie/analytics consent banner. gtag() is defined
+    // immediately so event calls queue harmlessly into dataLayer, but the GA
+    // library is not loaded and no config runs until the visitor consents.
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-R1E17DCKNC');
+    (function () {
+      var GA_ID = 'G-R1E17DCKNC';
+      var CONSENT_KEY = 'pp_analytics_consent_v1';
+      var gaLoaded = false;
+      function loadGA() {
+        if (gaLoaded) return;
+        gaLoaded = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+        document.head.appendChild(s);
+        gtag('js', new Date());
+        gtag('config', GA_ID);
+      }
+      function consentGiven() {
+        try { return !!(window.localStorage && localStorage.getItem(CONSENT_KEY) === '1'); } catch (e) { return false; }
+      }
+      function storeConsent() {
+        try { if (window.localStorage) localStorage.setItem(CONSENT_KEY, '1'); } catch (e) {}
+      }
+      function accept() {
+        storeConsent();
+        var b = document.getElementById('cookieConsent');
+        if (b) b.classList.remove('show');
+        loadGA();
+      }
+      function init() {
+        if (consentGiven()) { loadGA(); return; }
+        var banner = document.getElementById('cookieConsent');
+        if (!banner) return;
+        banner.classList.add('show');
+        var btn = document.getElementById('cookieConsentAccept');
+        if (btn) btn.addEventListener('click', accept);
+      }
+      window.__ppAcceptAnalytics = accept;
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else { init(); }
+    })();
   </script>
+  <style>
+    .cookie-consent{position:fixed;left:0;right:0;bottom:0;z-index:9999;display:none;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;padding:14px 18px;background:rgba(8,14,32,.96);border-top:1px solid #1b2a4a;backdrop-filter:blur(10px);color:#f2f5fb;font-size:14px}
+    .cookie-consent.show{display:flex}
+    .cookie-consent-text{margin:0;max-width:760px;line-height:1.5}
+    .cookie-consent-text a{color:#2f8bff;font-weight:600}
+    .cookie-consent-btn{flex:0 0 auto;background:#2f8bff;color:#04122b;border:none;border-radius:10px;padding:10px 20px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
+    .cookie-consent-btn:hover{filter:brightness(1.05)}
+    .preview-footnote-links{margin-top:14px;text-align:center;font-size:13px}
+    .preview-footnote-links a{color:#8fa0bd;text-decoration:none;font-weight:600}
+    .preview-footnote-links a:hover{color:#f2f5fb;text-decoration:underline}
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/html-to-image"></script>
 
@@ -4636,6 +4686,9 @@ html, body {
             </svg>
             <span>TikTok</span>
           </a>
+        </div>
+        <div class="preview-footnote-links">
+          <a href="/privacy.html">Privacy Policy</a>
         </div>
       </footer>
     </section>
@@ -9360,6 +9413,10 @@ html, body {
 
     })();
   </script>
+  <div id="cookieConsent" class="cookie-consent" role="dialog" aria-live="polite" aria-label="Analytics notice">
+    <p class="cookie-consent-text">We use analytics to understand how PoopProfit gets used. We never send your exact wage. <a href="/privacy.html">Privacy Policy</a></p>
+    <button id="cookieConsentAccept" type="button" class="cookie-consent-btn">Got it</button>
+  </div>
 </body>
 </html>
 
