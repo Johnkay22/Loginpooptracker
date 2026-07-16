@@ -1,6 +1,7 @@
--- Adds an optional, user-editable city to profiles. Filled in from the
--- profile-setup modal at signup or later from the header profile popup.
--- Distinct from poop_sessions.city, which is IP-derived per session.
+-- Added a user-editable city to profiles for the header profile popup.
+-- Superseded the same day: the popup edits industry + job_title instead.
+-- Kept so the repo matches the production migration history; see
+-- 20260716092344_remove_profile_city.sql for the rollback.
 alter table public.profiles
   add column if not exists city text;
 
