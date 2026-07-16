@@ -5003,10 +5003,6 @@ html, body {
           <input id="profileUsernameInput" name="username" type="text" autocomplete="username" maxlength="20" required>
         </div>
         <div class="profile-setup-field">
-          <label for="profileCityInput">City (optional)</label>
-          <input id="profileCityInput" name="city" type="text" autocomplete="address-level2" maxlength="120">
-        </div>
-        <div class="profile-setup-field">
           <label for="profileIndustryInput">Industry (optional)</label>
           <input id="profileIndustryInput" name="industry" type="text" autocomplete="organization-title" maxlength="120">
         </div>
@@ -5023,15 +5019,15 @@ html, body {
   <div id="profileEditModal" class="profile-setup-modal" aria-hidden="true">
     <div class="profile-setup-panel" role="dialog" aria-modal="true" aria-labelledby="profileEditTitle">
       <h2 id="profileEditTitle">Your profile</h2>
-      <p>Signed in as <span id="profileEditUsername" class="profile-edit-username"></span>. Add or update your city and industry any time.</p>
+      <p>Signed in as <span id="profileEditUsername" class="profile-edit-username"></span>. Add or update your industry and job title any time.</p>
       <form id="profileEditForm">
-        <div class="profile-setup-field">
-          <label for="profileEditCityInput">City</label>
-          <input id="profileEditCityInput" name="city" type="text" autocomplete="address-level2" maxlength="120" placeholder="Add your city">
-        </div>
         <div class="profile-setup-field">
           <label for="profileEditIndustryInput">Industry</label>
           <input id="profileEditIndustryInput" name="industry" type="text" autocomplete="organization-title" maxlength="120" placeholder="Add your industry">
+        </div>
+        <div class="profile-setup-field">
+          <label for="profileEditJobTitleInput">Job title</label>
+          <input id="profileEditJobTitleInput" name="job_title" type="text" autocomplete="organization" maxlength="120" placeholder="Add your job title">
         </div>
         <p id="profileEditError" class="profile-setup-error" aria-live="polite"></p>
         <div class="profile-edit-actions">
@@ -5175,7 +5171,6 @@ html, body {
       var profileSetupModal = document.getElementById("profileSetupModal");
       var profileSetupForm = document.getElementById("profileSetupForm");
       var profileUsernameInput = document.getElementById("profileUsernameInput");
-      var profileCityInput = document.getElementById("profileCityInput");
       var profileIndustryInput = document.getElementById("profileIndustryInput");
       var profileJobTitleInput = document.getElementById("profileJobTitleInput");
       var profileSetupError = document.getElementById("profileSetupError");
@@ -5183,8 +5178,8 @@ html, body {
       var profileEditModal = document.getElementById("profileEditModal");
       var profileEditForm = document.getElementById("profileEditForm");
       var profileEditUsername = document.getElementById("profileEditUsername");
-      var profileEditCityInput = document.getElementById("profileEditCityInput");
       var profileEditIndustryInput = document.getElementById("profileEditIndustryInput");
+      var profileEditJobTitleInput = document.getElementById("profileEditJobTitleInput");
       var profileEditError = document.getElementById("profileEditError");
       var profileEditSaveButton = document.getElementById("profileEditSaveButton");
       var profileEditCancelButton = document.getElementById("profileEditCancelButton");
@@ -5822,13 +5817,13 @@ html, body {
         if (!profileEditModal || !isSignedInMode() || !authContext.username) return;
         var profile = authContext.profile || {};
         if (profileEditUsername) profileEditUsername.textContent = authContext.username;
-        if (profileEditCityInput) profileEditCityInput.value = profile.city || "";
         if (profileEditIndustryInput) profileEditIndustryInput.value = profile.industry || "";
+        if (profileEditJobTitleInput) profileEditJobTitleInput.value = profile.job_title || "";
         setProfileEditError("");
         profileEditModal.classList.add("open");
         profileEditModal.setAttribute("aria-hidden", "false");
         document.body.classList.add("wallet-modal-open");
-        if (profileEditCityInput) profileEditCityInput.focus();
+        if (profileEditIndustryInput) profileEditIndustryInput.focus();
       }
 
       function closeProfileEditModal() {
@@ -5844,23 +5839,23 @@ html, body {
           setProfileEditError("You need to be signed in to update your profile.");
           return;
         }
-        var city = profileEditCityInput ? profileEditCityInput.value.trim() : "";
         var industry = profileEditIndustryInput ? profileEditIndustryInput.value.trim() : "";
+        var jobTitle = profileEditJobTitleInput ? profileEditJobTitleInput.value.trim() : "";
         if (profileEditSaveButton) profileEditSaveButton.disabled = true;
         setProfileEditError("");
         Promise.resolve(
           authContext.supabase
             .from("profiles")
-            .update({ city: city || null, industry: industry || null })
+            .update({ industry: industry || null, job_title: jobTitle || null })
             .eq("user_id", authContext.userId)
-            .select("user_id, username, city, industry, job_title")
+            .select("user_id, username, industry, job_title")
             .single()
         ).then(function (result) {
           if (result.error) throw result.error;
           authContext.profile = Object.assign({}, authContext.profile, result.data);
           trackCoreEvent("profile_updated", {
-            has_city: Boolean(city),
-            has_industry: Boolean(industry)
+            has_industry: Boolean(industry),
+            has_job_title: Boolean(jobTitle)
           });
           closeProfileEditModal();
         }).catch(function () {
@@ -5892,7 +5887,7 @@ html, body {
         if (!authContext.supabase || !userId) return Promise.resolve(null);
         return authContext.supabase
           .from("profiles")
-          .select("user_id, username, city, industry, job_title, pay_mode, annual_salary, hours_per_week, hourly_wage")
+          .select("user_id, username, industry, job_title, pay_mode, annual_salary, hours_per_week, hourly_wage")
           .eq("user_id", userId)
           .maybeSingle()
           .then(function (result) {
@@ -5910,11 +5905,10 @@ html, body {
           .insert({
             user_id: authContext.userId,
             username: payload.username,
-            city: payload.city || null,
             industry: payload.industry || null,
             job_title: payload.job_title || null
           })
-          .select("user_id, username, city, industry, job_title")
+          .select("user_id, username, industry, job_title")
           .single()
           .then(function (result) {
             if (result.error) throw result.error;
@@ -6000,7 +5994,6 @@ html, body {
             function handleSubmit(event) {
               event.preventDefault();
               var username = profileUsernameInput ? profileUsernameInput.value.trim() : "";
-              var city = profileCityInput ? profileCityInput.value.trim() : "";
               var industry = profileIndustryInput ? profileIndustryInput.value.trim() : "";
               var jobTitle = profileJobTitleInput ? profileJobTitleInput.value.trim() : "";
 
@@ -6014,7 +6007,6 @@ html, body {
 
               createProfileForUser({
                 username: username,
-                city: city,
                 industry: industry,
                 job_title: jobTitle
               }).then(function (createdProfile) {
@@ -6023,7 +6015,6 @@ html, body {
                 renderAuthHeader();
                 closeProfileSetupModal();
                 trackCoreEvent("profile_created", {
-                  has_city: Boolean(city),
                   has_industry: Boolean(industry),
                   has_job_title: Boolean(jobTitle)
                 });
