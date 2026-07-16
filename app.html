@@ -256,7 +256,8 @@
       visibility: hidden;
     }
 
-    body.guest-mode #headAuth {
+    body.guest-mode #headAuth,
+    body.guest-mode #walletUsernameButton {
       display: none !important;
     }
 
@@ -524,16 +525,6 @@
       min-width: 0;
     }
 
-    .head-username {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text);
-      max-width: 96px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
     .head-signout {
       border: 1px solid var(--line-2);
       background: var(--field);
@@ -630,6 +621,20 @@
 
     .profile-setup-submit {
       width: 100%;
+    }
+
+    .profile-edit-username {
+      color: #5fb2ff;
+      font-weight: 800;
+    }
+
+    .profile-edit-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .profile-edit-actions .button {
+      flex: 1;
     }
 
     @media (max-width: 760px) {
@@ -795,6 +800,37 @@
       min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    .wallet-username {
+      margin: 0 0 0 auto;
+      border: 0;
+      background: transparent;
+      font-family: inherit;
+      color: #5fb2ff;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      text-shadow: 0 0 8px rgba(95, 178, 255, 0.28);
+      border-left: 1px solid rgba(120, 170, 235, 0.28);
+      border-radius: 0;
+      padding: 3px 2px 3px 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 1;
+      min-width: 0;
+      max-width: 42%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .wallet-username:hover {
+      color: #8ecbff;
+      text-decoration: underline;
+    }
+
+    .wallet-username[hidden] {
+      display: none;
     }
 
     .wallet-first-modal {
@@ -3769,7 +3805,7 @@ html, body {
   background: linear-gradient(180deg, rgba(16,26,43,.72), rgba(10,17,32,.78));
   box-shadow: var(--shadow);
   padding: 14px;
-  padding-top: calc(148px + env(safe-area-inset-top));
+  padding-top: calc(164px + env(safe-area-inset-top));
   padding-bottom: 12px;
   position: relative;
   overflow: visible;
@@ -3793,13 +3829,14 @@ html, body {
   -webkit-backdrop-filter: blur(14px);
 }
 .head { display: flex; align-items: center; justify-content: space-between; gap: 11px; margin-bottom: 8px; padding: 0 2px; width: 100%; }
-.head .logo { height: 56px; width: auto; display: block; flex: none; }
+.head .logo { height: 72px; width: auto; display: block; flex: none; min-width: 0; max-width: min(300px, 58vw); object-fit: contain; object-position: left center; }
 .head .tutorial-help-button { position: static; top: auto; right: auto; flex: none; }
 .wallet-banner-row { width: 100%; margin-bottom: 0; }
 .wallet-corner { border-radius: 999px; padding: 10px 14px; background: linear-gradient(180deg, var(--panel-top), var(--panel-bot)); border: 1px solid var(--line); box-shadow: var(--shadow); min-height: 48px; }
 .wallet-coin { width: 28px; height: 28px; }
 .wallet-balance-value { font-weight: 700; font-size: 14px; }
 .wallet-streak { font-size: 11.5px; color: var(--muted); border-left: 1px solid var(--line-2); padding-left: 9px; margin: 0; }
+.wallet-username { font-size: 12.5px; font-weight: 700; color: var(--blue-2); border-left: 1px solid var(--line-2); padding-left: 12px; }
 .tabs, .mobile-nav { display: none !important; }
 
 .panel-grid { display: block; }
@@ -4073,7 +4110,7 @@ html, body {
     border-left: 0 !important;
     border-right: 0 !important;
     margin: 0 !important;
-    padding: calc(144px + env(safe-area-inset-top)) 12px 8px !important;
+    padding: calc(158px + env(safe-area-inset-top)) 12px 8px !important;
   }
 
   .fixed-nav-stack {
@@ -4101,15 +4138,16 @@ html, body {
   }
 
   .head .logo {
-    height: 52px;
-    max-width: min(138px, 40vw);
+    height: 66px;
+    max-width: min(224px, 56vw);
     width: auto;
     object-fit: contain;
     object-position: left center;
   }
 
-  .head-username {
-    display: none;
+  .wallet-username {
+    font-size: 12px;
+    max-width: 34%;
   }
 
   .head-signout {
@@ -4218,7 +4256,7 @@ html, body {
     .page {
       width: 100%;
       max-width: min(1240px, 94vw);
-      margin: 142px auto 40px;
+      margin: 156px auto 40px;
       padding: 0;
     }
 
@@ -4258,22 +4296,18 @@ html, body {
     }
 
     .fixed-nav-stack .head .logo {
-      height: 54px;
+      height: 68px;
       max-width: none;
     }
 
-    /* Right-side account cluster: even spacing, help icon last */
+    /* Right-side account cluster: even spacing */
     .fixed-nav-stack .head-controls {
       gap: 12px;
     }
 
-    .fixed-nav-stack #tutorialHelpButton {
-      order: 3;
-    }
-
-    .fixed-nav-stack .head-username {
+    .fixed-nav-stack .wallet-username {
       max-width: 220px;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     /* Wallet is grouped as its own unit, divided from the account controls */
@@ -4293,7 +4327,7 @@ html, body {
     /* Tab nav: centered on the header's second row */
     #appDock.dock {
       position: fixed;
-      top: 66px;
+      top: 80px;
       bottom: auto;
       left: 50%;
       transform: translateX(-50%);
@@ -4423,7 +4457,6 @@ html, body {
           <div class="head-controls">
             <button id="tutorialHelpButton" class="tutorial-help-button" type="button" aria-label="Open quick tour">?</button>
             <div id="headAuth" class="head-auth" hidden>
-              <span id="headUsername" class="head-username"></span>
               <button id="signOutButton" class="head-signout" type="button">Sign out</button>
             </div>
           </div>
@@ -4435,6 +4468,9 @@ html, body {
               <span id="walletBalanceValue" class="wallet-balance-value">0</span>
             </div>
             <p id="walletStreakValue" class="wallet-streak">🔥 0 day streak</p>
+            <button id="walletUsernameButton" class="wallet-username" type="button" hidden
+              aria-haspopup="dialog" aria-controls="profileEditModal"
+              title="View and edit your profile"></button>
             <p id="walletGuestLabel" class="wallet-guest-label" hidden>0 unclaimed Turd Tokens. Sign in to start your real balance.</p>
           </aside>
         </div>
@@ -4966,8 +5002,12 @@ html, body {
           <input id="profileUsernameInput" name="username" type="text" autocomplete="username" maxlength="20" required>
         </div>
         <div class="profile-setup-field">
+          <label for="profileCityInput">City (optional)</label>
+          <input id="profileCityInput" name="city" type="text" autocomplete="address-level2" maxlength="120">
+        </div>
+        <div class="profile-setup-field">
           <label for="profileIndustryInput">Industry (optional)</label>
-          <input id="profileIndustryInput" name="industry" type="text" autocomplete="organization-title">
+          <input id="profileIndustryInput" name="industry" type="text" autocomplete="organization-title" maxlength="120">
         </div>
         <div class="profile-setup-field">
           <label for="profileJobTitleInput">Job title (optional)</label>
@@ -4975,6 +5015,28 @@ html, body {
         </div>
         <p id="profileSetupError" class="profile-setup-error" aria-live="polite"></p>
         <button id="profileSetupSubmitButton" class="button profile-setup-submit" type="submit">Continue</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="profileEditModal" class="profile-setup-modal" aria-hidden="true">
+    <div class="profile-setup-panel" role="dialog" aria-modal="true" aria-labelledby="profileEditTitle">
+      <h2 id="profileEditTitle">Your profile</h2>
+      <p>Signed in as <span id="profileEditUsername" class="profile-edit-username"></span>. Add or update your city and industry any time.</p>
+      <form id="profileEditForm">
+        <div class="profile-setup-field">
+          <label for="profileEditCityInput">City</label>
+          <input id="profileEditCityInput" name="city" type="text" autocomplete="address-level2" maxlength="120" placeholder="Add your city">
+        </div>
+        <div class="profile-setup-field">
+          <label for="profileEditIndustryInput">Industry</label>
+          <input id="profileEditIndustryInput" name="industry" type="text" autocomplete="organization-title" maxlength="120" placeholder="Add your industry">
+        </div>
+        <p id="profileEditError" class="profile-setup-error" aria-live="polite"></p>
+        <div class="profile-edit-actions">
+          <button id="profileEditCancelButton" class="button ghost" type="button">Cancel</button>
+          <button id="profileEditSaveButton" class="button" type="submit">Save</button>
+        </div>
       </form>
     </div>
   </div>
@@ -5101,20 +5163,30 @@ html, body {
         session: null,
         userId: null,
         username: null,
+        profile: null,
         accessToken: null,
         mode: "signed_out"
       };
 
       var headAuth = document.getElementById("headAuth");
-      var headUsername = document.getElementById("headUsername");
+      var walletUsernameButton = document.getElementById("walletUsernameButton");
       var signOutButton = document.getElementById("signOutButton");
       var profileSetupModal = document.getElementById("profileSetupModal");
       var profileSetupForm = document.getElementById("profileSetupForm");
       var profileUsernameInput = document.getElementById("profileUsernameInput");
+      var profileCityInput = document.getElementById("profileCityInput");
       var profileIndustryInput = document.getElementById("profileIndustryInput");
       var profileJobTitleInput = document.getElementById("profileJobTitleInput");
       var profileSetupError = document.getElementById("profileSetupError");
       var profileSetupSubmitButton = document.getElementById("profileSetupSubmitButton");
+      var profileEditModal = document.getElementById("profileEditModal");
+      var profileEditForm = document.getElementById("profileEditForm");
+      var profileEditUsername = document.getElementById("profileEditUsername");
+      var profileEditCityInput = document.getElementById("profileEditCityInput");
+      var profileEditIndustryInput = document.getElementById("profileEditIndustryInput");
+      var profileEditError = document.getElementById("profileEditError");
+      var profileEditSaveButton = document.getElementById("profileEditSaveButton");
+      var profileEditCancelButton = document.getElementById("profileEditCancelButton");
       var guestCtaModal = document.getElementById("guestCtaModal");
       var guestCtaSheet = guestCtaModal ? guestCtaModal.querySelector(".guest-cta-sheet") : null;
       var guestCtaCloseButton = document.getElementById("guestCtaCloseButton");
@@ -5689,12 +5761,12 @@ html, body {
       }
 
       function renderAuthHeader() {
-        if (!headAuth || !headUsername || !isSignedInMode() || !authContext.username) {
-          if (headAuth) headAuth.hidden = true;
-          return;
+        var signedIn = Boolean(isSignedInMode() && authContext.username);
+        if (headAuth) headAuth.hidden = !signedIn;
+        if (walletUsernameButton) {
+          walletUsernameButton.textContent = signedIn ? authContext.username : "";
+          walletUsernameButton.hidden = !signedIn;
         }
-        headUsername.textContent = authContext.username;
-        headAuth.hidden = false;
       }
 
       function applyAuthMode(mode) {
@@ -5705,8 +5777,10 @@ html, body {
           authContext.userId = null;
           authContext.accessToken = null;
           authContext.username = null;
+          authContext.profile = null;
           renderAuthHeader();
           closeProfileSetupModal();
+          closeProfileEditModal();
           applyGuestLocks();
           renderGuestWallet();
         } else {
@@ -5739,11 +5813,85 @@ html, body {
         return USERNAME_PATTERN.test(String(value || "").trim());
       }
 
+      function setProfileEditError(message) {
+        if (profileEditError) profileEditError.textContent = message || "";
+      }
+
+      function openProfileEditModal() {
+        if (!profileEditModal || !isSignedInMode() || !authContext.username) return;
+        var profile = authContext.profile || {};
+        if (profileEditUsername) profileEditUsername.textContent = authContext.username;
+        if (profileEditCityInput) profileEditCityInput.value = profile.city || "";
+        if (profileEditIndustryInput) profileEditIndustryInput.value = profile.industry || "";
+        setProfileEditError("");
+        profileEditModal.classList.add("open");
+        profileEditModal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("wallet-modal-open");
+        if (profileEditCityInput) profileEditCityInput.focus();
+      }
+
+      function closeProfileEditModal() {
+        if (!profileEditModal || !profileEditModal.classList.contains("open")) return;
+        profileEditModal.classList.remove("open");
+        profileEditModal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("wallet-modal-open");
+      }
+
+      function handleProfileEditSubmit(event) {
+        event.preventDefault();
+        if (!authContext.supabase || !authContext.userId) {
+          setProfileEditError("You need to be signed in to update your profile.");
+          return;
+        }
+        var city = profileEditCityInput ? profileEditCityInput.value.trim() : "";
+        var industry = profileEditIndustryInput ? profileEditIndustryInput.value.trim() : "";
+        if (profileEditSaveButton) profileEditSaveButton.disabled = true;
+        setProfileEditError("");
+        Promise.resolve(
+          authContext.supabase
+            .from("profiles")
+            .update({ city: city || null, industry: industry || null })
+            .eq("user_id", authContext.userId)
+            .select("user_id, username, city, industry, job_title")
+            .single()
+        ).then(function (result) {
+          if (result.error) throw result.error;
+          authContext.profile = Object.assign({}, authContext.profile, result.data);
+          trackCoreEvent("profile_updated", {
+            has_city: Boolean(city),
+            has_industry: Boolean(industry)
+          });
+          closeProfileEditModal();
+        }).catch(function () {
+          setProfileEditError("Could not save your profile. Please try again.");
+        }).then(function () {
+          if (profileEditSaveButton) profileEditSaveButton.disabled = false;
+        });
+      }
+
+      if (walletUsernameButton) {
+        walletUsernameButton.addEventListener("click", openProfileEditModal);
+      }
+      if (profileEditForm) {
+        profileEditForm.addEventListener("submit", handleProfileEditSubmit);
+      }
+      if (profileEditCancelButton) {
+        profileEditCancelButton.addEventListener("click", closeProfileEditModal);
+      }
+      if (profileEditModal) {
+        profileEditModal.addEventListener("click", function (event) {
+          if (event.target === profileEditModal) closeProfileEditModal();
+        });
+      }
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") closeProfileEditModal();
+      });
+
       function fetchProfileForUser(userId) {
         if (!authContext.supabase || !userId) return Promise.resolve(null);
         return authContext.supabase
           .from("profiles")
-          .select("user_id, username, industry, job_title, pay_mode, annual_salary, hours_per_week, hourly_wage")
+          .select("user_id, username, city, industry, job_title, pay_mode, annual_salary, hours_per_week, hourly_wage")
           .eq("user_id", userId)
           .maybeSingle()
           .then(function (result) {
@@ -5761,10 +5909,11 @@ html, body {
           .insert({
             user_id: authContext.userId,
             username: payload.username,
+            city: payload.city || null,
             industry: payload.industry || null,
             job_title: payload.job_title || null
           })
-          .select("user_id, username, industry, job_title")
+          .select("user_id, username, city, industry, job_title")
           .single()
           .then(function (result) {
             if (result.error) throw result.error;
@@ -5833,6 +5982,7 @@ html, body {
           applyProfileWageDefaults(profile);
           if (profile && profile.username) {
             authContext.username = profile.username;
+            authContext.profile = profile;
             renderAuthHeader();
             return profile;
           }
@@ -5849,6 +5999,7 @@ html, body {
             function handleSubmit(event) {
               event.preventDefault();
               var username = profileUsernameInput ? profileUsernameInput.value.trim() : "";
+              var city = profileCityInput ? profileCityInput.value.trim() : "";
               var industry = profileIndustryInput ? profileIndustryInput.value.trim() : "";
               var jobTitle = profileJobTitleInput ? profileJobTitleInput.value.trim() : "";
 
@@ -5862,13 +6013,16 @@ html, body {
 
               createProfileForUser({
                 username: username,
+                city: city,
                 industry: industry,
                 job_title: jobTitle
               }).then(function (createdProfile) {
                 authContext.username = createdProfile.username;
+                authContext.profile = createdProfile;
                 renderAuthHeader();
                 closeProfileSetupModal();
                 trackCoreEvent("profile_created", {
+                  has_city: Boolean(city),
                   has_industry: Boolean(industry),
                   has_job_title: Boolean(jobTitle)
                 });
