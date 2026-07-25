@@ -8,6 +8,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+(function(){var GA_ID="G-R1E17DCKNC",CONSENT_KEY="pp_analytics_consent_v1",gaLoaded=false;
+function loadGA(){if(gaLoaded)return;gaLoaded=true;var s=document.createElement("script");s.async=true;s.src="https://www.googletagmanager.com/gtag/js?id="+GA_ID;document.head.appendChild(s);gtag("js",new Date());gtag("config",GA_ID);}
+function consentGiven(){try{return !!(window.localStorage&&localStorage.getItem(CONSENT_KEY)==="1");}catch(e){return false;}}
+function storeConsent(){try{if(window.localStorage)localStorage.setItem(CONSENT_KEY,"1");}catch(e){}}
+function accept(){storeConsent();loadGA();}
+function init(){if(consentGiven()){loadGA();return;}}
+window.__ppAcceptAnalytics=accept;
+if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",init);}else{init();}})();
+</script>
+<script src="/js/pp-error-reporter.js"></script>
 <style>
   :root{
     --bg:#F7F4EF;
