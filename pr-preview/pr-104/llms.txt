@@ -1,0 +1,26 @@
+# Poop Profit
+
+> Free web app that calculates and tracks how much money you get paid while pooping at work. It reveals earnings you already make on the clock; it never pays users or helps them earn more.
+
+## What it does
+
+- Live session timer: enter your pay, start the timer when you sit down, watch earnings tick up in real time
+- Session log and analytics: totals, averages, longest sessions, best-earning days
+- Shareable stat card to send to coworkers
+- Turd Tokens: a daily reward for logging a session, with streak bonuses. Not a cryptocurrency, not an investment. Redeemable for Poop Profit merch in the future
+- Mascot: Herman, the fictional poop CEO
+
+## Access
+
+- Guests can use the timer and calculator instantly, no account required
+- A free account (Google sign-in or email magic link) saves every session, syncs across devices, and unlocks analytics and Turd Tokens
+
+## Pages
+
+- [Home](https://www.poopprofit.com/): overview of features, Turd Token, merch, and FAQ
+- [FAQ](https://www.poopprofit.com/#faq): common questions about how Poop Profit works, accounts, salary mode, and Turd Tokens
+- [App](https://www.poopprofit.com/app.html): the timer and calculator
+- [Sign in](https://www.poopprofit.com/auth.html): free account login
+- [Privacy Policy](https://www.poopprofit.com/privacy.html)
+
+Not financial advice.
