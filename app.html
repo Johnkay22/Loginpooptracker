@@ -7439,8 +7439,23 @@ html, body {
         }, true);
 
         document.addEventListener("visibilitychange", function () {
-          if (document.hidden || !state.activeSessionStartMs) return;
+          if (document.hidden) {
+            hiddenSinceMs = Date.now();
+            return;
+          }
+          var awayMs = hiddenSinceMs === null ? 0 : Date.now() - hiddenSinceMs;
+          hiddenSinceMs = null;
+          if (awayMs >= REOPEN_TAB_RESET_MS) {
+            resetToTimerTabOnReopen();
+          }
+          if (!state.activeSessionStartMs) return;
           runTimerTick();
+        });
+
+        window.addEventListener("pageshow", function (event) {
+          if (!event.persisted) return;
+          hiddenSinceMs = null;
+          resetToTimerTabOnReopen();
         });
       }
 
@@ -7463,6 +7478,21 @@ html, body {
           window.clearTimeout(statsCountUpTimerId);
           statsCountUpTimerId = null;
         }
+      }
+
+      // Reopening the app lands on the timer tab, but a quick trip away (share
+      // sheet, notification, copying a number) should leave the view untouched.
+      var REOPEN_TAB_RESET_MS = 60000;
+      var hiddenSinceMs = null;
+
+      function isAnyOverlayOpen() {
+        return !!document.querySelector(".open[class*=\"modal\"], .open[class*=\"overlay\"]");
+      }
+
+      function resetToTimerTabOnReopen() {
+        if (state.activeTab === "calculator") return;
+        if (isAnyOverlayOpen()) return;
+        setActiveTab("calculator");
       }
 
       function setActiveTab(tabName) {
@@ -9766,7 +9796,8 @@ html, body {
         var safe = cloneDefaultState();
         if (!candidate || typeof candidate !== "object") return safe;
 
-        safe.activeTab = ["calculator", "stats", "coming"].includes(candidate.activeTab) ? candidate.activeTab : "calculator";
+        // activeTab is deliberately not restored: the app always opens on the
+        // timer tab, whatever tab was last used before the app was closed.
         safe.wageMode = candidate.wageMode === "salary" ? "salary" : "hourly";
         safe.wageModeCollapsed = candidate.wageModeCollapsed === false ? false : true;
         safe.hourlyWage = toInputString(candidate.hourlyWage);
