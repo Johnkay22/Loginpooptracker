@@ -4032,6 +4032,11 @@ html, body {
 .log-entry .log-meta { font-size: 11.5px; color: var(--muted-2); line-height: 1.45; word-break: break-word; }
 .log-entry .log-tp { display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 600; color: var(--green); line-height: 1.4; }
 .log-entry .log-tp .log-tp-icon { width: 18px; height: 18px; flex: none; object-fit: contain; }
+.log-entry .log-unsaved { font-size: 11.5px; font-weight: 700; color: #ffc966; line-height: 1.4; }
+.guest-log-cta { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--line-2); }
+.guest-log-cta[hidden] { display: none; }
+.guest-log-cta-text { margin: 0 0 10px; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+.guest-log-cta .button { display: flex; align-items: center; justify-content: center; text-decoration: none; box-sizing: border-box; }
 .log-entry .log-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 .log-entry .icon-button { flex: none; }
 
@@ -4606,6 +4611,10 @@ html, body {
               <button id="clearAllButton" class="button warn" type="button">Clear All</button>
             </div>
             <div id="logList" class="log-list" aria-live="polite"></div>
+            <div id="guestLogCta" class="guest-log-cta" hidden>
+              <p class="guest-log-cta-text">These sessions live on this device only. Create a free account to keep them permanently.</p>
+              <a id="guestLogCtaButton" class="button full" href="auth.html">Save my sessions</a>
+            </div>
           </article>
         </div>
       </section>
@@ -5446,8 +5455,9 @@ html, body {
       // local-only "unclaimed" token counter with a sign-in nudge.
       // #panel-coming is deliberately public: upcoming games/merch are marketing,
       // and guests seeing them is a reason to create an account, not a reward.
+      // .log-card is visible to guests: they see their own device-local sessions
+      // marked "not saved", with a save CTA underneath.
       var SOFT_LOCK_CONFIG = [
-        { selector: ".log-card", region: "session_log" },
         { selector: "#panel-stats", region: "stats_tab" }
       ];
       var walletSnapshot = {
@@ -7104,6 +7114,12 @@ html, body {
             trackCoreEvent("core_lock_cta_click", { choice: "signin", region_name: activeLockRegion });
           });
         }
+        var guestLogCtaButton = document.getElementById("guestLogCtaButton");
+        if (guestLogCtaButton) {
+          guestLogCtaButton.addEventListener("click", function () {
+            trackCoreEvent("core_guest_save_cta_click", { source: "session_log" });
+          });
+        }
         if (guestResultModal) {
           if (guestResultSaveButton) {
             guestResultSaveButton.addEventListener("click", function () {
@@ -8341,6 +8357,7 @@ html, body {
 
       function renderLog() {
         logList.innerHTML = "";
+        renderGuestLogCta();
 
         if (!state.sessions.length) {
           var empty = document.createElement("div");
@@ -8393,6 +8410,13 @@ html, body {
           var ratingPoops = ratingValue > 0 ? " | Rating: " + "💩".repeat(ratingValue) : "";
           meta.textContent = "Duration: " + formatDuration(session.durationSeconds) + " | Wage used: $" + session.hourlyWageSnapshot.toFixed(2) + "/hr" + ratingPoops;
 
+          var unsavedLine = null;
+          if (!isSignedInMode()) {
+            unsavedLine = document.createElement("div");
+            unsavedLine.className = "log-unsaved";
+            unsavedLine.textContent = "⚠ Not saved";
+          }
+
           var tpLine = null;
           if (session.tp_squares !== undefined && session.tp_squares !== null) {
             var tpSquaresValue = Math.max(0, Math.floor(Number(session.tp_squares) || 0));
@@ -8432,9 +8456,25 @@ html, body {
           row.appendChild(top);
           row.appendChild(meta);
           if (tpLine) row.appendChild(tpLine);
+          if (unsavedLine) row.appendChild(unsavedLine);
           row.appendChild(actions);
           logList.appendChild(row);
         });
+      }
+
+      function renderGuestLogCta() {
+        var cta = document.getElementById("guestLogCta");
+        if (!cta) return;
+        var show = !isSignedInMode() && state.sessions.length > 0;
+        cta.hidden = !show;
+        if (!show) return;
+        var button = document.getElementById("guestLogCtaButton");
+        if (button) {
+          var unsavedTotal = state.sessions.reduce(function (sum, session) {
+            return sum + (Number(session.earnings) || 0);
+          }, 0);
+          button.textContent = "Save my $" + roundCurrency(unsavedTotal).toFixed(2) + " in sessions";
+        }
       }
 
       function deleteSession(sessionId) {
