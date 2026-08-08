@@ -4037,6 +4037,21 @@ html, body {
 .guest-log-cta[hidden] { display: none; }
 .guest-log-cta-text { margin: 0 0 10px; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
 .guest-log-cta .button { display: flex; align-items: center; justify-content: center; text-decoration: none; box-sizing: border-box; }
+
+/* Guests get a real stats preview (today's numbers + locked teasers) instead of
+   the full stats grid, which needs saved history to be meaningful. */
+.guest-stats-preview { display: none; }
+body.guest-mode #panel-stats .guest-stats-preview { display: grid; gap: 18px; }
+body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
+.guest-stats-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+@media (max-width: 520px) { .guest-stats-metrics { grid-template-columns: 1fr; } }
+.guest-stats-metric { display: flex; flex-direction: column; gap: 6px; padding: 14px 12px; border: 1px solid var(--line-2); border-radius: 14px; background: var(--field); text-align: center; }
+.guest-stats-label { font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.guest-stats-value { font-size: 22px; font-weight: 800; color: #7cc8ff; }
+.guest-stats-note { margin: 12px 0 0; font-size: 12px; color: var(--muted-2); line-height: 1.45; }
+.guest-stats-teasers { list-style: none; margin: 12px 0 16px; padding: 0; display: grid; gap: 9px; }
+.guest-stats-teasers li { font-size: 13px; color: var(--muted); font-weight: 600; }
+.guest-stats-preview .button { display: flex; align-items: center; justify-content: center; text-decoration: none; box-sizing: border-box; }
 .log-entry .log-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 .log-entry .icon-button { flex: none; }
 
@@ -4620,6 +4635,37 @@ html, body {
       </section>
 
       <section id="panel-stats" class="tab-panel" aria-label="Stats tab">
+        <div id="guestStatsPreview" class="guest-stats-preview" aria-label="Guest stats preview">
+          <article class="card">
+            <div class="eyebrow">Today's Stats</div>
+            <div class="guest-stats-metrics">
+              <div class="guest-stats-metric">
+                <span class="guest-stats-label">Today's Poop Profit</span>
+                <span id="guestStatToday" class="guest-stats-value">$0.00</span>
+              </div>
+              <div class="guest-stats-metric">
+                <span class="guest-stats-label">Time on Company Time</span>
+                <span id="guestStatTime" class="guest-stats-value">00:00:00</span>
+              </div>
+              <div class="guest-stats-metric">
+                <span class="guest-stats-label">Sessions Today</span>
+                <span id="guestStatSessions" class="guest-stats-value">0</span>
+              </div>
+            </div>
+            <p class="guest-stats-note">Today's numbers come from the sessions on this device. They aren't saved yet.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">Unlock with a free account</div>
+            <ul class="guest-stats-teasers">
+              <li>🔒 Lifetime earnings + projected annual yield</li>
+              <li>🔒 Earnings trends over time</li>
+              <li>🔒 Average poop value + most profitable day</li>
+              <li>🔒 Streaks + your real Turd Token balance</li>
+              <li>🔒 Shareable stat reports</li>
+            </ul>
+            <a id="guestStatsCtaButton" class="button full" href="auth.html">Save my sessions to start my stats</a>
+          </article>
+        </div>
         <div class="panel-grid stats-panel-grid">
           <article class="card" style="grid-column: span 12;">
             <div class="stats-filter-bar">
@@ -5451,15 +5497,12 @@ html, body {
       var LOCK_IMPRESSION_SESSION_KEY = "pp_core_lock_impression_v1";
       var TEASER_STOP_LOCAL_KEY = "pp_core_teaser_session_stop_v1";
       var SIGNED_UNLOCK_TRACKED_KEY = "pp_core_signed_in_unlock_v1";
-      // #walletCorner is intentionally NOT locked for guests: it now shows the
-      // local-only "unclaimed" token counter with a sign-in nudge.
-      // #panel-coming is deliberately public: upcoming games/merch are marketing,
-      // and guests seeing them is a reason to create an account, not a reward.
-      // .log-card is visible to guests: they see their own device-local sessions
-      // marked "not saved", with a save CTA underneath.
-      var SOFT_LOCK_CONFIG = [
-        { selector: "#panel-stats", region: "stats_tab" }
-      ];
+      // Nothing is blur-locked for guests anymore:
+      // - #walletCorner shows the local "unclaimed" token counter with a claim nudge.
+      // - #panel-coming is public marketing for the account.
+      // - .log-card shows device-local sessions marked "not saved" with a save CTA.
+      // - #panel-stats swaps to a guest preview (today's numbers + locked teasers).
+      var SOFT_LOCK_CONFIG = [];
       var walletSnapshot = {
         new_balance: 0,
         window_day_count: 0,
@@ -7120,6 +7163,12 @@ html, body {
             trackCoreEvent("core_guest_save_cta_click", { source: "session_log" });
           });
         }
+        var guestStatsCtaButton = document.getElementById("guestStatsCtaButton");
+        if (guestStatsCtaButton) {
+          guestStatsCtaButton.addEventListener("click", function () {
+            trackCoreEvent("core_guest_save_cta_click", { source: "stats_preview" });
+          });
+        }
         if (guestResultModal) {
           if (guestResultSaveButton) {
             guestResultSaveButton.addEventListener("click", function () {
@@ -8196,6 +8245,28 @@ html, body {
           renderStats();
         }
         renderLog();
+        renderGuestStatsPreview();
+      }
+
+      function renderGuestStatsPreview() {
+        if (isSignedInMode()) return;
+        var todayEl = document.getElementById("guestStatToday");
+        var timeEl = document.getElementById("guestStatTime");
+        var sessionsEl = document.getElementById("guestStatSessions");
+        if (!todayEl || !timeEl || !sessionsEl) return;
+        var now = Date.now();
+        var todaySessions = (Array.isArray(state.sessions) ? state.sessions : []).filter(function (session) {
+          return isSameDay(session.endedAtMs, now);
+        });
+        var todayEarnings = todaySessions.reduce(function (sum, session) {
+          return sum + (Number(session.earnings) || 0);
+        }, 0);
+        var todaySeconds = todaySessions.reduce(function (sum, session) {
+          return sum + (Number(session.durationSeconds) || 0);
+        }, 0);
+        todayEl.textContent = "$" + roundCurrency(todayEarnings).toFixed(2);
+        timeEl.textContent = formatDuration(todaySeconds);
+        sessionsEl.textContent = String(todaySessions.length);
       }
 
       function resetStatDisplaysForCountUp() {
