@@ -5118,6 +5118,7 @@ html, body {
       var guestResultOkButton = document.getElementById("guestResultOkButton");
       var guestResultTpInput = document.getElementById("guestResultTpInput");
       var guestResultTpHint = document.getElementById("guestResultTpHint");
+      var activeGuestResultSession = null;
       var ratingTpInput = document.getElementById("ratingTpInput");
       var ratingTpHint = document.getElementById("ratingTpHint");
       var ratingProfitValue = document.getElementById("ratingProfitValue");
@@ -5127,10 +5128,12 @@ html, body {
       var statTpSavings = document.getElementById("statTpSavings");
       var pendingTpContext = null;
 
+      var GUEST_STATE_STORAGE_KEY = "pp_core_tabs_v1_guest";
+
       function getStorageKey() {
         return authContext && authContext.userId
           ? ("pp_core_tabs_v1_u_" + authContext.userId)
-          : "pp_core_tabs_v1_guest";
+          : GUEST_STATE_STORAGE_KEY;
       }
       var DEFAULT_STATE = {
         activeTab: "calculator",
@@ -5579,11 +5582,14 @@ html, body {
         document.body.classList.add("wallet-modal-open");
       }
 
-      function openGuestResult(earnings, durationSeconds) {
+      function openGuestResult(session) {
         if (!guestResultModal) {
           openGuestCta("session_stop");
           return;
         }
+        activeGuestResultSession = session || null;
+        var earnings = session ? session.earnings : 0;
+        var durationSeconds = session ? session.durationSeconds : 0;
         if (guestResultEarnings) {
           guestResultEarnings.textContent = "$" + roundCurrency(earnings).toFixed(2);
         }
@@ -5597,15 +5603,13 @@ html, body {
         document.body.classList.add("wallet-modal-open");
       }
 
-      function closeGuestResult(showCta) {
+      function closeGuestResult() {
         if (!guestResultModal) return;
         finalizePendingSession();
+        activeGuestResultSession = null;
         guestResultModal.classList.remove("open");
         guestResultModal.setAttribute("aria-hidden", "true");
         document.body.classList.remove("wallet-modal-open");
-        if (showCta) {
-          openGuestCta("session_stop");
-        }
       }
 
       function closeGuestCta() {
@@ -6652,15 +6656,18 @@ html, body {
             persist();
             renderAll();
           }
-          // Row already exists (inserted at stop); push TP as an update.
+          // Signed-in row already exists (inserted at stop); push TP as an update.
           if (isSignedInMode() && tpSquares !== null && updatedSession) {
             pushSessionUpdate(updatedSession, { tp_squares: tpSquares, tp_savings: tpSavings });
           }
+          // Guest rows are inserted anonymously now that TP is known. client_id
+          // ties the anon row to the local session so post-signup sync can claim
+          // it without double-importing (fire and forget).
+          if (ctx.guest && !isSignedInMode() && updatedSession) {
+            insertGuestSessionRow(updatedSession);
+          }
           return;
         }
-
-        // Guests have no row yet; insert now that TP is known (fire and forget).
-        insertGuestSessionRow(ctx.earnings, ctx.durationSeconds, tpSquares, tpSavings);
       }
 
       function insertSessionRow(session) {
@@ -6715,7 +6722,7 @@ html, body {
         }
       }
 
-      function insertGuestSessionRow(earnings, durationSeconds, tpSquares, tpSavings) {
+      function insertGuestSessionRow(session) {
         try {
           var client = authContext.supabase;
           if (!client || typeof client.from !== "function") {
@@ -6723,16 +6730,18 @@ html, body {
             return;
           }
 
-          var hasTp = tpSquares !== null && tpSquares !== undefined;
+          var hasTp = session.tp_squares !== null && session.tp_squares !== undefined;
           var geo = currentGeo();
           var row = {
             user_id: null,
             anon_id: getWalletAnonId(),
-            earnings: roundCurrency(Number(earnings) || 0),
-            duration_seconds: Math.max(0, Math.floor(Number(durationSeconds) || 0)),
-            ended_at: new Date().toISOString(),
-            tp_squares: hasTp ? Math.max(0, Math.floor(Number(tpSquares) || 0)) : null,
-            tp_savings: hasTp ? (Number(tpSavings) || 0) : null,
+            client_id: session.id || null,
+            earnings: roundCurrency(Number(session.earnings) || 0),
+            duration_seconds: Math.max(0, Math.floor(Number(session.durationSeconds) || 0)),
+            hourly_wage_snapshot: roundCurrency(Number(session.hourlyWageSnapshot) || 0),
+            ended_at: new Date(Number(session.endedAtMs) || Date.now()).toISOString(),
+            tp_squares: hasTp ? Math.max(0, Math.floor(Number(session.tp_squares) || 0)) : null,
+            tp_savings: hasTp ? (Number(session.tp_savings) || 0) : null,
             city: geo.city,
             region: geo.region,
             country: geo.country
@@ -6860,6 +6869,26 @@ html, body {
           }
         });
 
+        // Sessions completed while signed out live in the guest bucket. Import
+        // them into this account on every sync (not one-time: a user can sign
+        // out, poop as a guest, and sign back in). Successfully saved sessions
+        // are pruned from the guest bucket afterwards; client_id dedupe against
+        // remote rows keeps re-reads harmless.
+        try {
+          var guestRaw = window.localStorage ? window.localStorage.getItem(GUEST_STATE_STORAGE_KEY) : null;
+          if (guestRaw) {
+            var guestBucket = sanitizeState(JSON.parse(guestRaw));
+            (Array.isArray(guestBucket.sessions) ? guestBucket.sessions : []).forEach(function (session) {
+              if (session && session.id && !session.dbId && !seen[session.id]) {
+                seen[session.id] = true;
+                candidates.push(session);
+              }
+            });
+          }
+        } catch (error) {
+          console.warn("guest session import read failed:", error && error.message ? error.message : error);
+        }
+
         // One-time migration of the legacy shared bucket into this account.
         var legacyFlag = "pp_sessions_legacy_migrated_" + authContext.userId;
         if (!readLocalFlag(legacyFlag)) {
@@ -6930,10 +6959,36 @@ html, body {
               .sort(function (a, b) { return b.endedAtMs - a.endedAtMs; });
             persist();
             renderAll();
+            pruneImportedGuestSessions();
           })
           .catch(function (error) {
             console.warn("syncSessionsFromSupabase failed:", error && error.message ? error.message : error);
           });
+      }
+
+      // Once guest sessions are confirmed in the account (present in the synced
+      // remote state), drop them from the device-local guest bucket so a later
+      // sign-out doesn't show already-saved sessions as unsaved.
+      function pruneImportedGuestSessions() {
+        try {
+          if (!window.localStorage) return;
+          var raw = window.localStorage.getItem(GUEST_STATE_STORAGE_KEY);
+          if (!raw) return;
+          var guestBucket = JSON.parse(raw);
+          if (!guestBucket || !Array.isArray(guestBucket.sessions) || !guestBucket.sessions.length) return;
+          var savedIds = {};
+          (Array.isArray(state.sessions) ? state.sessions : []).forEach(function (session) {
+            if (session && session.id) savedIds[session.id] = true;
+          });
+          var remaining = guestBucket.sessions.filter(function (session) {
+            return !(session && savedIds[session.id]);
+          });
+          if (remaining.length === guestBucket.sessions.length) return;
+          guestBucket.sessions = remaining;
+          window.localStorage.setItem(GUEST_STATE_STORAGE_KEY, JSON.stringify(guestBucket));
+        } catch (_error) {
+          // Guest bucket pruning is best-effort.
+        }
       }
 
       function initializeWallet() {
@@ -7888,16 +7943,30 @@ html, body {
         clearIntervalIfRunning();
 
         if (!isSignedInMode()) {
+          // Guest sessions are kept in the device-local guest bucket so the log
+          // and stats preview can show them. They are marked "not saved" in the
+          // UI and imported into the account after signup (via the anon-row
+          // claim or the local-candidate sync, deduped by client_id).
+          var guestSession = {
+            id: String(Date.now()),
+            startedAtMs: startedAt,
+            endedAtMs: endedAt,
+            durationSeconds: durationSeconds,
+            hourlyWageSnapshot: hourly,
+            earnings: roundCurrency(earnings),
+            rating: 0
+          };
+          state.sessions.unshift(guestSession);
           persist();
           renderAll();
           setStatus(
             statusMessage,
-            "Session done: $" + roundCurrency(earnings).toFixed(2) + ". Sign in to save it and start earning Turd Tokens.",
+            "Session done: $" + roundCurrency(earnings).toFixed(2) + ". It's on this device only until you save it.",
             "ok"
           );
           writeLocalFlag(TEASER_STOP_LOCAL_KEY);
-          // Motivational local-only counter (never sent to the server): one
-          // "unclaimed" token per day, mirroring the daily claim rule.
+          // Motivational local-only counter: one "unclaimed" token per day,
+          // mirroring the daily claim rule, capped at the signup bonus.
           incrementGuestTokenForToday();
           renderGuestWallet();
           trackCoreEvent("core_teaser_session_stop", {
@@ -7906,9 +7975,9 @@ html, body {
             earnings_bucket: bucketize(earnings, "earnings")
           });
           // TP squares are captured at the end of the session inside the result
-          // modal, so defer the poop_sessions insert until it closes.
-          pendingTpContext = { earnings: earnings, durationSeconds: durationSeconds, sessionId: null };
-          openGuestResult(earnings, durationSeconds);
+          // modal, so defer the anonymous poop_sessions insert until it closes.
+          pendingTpContext = { earnings: earnings, durationSeconds: durationSeconds, sessionId: guestSession.id, guest: true };
+          openGuestResult(guestSession);
           return;
         }
 
