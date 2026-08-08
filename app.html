@@ -105,6 +105,8 @@
     .bathroom-gdp-line[hidden]{display:none}
     .wallet-guest-label{margin:4px 0 0;font-size:11px;line-height:1.35;color:#9ad8ff;opacity:.92;max-width:180px}
     .wallet-guest-label[hidden]{display:none}
+    .wallet-corner-clickable{cursor:pointer}
+    .wallet-corner-clickable:hover{filter:brightness(1.08)}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/html-to-image"></script>
@@ -260,71 +262,6 @@
     body.guest-mode #headAuth,
     body.guest-mode #walletUsernameButton {
       display: none !important;
-    }
-
-    .soft-locked {
-      position: relative;
-      isolation: isolate;
-      overflow: hidden;
-      border-color: rgba(73, 159, 255, 0.45) !important;
-    }
-
-    .soft-locked > *:not(.soft-lock-overlay) {
-      pointer-events: none !important;
-      user-select: none !important;
-      filter: blur(4px) saturate(0.78);
-      transition: filter 0.2s ease;
-    }
-
-    .soft-lock-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 14px;
-      background:
-        radial-gradient(130% 70% at 50% 50%, rgba(19, 40, 75, 0.28), rgba(4, 8, 18, 0.64)),
-        linear-gradient(180deg, rgba(4, 10, 24, 0.25), rgba(4, 10, 24, 0.6));
-      cursor: pointer;
-    }
-
-    .soft-lock-overlay::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border: 1px solid rgba(73, 159, 255, 0.42);
-      border-radius: inherit;
-      pointer-events: none;
-    }
-
-    .soft-lock-overlay button {
-      border: 1px solid rgba(77, 164, 255, 0.65);
-      background: rgba(10, 22, 45, 0.82);
-      color: #e8f3ff;
-      border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 12px;
-      font-weight: 700;
-      font-family: inherit;
-      letter-spacing: 0.02em;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      box-shadow: 0 0 18px -8px rgba(89, 177, 255, 0.8);
-    }
-
-    .soft-lock-overlay button:hover {
-      border-color: rgba(119, 194, 255, 0.9);
-      color: #ffffff;
-    }
-
-    .soft-lock-icon {
-      width: 16px;
-      height: 16px;
-      display: inline-block;
     }
 
     .guest-cta-modal {
@@ -494,6 +431,32 @@
       font-weight: 800;
       color: var(--text);
       line-height: 1.1;
+    }
+
+    .guest-result-tokens {
+      margin: 0 0 6px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffd35e;
+    }
+
+    .guest-result-continue {
+      display: block;
+      margin: 12px auto 0;
+      padding: 6px 10px;
+      background: none;
+      border: 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .guest-result-continue:hover {
+      color: var(--text);
     }
 
     @media (max-width: 760px) {
@@ -2356,7 +2319,8 @@
       padding: 16px;
       background: rgba(3, 8, 16, 0.76);
       backdrop-filter: blur(4px);
-      z-index: 130;
+      /* Above .guest-cta-modal (130) so guests can share from the result sheet. */
+      z-index: 150;
     }
 
     .share-picker-modal.open {
@@ -2774,7 +2738,8 @@
       padding: 16px;
       background: rgba(3, 8, 16, 0.6);
       backdrop-filter: blur(3px);
-      z-index: 140;
+      /* Above .guest-cta-modal (130) so guests can share from the result sheet. */
+      z-index: 150;
       visibility: hidden;
       opacity: 0;
       pointer-events: none;
@@ -4004,6 +3969,36 @@ html, body {
 .log-entry .log-meta { font-size: 11.5px; color: var(--muted-2); line-height: 1.45; word-break: break-word; }
 .log-entry .log-tp { display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 600; color: var(--green); line-height: 1.4; }
 .log-entry .log-tp .log-tp-icon { width: 18px; height: 18px; flex: none; object-fit: contain; }
+.log-entry .log-unsaved { font-size: 11.5px; font-weight: 700; color: #ffc966; line-height: 1.4; }
+.guest-log-cta { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--line-2); }
+.guest-log-cta[hidden] { display: none; }
+.guest-log-cta-text { margin: 0 0 10px; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+.guest-log-cta .button { display: flex; align-items: center; justify-content: center; text-decoration: none; box-sizing: border-box; }
+
+/* Guests get a real stats preview (today's numbers + locked teasers) instead of
+   the full stats grid, which needs saved history to be meaningful. */
+.guest-stats-preview { display: none; }
+body.guest-mode #panel-stats .guest-stats-preview { display: grid; gap: 18px; }
+body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
+.guest-stats-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+@media (max-width: 520px) { .guest-stats-metrics { grid-template-columns: 1fr; } }
+.guest-stats-metric { display: flex; flex-direction: column; gap: 6px; padding: 14px 12px; border: 1px solid var(--line-2); border-radius: 14px; background: var(--field); text-align: center; }
+.guest-stats-label { font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.guest-stats-value { font-size: 22px; font-weight: 800; color: #7cc8ff; }
+.guest-stats-note { margin: 12px 0 0; font-size: 12px; color: var(--muted-2); line-height: 1.45; }
+.guest-stats-teasers { list-style: none; margin: 12px 0 16px; padding: 0; display: grid; gap: 9px; }
+.guest-stats-teasers li { font-size: 13px; color: var(--muted); font-weight: 600; }
+.guest-stats-preview .button { display: flex; align-items: center; justify-content: center; text-decoration: none; box-sizing: border-box; }
+
+/* Returning-guest nudge: shows at most once per day when a guest comes back on a
+   later day with unsaved sessions and/or unclaimed tokens. Never blocks the timer. */
+.guest-return-nudge { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 14px; padding: 13px 15px; border: 1px solid rgba(255, 201, 102, 0.45); border-radius: var(--r-md, 14px); background: linear-gradient(180deg, rgba(64, 46, 14, 0.55), rgba(38, 28, 10, 0.55)); animation: rise .35s var(--ease); }
+.guest-return-nudge[hidden] { display: none; }
+.guest-return-nudge-text { margin: 0; font-size: 13.5px; font-weight: 700; color: #ffe0a3; line-height: 1.45; flex: 1 1 220px; }
+.guest-return-nudge-actions { display: flex; align-items: center; gap: 10px; flex: none; }
+.guest-return-nudge-actions .button { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; padding: 9px 13px; }
+.guest-return-nudge-dismiss { background: none; border: 0; padding: 8px 6px; color: var(--muted); font-family: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.guest-return-nudge-dismiss:hover { color: var(--text); }
 .log-entry .log-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 .log-entry .icon-button { flex: none; }
 
@@ -4493,6 +4488,13 @@ html, body {
       </div>
 
       <section id="panel-calculator" class="tab-panel active" aria-label="Calculator tab">
+        <div id="guestReturnNudge" class="guest-return-nudge" hidden>
+          <p id="guestReturnNudgeText" class="guest-return-nudge-text">Welcome back.</p>
+          <div class="guest-return-nudge-actions">
+            <a id="guestReturnNudgeSaveButton" class="button" href="auth.html">Save my stuff</a>
+            <button id="guestReturnNudgeDismissButton" class="guest-return-nudge-dismiss" type="button">Not now</button>
+          </div>
+        </div>
         <div class="panel-grid">
           <article class="card wage-card">
             <button id="wageStripToggleButton" class="wage-strip-toggle" type="button" aria-expanded="false" aria-controls="wageStripBody">
@@ -4578,11 +4580,46 @@ html, body {
               <button id="clearAllButton" class="button warn" type="button">Clear All</button>
             </div>
             <div id="logList" class="log-list" aria-live="polite"></div>
+            <div id="guestLogCta" class="guest-log-cta" hidden>
+              <p class="guest-log-cta-text">These sessions live on this device only. Create a free account to keep them permanently and see them on any device.</p>
+              <a id="guestLogCtaButton" class="button full" href="auth.html">Save my sessions</a>
+            </div>
           </article>
         </div>
       </section>
 
       <section id="panel-stats" class="tab-panel" aria-label="Stats tab">
+        <div id="guestStatsPreview" class="guest-stats-preview" aria-label="Guest stats preview">
+          <article class="card">
+            <div class="eyebrow">Today's Stats</div>
+            <div class="guest-stats-metrics">
+              <div class="guest-stats-metric">
+                <span class="guest-stats-label">Today's Poop Profit</span>
+                <span id="guestStatToday" class="guest-stats-value">$0.00</span>
+              </div>
+              <div class="guest-stats-metric">
+                <span class="guest-stats-label">Time on Company Time</span>
+                <span id="guestStatTime" class="guest-stats-value">00:00:00</span>
+              </div>
+              <div class="guest-stats-metric">
+                <span class="guest-stats-label">Sessions Today</span>
+                <span id="guestStatSessions" class="guest-stats-value">0</span>
+              </div>
+            </div>
+            <p class="guest-stats-note">Today's numbers come from the sessions on this device. They aren't saved yet.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">Unlock with a free account</div>
+            <ul class="guest-stats-teasers">
+              <li>🔒 Lifetime earnings + projected annual yield</li>
+              <li>🔒 Earnings trends over time</li>
+              <li>🔒 Average poop value + most profitable day</li>
+              <li>🔒 Streaks + your real Turd Token balance</li>
+              <li>🔒 Shareable stat reports</li>
+            </ul>
+            <a id="guestStatsCtaButton" class="button full" href="auth.html">Save my sessions to start my stats</a>
+          </article>
+        </div>
         <div class="panel-grid stats-panel-grid">
           <article class="card" style="grid-column: span 12;">
             <div class="stats-filter-bar">
@@ -4961,7 +4998,7 @@ html, body {
 
   <div id="guestResultModal" class="guest-cta-modal" aria-hidden="true">
     <div class="guest-cta-sheet guest-result-sheet" role="dialog" aria-modal="true" aria-labelledby="guestResultTitle">
-      <h3 id="guestResultTitle" class="guest-cta-title">Session complete</h3>
+      <h3 id="guestResultTitle" class="guest-cta-title">You just got paid to poop.</h3>
       <div class="guest-result-metrics">
         <div class="guest-result-metric">
           <span class="guest-result-label">You earned</span>
@@ -4972,12 +5009,16 @@ html, body {
           <span id="guestResultDuration" class="guest-result-time">0:00</span>
         </div>
       </div>
+      <p id="guestResultTokens" class="guest-result-tokens">🪙 1 Turd Token waiting</p>
       <div class="tp-field">
         <label for="guestResultTpInput">TP squares used <span class="tp-optional">(optional)</span></label>
         <input id="guestResultTpInput" type="number" min="0" step="1" inputmode="numeric" placeholder="e.g. 12">
         <p id="guestResultTpHint" class="tp-live-savings" hidden></p>
       </div>
-      <button id="guestResultOkButton" class="button full guest-cta-primary" type="button">OK</button>
+      <a id="guestResultSaveButton" class="button full guest-cta-primary" href="auth.html">Save my poop + claim my Turd Token</a>
+      <p class="guest-cta-primary-note">Free account. Keeps this session, your history, and your Tokens — on all your devices.</p>
+      <button id="guestResultShareButton" class="button ghost full guest-cta-secondary" type="button">↗ Share this poop</button>
+      <button id="guestResultContinueButton" class="guest-result-continue" type="button">Continue without saving</button>
     </div>
   </div>
 
@@ -4991,9 +5032,9 @@ html, body {
       <h3 id="guestCtaTitle" class="guest-cta-title">Unlock the full porcelain portfolio.</h3>
       <p id="guestCtaSubtitle" class="guest-cta-subtitle">Save your sessions and turn each stop into streaks, stats, and token glory.</p>
       <ul class="guest-cta-bullets">
-        <li>Save your sessions</li>
-        <li>Earn Turd Tokens</li>
-        <li>Unlock stats + share cards</li>
+        <li>Keep your session history</li>
+        <li>Claim + keep earning Turd Tokens</li>
+        <li>Unlock lifetime stats + trends</li>
       </ul>
       <a id="guestCtaCreateButton" class="button full guest-cta-primary" href="auth.html">Create free account</a>
       <p class="guest-cta-primary-note">Always free.</p>
@@ -5115,9 +5156,13 @@ html, body {
       var guestResultModal = document.getElementById("guestResultModal");
       var guestResultEarnings = document.getElementById("guestResultEarnings");
       var guestResultDuration = document.getElementById("guestResultDuration");
-      var guestResultOkButton = document.getElementById("guestResultOkButton");
+      var guestResultTokens = document.getElementById("guestResultTokens");
+      var guestResultSaveButton = document.getElementById("guestResultSaveButton");
+      var guestResultShareButton = document.getElementById("guestResultShareButton");
+      var guestResultContinueButton = document.getElementById("guestResultContinueButton");
       var guestResultTpInput = document.getElementById("guestResultTpInput");
       var guestResultTpHint = document.getElementById("guestResultTpHint");
+      var activeGuestResultSession = null;
       var ratingTpInput = document.getElementById("ratingTpInput");
       var ratingTpHint = document.getElementById("ratingTpHint");
       var ratingProfitValue = document.getElementById("ratingProfitValue");
@@ -5127,10 +5172,12 @@ html, body {
       var statTpSavings = document.getElementById("statTpSavings");
       var pendingTpContext = null;
 
+      var GUEST_STATE_STORAGE_KEY = "pp_core_tabs_v1_guest";
+
       function getStorageKey() {
         return authContext && authContext.userId
           ? ("pp_core_tabs_v1_u_" + authContext.userId)
-          : "pp_core_tabs_v1_guest";
+          : GUEST_STATE_STORAGE_KEY;
       }
       var DEFAULT_STATE = {
         activeTab: "calculator",
@@ -5371,8 +5418,8 @@ html, body {
         TUTORIAL_STEPS[2],
         TUTORIAL_STEPS[3],
         {
-          title: "Save & Unlock More",
-          body: "Sign in free to save your logs, earn Turd Tokens, and unlock streaks, stats, and share cards.",
+          title: "Don't Lose Your Progress",
+          body: "Your sessions and Turd Tokens stay on this device until you save them. Create a free account to keep your history, claim your Tokens, and sync across devices.",
           target: "#tutorialHelpButton",
           tab: "calculator",
           mascotSrc: "OnboardingMascot_20260419_095122_00000.jpg"
@@ -5393,20 +5440,23 @@ html, body {
       var RETURN_VISIT_LAST_SEEN_KEY = "pp_core_last_seen_ms_v1";
       var RETURN_VISIT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
       var RETURN_VISIT_MIN_GAP_MS = 60 * 1000;
+      var GUEST_RETURN_NUDGE_DAY_KEY = "pp_guest_return_nudge_day_v1";
       var lastTrackedHourlyWageValue = null;
       var WALLET_ANON_ID_KEY = "pp_wallet_anon_id_v1";
       var GUEST_TOKENS_KEY = "pp_guest_tokens_v1";
+      // Must match the fixed server-side signup bonus in wallet_grant_signup_bonus
+      // (supabase migration). The guest "unclaimed" counter is capped here so the
+      // app never promises more tokens at signup than the server actually grants.
+      var GUEST_TOKEN_CAP = 3;
       var WALLET_FUNCTION_URL = "https://ukfboxemqwuwkvfglzfq.supabase.co/functions/v1/wallet";
-      var LOCK_IMPRESSION_SESSION_KEY = "pp_core_lock_impression_v1";
       var TEASER_STOP_LOCAL_KEY = "pp_core_teaser_session_stop_v1";
       var SIGNED_UNLOCK_TRACKED_KEY = "pp_core_signed_in_unlock_v1";
-      // #walletCorner is intentionally NOT locked for guests: it now shows the
-      // local-only "unclaimed" token counter with a sign-in nudge.
-      var SOFT_LOCK_CONFIG = [
-        { selector: ".log-card", region: "session_log" },
-        { selector: "#panel-stats", region: "stats_tab" },
-        { selector: "#panel-coming", region: "coming_tab" }
-      ];
+      // Nothing is blur-locked for guests anymore (the old soft-lock overlay
+      // system was removed when the last region was ungated):
+      // - #walletCorner shows the local "unclaimed" token counter with a claim nudge.
+      // - #panel-coming is public marketing for the account.
+      // - .log-card shows device-local sessions marked "not saved" with a save CTA.
+      // - #panel-stats swaps to a guest preview (today's numbers + locked teasers).
       var walletSnapshot = {
         new_balance: 0,
         window_day_count: 0,
@@ -5495,27 +5545,10 @@ html, body {
         }
       }
 
-      function trackLockImpressionOnce() {
-        try {
-          if (!window.sessionStorage) return;
-          if (window.sessionStorage.getItem(LOCK_IMPRESSION_SESSION_KEY) === "1") return;
-          window.sessionStorage.setItem(LOCK_IMPRESSION_SESSION_KEY, "1");
-          trackCoreEvent("core_lock_impression");
-        } catch (_error) {
-          // Ignore sessionStorage failures.
-        }
-      }
-
       function describeGuestCtaEyebrow(regionName) {
         switch (regionName) {
           case "wallet_banner":
             return "Turd Token wallet";
-          case "session_log":
-            return "Session history";
-          case "stats_tab":
-            return "Stats & analytics";
-          case "coming_tab":
-            return "Shop & unlockables";
           case "session_stop":
             return "Save this session";
           default:
@@ -5527,12 +5560,28 @@ html, body {
         if (regionName === "session_stop") {
           return "That's just one poop in a lifetime of more poops.";
         }
+        if (regionName === "wallet_banner") {
+          var count = getGuestTokenCount();
+          if (count > 0) {
+            return "Claim your " + (count === 1 ? "Turd Token" : count + " Turd Tokens") + ".";
+          }
+          return "Start earning Turd Tokens.";
+        }
         return "Unlock the full porcelain portfolio.";
       }
 
       function describeGuestCta(regionName) {
         if (regionName === "session_stop") {
           return "Log in now to save your logs, share your stats with friends, and view detailed analytics.";
+        }
+        if (regionName === "wallet_banner") {
+          var count = getGuestTokenCount();
+          if (count > 0) {
+            return (count === 1 ? "You already have a token" : "You already have tokens") +
+              " waiting for you. Create your free account to add " +
+              (count === 1 ? "it" : "them") + " to your real balance and keep earning daily.";
+          }
+          return "Finish a poop to earn your first Turd Token, then create a free account to bank it.";
         }
         return "Save your sessions and turn each stop into streaks, stats, and token glory.";
       }
@@ -5549,21 +5598,42 @@ html, body {
         if (guestCtaSubtitle) {
           guestCtaSubtitle.textContent = describeGuestCta(activeLockRegion);
         }
+        if (guestCtaCreateButton) {
+          var unclaimedCount = getGuestTokenCount();
+          guestCtaCreateButton.textContent = unclaimedCount > 0
+            ? ("Claim my " + (unclaimedCount === 1 ? "Turd Token" : unclaimedCount + " Turd Tokens"))
+            : "Create free account";
+        }
         guestCtaModal.classList.add("open");
         guestCtaModal.setAttribute("aria-hidden", "false");
         document.body.classList.add("wallet-modal-open");
       }
 
-      function openGuestResult(earnings, durationSeconds) {
+      function openGuestResult(session) {
         if (!guestResultModal) {
           openGuestCta("session_stop");
           return;
         }
+        activeGuestResultSession = session || null;
+        var earnings = session ? session.earnings : 0;
+        var durationSeconds = session ? session.durationSeconds : 0;
+        var earningsText = "$" + roundCurrency(earnings).toFixed(2);
+        var tokenCount = getGuestTokenCount();
+        var tokenNoun = tokenCount === 1 ? "Turd Token" : tokenCount + " Turd Tokens";
         if (guestResultEarnings) {
-          guestResultEarnings.textContent = "$" + roundCurrency(earnings).toFixed(2);
+          guestResultEarnings.textContent = earningsText;
         }
         if (guestResultDuration) {
           guestResultDuration.textContent = formatDuration(Math.max(0, Math.floor(durationSeconds || 0)));
+        }
+        if (guestResultTokens) {
+          guestResultTokens.textContent = "🪙 " + (tokenCount === 1 ? "1 Turd Token" : tokenNoun) + " waiting";
+          guestResultTokens.hidden = tokenCount <= 0;
+        }
+        if (guestResultSaveButton) {
+          guestResultSaveButton.textContent = tokenCount > 0
+            ? ("Save my " + earningsText + " + claim my " + tokenNoun)
+            : ("Save my " + earningsText + " poop");
         }
         prefillTpInput(guestResultTpInput);
         updateTpLiveHint(guestResultTpInput, guestResultTpHint);
@@ -5572,15 +5642,13 @@ html, body {
         document.body.classList.add("wallet-modal-open");
       }
 
-      function closeGuestResult(showCta) {
+      function closeGuestResult() {
         if (!guestResultModal) return;
         finalizePendingSession();
+        activeGuestResultSession = null;
         guestResultModal.classList.remove("open");
         guestResultModal.setAttribute("aria-hidden", "true");
         document.body.classList.remove("wallet-modal-open");
-        if (showCta) {
-          openGuestCta("session_stop");
-        }
       }
 
       function closeGuestCta() {
@@ -5590,91 +5658,6 @@ html, body {
         if (!walletFirstModal || !walletFirstModal.classList.contains("open")) {
           document.body.classList.remove("wallet-modal-open");
         }
-      }
-
-      function createSoftLockOverlay(regionName) {
-        var overlay = document.createElement("div");
-        overlay.className = "soft-lock-overlay";
-        overlay.setAttribute("data-lock-region", regionName);
-        var button = document.createElement("button");
-        button.type = "button";
-        button.innerHTML = "<svg class=\"soft-lock-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M7 10V8a5 5 0 0 1 10 0v2h1.25A1.75 1.75 0 0 1 20 11.75v8.5A1.75 1.75 0 0 1 18.25 22h-12.5A1.75 1.75 0 0 1 4 20.25v-8.5A1.75 1.75 0 0 1 5.75 10H7Zm2 0h6V8a3 3 0 1 0-6 0v2Z\"/></svg><span>Unlock</span>";
-        overlay.appendChild(button);
-        overlay.addEventListener("click", function (event) {
-          event.preventDefault();
-          event.stopPropagation();
-          trackCoreEvent("core_lock_click", { region_name: regionName });
-          openGuestCta(regionName);
-        });
-        return overlay;
-      }
-
-      function lockElementRegion(target, regionName) {
-        if (!target) return;
-        target.classList.add("soft-locked");
-        target.setAttribute("data-soft-lock-region", regionName);
-        var overlay = target.querySelector(".soft-lock-overlay");
-        if (!overlay) {
-          overlay = createSoftLockOverlay(regionName);
-          target.appendChild(overlay);
-        }
-        Array.prototype.forEach.call(target.children, function (child) {
-          if (child === overlay) return;
-          if (!child.hasAttribute("data-soft-lock-prev-inert")) {
-            child.setAttribute("data-soft-lock-prev-inert", child.inert ? "1" : "0");
-          }
-          child.inert = true;
-        });
-        var focusables = target.querySelectorAll("a, button, input, select, textarea, [tabindex]");
-        focusables.forEach(function (node) {
-          if (node.closest(".soft-lock-overlay")) return;
-          if (!node.hasAttribute("data-soft-lock-prev-tabindex")) {
-            var previous = node.getAttribute("tabindex");
-            node.setAttribute("data-soft-lock-prev-tabindex", previous === null ? "__none__" : previous);
-          }
-          node.setAttribute("tabindex", "-1");
-          if ("disabled" in node && !node.hasAttribute("data-soft-lock-prev-disabled")) {
-            node.setAttribute("data-soft-lock-prev-disabled", node.disabled ? "1" : "0");
-            node.disabled = true;
-          }
-        });
-      }
-
-      function unlockElementRegion(target) {
-        if (!target) return;
-        target.classList.remove("soft-locked");
-        target.removeAttribute("data-soft-lock-region");
-        var overlay = target.querySelector(".soft-lock-overlay");
-        if (overlay) overlay.remove();
-        target.querySelectorAll("[data-soft-lock-prev-inert]").forEach(function (node) {
-          var previousInert = node.getAttribute("data-soft-lock-prev-inert") === "1";
-          node.inert = previousInert;
-          node.removeAttribute("data-soft-lock-prev-inert");
-        });
-        target.querySelectorAll("[data-soft-lock-prev-tabindex]").forEach(function (node) {
-          var previous = node.getAttribute("data-soft-lock-prev-tabindex");
-          if (previous === "__none__") node.removeAttribute("tabindex");
-          else node.setAttribute("tabindex", previous || "-1");
-          node.removeAttribute("data-soft-lock-prev-tabindex");
-        });
-        target.querySelectorAll("[data-soft-lock-prev-disabled]").forEach(function (node) {
-          var previousDisabled = node.getAttribute("data-soft-lock-prev-disabled") === "1";
-          node.disabled = previousDisabled;
-          node.removeAttribute("data-soft-lock-prev-disabled");
-        });
-      }
-
-      function applyGuestLocks() {
-        SOFT_LOCK_CONFIG.forEach(function (config) {
-          lockElementRegion(document.querySelector(config.selector), config.region);
-        });
-        trackLockImpressionOnce();
-      }
-
-      function clearGuestLocks() {
-        SOFT_LOCK_CONFIG.forEach(function (config) {
-          unlockElementRegion(document.querySelector(config.selector));
-        });
       }
 
       function renderAuthHeader() {
@@ -5698,12 +5681,15 @@ html, body {
           renderAuthHeader();
           closeProfileSetupModal();
           closeProfileEditModal();
-          applyGuestLocks();
           renderGuestWallet();
         } else {
-          clearGuestLocks();
           closeGuestCta();
           renderAuthHeader();
+          if (walletCorner) {
+            walletCorner.classList.remove("wallet-corner-clickable");
+            walletCorner.removeAttribute("role");
+            walletCorner.removeAttribute("tabindex");
+          }
         }
       }
 
@@ -6399,8 +6385,8 @@ html, body {
       // Purely local + motivational. NEVER sent to the server. Guests do not call
       // the wallet edge function at all; this counter just mirrors the daily rule
       // the UI communicates (one claim per day) to give guests a reason to sign in.
-      function localDayKey() {
-        var now = new Date();
+      function localDayKey(ms) {
+        var now = ms === undefined ? new Date() : new Date(ms);
         return now.getFullYear() + "-" +
           String(now.getMonth() + 1).padStart(2, "0") + "-" +
           String(now.getDate()).padStart(2, "0");
@@ -6414,7 +6400,7 @@ html, body {
           var parsed = JSON.parse(raw);
           if (!parsed || typeof parsed !== "object") return { count: 0, lastClaimDay: null };
           return {
-            count: Math.max(0, Math.floor(Number(parsed.count) || 0)),
+            count: Math.min(GUEST_TOKEN_CAP, Math.max(0, Math.floor(Number(parsed.count) || 0))),
             lastClaimDay: typeof parsed.lastClaimDay === "string" ? parsed.lastClaimDay : null
           };
         } catch (_error) {
@@ -6444,7 +6430,7 @@ html, body {
         if (state.lastClaimDay === today) {
           return state.count; // already earned today's unclaimed token
         }
-        state.count = Math.max(0, Math.floor(Number(state.count) || 0)) + 1;
+        state.count = Math.min(GUEST_TOKEN_CAP, Math.max(0, Math.floor(Number(state.count) || 0)) + 1);
         state.lastClaimDay = today;
         writeGuestTokenState(state);
         return state.count;
@@ -6458,22 +6444,91 @@ html, body {
         }
       }
 
+      function describeGuestTokens(count) {
+        if (count >= GUEST_TOKEN_CAP) {
+          return count + " unclaimed Turd Tokens — maxed out! Create your free account to claim them.";
+        }
+        if (count === 1) {
+          return "1 unclaimed Turd Token waiting. Create your free account to claim it.";
+        }
+        return count + " unclaimed Turd Tokens waiting. Create your free account to claim them.";
+      }
+
       function renderGuestWallet() {
         if (!walletCorner) return;
         var count = getGuestTokenCount();
+        var message = describeGuestTokens(count);
         if (walletBalanceValue) {
           walletBalanceValue.textContent = String(count);
         }
         var label = document.getElementById("walletGuestLabel");
         if (label) {
-          label.textContent = count + " unclaimed Turd Tokens. Sign in to start your real balance.";
+          label.textContent = message;
           label.hidden = false;
         }
         if (walletStreakValue) {
           walletStreakValue.hidden = true;
         }
-        walletCorner.setAttribute("aria-label", count + " unclaimed Turd Tokens. Sign in to start your real balance.");
+        // The guest wallet corner is a tap target that opens the claim CTA.
+        walletCorner.classList.add("wallet-corner-clickable");
+        walletCorner.setAttribute("role", "button");
+        walletCorner.setAttribute("tabindex", "0");
+        walletCorner.setAttribute("aria-label", message);
         if (statTokens) statTokens.textContent = String(count);
+      }
+
+      function describeGuestReturnNudge(unsavedTotal, tokenCount) {
+        var moneyPart = unsavedTotal > 0 ? ("$" + roundCurrency(unsavedTotal).toFixed(2)) : null;
+        var tokenPart = tokenCount > 0
+          ? (tokenCount === 1 ? "1 Turd Token" : tokenCount + " Turd Tokens")
+          : null;
+        if (moneyPart && tokenPart) {
+          return "Welcome back. Your " + moneyPart + " and " + tokenPart + " aren't saved yet.";
+        }
+        if (moneyPart) {
+          return "Welcome back. Your " + moneyPart + " in sessions isn't saved yet.";
+        }
+        return "Welcome back. Your " + tokenPart + (tokenCount === 1 ? " isn't" : " aren't") + " claimed yet.";
+      }
+
+      // Returning-guest nudge: greets a guest who comes back on a later day with
+      // unsaved sessions and/or unclaimed tokens. Shows at most once per local
+      // day, never on a first visit, never over a running timer. Must run BEFORE
+      // trackReturnVisitWithin7Days(), which overwrites the last-seen timestamp.
+      function maybeShowGuestReturnNudge() {
+        var nudge = document.getElementById("guestReturnNudge");
+        if (!nudge) return;
+        if (isSignedInMode()) return;
+        if (state.activeSessionStartMs) return;
+
+        var unsavedTotal = (Array.isArray(state.sessions) ? state.sessions : []).reduce(function (sum, session) {
+          return sum + (Number(session.earnings) || 0);
+        }, 0);
+        var tokenCount = getGuestTokenCount();
+        if (unsavedTotal <= 0 && tokenCount <= 0) return;
+
+        var today = localDayKey();
+        try {
+          if (!window.localStorage) return;
+          var storedVisit = Number(window.localStorage.getItem(RETURN_VISIT_LAST_SEEN_KEY));
+          var previousVisitMs = Number.isFinite(storedVisit) && storedVisit > 0 ? storedVisit : null;
+          // Only greet genuine returns: the last visit must be from an earlier day.
+          if (previousVisitMs === null || localDayKey(previousVisitMs) === today) return;
+          if (window.localStorage.getItem(GUEST_RETURN_NUDGE_DAY_KEY) === today) return;
+          window.localStorage.setItem(GUEST_RETURN_NUDGE_DAY_KEY, today);
+        } catch (_error) {
+          return;
+        }
+
+        var text = document.getElementById("guestReturnNudgeText");
+        if (text) text.textContent = describeGuestReturnNudge(unsavedTotal, tokenCount);
+        nudge.hidden = false;
+        trackCoreEvent("core_guest_return_nudge_shown");
+      }
+
+      function hideGuestReturnNudge() {
+        var nudge = document.getElementById("guestReturnNudge");
+        if (nudge) nudge.hidden = true;
       }
 
       function showSignupBonusCelebration(count) {
@@ -6616,15 +6671,18 @@ html, body {
             persist();
             renderAll();
           }
-          // Row already exists (inserted at stop); push TP as an update.
+          // Signed-in row already exists (inserted at stop); push TP as an update.
           if (isSignedInMode() && tpSquares !== null && updatedSession) {
             pushSessionUpdate(updatedSession, { tp_squares: tpSquares, tp_savings: tpSavings });
           }
+          // Guest rows are inserted anonymously now that TP is known. client_id
+          // ties the anon row to the local session so post-signup sync can claim
+          // it without double-importing (fire and forget).
+          if (ctx.guest && !isSignedInMode() && updatedSession) {
+            insertGuestSessionRow(updatedSession);
+          }
           return;
         }
-
-        // Guests have no row yet; insert now that TP is known (fire and forget).
-        insertGuestSessionRow(ctx.earnings, ctx.durationSeconds, tpSquares, tpSavings);
       }
 
       function insertSessionRow(session) {
@@ -6679,7 +6737,7 @@ html, body {
         }
       }
 
-      function insertGuestSessionRow(earnings, durationSeconds, tpSquares, tpSavings) {
+      function insertGuestSessionRow(session) {
         try {
           var client = authContext.supabase;
           if (!client || typeof client.from !== "function") {
@@ -6687,16 +6745,18 @@ html, body {
             return;
           }
 
-          var hasTp = tpSquares !== null && tpSquares !== undefined;
+          var hasTp = session.tp_squares !== null && session.tp_squares !== undefined;
           var geo = currentGeo();
           var row = {
             user_id: null,
             anon_id: getWalletAnonId(),
-            earnings: roundCurrency(Number(earnings) || 0),
-            duration_seconds: Math.max(0, Math.floor(Number(durationSeconds) || 0)),
-            ended_at: new Date().toISOString(),
-            tp_squares: hasTp ? Math.max(0, Math.floor(Number(tpSquares) || 0)) : null,
-            tp_savings: hasTp ? (Number(tpSavings) || 0) : null,
+            client_id: session.id || null,
+            earnings: roundCurrency(Number(session.earnings) || 0),
+            duration_seconds: Math.max(0, Math.floor(Number(session.durationSeconds) || 0)),
+            hourly_wage_snapshot: roundCurrency(Number(session.hourlyWageSnapshot) || 0),
+            ended_at: new Date(Number(session.endedAtMs) || Date.now()).toISOString(),
+            tp_squares: hasTp ? Math.max(0, Math.floor(Number(session.tp_squares) || 0)) : null,
+            tp_savings: hasTp ? (Number(session.tp_savings) || 0) : null,
             city: geo.city,
             region: geo.region,
             country: geo.country
@@ -6824,6 +6884,26 @@ html, body {
           }
         });
 
+        // Sessions completed while signed out live in the guest bucket. Import
+        // them into this account on every sync (not one-time: a user can sign
+        // out, poop as a guest, and sign back in). Successfully saved sessions
+        // are pruned from the guest bucket afterwards; client_id dedupe against
+        // remote rows keeps re-reads harmless.
+        try {
+          var guestRaw = window.localStorage ? window.localStorage.getItem(GUEST_STATE_STORAGE_KEY) : null;
+          if (guestRaw) {
+            var guestBucket = sanitizeState(JSON.parse(guestRaw));
+            (Array.isArray(guestBucket.sessions) ? guestBucket.sessions : []).forEach(function (session) {
+              if (session && session.id && !session.dbId && !seen[session.id]) {
+                seen[session.id] = true;
+                candidates.push(session);
+              }
+            });
+          }
+        } catch (error) {
+          console.warn("guest session import read failed:", error && error.message ? error.message : error);
+        }
+
         // One-time migration of the legacy shared bucket into this account.
         var legacyFlag = "pp_sessions_legacy_migrated_" + authContext.userId;
         if (!readLocalFlag(legacyFlag)) {
@@ -6894,10 +6974,36 @@ html, body {
               .sort(function (a, b) { return b.endedAtMs - a.endedAtMs; });
             persist();
             renderAll();
+            pruneImportedGuestSessions();
           })
           .catch(function (error) {
             console.warn("syncSessionsFromSupabase failed:", error && error.message ? error.message : error);
           });
+      }
+
+      // Once guest sessions are confirmed in the account (present in the synced
+      // remote state), drop them from the device-local guest bucket so a later
+      // sign-out doesn't show already-saved sessions as unsaved.
+      function pruneImportedGuestSessions() {
+        try {
+          if (!window.localStorage) return;
+          var raw = window.localStorage.getItem(GUEST_STATE_STORAGE_KEY);
+          if (!raw) return;
+          var guestBucket = JSON.parse(raw);
+          if (!guestBucket || !Array.isArray(guestBucket.sessions) || !guestBucket.sessions.length) return;
+          var savedIds = {};
+          (Array.isArray(state.sessions) ? state.sessions : []).forEach(function (session) {
+            if (session && session.id) savedIds[session.id] = true;
+          });
+          var remaining = guestBucket.sessions.filter(function (session) {
+            return !(session && savedIds[session.id]);
+          });
+          if (remaining.length === guestBucket.sessions.length) return;
+          guestBucket.sessions = remaining;
+          window.localStorage.setItem(GUEST_STATE_STORAGE_KEY, JSON.stringify(guestBucket));
+        } catch (_error) {
+          // Guest bucket pruning is best-effort.
+        }
       }
 
       function initializeWallet() {
@@ -6966,20 +7072,78 @@ html, body {
             trackCoreEvent("core_lock_cta_click", { choice: "signin", region_name: activeLockRegion });
           });
         }
+        var guestLogCtaButton = document.getElementById("guestLogCtaButton");
+        if (guestLogCtaButton) {
+          guestLogCtaButton.addEventListener("click", function () {
+            trackCoreEvent("core_guest_save_cta_click", { source: "session_log" });
+          });
+        }
+        var guestStatsCtaButton = document.getElementById("guestStatsCtaButton");
+        if (guestStatsCtaButton) {
+          guestStatsCtaButton.addEventListener("click", function () {
+            trackCoreEvent("core_guest_save_cta_click", { source: "stats_preview" });
+          });
+        }
+        var guestReturnNudgeSaveButton = document.getElementById("guestReturnNudgeSaveButton");
+        if (guestReturnNudgeSaveButton) {
+          guestReturnNudgeSaveButton.addEventListener("click", function () {
+            trackCoreEvent("core_guest_save_cta_click", { source: "return_banner" });
+          });
+        }
+        var guestReturnNudgeDismissButton = document.getElementById("guestReturnNudgeDismissButton");
+        if (guestReturnNudgeDismissButton) {
+          guestReturnNudgeDismissButton.addEventListener("click", function () {
+            trackCoreEvent("core_guest_return_nudge_dismiss");
+            hideGuestReturnNudge();
+          });
+        }
+        if (walletCorner) {
+          walletCorner.addEventListener("click", function (event) {
+            if (isSignedInMode()) return;
+            // The signed-in username button lives inside the corner; don't let a
+            // stray guest-mode edge case swallow clicks meant for it.
+            if (event.target && event.target.closest && event.target.closest("#walletUsernameButton")) return;
+            trackCoreEvent("core_guest_wallet_click");
+            openGuestCta("wallet_banner");
+          });
+          walletCorner.addEventListener("keydown", function (event) {
+            if (isSignedInMode()) return;
+            if (event.key !== "Enter" && event.key !== " ") return;
+            event.preventDefault();
+            trackCoreEvent("core_guest_wallet_click");
+            openGuestCta("wallet_banner");
+          });
+        }
         if (guestResultModal) {
-          if (guestResultOkButton) {
-            guestResultOkButton.addEventListener("click", function () {
-              closeGuestResult(true);
+          if (guestResultSaveButton) {
+            guestResultSaveButton.addEventListener("click", function () {
+              trackCoreEvent("core_guest_save_cta_click", { source: "session_result" });
+              // Finalize before navigating so TP squares land on the local
+              // session and the anonymous row insert is kicked off. The local
+              // save is synchronous; the session itself is already persisted.
+              finalizePendingSession();
+            });
+          }
+          if (guestResultShareButton) {
+            guestResultShareButton.addEventListener("click", function () {
+              if (!activeGuestResultSession) return;
+              shareSessionCard(activeGuestResultSession, "guest_result");
+            });
+          }
+          if (guestResultContinueButton) {
+            guestResultContinueButton.addEventListener("click", function () {
+              trackCoreEvent("core_guest_save_cta_dismiss", { source: "session_result" });
+              closeGuestResult();
             });
           }
           guestResultModal.addEventListener("click", function (event) {
             if (event.target === guestResultModal) {
-              closeGuestResult(true);
+              closeGuestResult();
             }
           });
           document.addEventListener("keydown", function (event) {
             if (event.key === "Escape" && guestResultModal.classList.contains("open")) {
-              closeGuestResult(true);
+              closeGuestResult();
             }
           });
         }
@@ -7017,6 +7181,7 @@ html, body {
         }
         restoreRunningSession();
         setupTutorial();
+        maybeShowGuestReturnNudge();
         trackReturnVisitWithin7Days();
         updateBathroomGdpLine();
         resolveGeo();
@@ -7025,7 +7190,6 @@ html, body {
           syncSessionsFromSupabase();
         } else {
           renderGuestWallet();
-          applyGuestLocks();
         }
         window.generateShareCardPng = generateShareCardPng;
         // Share-card assets are intentionally NOT preloaded at startup; they load
@@ -7805,6 +7969,7 @@ html, body {
         state.activeSessionStartMs = Date.now();
         lastMilestoneAnnounced = 0;
         hideMilestoneCelebration();
+        hideGuestReturnNudge();
         persist();
         trackCoreEvent("core_session_start", {
           wage_mode: state.wageMode,
@@ -7852,16 +8017,30 @@ html, body {
         clearIntervalIfRunning();
 
         if (!isSignedInMode()) {
+          // Guest sessions are kept in the device-local guest bucket so the log
+          // and stats preview can show them. They are marked "not saved" in the
+          // UI and imported into the account after signup (via the anon-row
+          // claim or the local-candidate sync, deduped by client_id).
+          var guestSession = {
+            id: String(Date.now()),
+            startedAtMs: startedAt,
+            endedAtMs: endedAt,
+            durationSeconds: durationSeconds,
+            hourlyWageSnapshot: hourly,
+            earnings: roundCurrency(earnings),
+            rating: 0
+          };
+          state.sessions.unshift(guestSession);
           persist();
           renderAll();
           setStatus(
             statusMessage,
-            "Session done: $" + roundCurrency(earnings).toFixed(2) + ". Sign in to save it and start earning Turd Tokens.",
+            "Session done: $" + roundCurrency(earnings).toFixed(2) + ". It's on this device only until you save it.",
             "ok"
           );
           writeLocalFlag(TEASER_STOP_LOCAL_KEY);
-          // Motivational local-only counter (never sent to the server): one
-          // "unclaimed" token per day, mirroring the daily claim rule.
+          // Motivational local-only counter: one "unclaimed" token per day,
+          // mirroring the daily claim rule, capped at the signup bonus.
           incrementGuestTokenForToday();
           renderGuestWallet();
           trackCoreEvent("core_teaser_session_stop", {
@@ -7870,9 +8049,9 @@ html, body {
             earnings_bucket: bucketize(earnings, "earnings")
           });
           // TP squares are captured at the end of the session inside the result
-          // modal, so defer the poop_sessions insert until it closes.
-          pendingTpContext = { earnings: earnings, durationSeconds: durationSeconds, sessionId: null };
-          openGuestResult(earnings, durationSeconds);
+          // modal, so defer the anonymous poop_sessions insert until it closes.
+          pendingTpContext = { earnings: earnings, durationSeconds: durationSeconds, sessionId: guestSession.id, guest: true };
+          openGuestResult(guestSession);
           return;
         }
 
@@ -8012,6 +8191,28 @@ html, body {
           renderStats();
         }
         renderLog();
+        renderGuestStatsPreview();
+      }
+
+      function renderGuestStatsPreview() {
+        if (isSignedInMode()) return;
+        var todayEl = document.getElementById("guestStatToday");
+        var timeEl = document.getElementById("guestStatTime");
+        var sessionsEl = document.getElementById("guestStatSessions");
+        if (!todayEl || !timeEl || !sessionsEl) return;
+        var now = Date.now();
+        var todaySessions = (Array.isArray(state.sessions) ? state.sessions : []).filter(function (session) {
+          return isSameDay(session.endedAtMs, now);
+        });
+        var todayEarnings = todaySessions.reduce(function (sum, session) {
+          return sum + (Number(session.earnings) || 0);
+        }, 0);
+        var todaySeconds = todaySessions.reduce(function (sum, session) {
+          return sum + (Number(session.durationSeconds) || 0);
+        }, 0);
+        todayEl.textContent = "$" + roundCurrency(todayEarnings).toFixed(2);
+        timeEl.textContent = formatDuration(todaySeconds);
+        sessionsEl.textContent = String(todaySessions.length);
       }
 
       function resetStatDisplaysForCountUp() {
@@ -8173,6 +8374,7 @@ html, body {
 
       function renderLog() {
         logList.innerHTML = "";
+        renderGuestLogCta();
 
         if (!state.sessions.length) {
           var empty = document.createElement("div");
@@ -8225,6 +8427,13 @@ html, body {
           var ratingPoops = ratingValue > 0 ? " | Rating: " + "💩".repeat(ratingValue) : "";
           meta.textContent = "Duration: " + formatDuration(session.durationSeconds) + " | Wage used: $" + session.hourlyWageSnapshot.toFixed(2) + "/hr" + ratingPoops;
 
+          var unsavedLine = null;
+          if (!isSignedInMode()) {
+            unsavedLine = document.createElement("div");
+            unsavedLine.className = "log-unsaved";
+            unsavedLine.textContent = "⚠ Not saved";
+          }
+
           var tpLine = null;
           if (session.tp_squares !== undefined && session.tp_squares !== null) {
             var tpSquaresValue = Math.max(0, Math.floor(Number(session.tp_squares) || 0));
@@ -8264,9 +8473,25 @@ html, body {
           row.appendChild(top);
           row.appendChild(meta);
           if (tpLine) row.appendChild(tpLine);
+          if (unsavedLine) row.appendChild(unsavedLine);
           row.appendChild(actions);
           logList.appendChild(row);
         });
+      }
+
+      function renderGuestLogCta() {
+        var cta = document.getElementById("guestLogCta");
+        if (!cta) return;
+        var show = !isSignedInMode() && state.sessions.length > 0;
+        cta.hidden = !show;
+        if (!show) return;
+        var button = document.getElementById("guestLogCtaButton");
+        if (button) {
+          var unsavedTotal = state.sessions.reduce(function (sum, session) {
+            return sum + (Number(session.earnings) || 0);
+          }, 0);
+          button.textContent = "Save my $" + roundCurrency(unsavedTotal).toFixed(2) + " in sessions";
+        }
       }
 
       function deleteSession(sessionId) {
