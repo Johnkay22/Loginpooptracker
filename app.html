@@ -5396,6 +5396,10 @@ html, body {
       var lastTrackedHourlyWageValue = null;
       var WALLET_ANON_ID_KEY = "pp_wallet_anon_id_v1";
       var GUEST_TOKENS_KEY = "pp_guest_tokens_v1";
+      // Must match the fixed server-side signup bonus in wallet_grant_signup_bonus
+      // (supabase migration). The guest "unclaimed" counter is capped here so the
+      // app never promises more tokens at signup than the server actually grants.
+      var GUEST_TOKEN_CAP = 3;
       var WALLET_FUNCTION_URL = "https://ukfboxemqwuwkvfglzfq.supabase.co/functions/v1/wallet";
       var LOCK_IMPRESSION_SESSION_KEY = "pp_core_lock_impression_v1";
       var TEASER_STOP_LOCAL_KEY = "pp_core_teaser_session_stop_v1";
@@ -5526,12 +5530,28 @@ html, body {
         if (regionName === "session_stop") {
           return "That's just one poop in a lifetime of more poops.";
         }
+        if (regionName === "wallet_banner") {
+          var count = getGuestTokenCount();
+          if (count > 0) {
+            return "Claim your " + (count === 1 ? "Turd Token" : count + " Turd Tokens") + ".";
+          }
+          return "Start earning Turd Tokens.";
+        }
         return "Unlock the full porcelain portfolio.";
       }
 
       function describeGuestCta(regionName) {
         if (regionName === "session_stop") {
           return "Log in now to save your logs, share your stats with friends, and view detailed analytics.";
+        }
+        if (regionName === "wallet_banner") {
+          var count = getGuestTokenCount();
+          if (count > 0) {
+            return (count === 1 ? "You already have a token" : "You already have tokens") +
+              " waiting for you. Create your free account to add " +
+              (count === 1 ? "it" : "them") + " to your real balance and keep earning daily.";
+          }
+          return "Finish a poop to earn your first Turd Token, then create a free account to bank it.";
         }
         return "Save your sessions and turn each stop into streaks, stats, and token glory.";
       }
@@ -5547,6 +5567,12 @@ html, body {
         }
         if (guestCtaSubtitle) {
           guestCtaSubtitle.textContent = describeGuestCta(activeLockRegion);
+        }
+        if (guestCtaCreateButton) {
+          var unclaimedCount = getGuestTokenCount();
+          guestCtaCreateButton.textContent = unclaimedCount > 0
+            ? ("Claim my " + (unclaimedCount === 1 ? "Turd Token" : unclaimedCount + " Turd Tokens"))
+            : "Create free account";
         }
         guestCtaModal.classList.add("open");
         guestCtaModal.setAttribute("aria-hidden", "false");
@@ -6413,7 +6439,7 @@ html, body {
           var parsed = JSON.parse(raw);
           if (!parsed || typeof parsed !== "object") return { count: 0, lastClaimDay: null };
           return {
-            count: Math.max(0, Math.floor(Number(parsed.count) || 0)),
+            count: Math.min(GUEST_TOKEN_CAP, Math.max(0, Math.floor(Number(parsed.count) || 0))),
             lastClaimDay: typeof parsed.lastClaimDay === "string" ? parsed.lastClaimDay : null
           };
         } catch (_error) {
@@ -6443,7 +6469,7 @@ html, body {
         if (state.lastClaimDay === today) {
           return state.count; // already earned today's unclaimed token
         }
-        state.count = Math.max(0, Math.floor(Number(state.count) || 0)) + 1;
+        state.count = Math.min(GUEST_TOKEN_CAP, Math.max(0, Math.floor(Number(state.count) || 0)) + 1);
         state.lastClaimDay = today;
         writeGuestTokenState(state);
         return state.count;
@@ -6457,21 +6483,32 @@ html, body {
         }
       }
 
+      function describeGuestTokens(count) {
+        if (count >= GUEST_TOKEN_CAP) {
+          return count + " unclaimed Turd Tokens — maxed out! Create your free account to claim them.";
+        }
+        if (count === 1) {
+          return "1 unclaimed Turd Token waiting. Create your free account to claim it.";
+        }
+        return count + " unclaimed Turd Tokens waiting. Create your free account to claim them.";
+      }
+
       function renderGuestWallet() {
         if (!walletCorner) return;
         var count = getGuestTokenCount();
+        var message = describeGuestTokens(count);
         if (walletBalanceValue) {
           walletBalanceValue.textContent = String(count);
         }
         var label = document.getElementById("walletGuestLabel");
         if (label) {
-          label.textContent = count + " unclaimed Turd Tokens. Sign in to start your real balance.";
+          label.textContent = message;
           label.hidden = false;
         }
         if (walletStreakValue) {
           walletStreakValue.hidden = true;
         }
-        walletCorner.setAttribute("aria-label", count + " unclaimed Turd Tokens. Sign in to start your real balance.");
+        walletCorner.setAttribute("aria-label", message);
         if (statTokens) statTokens.textContent = String(count);
       }
 
