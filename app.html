@@ -262,71 +262,6 @@
       display: none !important;
     }
 
-    .soft-locked {
-      position: relative;
-      isolation: isolate;
-      overflow: hidden;
-      border-color: rgba(73, 159, 255, 0.45) !important;
-    }
-
-    .soft-locked > *:not(.soft-lock-overlay) {
-      pointer-events: none !important;
-      user-select: none !important;
-      filter: blur(4px) saturate(0.78);
-      transition: filter 0.2s ease;
-    }
-
-    .soft-lock-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 14px;
-      background:
-        radial-gradient(130% 70% at 50% 50%, rgba(19, 40, 75, 0.28), rgba(4, 8, 18, 0.64)),
-        linear-gradient(180deg, rgba(4, 10, 24, 0.25), rgba(4, 10, 24, 0.6));
-      cursor: pointer;
-    }
-
-    .soft-lock-overlay::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border: 1px solid rgba(73, 159, 255, 0.42);
-      border-radius: inherit;
-      pointer-events: none;
-    }
-
-    .soft-lock-overlay button {
-      border: 1px solid rgba(77, 164, 255, 0.65);
-      background: rgba(10, 22, 45, 0.82);
-      color: #e8f3ff;
-      border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 12px;
-      font-weight: 700;
-      font-family: inherit;
-      letter-spacing: 0.02em;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      box-shadow: 0 0 18px -8px rgba(89, 177, 255, 0.8);
-    }
-
-    .soft-lock-overlay button:hover {
-      border-color: rgba(119, 194, 255, 0.9);
-      color: #ffffff;
-    }
-
-    .soft-lock-icon {
-      width: 16px;
-      height: 16px;
-      display: inline-block;
-    }
-
     .guest-cta-modal {
       position: fixed;
       inset: 0;
@@ -5078,9 +5013,9 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
       <h3 id="guestCtaTitle" class="guest-cta-title">Unlock the full porcelain portfolio.</h3>
       <p id="guestCtaSubtitle" class="guest-cta-subtitle">Save your sessions and turn each stop into streaks, stats, and token glory.</p>
       <ul class="guest-cta-bullets">
-        <li>Save your sessions</li>
-        <li>Earn Turd Tokens</li>
-        <li>Unlock stats + share cards</li>
+        <li>Keep your session history</li>
+        <li>Claim + keep earning Turd Tokens</li>
+        <li>Unlock lifetime stats + trends</li>
       </ul>
       <a id="guestCtaCreateButton" class="button full guest-cta-primary" href="auth.html">Create free account</a>
       <p class="guest-cta-primary-note">Always free.</p>
@@ -5464,8 +5399,8 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         TUTORIAL_STEPS[2],
         TUTORIAL_STEPS[3],
         {
-          title: "Save & Unlock More",
-          body: "Sign in free to save your logs, earn Turd Tokens, and unlock streaks, stats, and share cards.",
+          title: "Don't Lose Your Progress",
+          body: "Your sessions and Turd Tokens stay on this device until you save them. Create a free account to keep your history, claim your Tokens, and sync across devices.",
           target: "#tutorialHelpButton",
           tab: "calculator",
           mascotSrc: "OnboardingMascot_20260419_095122_00000.jpg"
@@ -5494,15 +5429,14 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
       // app never promises more tokens at signup than the server actually grants.
       var GUEST_TOKEN_CAP = 3;
       var WALLET_FUNCTION_URL = "https://ukfboxemqwuwkvfglzfq.supabase.co/functions/v1/wallet";
-      var LOCK_IMPRESSION_SESSION_KEY = "pp_core_lock_impression_v1";
       var TEASER_STOP_LOCAL_KEY = "pp_core_teaser_session_stop_v1";
       var SIGNED_UNLOCK_TRACKED_KEY = "pp_core_signed_in_unlock_v1";
-      // Nothing is blur-locked for guests anymore:
+      // Nothing is blur-locked for guests anymore (the old soft-lock overlay
+      // system was removed when the last region was ungated):
       // - #walletCorner shows the local "unclaimed" token counter with a claim nudge.
       // - #panel-coming is public marketing for the account.
       // - .log-card shows device-local sessions marked "not saved" with a save CTA.
       // - #panel-stats swaps to a guest preview (today's numbers + locked teasers).
-      var SOFT_LOCK_CONFIG = [];
       var walletSnapshot = {
         new_balance: 0,
         window_day_count: 0,
@@ -5591,25 +5525,10 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         }
       }
 
-      function trackLockImpressionOnce() {
-        try {
-          if (!window.sessionStorage) return;
-          if (window.sessionStorage.getItem(LOCK_IMPRESSION_SESSION_KEY) === "1") return;
-          window.sessionStorage.setItem(LOCK_IMPRESSION_SESSION_KEY, "1");
-          trackCoreEvent("core_lock_impression");
-        } catch (_error) {
-          // Ignore sessionStorage failures.
-        }
-      }
-
       function describeGuestCtaEyebrow(regionName) {
         switch (regionName) {
           case "wallet_banner":
             return "Turd Token wallet";
-          case "session_log":
-            return "Session history";
-          case "stats_tab":
-            return "Stats & analytics";
           case "session_stop":
             return "Save this session";
           default:
@@ -5721,91 +5640,6 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         }
       }
 
-      function createSoftLockOverlay(regionName) {
-        var overlay = document.createElement("div");
-        overlay.className = "soft-lock-overlay";
-        overlay.setAttribute("data-lock-region", regionName);
-        var button = document.createElement("button");
-        button.type = "button";
-        button.innerHTML = "<svg class=\"soft-lock-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M7 10V8a5 5 0 0 1 10 0v2h1.25A1.75 1.75 0 0 1 20 11.75v8.5A1.75 1.75 0 0 1 18.25 22h-12.5A1.75 1.75 0 0 1 4 20.25v-8.5A1.75 1.75 0 0 1 5.75 10H7Zm2 0h6V8a3 3 0 1 0-6 0v2Z\"/></svg><span>Unlock</span>";
-        overlay.appendChild(button);
-        overlay.addEventListener("click", function (event) {
-          event.preventDefault();
-          event.stopPropagation();
-          trackCoreEvent("core_lock_click", { region_name: regionName });
-          openGuestCta(regionName);
-        });
-        return overlay;
-      }
-
-      function lockElementRegion(target, regionName) {
-        if (!target) return;
-        target.classList.add("soft-locked");
-        target.setAttribute("data-soft-lock-region", regionName);
-        var overlay = target.querySelector(".soft-lock-overlay");
-        if (!overlay) {
-          overlay = createSoftLockOverlay(regionName);
-          target.appendChild(overlay);
-        }
-        Array.prototype.forEach.call(target.children, function (child) {
-          if (child === overlay) return;
-          if (!child.hasAttribute("data-soft-lock-prev-inert")) {
-            child.setAttribute("data-soft-lock-prev-inert", child.inert ? "1" : "0");
-          }
-          child.inert = true;
-        });
-        var focusables = target.querySelectorAll("a, button, input, select, textarea, [tabindex]");
-        focusables.forEach(function (node) {
-          if (node.closest(".soft-lock-overlay")) return;
-          if (!node.hasAttribute("data-soft-lock-prev-tabindex")) {
-            var previous = node.getAttribute("tabindex");
-            node.setAttribute("data-soft-lock-prev-tabindex", previous === null ? "__none__" : previous);
-          }
-          node.setAttribute("tabindex", "-1");
-          if ("disabled" in node && !node.hasAttribute("data-soft-lock-prev-disabled")) {
-            node.setAttribute("data-soft-lock-prev-disabled", node.disabled ? "1" : "0");
-            node.disabled = true;
-          }
-        });
-      }
-
-      function unlockElementRegion(target) {
-        if (!target) return;
-        target.classList.remove("soft-locked");
-        target.removeAttribute("data-soft-lock-region");
-        var overlay = target.querySelector(".soft-lock-overlay");
-        if (overlay) overlay.remove();
-        target.querySelectorAll("[data-soft-lock-prev-inert]").forEach(function (node) {
-          var previousInert = node.getAttribute("data-soft-lock-prev-inert") === "1";
-          node.inert = previousInert;
-          node.removeAttribute("data-soft-lock-prev-inert");
-        });
-        target.querySelectorAll("[data-soft-lock-prev-tabindex]").forEach(function (node) {
-          var previous = node.getAttribute("data-soft-lock-prev-tabindex");
-          if (previous === "__none__") node.removeAttribute("tabindex");
-          else node.setAttribute("tabindex", previous || "-1");
-          node.removeAttribute("data-soft-lock-prev-tabindex");
-        });
-        target.querySelectorAll("[data-soft-lock-prev-disabled]").forEach(function (node) {
-          var previousDisabled = node.getAttribute("data-soft-lock-prev-disabled") === "1";
-          node.disabled = previousDisabled;
-          node.removeAttribute("data-soft-lock-prev-disabled");
-        });
-      }
-
-      function applyGuestLocks() {
-        SOFT_LOCK_CONFIG.forEach(function (config) {
-          lockElementRegion(document.querySelector(config.selector), config.region);
-        });
-        trackLockImpressionOnce();
-      }
-
-      function clearGuestLocks() {
-        SOFT_LOCK_CONFIG.forEach(function (config) {
-          unlockElementRegion(document.querySelector(config.selector));
-        });
-      }
-
       function renderAuthHeader() {
         var signedIn = Boolean(isSignedInMode() && authContext.username);
         if (headAuth) headAuth.hidden = !signedIn;
@@ -5827,10 +5661,8 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           renderAuthHeader();
           closeProfileSetupModal();
           closeProfileEditModal();
-          applyGuestLocks();
           renderGuestWallet();
         } else {
-          clearGuestLocks();
           closeGuestCta();
           renderAuthHeader();
         }
@@ -7244,7 +7076,6 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           syncSessionsFromSupabase();
         } else {
           renderGuestWallet();
-          applyGuestLocks();
         }
         window.generateShareCardPng = generateShareCardPng;
         // Share-card assets are intentionally NOT preloaded at startup; they load
