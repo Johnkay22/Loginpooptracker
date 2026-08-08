@@ -496,6 +496,32 @@
       line-height: 1.1;
     }
 
+    .guest-result-tokens {
+      margin: 0 0 6px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffd35e;
+    }
+
+    .guest-result-continue {
+      display: block;
+      margin: 12px auto 0;
+      padding: 6px 10px;
+      background: none;
+      border: 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .guest-result-continue:hover {
+      color: var(--text);
+    }
+
     @media (max-width: 760px) {
       .guest-cta-modal {
         align-items: flex-end;
@@ -2356,7 +2382,8 @@
       padding: 16px;
       background: rgba(3, 8, 16, 0.76);
       backdrop-filter: blur(4px);
-      z-index: 130;
+      /* Above .guest-cta-modal (130) so guests can share from the result sheet. */
+      z-index: 150;
     }
 
     .share-picker-modal.open {
@@ -2774,7 +2801,8 @@
       padding: 16px;
       background: rgba(3, 8, 16, 0.6);
       backdrop-filter: blur(3px);
-      z-index: 140;
+      /* Above .guest-cta-modal (130) so guests can share from the result sheet. */
+      z-index: 150;
       visibility: hidden;
       opacity: 0;
       pointer-events: none;
@@ -4961,7 +4989,7 @@ html, body {
 
   <div id="guestResultModal" class="guest-cta-modal" aria-hidden="true">
     <div class="guest-cta-sheet guest-result-sheet" role="dialog" aria-modal="true" aria-labelledby="guestResultTitle">
-      <h3 id="guestResultTitle" class="guest-cta-title">Session complete</h3>
+      <h3 id="guestResultTitle" class="guest-cta-title">You just got paid to poop.</h3>
       <div class="guest-result-metrics">
         <div class="guest-result-metric">
           <span class="guest-result-label">You earned</span>
@@ -4972,12 +5000,16 @@ html, body {
           <span id="guestResultDuration" class="guest-result-time">0:00</span>
         </div>
       </div>
+      <p id="guestResultTokens" class="guest-result-tokens">🪙 1 Turd Token waiting</p>
       <div class="tp-field">
         <label for="guestResultTpInput">TP squares used <span class="tp-optional">(optional)</span></label>
         <input id="guestResultTpInput" type="number" min="0" step="1" inputmode="numeric" placeholder="e.g. 12">
         <p id="guestResultTpHint" class="tp-live-savings" hidden></p>
       </div>
-      <button id="guestResultOkButton" class="button full guest-cta-primary" type="button">OK</button>
+      <a id="guestResultSaveButton" class="button full guest-cta-primary" href="auth.html">Save my poop + claim my Turd Token</a>
+      <p class="guest-cta-primary-note">Free account. Keeps this session, your history, and your Tokens.</p>
+      <button id="guestResultShareButton" class="button ghost full guest-cta-secondary" type="button">↗ Share this poop</button>
+      <button id="guestResultContinueButton" class="guest-result-continue" type="button">Continue without saving</button>
     </div>
   </div>
 
@@ -5115,7 +5147,10 @@ html, body {
       var guestResultModal = document.getElementById("guestResultModal");
       var guestResultEarnings = document.getElementById("guestResultEarnings");
       var guestResultDuration = document.getElementById("guestResultDuration");
-      var guestResultOkButton = document.getElementById("guestResultOkButton");
+      var guestResultTokens = document.getElementById("guestResultTokens");
+      var guestResultSaveButton = document.getElementById("guestResultSaveButton");
+      var guestResultShareButton = document.getElementById("guestResultShareButton");
+      var guestResultContinueButton = document.getElementById("guestResultContinueButton");
       var guestResultTpInput = document.getElementById("guestResultTpInput");
       var guestResultTpHint = document.getElementById("guestResultTpHint");
       var activeGuestResultSession = null;
@@ -5590,11 +5625,23 @@ html, body {
         activeGuestResultSession = session || null;
         var earnings = session ? session.earnings : 0;
         var durationSeconds = session ? session.durationSeconds : 0;
+        var earningsText = "$" + roundCurrency(earnings).toFixed(2);
+        var tokenCount = getGuestTokenCount();
+        var tokenNoun = tokenCount === 1 ? "Turd Token" : tokenCount + " Turd Tokens";
         if (guestResultEarnings) {
-          guestResultEarnings.textContent = "$" + roundCurrency(earnings).toFixed(2);
+          guestResultEarnings.textContent = earningsText;
         }
         if (guestResultDuration) {
           guestResultDuration.textContent = formatDuration(Math.max(0, Math.floor(durationSeconds || 0)));
+        }
+        if (guestResultTokens) {
+          guestResultTokens.textContent = "🪙 " + (tokenCount === 1 ? "1 Turd Token" : tokenNoun) + " waiting";
+          guestResultTokens.hidden = tokenCount <= 0;
+        }
+        if (guestResultSaveButton) {
+          guestResultSaveButton.textContent = tokenCount > 0
+            ? ("Save my " + earningsText + " + claim my " + tokenNoun)
+            : ("Save my " + earningsText + " poop");
         }
         prefillTpInput(guestResultTpInput);
         updateTpLiveHint(guestResultTpInput, guestResultTpHint);
@@ -7058,19 +7105,35 @@ html, body {
           });
         }
         if (guestResultModal) {
-          if (guestResultOkButton) {
-            guestResultOkButton.addEventListener("click", function () {
-              closeGuestResult(true);
+          if (guestResultSaveButton) {
+            guestResultSaveButton.addEventListener("click", function () {
+              trackCoreEvent("core_guest_save_cta_click", { source: "session_result" });
+              // Finalize before navigating so TP squares land on the local
+              // session and the anonymous row insert is kicked off. The local
+              // save is synchronous; the session itself is already persisted.
+              finalizePendingSession();
+            });
+          }
+          if (guestResultShareButton) {
+            guestResultShareButton.addEventListener("click", function () {
+              if (!activeGuestResultSession) return;
+              shareSessionCard(activeGuestResultSession, "guest_result");
+            });
+          }
+          if (guestResultContinueButton) {
+            guestResultContinueButton.addEventListener("click", function () {
+              trackCoreEvent("core_guest_save_cta_dismiss", { source: "session_result" });
+              closeGuestResult();
             });
           }
           guestResultModal.addEventListener("click", function (event) {
             if (event.target === guestResultModal) {
-              closeGuestResult(true);
+              closeGuestResult();
             }
           });
           document.addEventListener("keydown", function (event) {
             if (event.key === "Escape" && guestResultModal.classList.contains("open")) {
-              closeGuestResult(true);
+              closeGuestResult();
             }
           });
         }
