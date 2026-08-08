@@ -105,6 +105,8 @@
     .bathroom-gdp-line[hidden]{display:none}
     .wallet-guest-label{margin:4px 0 0;font-size:11px;line-height:1.35;color:#9ad8ff;opacity:.92;max-width:180px}
     .wallet-guest-label[hidden]{display:none}
+    .wallet-corner-clickable{cursor:pointer}
+    .wallet-corner-clickable:hover{filter:brightness(1.08)}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/html-to-image"></script>
@@ -5665,6 +5667,11 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         } else {
           closeGuestCta();
           renderAuthHeader();
+          if (walletCorner) {
+            walletCorner.classList.remove("wallet-corner-clickable");
+            walletCorner.removeAttribute("role");
+            walletCorner.removeAttribute("tabindex");
+          }
         }
       }
 
@@ -6444,6 +6451,10 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         if (walletStreakValue) {
           walletStreakValue.hidden = true;
         }
+        // The guest wallet corner is a tap target that opens the claim CTA.
+        walletCorner.classList.add("wallet-corner-clickable");
+        walletCorner.setAttribute("role", "button");
+        walletCorner.setAttribute("tabindex", "0");
         walletCorner.setAttribute("aria-label", message);
         if (statTokens) statTokens.textContent = String(count);
       }
@@ -6999,6 +7010,23 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         if (guestStatsCtaButton) {
           guestStatsCtaButton.addEventListener("click", function () {
             trackCoreEvent("core_guest_save_cta_click", { source: "stats_preview" });
+          });
+        }
+        if (walletCorner) {
+          walletCorner.addEventListener("click", function (event) {
+            if (isSignedInMode()) return;
+            // The signed-in username button lives inside the corner; don't let a
+            // stray guest-mode edge case swallow clicks meant for it.
+            if (event.target && event.target.closest && event.target.closest("#walletUsernameButton")) return;
+            trackCoreEvent("core_guest_wallet_click");
+            openGuestCta("wallet_banner");
+          });
+          walletCorner.addEventListener("keydown", function (event) {
+            if (isSignedInMode()) return;
+            if (event.key !== "Enter" && event.key !== " ") return;
+            event.preventDefault();
+            trackCoreEvent("core_guest_wallet_click");
+            openGuestCta("wallet_banner");
           });
         }
         if (guestResultModal) {
