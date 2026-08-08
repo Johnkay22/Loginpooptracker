@@ -3989,6 +3989,16 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
 .guest-stats-teasers { list-style: none; margin: 12px 0 16px; padding: 0; display: grid; gap: 9px; }
 .guest-stats-teasers li { font-size: 13px; color: var(--muted); font-weight: 600; }
 .guest-stats-preview .button { display: flex; align-items: center; justify-content: center; text-decoration: none; box-sizing: border-box; }
+
+/* Returning-guest nudge: shows at most once per day when a guest comes back on a
+   later day with unsaved sessions and/or unclaimed tokens. Never blocks the timer. */
+.guest-return-nudge { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 14px; padding: 13px 15px; border: 1px solid rgba(255, 201, 102, 0.45); border-radius: var(--r-md, 14px); background: linear-gradient(180deg, rgba(64, 46, 14, 0.55), rgba(38, 28, 10, 0.55)); animation: rise .35s var(--ease); }
+.guest-return-nudge[hidden] { display: none; }
+.guest-return-nudge-text { margin: 0; font-size: 13.5px; font-weight: 700; color: #ffe0a3; line-height: 1.45; flex: 1 1 220px; }
+.guest-return-nudge-actions { display: flex; align-items: center; gap: 10px; flex: none; }
+.guest-return-nudge-actions .button { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; padding: 9px 13px; }
+.guest-return-nudge-dismiss { background: none; border: 0; padding: 8px 6px; color: var(--muted); font-family: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.guest-return-nudge-dismiss:hover { color: var(--text); }
 .log-entry .log-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 .log-entry .icon-button { flex: none; }
 
@@ -4478,6 +4488,13 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
       </div>
 
       <section id="panel-calculator" class="tab-panel active" aria-label="Calculator tab">
+        <div id="guestReturnNudge" class="guest-return-nudge" hidden>
+          <p id="guestReturnNudgeText" class="guest-return-nudge-text">Welcome back.</p>
+          <div class="guest-return-nudge-actions">
+            <a id="guestReturnNudgeSaveButton" class="button" href="auth.html">Save my stuff</a>
+            <button id="guestReturnNudgeDismissButton" class="guest-return-nudge-dismiss" type="button">Not now</button>
+          </div>
+        </div>
         <div class="panel-grid">
           <article class="card wage-card">
             <button id="wageStripToggleButton" class="wage-strip-toggle" type="button" aria-expanded="false" aria-controls="wageStripBody">
@@ -5423,6 +5440,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
       var RETURN_VISIT_LAST_SEEN_KEY = "pp_core_last_seen_ms_v1";
       var RETURN_VISIT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
       var RETURN_VISIT_MIN_GAP_MS = 60 * 1000;
+      var GUEST_RETURN_NUDGE_DAY_KEY = "pp_guest_return_nudge_day_v1";
       var lastTrackedHourlyWageValue = null;
       var WALLET_ANON_ID_KEY = "pp_wallet_anon_id_v1";
       var GUEST_TOKENS_KEY = "pp_guest_tokens_v1";
@@ -6367,8 +6385,8 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
       // Purely local + motivational. NEVER sent to the server. Guests do not call
       // the wallet edge function at all; this counter just mirrors the daily rule
       // the UI communicates (one claim per day) to give guests a reason to sign in.
-      function localDayKey() {
-        var now = new Date();
+      function localDayKey(ms) {
+        var now = ms === undefined ? new Date() : new Date(ms);
         return now.getFullYear() + "-" +
           String(now.getMonth() + 1).padStart(2, "0") + "-" +
           String(now.getDate()).padStart(2, "0");
@@ -6457,6 +6475,60 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         walletCorner.setAttribute("tabindex", "0");
         walletCorner.setAttribute("aria-label", message);
         if (statTokens) statTokens.textContent = String(count);
+      }
+
+      function describeGuestReturnNudge(unsavedTotal, tokenCount) {
+        var moneyPart = unsavedTotal > 0 ? ("$" + roundCurrency(unsavedTotal).toFixed(2)) : null;
+        var tokenPart = tokenCount > 0
+          ? (tokenCount === 1 ? "1 Turd Token" : tokenCount + " Turd Tokens")
+          : null;
+        if (moneyPart && tokenPart) {
+          return "Welcome back. Your " + moneyPart + " and " + tokenPart + " aren't saved yet.";
+        }
+        if (moneyPart) {
+          return "Welcome back. Your " + moneyPart + " in sessions isn't saved yet.";
+        }
+        return "Welcome back. Your " + tokenPart + (tokenCount === 1 ? " isn't" : " aren't") + " claimed yet.";
+      }
+
+      // Returning-guest nudge: greets a guest who comes back on a later day with
+      // unsaved sessions and/or unclaimed tokens. Shows at most once per local
+      // day, never on a first visit, never over a running timer. Must run BEFORE
+      // trackReturnVisitWithin7Days(), which overwrites the last-seen timestamp.
+      function maybeShowGuestReturnNudge() {
+        var nudge = document.getElementById("guestReturnNudge");
+        if (!nudge) return;
+        if (isSignedInMode()) return;
+        if (state.activeSessionStartMs) return;
+
+        var unsavedTotal = (Array.isArray(state.sessions) ? state.sessions : []).reduce(function (sum, session) {
+          return sum + (Number(session.earnings) || 0);
+        }, 0);
+        var tokenCount = getGuestTokenCount();
+        if (unsavedTotal <= 0 && tokenCount <= 0) return;
+
+        var today = localDayKey();
+        try {
+          if (!window.localStorage) return;
+          var storedVisit = Number(window.localStorage.getItem(RETURN_VISIT_LAST_SEEN_KEY));
+          var previousVisitMs = Number.isFinite(storedVisit) && storedVisit > 0 ? storedVisit : null;
+          // Only greet genuine returns: the last visit must be from an earlier day.
+          if (previousVisitMs === null || localDayKey(previousVisitMs) === today) return;
+          if (window.localStorage.getItem(GUEST_RETURN_NUDGE_DAY_KEY) === today) return;
+          window.localStorage.setItem(GUEST_RETURN_NUDGE_DAY_KEY, today);
+        } catch (_error) {
+          return;
+        }
+
+        var text = document.getElementById("guestReturnNudgeText");
+        if (text) text.textContent = describeGuestReturnNudge(unsavedTotal, tokenCount);
+        nudge.hidden = false;
+        trackCoreEvent("core_guest_return_nudge_shown");
+      }
+
+      function hideGuestReturnNudge() {
+        var nudge = document.getElementById("guestReturnNudge");
+        if (nudge) nudge.hidden = true;
       }
 
       function showSignupBonusCelebration(count) {
@@ -7012,6 +7084,19 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
             trackCoreEvent("core_guest_save_cta_click", { source: "stats_preview" });
           });
         }
+        var guestReturnNudgeSaveButton = document.getElementById("guestReturnNudgeSaveButton");
+        if (guestReturnNudgeSaveButton) {
+          guestReturnNudgeSaveButton.addEventListener("click", function () {
+            trackCoreEvent("core_guest_save_cta_click", { source: "return_banner" });
+          });
+        }
+        var guestReturnNudgeDismissButton = document.getElementById("guestReturnNudgeDismissButton");
+        if (guestReturnNudgeDismissButton) {
+          guestReturnNudgeDismissButton.addEventListener("click", function () {
+            trackCoreEvent("core_guest_return_nudge_dismiss");
+            hideGuestReturnNudge();
+          });
+        }
         if (walletCorner) {
           walletCorner.addEventListener("click", function (event) {
             if (isSignedInMode()) return;
@@ -7096,6 +7181,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         }
         restoreRunningSession();
         setupTutorial();
+        maybeShowGuestReturnNudge();
         trackReturnVisitWithin7Days();
         updateBathroomGdpLine();
         resolveGeo();
@@ -7883,6 +7969,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         state.activeSessionStartMs = Date.now();
         lastMilestoneAnnounced = 0;
         hideMilestoneCelebration();
+        hideGuestReturnNudge();
         persist();
         trackCoreEvent("core_session_start", {
           wage_mode: state.wageMode,
