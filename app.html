@@ -5402,10 +5402,11 @@ html, body {
       var SIGNED_UNLOCK_TRACKED_KEY = "pp_core_signed_in_unlock_v1";
       // #walletCorner is intentionally NOT locked for guests: it now shows the
       // local-only "unclaimed" token counter with a sign-in nudge.
+      // #panel-coming is deliberately public: upcoming games/merch are marketing,
+      // and guests seeing them is a reason to create an account, not a reward.
       var SOFT_LOCK_CONFIG = [
         { selector: ".log-card", region: "session_log" },
-        { selector: "#panel-stats", region: "stats_tab" },
-        { selector: "#panel-coming", region: "coming_tab" }
+        { selector: "#panel-stats", region: "stats_tab" }
       ];
       var walletSnapshot = {
         new_balance: 0,
@@ -5514,8 +5515,6 @@ html, body {
             return "Session history";
           case "stats_tab":
             return "Stats & analytics";
-          case "coming_tab":
-            return "Shop & unlockables";
           case "session_stop":
             return "Save this session";
           default:
