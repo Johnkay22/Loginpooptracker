@@ -8,36 +8,47 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
   <script>
+    // GA4 loads for every visitor under Consent Mode v2. Storage consent
+    // defaults to denied, so before the visitor accepts the banner GA sets no
+    // cookies and only sends cookieless pings. That keeps traffic counts
+    // accurate without weakening the privacy posture; accepting the banner
+    // upgrades analytics_storage to granted with no page reload.
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     (function () {
       var GA_ID = 'G-R1E17DCKNC';
       var CONSENT_KEY = 'pp_analytics_consent_v1';
-      var gaLoaded = false;
-      function loadGA() {
-        if (gaLoaded) return;
-        gaLoaded = true;
-        var s = document.createElement('script');
-        s.async = true;
-        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
-        document.head.appendChild(s);
-        gtag('js', new Date());
-        gtag('config', GA_ID);
-      }
       function consentGiven() {
         try { return !!(window.localStorage && localStorage.getItem(CONSENT_KEY) === '1'); } catch (e) { return false; }
       }
       function storeConsent() {
         try { if (window.localStorage) localStorage.setItem(CONSENT_KEY, '1'); } catch (e) {}
       }
+      function grantAnalytics() {
+        gtag('consent', 'update', { analytics_storage: 'granted' });
+      }
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        wait_for_update: 500
+      });
+      if (consentGiven()) grantAnalytics();
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(s);
+      gtag('js', new Date());
+      gtag('config', GA_ID);
       function accept() {
         storeConsent();
         var b = document.getElementById('cookieConsent');
         if (b) b.style.display = 'none';
-        loadGA();
+        grantAnalytics();
       }
       function init() {
-        if (consentGiven()) { loadGA(); return; }
+        if (consentGiven()) return;
         var banner = document.getElementById('cookieConsent');
         if (!banner) return;
         banner.style.display = 'flex';

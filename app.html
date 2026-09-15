@@ -45,39 +45,47 @@
   <link rel="preconnect" href="https://unpkg.com">
 
   <script>
-    // GA4 is gated behind the cookie/analytics consent banner. gtag() is defined
-    // immediately so event calls queue harmlessly into dataLayer, but the GA
-    // library is not loaded and no config runs until the visitor consents.
+    // GA4 loads for every visitor under Consent Mode v2. Storage consent
+    // defaults to denied, so before the visitor accepts the banner GA sets no
+    // cookies and only sends cookieless pings. That keeps traffic counts
+    // accurate without weakening the privacy posture; accepting the banner
+    // upgrades analytics_storage to granted with no page reload.
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     (function () {
       var GA_ID = 'G-R1E17DCKNC';
       var CONSENT_KEY = 'pp_analytics_consent_v1';
-      var gaLoaded = false;
-      function loadGA() {
-        if (gaLoaded) return;
-        gaLoaded = true;
-        var s = document.createElement('script');
-        s.async = true;
-        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
-        document.head.appendChild(s);
-        gtag('js', new Date());
-        gtag('config', GA_ID);
-      }
       function consentGiven() {
         try { return !!(window.localStorage && localStorage.getItem(CONSENT_KEY) === '1'); } catch (e) { return false; }
       }
       function storeConsent() {
         try { if (window.localStorage) localStorage.setItem(CONSENT_KEY, '1'); } catch (e) {}
       }
+      function grantAnalytics() {
+        gtag('consent', 'update', { analytics_storage: 'granted' });
+      }
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        wait_for_update: 500
+      });
+      if (consentGiven()) grantAnalytics();
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(s);
+      gtag('js', new Date());
+      gtag('config', GA_ID);
       function accept() {
         storeConsent();
         var b = document.getElementById('cookieConsent');
         if (b) b.classList.remove('show');
-        loadGA();
+        grantAnalytics();
       }
       function init() {
-        if (consentGiven()) { loadGA(); return; }
+        if (consentGiven()) return;
         var banner = document.getElementById('cookieConsent');
         if (!banner) return;
         banner.classList.add('show');
@@ -6041,7 +6049,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         lastTrackedHourlyWageValue = roundedWage;
         trackCoreEvent("core_entered_hourly_wage", {
           wage_bucket: bucketize(roundedWage, "wage"),
-          source: source || "input"
+          trigger: source || "input"
         });
       }
 
@@ -7075,19 +7083,19 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         var guestLogCtaButton = document.getElementById("guestLogCtaButton");
         if (guestLogCtaButton) {
           guestLogCtaButton.addEventListener("click", function () {
-            trackCoreEvent("core_guest_save_cta_click", { source: "session_log" });
+            trackCoreEvent("core_guest_save_cta_click", { trigger: "session_log" });
           });
         }
         var guestStatsCtaButton = document.getElementById("guestStatsCtaButton");
         if (guestStatsCtaButton) {
           guestStatsCtaButton.addEventListener("click", function () {
-            trackCoreEvent("core_guest_save_cta_click", { source: "stats_preview" });
+            trackCoreEvent("core_guest_save_cta_click", { trigger: "stats_preview" });
           });
         }
         var guestReturnNudgeSaveButton = document.getElementById("guestReturnNudgeSaveButton");
         if (guestReturnNudgeSaveButton) {
           guestReturnNudgeSaveButton.addEventListener("click", function () {
-            trackCoreEvent("core_guest_save_cta_click", { source: "return_banner" });
+            trackCoreEvent("core_guest_save_cta_click", { trigger: "return_banner" });
           });
         }
         var guestReturnNudgeDismissButton = document.getElementById("guestReturnNudgeDismissButton");
@@ -7117,7 +7125,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         if (guestResultModal) {
           if (guestResultSaveButton) {
             guestResultSaveButton.addEventListener("click", function () {
-              trackCoreEvent("core_guest_save_cta_click", { source: "session_result" });
+              trackCoreEvent("core_guest_save_cta_click", { trigger: "session_result" });
               // Finalize before navigating so TP squares land on the local
               // session and the anonymous row insert is kicked off. The local
               // save is synchronous; the session itself is already persisted.
@@ -7132,7 +7140,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           }
           if (guestResultContinueButton) {
             guestResultContinueButton.addEventListener("click", function () {
-              trackCoreEvent("core_guest_save_cta_dismiss", { source: "session_result" });
+              trackCoreEvent("core_guest_save_cta_dismiss", { trigger: "session_result" });
               closeGuestResult();
             });
           }
@@ -7946,7 +7954,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         } else {
           var startSource = source || "timer_button";
           trackCoreEvent("core_clicked_start", {
-            source: startSource,
+            trigger: startSource,
             wage_mode: state.wageMode,
             has_valid_wage: getEffectiveHourlyWage() > 0
           });
@@ -7976,7 +7984,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           wage_bucket: bucketize(hourly, "wage")
         });
         trackCoreEvent("core_started_timer", {
-          source: startSource,
+          trigger: startSource,
           wage_mode: state.wageMode,
           wage_bucket: bucketize(hourly, "wage")
         });
@@ -8005,12 +8013,12 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           earnings_bucket: bucketize(earnings, "earnings")
         });
         trackCoreEvent("core_stopped_timer", {
-          source: stopSource,
+          trigger: stopSource,
           duration_bucket: bucketize(durationSeconds, "duration"),
           earnings_bucket: bucketize(earnings, "earnings")
         });
         trackCoreEvent("core_saved_result", {
-          source: stopSource,
+          trigger: stopSource,
           duration_bucket: bucketize(durationSeconds, "duration"),
           earnings_bucket: bucketize(earnings, "earnings")
         });
@@ -8044,7 +8052,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           incrementGuestTokenForToday();
           renderGuestWallet();
           trackCoreEvent("core_teaser_session_stop", {
-            source: stopSource,
+            trigger: stopSource,
             duration_bucket: bucketize(durationSeconds, "duration"),
             earnings_bucket: bucketize(earnings, "earnings")
           });
@@ -8568,7 +8576,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         announceShareStatus("Generating card...", "ok");
         return generateShareCardPng(session)
           .then(function (blob) {
-            trackCoreEvent("core_share_card_generate", { source: shareSource });
+            trackCoreEvent("core_share_card_generate", { trigger: shareSource });
             var file = new File([blob], fileName, { type: "image/png" });
             if (canNativeShareFile(file)) {
               return navigator.share({
@@ -8576,8 +8584,8 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
                 text: caption,
                 files: [file]
               }).then(function () {
-                trackCoreEvent("core_share_card_complete", { source: shareSource, method: "native" });
-                trackCoreEvent("core_shared_result", { source: shareSource, method: "native", share_type: "card" });
+                trackCoreEvent("core_share_card_complete", { trigger: shareSource, method: "native" });
+                trackCoreEvent("core_shared_result", { trigger: shareSource, method: "native", share_type: "card" });
                 announceShareStatus("Share complete.", "ok");
                 return true;
               }).catch(function (error) {
@@ -8591,8 +8599,8 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
 
             downloadBlob(blob, fileName);
             return copyTextSilently(caption).then(function (copied) {
-              trackCoreEvent("core_share_card_complete", { source: shareSource, method: "download" });
-              trackCoreEvent("core_shared_result", { source: shareSource, method: "download", share_type: "card" });
+              trackCoreEvent("core_share_card_complete", { trigger: shareSource, method: "download" });
+              trackCoreEvent("core_shared_result", { trigger: shareSource, method: "download", share_type: "card" });
               if (copied) {
                 announceShareStatus("Card downloaded and caption copied.", "ok");
               } else {
@@ -9569,7 +9577,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         tutorialOverlay.classList.add("open");
         tutorialOverlay.setAttribute("aria-hidden", "false");
         trackCoreEvent("core_tutorial_start", {
-          source: fromReplay ? "manual_replay" : "auto_prompt"
+          trigger: fromReplay ? "manual_replay" : "auto_prompt"
         });
         if (!fromReplay) {
           localStorage.setItem(TUTORIAL_SEEN_KEY, "1");
