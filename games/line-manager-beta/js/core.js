@@ -41,6 +41,10 @@ function cleanSave(raw){
  s.upgrades={...defaults().upgrades};
  for(const u of UPGRADES)s.upgrades[u.id]=Math.max(0,Math.min(u.prices.length,Math.floor(Number(raw.upgrades?.[u.id])||0)));
  for(const k of ['records','daily','awards'])if(!s[k]||typeof s[k]!=='object'||Array.isArray(s[k]))s[k]={};
+ // Older saves only unlocked tomorrow after visiting the shop. Recover completed days.
+ const completed=Object.keys(s.records).map(Number).filter(d=>Number.isInteger(d)&&d>=1&&d<9999);
+ if(s.lastReport?.mode==='career'&&Number.isInteger(s.lastReport.day)&&s.lastReport.day>=1&&s.lastReport.day<9999)completed.push(s.lastReport.day);
+ if(completed.length){s.day=Math.max(s.day,...completed.map(d=>d+1));s.tutorialDone=true;}
  if(s.checkpoint && (!Array.isArray(s.checkpoint.employees)||!Array.isArray(s.checkpoint.stalls)||!s.checkpoint.herman||!Number.isFinite(s.checkpoint.clock)))s.checkpoint=null;
  return s;
 }
@@ -183,7 +187,7 @@ class Game{
  pause(){if(this.screen==='play'){this.screen='pause';this.persist();}}
  end(){if(this.screen!=='play')return;this.screen='report';const stars=starsFor(this);let award=awardFor(this),credited=0;
   if(this.mode==='orientation'){this.save.tutorialDone=true;award=12;credited=Math.max(0,award-(this.save.awards.orientation||0));this.save.awards.orientation=award;this.save.budget+=credited;}
-  else if(this.mode==='career'){const key=String(this.day),old=this.save.records[key];credited=Math.max(0,award-(this.save.awards[key]||0));this.save.awards[key]=Math.max(award,this.save.awards[key]||0);this.save.budget+=credited;this.save.records[key]={gdp:Math.max(this.gdp,old?.gdp||0),stars:Math.max(stars,old?.stars||0)};}
+  else if(this.mode==='career'){const key=String(this.day),old=this.save.records[key];credited=Math.max(0,award-(this.save.awards[key]||0));this.save.awards[key]=Math.max(award,this.save.awards[key]||0);this.save.budget+=credited;this.save.records[key]={gdp:Math.max(this.gdp,old?.gdp||0),stars:Math.max(stars,old?.stars||0)};this.save.day=Math.max(this.save.day,this.day+1);this.save.tutorialDone=true;}
   else{const old=this.save.daily[this.dailyKey];this.save.daily[this.dailyKey]={gdp:Math.max(this.gdp,old?.gdp||0),stars:Math.max(stars,old?.stars||0)};}
   this.report={day:this.day,mode:this.mode,gdp:this.gdp,breaks:this.breaks,complaints:this.complaints,stars,award,credited,goal:this.goalMet,streak:this.bestStreak,early:this.complaints>=3};
   if(this.mode!=='daily'){this.save.checkpoint=null;this.save.lastReport=copy(this.report);}this.emit('save',this.save);this.emit('end',this.report);
