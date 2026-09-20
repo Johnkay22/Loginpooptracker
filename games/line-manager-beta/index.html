@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101a2d">
+<meta name="description" content="Herman Bowels runs the office restroom operation. Lead the line, keep the paper stocked, and put every break on the books.">
+<title>Line Manager | Poop Profit</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101a2d'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='36' fill='%23e8cf72'%3ELM%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="office" aria-label="Office floor. Drag to pan, pinch or scroll to zoom. All game actions are also available in the controls." role="img"></canvas>
+<header class="topbar">
+ <div class="brand"><div><span class="eyebrow">POOP PROFIT</span><strong>Line Manager <sup>BETA</sup></strong></div></div>
+ <div class="clock" id="clock"><span id="day-label">FACILITIES DIVISION</span><strong id="time-label">9:00 AM</strong><div class="clock-track"><i id="time-progress"></i></div></div>
+ <nav class="top-actions" aria-label="Game controls"><button id="sound" class="icon-btn" aria-label="Mute sound" title="Sound">♪</button><button id="help" class="icon-btn" aria-label="How to play" title="How to play">?</button><button id="pause" class="icon-btn" aria-label="Pause game" title="Pause game">Ⅱ</button></nav>
+</header>
+<section id="scoreboard" class="scoreboard" aria-label="Shift statistics">
+ <div class="gdp"><span class="eyebrow">BATHROOM GDP</span><strong id="gdp">$0.00</strong><span id="target">Target $75</span></div>
+ <div class="stat"><span class="eyebrow">ON THE BOOKS</span><strong id="breaks">0 breaks</strong><span id="streak">Build a smooth operation</span></div>
+ <div class="stat hr"><span class="eyebrow">HR COMPLAINTS</span><strong id="hr">○ ○ ○</strong><span id="hr-note">Keep the team comfortable</span></div>
+</section>
+<div class="view-controls" aria-label="Camera controls"><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="view-fit" aria-label="Fit office">⌖</button></div>
+<aside id="lesson" class="lesson" hidden aria-live="polite"><strong></strong><p></p></aside>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="save-warning" class="save-warning" hidden>Saving is unavailable in this browser. Keep this page open to retain this session.</div>
+<section id="controls" class="controls" aria-label="Office actions">
+ <div class="queue-row"><span id="line-count">LINE 0 / 2</span><span id="route">Tap an employee who needs a break</span><button id="cancel" class="text-btn">Stop walking</button></div>
+ <div id="roster" class="roster" aria-label="Employees requesting breaks"></div>
+ <div class="facilities"><div class="stall-group" id="stalls" aria-label="Stalls"></div><button id="paper" class="paper-button"><span>◉</span><div><strong>Get paper</strong><small>Supply shelf</small></div></button></div>
+ <div class="bottom-note"><span id="objective">OPTIONAL · Complete four breaks with no complaints</span><span class="gesture-hint">Drag to pan · Scroll to zoom</span></div>
+</section>
+<div id="modal" class="modal" hidden></div>
+<div id="loading" class="loading"><span class="eyebrow">OPENING THE OFFICE</span><strong>Herman is clocking in.</strong><span id="load-status">Preparing the floor…</span></div>
+<noscript>This game needs JavaScript enabled in your browser.</noscript>
+<script src="js/core.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/office.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
