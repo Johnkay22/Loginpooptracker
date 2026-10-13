@@ -99,6 +99,7 @@
     })();
   </script>
   <script src="/js/pp-error-reporter.js"></script>
+  <script src="js/pp-currency.js?v=20261013b"></script>
   <style>
     .cookie-consent{position:fixed;left:0;right:0;bottom:0;z-index:9999;display:none;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;padding:14px 18px;background:rgba(8,14,32,.96);border-top:1px solid #1b2a4a;backdrop-filter:blur(10px);color:#f2f5fb;font-size:14px}
     .cookie-consent.show{display:flex}
@@ -3942,6 +3943,10 @@ html, body {
 .row label, .row.two label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 7px; font-weight: 600; }
 .row input, .custom-range input { width: 100%; background: var(--field); border: 1px solid var(--line-2); color: var(--text); border-radius: 11px; padding: 12px; font-family: inherit; font-size: 15px; font-weight: 600; color-scheme: dark; }
 .hourly-display, .wage-eff { margin-top: 13px; font-size: 12.5px; color: var(--muted); }
+.currency-inline { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 12px 0; }
+.currency-inline label { font-size: 11px; color: var(--muted); font-weight: 600; }
+.wage-card select.currency-select { -webkit-appearance: none; appearance: none; width: auto; min-width: 0; margin: 0; background: var(--field) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238b9bb4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center; border: 1px solid var(--line-2); color: var(--text); border-radius: 9px; padding: 6px 28px 6px 10px; font-family: inherit; font-size: 13px; font-weight: 600; line-height: 1.3; color-scheme: dark; cursor: pointer; }
+.wage-card select.currency-select:focus-visible { outline: 2px solid var(--accent, #5db4ff); outline-offset: 2px; }
 
 .timer-card h2 { display: none; }
 .timer-card .timer { text-align: center; }
@@ -4506,7 +4511,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         <div class="panel-grid">
           <article class="card wage-card">
             <button id="wageStripToggleButton" class="wage-strip-toggle" type="button" aria-expanded="false" aria-controls="wageStripBody">
-              <span class="wage-strip-icon" aria-hidden="true">$</span>
+              <span id="wageStripIcon" class="wage-strip-icon" aria-hidden="true">$</span>
               <span class="wage-strip-copy">
                 <span class="wage-strip-title">Wage Settings</span>
                 <span id="wageStripSummary" class="wage-strip-summary">Hourly mode</span>
@@ -4525,6 +4530,11 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
               <div class="segmented" role="group" aria-label="Wage input mode">
                 <button id="hourlyModeButton" type="button">Hourly Wage</button>
                 <button id="salaryModeButton" type="button">Salary + Weekly Hours</button>
+              </div>
+
+              <div class="currency-inline">
+                <label for="currencySelect">Currency</label>
+                <select id="currencySelect" class="currency-select" title="Picked automatically from your location. Changes the symbol only, not your numbers."></select>
               </div>
 
               <div id="hourlyInputs" class="row">
@@ -5116,6 +5126,24 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
       var SUPABASE_URL = "https://ukfboxemqwuwkvfglzfq.supabase.co";
       var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrZmJveGVtcXd1d2t2ZmdsemZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MDk0OTQsImV4cCI6MjA5NjI4NTQ5NH0.nXvi3ZEimwuZHfWR2DZlxX1YYzrdMe_UvZa6NkKN4Og";
 
+      // Display currency (symbol + number format only, never converted). See /js/pp-currency.js.
+      var PPC = window.PPCurrency || {
+        get: function () { return "USD"; },
+        set: function () {},
+        info: function () { return { code: "USD", symbol: "$", icon: "$", decimals: 2 }; },
+        format: function (v, d) { var n = Number(v) || 0; return "$" + (d === 0 ? Math.round(n).toLocaleString("en-US") : n.toFixed(2)); },
+        fillSelect: function () {},
+        isSupported: function (c) { return c === "USD"; },
+        onChange: function () {}
+      };
+      function money(value) { return PPC.format(value); }
+      function moneyWhole(value) { return PPC.format(value, 0); }
+      // Toilet-paper prices are US averages, so savings stay in US dollars and say so.
+      function moneyUsd(value) {
+        var text = PPC.format(value, undefined, "USD");
+        return PPC.get() === "USD" ? text : "US" + text;
+      }
+
       // All company toilet-paper savings math references this single source of truth.
       var TP_CONFIG = {
         pricePerRoll: 1.09,        // average USD price per roll
@@ -5625,7 +5653,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         activeGuestResultSession = session || null;
         var earnings = session ? session.earnings : 0;
         var durationSeconds = session ? session.durationSeconds : 0;
-        var earningsText = "$" + roundCurrency(earnings).toFixed(2);
+        var earningsText = money(roundCurrency(earnings));
         var tokenCount = getGuestTokenCount();
         var tokenNoun = tokenCount === 1 ? "Turd Token" : tokenCount + " Turd Tokens";
         if (guestResultEarnings) {
@@ -5802,7 +5830,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         if (!authContext.supabase || !userId) return Promise.resolve(null);
         return authContext.supabase
           .from("profiles")
-          .select("user_id, username, industry, job_title, pay_mode, annual_salary, hours_per_week, hourly_wage")
+          .select("user_id, username, industry, job_title, pay_mode, annual_salary, hours_per_week, hourly_wage, currency")
           .eq("user_id", userId)
           .maybeSingle()
           .then(function (result) {
@@ -5833,6 +5861,9 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
 
       function applyProfileWageDefaults(profile) {
         if (!profile) return;
+        if (profile.currency && PPC.isSupported(profile.currency)) {
+          PPC.set(profile.currency);
+        }
         var hasWage = profile.pay_mode != null
           || profile.hourly_wage != null
           || profile.annual_salary != null
@@ -5871,7 +5902,8 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
             pay_mode: state.wageMode === "salary" ? "salary" : "hourly",
             hourly_wage: wageValueOrNull(state.hourlyWage),
             annual_salary: wageValueOrNull(state.annualSalary),
-            hours_per_week: wageValueOrNull(state.weeklyHours)
+            hours_per_week: wageValueOrNull(state.weeklyHours),
+            currency: PPC.get()
           };
           Promise.resolve(client.from("profiles").update(patch).eq("user_id", authContext.userId))
             .then(function (result) {
@@ -6486,7 +6518,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
       }
 
       function describeGuestReturnNudge(unsavedTotal, tokenCount) {
-        var moneyPart = unsavedTotal > 0 ? ("$" + roundCurrency(unsavedTotal).toFixed(2)) : null;
+        var moneyPart = unsavedTotal > 0 ? (money(roundCurrency(unsavedTotal))) : null;
         var tokenPart = tokenCount > 0
           ? (tokenCount === 1 ? "1 Turd Token" : tokenCount + " Turd Tokens")
           : null;
@@ -6603,7 +6635,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
       function formatTpSummaryText(squares, savings) {
         var count = Math.max(0, Math.floor(Number(squares) || 0));
         var unit = count === 1 ? "square" : "squares";
-        return "You saved $" + roundCurrency(Number(savings) || 0).toFixed(2) +
+        return "You saved " + moneyUsd(roundCurrency(Number(savings) || 0)) +
           " in company toilet paper (" + count + " " + unit + ")";
       }
 
@@ -7168,6 +7200,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           persist();
         }
         setupGuestCtaEvents();
+        setupCurrencySelect();
         hydrateInputs();
         renderTabs();
         renderWageMode();
@@ -7920,14 +7953,50 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         renderWageStrip();
       }
 
+      function renderCurrencyLabels() {
+        var code = PPC.get();
+        var icon = document.getElementById("wageStripIcon");
+        if (icon) icon.textContent = PPC.info(code).icon;
+        var hourlyLabel = document.querySelector('label[for="hourlyWageInput"]');
+        if (hourlyLabel) hourlyLabel.textContent = "Hourly Wage (" + code + ")";
+        var salaryLabel = document.querySelector('label[for="annualSalaryInput"]');
+        if (salaryLabel) salaryLabel.textContent = "Annual Salary (" + code + ")";
+        var select = document.getElementById("currencySelect");
+        if (select && select.value !== code) select.value = code;
+        // Blank placeholders baked into the markup ("$0.00") follow the currency until real numbers replace them.
+        ["guestStatToday", "statAvgEarnings", "trendPeakLabel", "trendAverageLabel", "insightBestDay",
+          "insightProfitRate", "ratingProfitValue", "guestResultEarnings", "shareCardAmountValue", "statTpSavings"]
+          .forEach(function (id) {
+            var el = document.getElementById(id);
+            if (!el || !/^(US)?\$0\.00( \/ hr)?$|^[^0-9]*0(\.00)?( \/ hr)?$/.test(el.textContent.trim())) return;
+            if (id === "statTpSavings") { el.textContent = moneyUsd(0); return; }
+            el.textContent = money(0) + (id === "insightProfitRate" ? " / hr" : "");
+          });
+      }
+
+      function setupCurrencySelect() {
+        var select = document.getElementById("currencySelect");
+        if (!select) return;
+        PPC.fillSelect(select, "short");
+        select.addEventListener("change", function () {
+          PPC.set(select.value);
+        });
+        PPC.onChange(function (code) {
+          renderAll();
+          saveWageToProfile();
+          try { if (typeof window.gtag === "function") window.gtag("event", "currency_change", { currency: code }); } catch (_e) {}
+        });
+      }
+
       function renderWageStrip() {
+        renderCurrencyLabels();
         var effectiveHourly = getEffectiveHourlyWage();
         var summaryPrefix = state.wageMode === "hourly" ? "Hourly mode" : "Salary mode";
         if (wageStripSummary) {
           wageStripSummary.textContent = summaryPrefix;
         }
         if (wageStripRate) {
-          wageStripRate.textContent = "$" + effectiveHourly.toFixed(2) + "/hr";
+          wageStripRate.textContent = money(effectiveHourly) + "/hr";
         }
         if (wageStripToggleButton) {
           wageStripToggleButton.setAttribute("aria-expanded", wageModeCollapsed ? "false" : "true");
@@ -8043,7 +8112,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           renderAll();
           setStatus(
             statusMessage,
-            "Session done: $" + roundCurrency(earnings).toFixed(2) + ". It's on this device only until you save it.",
+            "Session done: " + money(roundCurrency(earnings)) + ". It's on this device only until you save it.",
             "ok"
           );
           writeLocalFlag(TEASER_STOP_LOCAL_KEY);
@@ -8137,7 +8206,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         var elapsedSeconds = Math.max(0, Math.floor((Date.now() - state.activeSessionStartMs) / 1000));
         var currentEarnings = (getEffectiveHourlyWage() / 3600) * elapsedSeconds;
         timerDisplay.textContent = formatDuration(elapsedSeconds);
-        liveEarnings.textContent = "Current earnings: $" + currentEarnings.toFixed(2);
+        liveEarnings.textContent = "Current earnings: " + money(currentEarnings);
         renderTimerRuntimeUI(elapsedSeconds, currentEarnings);
       }
 
@@ -8183,7 +8252,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
 
       function renderAll() {
         var hourly = getEffectiveHourlyWage();
-        hourlyWageDisplay.textContent = "Effective hourly wage: $" + hourly.toFixed(2);
+        hourlyWageDisplay.textContent = "Effective hourly wage: " + money(hourly);
         state.wageModeCollapsed = wageModeCollapsed;
         renderWageStrip();
 
@@ -8218,18 +8287,18 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         var todaySeconds = todaySessions.reduce(function (sum, session) {
           return sum + (Number(session.durationSeconds) || 0);
         }, 0);
-        todayEl.textContent = "$" + roundCurrency(todayEarnings).toFixed(2);
+        todayEl.textContent = money(roundCurrency(todayEarnings));
         timeEl.textContent = formatDuration(todaySeconds);
         sessionsEl.textContent = String(todaySessions.length);
       }
 
       function resetStatDisplaysForCountUp() {
         if (statEarnings) statEarnings.innerHTML = formatStatHeroMoney(0);
-        if (statAnnualYield) statAnnualYield.textContent = "$0";
-        if (statAnnualYieldInline) statAnnualYieldInline.textContent = "$0";
+        if (statAnnualYield) statAnnualYield.textContent = moneyWhole(0);
+        if (statAnnualYieldInline) statAnnualYieldInline.textContent = moneyWhole(0);
         if (statTime) statTime.textContent = formatDuration(0);
         if (statSessions) statSessions.textContent = "0";
-        if (statAvgEarnings) statAvgEarnings.textContent = "$0.00";
+        if (statAvgEarnings) statAvgEarnings.textContent = money(0);
         if (statAvgTime) statAvgTime.textContent = formatDuration(0);
         if (statToday) statToday.textContent = "0";
         if (statTokens) statTokens.textContent = "0";
@@ -8296,13 +8365,13 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           if (state.activeTab === "stats") {
             statsCountUpGeneration += 1;
           }
-          if (statEarnings) statEarnings.textContent = "$" + totalEarnings.toFixed(2);
-          if (statAnnualYield) statAnnualYield.textContent = "$" + Math.round(projectedAnnual).toLocaleString("en-US");
-          if (statAnnualYieldInline) statAnnualYieldInline.textContent = "$" + Math.round(projectedAnnual).toLocaleString("en-US");
+          if (statEarnings) statEarnings.textContent = money(totalEarnings);
+          if (statAnnualYield) statAnnualYield.textContent = moneyWhole(projectedAnnual);
+          if (statAnnualYieldInline) statAnnualYieldInline.textContent = moneyWhole(projectedAnnual);
           if (statSessions) statSessions.textContent = String(totalSessions);
           if (statTime) statTime.textContent = formatDuration(totalTimeSeconds);
           if (statAvgTime) statAvgTime.textContent = formatDuration(Math.floor(avgTime));
-          if (statAvgEarnings) statAvgEarnings.textContent = "$" + avgEarnings.toFixed(2);
+          if (statAvgEarnings) statAvgEarnings.textContent = money(avgEarnings);
           if (statToday) statToday.textContent = String(todaySessions);
           if (statTokens) statTokens.textContent = String(tokenBalance);
           if (statPercentile) statPercentile.textContent = pct + "%";
@@ -8316,12 +8385,12 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           return sum + (Number(s.tp_savings) || 0);
         }, 0);
         if (statTpSavings) {
-          statTpSavings.textContent = "$" + roundCurrency(lifetimeTpSavings).toFixed(2);
+          statTpSavings.textContent = moneyUsd(roundCurrency(lifetimeTpSavings));
         }
 
         insightLongest.textContent = formatDuration(longestSession);
-        insightBestDay.textContent = "$" + bestDayEarnings.toFixed(2);
-        insightProfitRate.textContent = "$" + profitRate.toFixed(2) + " / hr";
+        insightBestDay.textContent = money(bestDayEarnings);
+        insightProfitRate.textContent = money(profitRate) + " / hr";
 
         renderTrend(sessions);
       }
@@ -8356,10 +8425,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
 
       function formatStatHeroMoney(value, finalValue) {
         var amount = typeof finalValue === "number" ? finalValue : value;
-        var formatted = "$" + Math.max(0, amount).toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
+        var formatted = money(Math.max(0, amount));
         var dotIndex = formatted.lastIndexOf(".");
         if (dotIndex === -1) return formatted;
         return formatted.slice(0, dotIndex) + '<span class="cents">' + formatted.slice(dotIndex) + "</span>";
@@ -8367,12 +8433,12 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
 
       function formatStatMoneyRounded(value, finalValue) {
         var amount = typeof finalValue === "number" ? finalValue : value;
-        return "$" + Math.round(Math.max(0, amount)).toLocaleString("en-US");
+        return moneyWhole(Math.max(0, amount));
       }
 
       function formatStatMoneyFixed(value, finalValue) {
         var amount = typeof finalValue === "number" ? finalValue : value;
-        return "$" + Math.max(0, amount).toFixed(2);
+        return money(Math.max(0, amount));
       }
 
       function formatStatDurationAnimated(value, finalValue) {
@@ -8424,7 +8490,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
 
           var earnings = document.createElement("div");
           earnings.className = "log-earnings";
-          earnings.textContent = "$" + session.earnings.toFixed(2);
+          earnings.textContent = money(session.earnings);
 
           top.appendChild(date);
           top.appendChild(earnings);
@@ -8433,7 +8499,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           meta.className = "log-meta";
           var ratingValue = Number(session.rating) || 0;
           var ratingPoops = ratingValue > 0 ? " | Rating: " + "💩".repeat(ratingValue) : "";
-          meta.textContent = "Duration: " + formatDuration(session.durationSeconds) + " | Wage used: $" + session.hourlyWageSnapshot.toFixed(2) + "/hr" + ratingPoops;
+          meta.textContent = "Duration: " + formatDuration(session.durationSeconds) + " | Wage used: " + money(session.hourlyWageSnapshot) + "/hr" + ratingPoops;
 
           var unsavedLine = null;
           if (!isSignedInMode()) {
@@ -8498,7 +8564,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           var unsavedTotal = state.sessions.reduce(function (sum, session) {
             return sum + (Number(session.earnings) || 0);
           }, 0);
-          button.textContent = "Save my $" + roundCurrency(unsavedTotal).toFixed(2) + " in sessions";
+          button.textContent = "Save my " + money(roundCurrency(unsavedTotal)) + " in sessions";
         }
       }
 
@@ -8553,9 +8619,9 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         var map = {
           totalSessions: "My total poop sessions: " + totalSessions + ". Track yours at poopprofit.com",
           totalTime: "My total poop time: " + formatDuration(totalTimeSeconds) + ". Track yours at poopprofit.com",
-          totalEarnings: "My total poop earnings: $" + totalEarnings.toFixed(2) + ". Track yours at poopprofit.com",
+          totalEarnings: "My total poop earnings: " + money(totalEarnings) + ". Track yours at poopprofit.com",
           avgSession: "My average poop session: " + formatDuration(Math.floor(avgTime)) + ". Track yours at poopprofit.com",
-          avgEarnings: "My average poop earnings per session: $" + avgEarnings.toFixed(2) + ". Track yours at poopprofit.com",
+          avgEarnings: "My average poop earnings per session: " + money(avgEarnings) + ". Track yours at poopprofit.com",
           todaySessions: "My poop sessions today: " + todaySessions + ". Track yours at poopprofit.com"
         };
         return map[statKey] || "";
@@ -8569,7 +8635,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         var shareSource = source || "log";
         var resolvedOptions = options || {};
         var caption = resolvedOptions.caption ||
-          ("I got paid $" + Number(session.earnings || 0).toFixed(2) + " to poop. Track yours at poopprofit.com");
+          ("I got paid " + money(Number(session.earnings || 0)) + " to poop. Track yours at poopprofit.com");
         var fileName = resolvedOptions.fileName ||
           ("poopprofit-" + Number(session.earnings || 0).toFixed(2).replace(".", "-") + ".png");
 
@@ -8684,7 +8750,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         if (scope === "latest") {
           if (!sessions.length) return "";
           var latest = sessions[0];
-          return "I just earned $" + latest.earnings.toFixed(2) + " in " + formatDuration(latest.durationSeconds) +
+          return "I just earned " + money(latest.earnings) + " in " + formatDuration(latest.durationSeconds) +
             " with Poop Profit. Track your poop profits at poopprofit.com";
         }
 
@@ -8694,7 +8760,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         var totalEarnings = sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
         var totalTimeSeconds = sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
 
-        return "My Poop Profit stats: " + totalSessions + " sessions, $" + totalEarnings.toFixed(2) +
+        return "My Poop Profit stats: " + totalSessions + " sessions, " + money(totalEarnings) +
           " earned, " + formatDuration(totalTimeSeconds) + " total time. Check yours at poopprofit.com";
       }
 
@@ -8710,7 +8776,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           var latest = sessions[0];
           shareSessionCard(latest, "summary_latest", {
             caption:
-              "I just earned $" + Number(latest.earnings || 0).toFixed(2) +
+              "I just earned " + money(Number(latest.earnings || 0)) +
               " in " + formatDuration(Math.max(0, Math.floor(latest.durationSeconds || 0))) +
               ". Track yours at poopprofit.com",
             fileName: "poopprofit-latest-" + Number(latest.earnings || 0).toFixed(2).replace(".", "-") + ".png"
@@ -8729,7 +8795,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           "summary_overall",
           {
             caption:
-              "I've earned $" + totalEarnings.toFixed(2) +
+              "I've earned " + money(totalEarnings) +
               " across " + totalSessions + " sessions (" + formatDuration(totalTimeSeconds) + " total). " +
               "Track yours at poopprofit.com",
             fileName: "poopprofit-overall-" + totalEarnings.toFixed(2).replace(".", "-") + ".png"
@@ -8765,7 +8831,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         var safeEarnings = Number.isFinite(earnings) ? Math.max(0, earnings) : 0;
         var durationSeconds = Number(session && session.durationSeconds);
         var safeDurationSeconds = Number.isFinite(durationSeconds) ? Math.max(0, Math.floor(durationSeconds)) : 0;
-        shareCardAmountValue.textContent = "$" + safeEarnings.toFixed(2);
+        shareCardAmountValue.textContent = money(safeEarnings);
         shareCardDurationValue.textContent = formatShareCardDuration(safeDurationSeconds);
       }
 
@@ -9145,7 +9211,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         pendingRatingShareSession = null;
         if (ratingProfitValue) {
           var profitEarnings = pendingTpContext ? Number(pendingTpContext.earnings) || 0 : 0;
-          ratingProfitValue.textContent = "$" + roundCurrency(profitEarnings).toFixed(2);
+          ratingProfitValue.textContent = money(roundCurrency(profitEarnings));
         }
         applyRatingSelection(0);
         prefillTpInput(ratingTpInput);
@@ -9178,7 +9244,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         }
         pendingRatingShareSession = session;
         if (ratingShareMessage) {
-          ratingShareMessage.textContent = "Share your $" + Number(session.earnings || 0).toFixed(2) + " poop?";
+          ratingShareMessage.textContent = "Share your " + money(Number(session.earnings || 0)) + " poop?";
         }
         if (ratingInputStep) ratingInputStep.hidden = true;
         if (ratingShareStep) ratingShareStep.hidden = false;
@@ -9247,8 +9313,8 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
 
         var fiveMinuteProjection = (earnings / Math.max(1, elapsed)) * 300;
         var tenMinuteProjection = (earnings / Math.max(1, elapsed)) * 600;
-        sessionProjection.textContent = "Projection: 5m = $" + fiveMinuteProjection.toFixed(2) +
-          " | 10m = $" + tenMinuteProjection.toFixed(2);
+        sessionProjection.textContent = "Projection: 5m = " + money(fiveMinuteProjection) +
+          " | 10m = " + money(tenMinuteProjection);
 
         var progressPercent = Math.min(100, (elapsed / 900) * 100);
         timerProgressBar.style.width = progressPercent.toFixed(1) + "%";
@@ -9327,7 +9393,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           void timerCard.offsetWidth;
           timerCard.classList.add("milestone-pop");
         }
-        var message = "Milestone hit: " + formatDuration(milestoneSeconds) + " - $" + earnings.toFixed(2) + " earned.";
+        var message = "Milestone hit: " + formatDuration(milestoneSeconds) + " - " + money(earnings) + " earned.";
         setStatus(statusMessage, message, "ok");
         if (!milestoneToast) return;
         milestoneToast.textContent = message;
@@ -9393,10 +9459,10 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         var minValue = Math.min.apply(null, values);
         var avgValue = totalValue / Math.max(1, values.length);
         var latestSession = plotted[plotted.length - 1];
-        if (trendPeakLabel) trendPeakLabel.textContent = "Peak: $" + maxValue.toFixed(2);
-        if (trendAverageLabel) trendAverageLabel.textContent = "Avg: $" + avgValue.toFixed(2);
+        if (trendPeakLabel) trendPeakLabel.textContent = "Peak: " + money(maxValue);
+        if (trendAverageLabel) trendAverageLabel.textContent = "Avg: " + money(avgValue);
         if (trendFootnote && latestSession) {
-          trendFootnote.textContent = "Latest: $" + latestSession.earnings.toFixed(2) + " on " +
+          trendFootnote.textContent = "Latest: " + money(latestSession.earnings) + " on " +
             formatDateForSummary(latestSession.endedAtMs);
         }
 
@@ -9423,7 +9489,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           context.moveTo(padding.left, y);
           context.lineTo(width - padding.right, y);
           context.stroke();
-          context.fillText("$" + tickValue.toFixed(2), width - 6, y + 3);
+          context.fillText(money(tickValue), width - 6, y + 3);
         });
         context.textAlign = "left";
 
