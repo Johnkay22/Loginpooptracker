@@ -150,7 +150,7 @@
       var opt = document.createElement("option");
       opt.value = row[0];
       opt.textContent = labelStyle === "short"
-        ? (row[1].trim() + "  " + row[0])
+        ? (row[2] + " " + row[0])
         : (row[0] + " (" + row[1].trim() + ") " + row[4]);
       select.appendChild(opt);
     });

@@ -99,7 +99,7 @@
     })();
   </script>
   <script src="/js/pp-error-reporter.js"></script>
-  <script src="/js/pp-currency.js"></script>
+  <script src="js/pp-currency.js"></script>
   <style>
     .cookie-consent{position:fixed;left:0;right:0;bottom:0;z-index:9999;display:none;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;padding:14px 18px;background:rgba(8,14,32,.96);border-top:1px solid #1b2a4a;backdrop-filter:blur(10px);color:#f2f5fb;font-size:14px}
     .cookie-consent.show{display:flex}
@@ -3943,9 +3943,10 @@ html, body {
 .row label, .row.two label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 7px; font-weight: 600; }
 .row input, .custom-range input { width: 100%; background: var(--field); border: 1px solid var(--line-2); color: var(--text); border-radius: 11px; padding: 12px; font-family: inherit; font-size: 15px; font-weight: 600; color-scheme: dark; }
 .hourly-display, .wage-eff { margin-top: 13px; font-size: 12.5px; color: var(--muted); }
-.row select.currency-select { width: 100%; background: var(--field); border: 1px solid var(--line-2); color: var(--text); border-radius: 11px; padding: 12px; font-family: inherit; font-size: 15px; font-weight: 600; color-scheme: dark; }
-.currency-row { margin-bottom: 12px; }
-.currency-hint { margin: 6px 0 0; font-size: 11.5px; color: var(--muted); }
+.currency-inline { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 12px 0; }
+.currency-inline label { font-size: 11px; color: var(--muted); font-weight: 600; }
+.wage-card select.currency-select { -webkit-appearance: none; appearance: none; width: auto; min-width: 0; margin: 0; background: var(--field) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238b9bb4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center; border: 1px solid var(--line-2); color: var(--text); border-radius: 9px; padding: 6px 28px 6px 10px; font-family: inherit; font-size: 13px; font-weight: 600; line-height: 1.3; color-scheme: dark; cursor: pointer; }
+.wage-card select.currency-select:focus-visible { outline: 2px solid var(--accent, #5db4ff); outline-offset: 2px; }
 
 .timer-card h2 { display: none; }
 .timer-card .timer { text-align: center; }
@@ -4531,12 +4532,9 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
                 <button id="salaryModeButton" type="button">Salary + Weekly Hours</button>
               </div>
 
-              <div class="row currency-row">
-                <div>
-                  <label for="currencySelect">Currency</label>
-                  <select id="currencySelect" class="currency-select" aria-describedby="currencyHint"></select>
-                  <p id="currencyHint" class="currency-hint">Picked automatically from your location. Changes the symbol only, not your numbers.</p>
-                </div>
+              <div class="currency-inline">
+                <label for="currencySelect">Currency</label>
+                <select id="currencySelect" class="currency-select" title="Picked automatically from your location. Changes the symbol only, not your numbers."></select>
               </div>
 
               <div id="hourlyInputs" class="row">
@@ -7979,7 +7977,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
       function setupCurrencySelect() {
         var select = document.getElementById("currencySelect");
         if (!select) return;
-        PPC.fillSelect(select);
+        PPC.fillSelect(select, "short");
         select.addEventListener("change", function () {
           PPC.set(select.value);
         });
