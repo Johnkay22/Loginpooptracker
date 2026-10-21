@@ -91,7 +91,7 @@
   .dim{color:var(--muted)}
 
   tr.detail-row > td{background:#FCFAF6;padding:0;white-space:normal}
-  .dossier{padding:18px 20px 22px;border-left:3px solid var(--gold)}
+  .dossier{padding:18px 20px 22px;border-left:3px solid var(--gold);position:sticky;left:0;width:min(100%, calc(100vw - 42px))}
   .dossier.guest-dossier{border-left-color:var(--muted)}
   .dossier h3{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px}
   .dossier h3:first-child{margin-top:0}
@@ -105,6 +105,26 @@
   .mini td{padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
   .mini tr:last-child td{border-bottom:none}
   .none-note{font-size:12.5px;color:var(--muted)}
+
+  .pill.st-regular{background:var(--green-bg);color:var(--green)}
+  .pill.st-new{background:#EAF0F7;color:#3B5F8A}
+  .pill.st-stuck{background:#FBEBDD;color:#A4561F}
+  .pill.st-lapsed{background:#EFEDE8;color:#6E6257}
+  .pill.st-guest{background:#EFEDE8;color:var(--muted)}
+  .story{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.55;margin-bottom:6px}
+  .story .pill{margin-right:6px;vertical-align:1px}
+  .story .tip{display:block;margin-top:6px;font-size:12.5px;color:var(--muted)}
+  .timeline{list-style:none;margin:4px 0 0;padding:0}
+  .timeline li{position:relative;padding:0 0 12px 22px;font-size:13px}
+  .timeline li:last-child{padding-bottom:0}
+  .timeline li::before{content:"";position:absolute;left:4px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--gold)}
+  .timeline li::after{content:"";position:absolute;left:8px;top:17px;bottom:-4px;width:1px;background:var(--line)}
+  .timeline li:last-child::after{display:none}
+  .timeline li.miss::before{background:transparent;border:1.5px dashed #C9BCAD}
+  .timeline li.miss .t-what{color:var(--muted)}
+  .timeline .t-what{font-weight:600}
+  .timeline .t-when{color:var(--muted);font-size:12px;margin-left:6px}
+  .timeline .t-note{display:block;color:var(--muted);font-size:12px}
 
   .chart-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
   .chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:8px;border-bottom:1px solid var(--line)}
@@ -204,6 +224,12 @@
         <div class="hint">Claimed tokens or logged a session in the past week.</div>
         <span class="go">View active &rarr;</span>
       </div>
+      <div class="card clickable" data-jump="stuck" role="button" tabindex="0">
+        <div class="label">Signed up, never logged</div>
+        <div class="value" id="s-stuck"></div>
+        <div class="hint" id="s-stuck-hint">Created an account but never ran a single session. Your biggest leak.</div>
+        <span class="go">See where they stopped &rarr;</span>
+      </div>
       <div class="card">
         <div class="label">Signup rate</div>
         <div class="value" id="s-conv"></div>
@@ -223,7 +249,7 @@
   </section>
 
   <section id="usersSection">
-    <h2>Everyone<span class="sub">click any row for the full dossier: identity, wallet, session history</span></h2>
+    <h2>Everyone<span class="sub">click any row for the full dossier: journey, identity, wallet, session history</span></h2>
     <div class="toolbar">
       <input class="search" id="search" type="search" placeholder="Search name, email, or ID" aria-label="Search people">
       <div class="chips" role="group" aria-label="Filter people">
@@ -231,6 +257,7 @@
         <button class="chip" data-filter="registered">Registered</button>
         <button class="chip" data-filter="guest">Guests</button>
         <button class="chip" data-filter="active">Active 7d</button>
+        <button class="chip" data-filter="stuck">Never logged</button>
       </div>
       <span class="count-note" id="countNote"></span>
     </div>
@@ -240,6 +267,7 @@
           <tr>
             <th data-key="username">Person</th>
             <th data-key="registered">Type</th>
+            <th data-key="stage_rank">Stage</th>
             <th data-key="first_seen">First seen</th>
             <th data-key="token_balance">Tokens</th>
             <th data-key="current_streak">Streak</th>
@@ -368,6 +396,132 @@
   }
 
   var data = null, sortKey = "token_balance", sortDir = -1, filter = "all", openKey = null;
+  var DAY = 86400000;
+
+  // Stable row key: guests and wallet holders have an anon_id; accounts with no wallet only have a user_id.
+  function rowKey(u) { return u.anon_id || u.user_id || ""; }
+  function msSince(iso) {
+    if (!iso) return Infinity;
+    var t = new Date(iso).getTime();
+    return isFinite(t) && t > 0 ? Date.now() - t : Infinity;
+  }
+  function daysBetween(a, b) {
+    if (!a || !b) return null;
+    return Math.max(0, Math.round((new Date(b).getTime() - new Date(a).getTime()) / DAY));
+  }
+  function inDays(n) {
+    if (n == null) return "";
+    if (n === 0) return "same day";
+    return n === 1 ? "1 day later" : n + " days later";
+  }
+
+  // Where each person is in the funnel. rank orders the Stage column (problems first).
+  function stageOf(u) {
+    if (!u.registered) {
+      return { key: "guest", label: "Guest", tone: "st-guest", rank: 7,
+        tip: "Used the calculator without an account. Nothing ties their guest history to anyone." };
+    }
+    var idle = msSince(u.last_active_at);
+    if (!u.last_sign_in_at) {
+      return { key: "unconfirmed", label: "Never confirmed", tone: "st-stuck", rank: 1,
+        tip: "Started signup but never clicked the sign-in link. Likely a magic link email that went to spam or got ignored." };
+    }
+    if (!u.session_count && !u.pay_mode) {
+      return { key: "setup", label: "Stalled at setup", tone: "st-stuck", rank: 2,
+        tip: "Signed in but never saved their pay setup, so the calculator never had a number to work with." };
+    }
+    if (!u.session_count) {
+      return { key: "never", label: "Never logged", tone: "st-stuck", rank: 3,
+        tip: "Finished signup and pay setup, then never started the timer. The gap is between setup and the first break." };
+    }
+    if (u.session_count === 1 && idle > 7 * DAY) {
+      return { key: "once", label: "One and done", tone: "st-lapsed", rank: 4,
+        tip: "Tried it once and never came back." };
+    }
+    if (idle > 14 * DAY) {
+      return { key: "lapsed", label: "Lapsed", tone: "st-lapsed", rank: 5,
+        tip: "Used it more than once, but nothing in over two weeks." };
+    }
+    if (idle <= 7 * DAY && (u.active_days || 0) >= 3) {
+      return { key: "regular", label: "Regular", tone: "st-regular", rank: 6,
+        tip: "Active this week and has logged on 3 or more different days." };
+    }
+    return { key: "new", label: "Getting started", tone: "st-new", rank: 6,
+      tip: "Has logged sessions recently but hasn't built a habit yet." };
+  }
+  function stagePill(st) { return '<span class="pill ' + st.tone + '">' + esc(st.label) + "</span>"; }
+  function providerName(u) { return u.provider === "google" ? "Google" : "Magic link"; }
+  function deviceText(u) {
+    if (!u.device && !u.browser) return null;
+    if (u.browser && u.device) return u.device + ", " + u.browser;
+    return u.device || u.browser;
+  }
+
+  // One plain-English paragraph describing the person's path so far.
+  function storyText(u) {
+    var parts = [];
+    if (!u.registered) {
+      parts.push("First showed up " + (fmtDate(u.first_seen) || "on an unknown date") + " as a guest.");
+      if (u.session_count) {
+        parts.push("Logged " + fmtInt(u.session_count) + (u.session_count === 1 ? " session" : " sessions")
+          + " across " + fmtInt(u.active_days) + (u.active_days === 1 ? " day" : " days") + ", never signed up.");
+      }
+      if (u.last_session_at) parts.push("Last seen " + fmtAgo(u.last_session_at) + ".");
+      return parts.join(" ");
+    }
+    var dev = deviceText(u);
+    parts.push("Signed up " + (fmtDate(u.signed_up_at) || "on an unknown date") + " with " + providerName(u) + (dev ? " on " + dev : "") + ".");
+    if (!u.last_sign_in_at) {
+      parts.push("Never actually signed in.");
+      return parts.join(" ");
+    }
+    parts.push(u.pay_mode ? "Saved " + (u.pay_mode === "salary" ? "salary" : "hourly") + " pay setup." : "Never saved pay setup.");
+    if (u.session_count) {
+      var gap = daysBetween(u.signed_up_at, u.first_session_at);
+      parts.push("First session " + (gap == null ? "on " + fmtDate(u.first_session_at) : inDays(gap)) + ".");
+      parts.push(fmtInt(u.session_count) + (u.session_count === 1 ? " session" : " sessions") + " over "
+        + fmtInt(u.active_days) + (u.active_days === 1 ? " day" : " days") + ", last one " + fmtAgo(u.last_session_at) + ".");
+    } else {
+      parts.push("Never started a session.");
+    }
+    if (u.last_app_open_at) parts.push("Last opened the app " + fmtAgo(u.last_app_open_at) + ".");
+    return parts.join(" ");
+  }
+
+  function step(done, what, when, note) {
+    return '<li class="' + (done ? "" : "miss") + '"><span class="t-what">' + esc(what) + "</span>"
+      + (when ? '<span class="t-when">' + esc(when) + "</span>" : "")
+      + (note ? '<span class="t-note">' + esc(note) + "</span>" : "") + "</li>";
+  }
+
+  function afterSignup(n) {
+    if (n == null) return null;
+    if (n === 0) return "Same day as signup";
+    return n + (n === 1 ? " day" : " days") + " after signup";
+  }
+
+  function timelineHTML(u) {
+    var su = u.signed_up_at;
+    var steps = "";
+    steps += step(true, "Signed up with " + providerName(u), fmtDateTime(su), deviceText(u));
+    steps += step(!!u.last_sign_in_at, u.last_sign_in_at ? "Signed in" : "Never signed in",
+      u.last_sign_in_at ? "latest " + fmtDateTime(u.last_sign_in_at) : null,
+      u.last_sign_in_at ? null : "Account exists but the sign-in link was never used.");
+    steps += step(!!u.pay_mode, u.pay_mode ? "Pay setup saved (" + u.pay_mode + ")" : "No pay setup saved", null,
+      u.has_profile ? null : "No profile row at all.");
+    steps += step(!!u.first_session_at, u.first_session_at ? "First session" : "No session yet",
+      u.first_session_at ? fmtDateTime(u.first_session_at) : null,
+      u.first_session_at ? afterSignup(daysBetween(su, u.first_session_at)) : null);
+    steps += step(!!u.first_claim_at, u.first_claim_at ? "First Turd Token claim" : "No tokens claimed",
+      u.first_claim_at ? fmtDateTime(u.first_claim_at) : null, null);
+    if (u.session_count > 1) {
+      steps += step(true, "Latest session", fmtDateTime(u.last_session_at), fmtAgo(u.last_session_at));
+    }
+    if (u.last_app_open_at) {
+      steps += step(true, "Last opened the app", fmtDateTime(u.last_app_open_at), "Approximate, based on their login refreshing.");
+    }
+    return '<ol class="timeline">' + steps + "</ol>";
+  }
 
   function setVal(id, html) { el(id).innerHTML = html; }
   function unit(t) { return ' <span class="unit">' + t + "</span>"; }
@@ -380,6 +534,11 @@
     setVal("s-active", fmtInt(t.active_7d));
     setVal("s-conv", esc(t.conversion_pct) + unit("%"));
     setVal("s-sess-today", fmtInt(s.today));
+    setVal("s-stuck", fmtInt(t.never_logged));
+    if (t.registered) {
+      el("s-stuck-hint").textContent = fmtInt(t.never_logged) + " of " + fmtInt(t.registered)
+        + " accounts never ran a session" + (t.logged_once ? ", and " + fmtInt(t.logged_once) + " more stopped after one." : ".");
+    }
 
     setVal("s-outstanding", fmtInt(e.tokens_outstanding) + unit("TT"));
     setVal("s-earned", fmtInt(e.tokens_ever_earned) + unit("TT"));
@@ -420,8 +579,10 @@
         var ms = u.last_active_at ? Date.now() - new Date(u.last_active_at).getTime() : Infinity;
         if (!(ms < 7 * 86400000)) return false;
       }
+      if (filter === "stuck" && !(u.registered && !u.session_count)) return false;
       if (q) {
-        var hay = ((u.username || "") + " " + (u.email || "") + " " + (u.anon_id || "")).toLowerCase();
+        var hay = ((u.username || "") + " " + (u.email || "") + " " + (u.anon_id || "") + " " + (u.user_id || "")
+          + " " + u.stage.label + " " + (u.device || "") + " " + (u.browser || "") + " " + (u.cities || "")).toLowerCase();
         if (hay.indexOf(q) === -1) return false;
       }
       return true;
@@ -445,8 +606,22 @@
   function dossierHTML(u) {
     var out = '<div class="dossier' + (u.registered ? "" : " guest-dossier") + '">';
 
+    out += "<h3>Journey</h3>"
+      + '<div class="story">' + stagePill(u.stage) + esc(storyText(u))
+      + '<span class="tip">' + esc(u.stage.tip) + "</span></div>";
+
     if (!u.registered) {
-      out += '<div class="guest-note">Anonymous guest. They used the calculator without signing up, so there is no email, profile, or server-side wallet. Their tokens live only in their own browser.</div>';
+      out += '<div class="guest-note">No account, so no email, profile, or server-side wallet. Their tokens live only in their own browser, and if they sign up later their guest sessions will not be linked to the new account.</div>';
+    } else {
+      out += timelineHTML(u);
+      out += "<h3>Habits</h3><div class='facts'>"
+        + fact("Device", deviceText(u))
+        + fact("Days with a session", u.session_count ? fmtInt(u.active_days) : null, true)
+        + fact("Sessions last 7 days", fmtInt(u.sessions_7d), true)
+        + fact("Avg rating", u.rated_sessions ? u.avg_rating + " / 5 (" + fmtInt(u.rated_sessions) + " rated)" : null)
+        + fact("Logged from", u.cities)
+        + fact("Last opened app", fmtAgo(u.last_app_open_at))
+        + "</div>";
     }
 
     out += "<h3>Identity</h3><div class='facts'>"
@@ -488,12 +663,15 @@
     } else {
       var rows = "";
       sessions.forEach(function (s) {
+        var place = [s.city, s.region].filter(Boolean).join(", ");
         rows += "<tr><td>" + esc(fmtDateTime(s.at)) + "</td>"
           + '<td class="num-cell">' + esc(fmtDur(s.sec)) + "</td>"
           + '<td class="num-cell">' + esc(fmtMoney(s.earn)) + "</td>"
-          + '<td class="num-cell dim">' + (s.tp != null ? fmtInt(s.tp) : "&mdash;") + "</td></tr>";
+          + '<td class="num-cell dim">' + (s.tp != null ? fmtInt(s.tp) : "&mdash;") + "</td>"
+          + '<td class="num-cell dim">' + (s.rating != null ? esc(s.rating) + "/5" : "&mdash;") + "</td>"
+          + '<td class="dim">' + (place ? esc(place) : "&mdash;") + "</td></tr>";
       });
-      out += '<table class="mini"><thead><tr><th>When</th><th>Duration</th><th>Revealed</th><th>TP squares</th></tr></thead><tbody>' + rows + "</tbody></table>";
+      out += '<div style="overflow-x:auto"><table class="mini"><thead><tr><th>When</th><th>Duration</th><th>Revealed</th><th>TP squares</th><th>Rating</th><th>Where</th></tr></thead><tbody>' + rows + "</tbody></table></div>";
     }
 
     return out + "</div>";
@@ -503,18 +681,22 @@
     var rows = filteredUsers();
     var html = "";
     rows.forEach(function (u) {
-      var isOpen = openKey === u.anon_id;
+      var key = rowKey(u);
+      var isOpen = openKey === key;
       var name = u.username
         ? '<span class="uname">' + esc(u.username) + "</span>"
-        : '<span class="uid">' + esc(shortId(u.anon_id)) + "</span>";
+        : (u.registered && u.email
+          ? '<span class="uname">' + esc(u.email) + "</span>"
+          : '<span class="uid">' + esc(shortId(key)) + "</span>");
       var type = u.registered
         ? '<span class="pill reg">' + esc(u.provider === "google" ? "Google" : "Magic link") + "</span>"
         : '<span class="pill guest">Guest</span>';
       var activeMs = u.last_active_at ? Date.now() - new Date(u.last_active_at).getTime() : Infinity;
       var activePill = activeMs < 7 * 86400000 ? ' <span class="pill active">active</span>' : "";
-      html += '<tr class="u-row' + (isOpen ? " open" : "") + '" data-id="' + esc(u.anon_id) + '">'
+      html += '<tr class="u-row' + (isOpen ? " open" : "") + '" data-id="' + esc(key) + '">'
         + '<td><span class="caret">&#9654;</span>' + name + "</td>"
         + "<td>" + type + activePill + "</td>"
+        + "<td>" + stagePill(u.stage) + "</td>"
         + '<td class="dim">' + (fmtDate(u.first_seen) || "&mdash;") + "</td>"
         + '<td class="num-cell">' + (u.registered ? fmtInt(u.token_balance) : '<span class="dim">local</span>') + "</td>"
         + '<td class="num-cell">' + (u.registered ? fmtInt(u.current_streak) : '<span class="dim">&mdash;</span>') + "</td>"
@@ -522,9 +704,9 @@
         + '<td class="num-cell">' + fmtInt(u.session_count) + "</td>"
         + '<td class="dim">' + (fmtAgo(u.last_active_at) || "never") + "</td>"
         + "</tr>";
-      if (isOpen) html += '<tr class="detail-row"><td colspan="8">' + dossierHTML(u) + "</td></tr>";
+      if (isOpen) html += '<tr class="detail-row"><td colspan="9">' + dossierHTML(u) + "</td></tr>";
     });
-    el("usersBody").innerHTML = html || '<tr><td colspan="8" class="dim" style="padding:24px">Nobody matches.</td></tr>';
+    el("usersBody").innerHTML = html || '<tr><td colspan="9" class="dim" style="padding:24px">Nobody matches.</td></tr>';
     el("countNote").textContent = rows.length + " of " + (data.users || []).length + " people";
 
     document.querySelectorAll("#usersTable thead th").forEach(function (th) {
@@ -576,6 +758,10 @@
         return;
       }
       data = res.data;
+      (data.users || []).forEach(function (u) {
+        u.stage = stageOf(u);
+        u.stage_rank = u.stage.rank;
+      });
       renderAll();
       show("dash");
     }).catch(function (err) {
