@@ -42,7 +42,6 @@
   <link rel="preload" as="image" href="corepreviewmobilebg.webp" media="(max-width: 760px)">
 
   <link rel="preconnect" href="https://www.googletagmanager.com">
-  <link rel="preconnect" href="https://unpkg.com">
 
   <script>
     // GA4 loads for every visitor under Consent Mode v2. Storage consent
@@ -100,6 +99,7 @@
   </script>
   <script src="/js/pp-error-reporter.js"></script>
   <script src="js/pp-currency.js?v=20261013b"></script>
+  <script src="js/pp-share-cards.js?v=20261029" defer></script>
   <style>
     .cookie-consent{position:fixed;left:0;right:0;bottom:0;z-index:9999;display:none;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;padding:14px 18px;background:rgba(8,14,32,.96);border-top:1px solid #1b2a4a;backdrop-filter:blur(10px);color:#f2f5fb;font-size:14px}
     .cookie-consent.show{display:flex}
@@ -118,7 +118,6 @@
     .wallet-corner-clickable:hover{filter:brightness(1.08)}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://unpkg.com/html-to-image"></script>
 
   <script type="application/ld+json">
     {
@@ -2357,300 +2356,6 @@
       font-size: 0.92rem;
     }
 
-    .share-channel-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .share-channel-grid button {
-      border: 1px solid rgba(67, 179, 255, 0.34);
-      border-radius: 12px;
-      background: rgba(8, 14, 28, 0.8);
-      color: #d9ecff;
-      min-height: 88px;
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .share-channel-grid button img {
-      width: 24px;
-      height: 24px;
-      object-fit: contain;
-    }
-
-    .share-card-template {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 1080px;
-      height: 1920px;
-      pointer-events: none;
-      opacity: 0;
-      z-index: -1;
-    }
-
-    .share-card-canvas {
-      width: 1080px;
-      height: 1920px;
-      border-radius: 54px;
-      overflow: hidden;
-      position: relative;
-      padding: 72px 62px 58px;
-      background:
-        radial-gradient(circle at 20% 18%, rgba(68, 193, 255, 0.2), transparent 44%),
-        radial-gradient(circle at 86% 14%, rgba(92, 142, 255, 0.18), transparent 40%),
-        radial-gradient(circle at 48% 64%, rgba(36, 102, 214, 0.12), transparent 38%),
-        linear-gradient(180deg, #061226 0%, #071a3b 58%, #061226 100%);
-      color: #eef8ff;
-      font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      gap: 22px;
-      isolation: isolate;
-    }
-
-    .share-card-canvas::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image:
-        radial-gradient(circle at 8% 12%, rgba(159, 226, 255, 0.82) 1px, transparent 1.5px),
-        radial-gradient(circle at 32% 28%, rgba(129, 205, 255, 0.65) 1px, transparent 1.5px),
-        radial-gradient(circle at 74% 22%, rgba(179, 237, 255, 0.75) 1px, transparent 1.6px),
-        radial-gradient(circle at 64% 46%, rgba(118, 189, 255, 0.58) 1px, transparent 1.4px),
-        radial-gradient(circle at 16% 72%, rgba(169, 232, 255, 0.72) 1px, transparent 1.6px),
-        radial-gradient(circle at 82% 78%, rgba(154, 226, 255, 0.76) 1px, transparent 1.5px);
-      opacity: 0.9;
-      pointer-events: none;
-      z-index: -2;
-    }
-
-    .share-card-canvas::after {
-      content: "";
-      position: absolute;
-      inset: 26px;
-      border-radius: 40px;
-      border: 1px solid rgba(127, 218, 255, 0.24);
-      box-shadow: inset 0 0 40px rgba(79, 188, 255, 0.12), 0 0 40px rgba(25, 125, 215, 0.22);
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .share-card-top {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 104px;
-    }
-
-    .share-card-top img {
-      width: 420px;
-      height: auto;
-      display: block;
-    }
-
-    .share-card-panel {
-      border-radius: 36px;
-      border: 2px solid rgba(122, 217, 255, 0.74);
-      background: linear-gradient(180deg, rgba(7, 28, 63, 0.8), rgba(6, 23, 52, 0.84));
-      box-shadow:
-        inset 0 0 26px rgba(91, 198, 255, 0.14),
-        0 0 26px rgba(74, 193, 255, 0.33),
-        0 14px 32px rgba(3, 11, 27, 0.52);
-    }
-
-    .share-card-headline-panel {
-      padding: 46px 38px 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 12px;
-    }
-
-    .share-card-headline {
-      margin: 0;
-      font-size: 78px;
-      line-height: 1.03;
-      font-weight: 900;
-      letter-spacing: -0.015em;
-      text-wrap: balance;
-    }
-
-    .share-card-amount {
-      display: block;
-      margin: 8px 0 5px;
-      font-size: 176px;
-      line-height: 0.9;
-      font-weight: 900;
-      letter-spacing: -0.035em;
-      background: linear-gradient(180deg, #edfbff 0%, #80e0ff 58%, #3fc1ff 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 36px rgba(72, 189, 255, 0.34);
-      white-space: nowrap;
-    }
-
-    /* Capture fallback: avoid desktop foreignObject gradient text artifact. */
-    .share-card-canvas.capture-safe .share-card-amount {
-      background: none !important;
-      -webkit-background-clip: border-box !important;
-      background-clip: border-box !important;
-      color: #9be7ff !important;
-      -webkit-text-fill-color: #9be7ff !important;
-      text-shadow: 0 0 24px rgba(72, 189, 255, 0.28);
-    }
-
-    .share-card-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(121, 215, 255, 0.58);
-      background: rgba(6, 20, 48, 0.72);
-      box-shadow: inset 0 0 20px rgba(66, 179, 255, 0.16);
-      color: #e2f5ff;
-      font-size: 40px;
-      font-weight: 700;
-      line-height: 1;
-      padding: 16px 30px;
-      white-space: nowrap;
-    }
-
-    .share-card-badge svg {
-      width: 42px;
-      height: 42px;
-      fill: currentColor;
-      opacity: 0.96;
-      flex-shrink: 0;
-    }
-
-    .share-card-main-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 380px;
-      gap: 20px;
-      align-items: center;
-      margin-top: 6px;
-    }
-
-    .share-card-duration-panel {
-      min-height: 560px;
-      padding: 40px 28px 34px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 28px;
-    }
-
-    .share-card-stopwatch {
-      width: 220px;
-      height: 220px;
-      fill: none;
-      stroke: #8ee7ff;
-      stroke-width: 10;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      filter: drop-shadow(0 0 14px rgba(102, 216, 255, 0.42));
-    }
-
-    .share-card-duration-value {
-      margin: 0;
-      font-size: 90px;
-      line-height: 1;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      color: #dbf6ff;
-      text-shadow: 0 0 24px rgba(74, 188, 255, 0.3);
-      white-space: nowrap;
-    }
-
-    .share-card-mascot {
-      width: 100%;
-      max-height: 560px;
-      object-fit: contain;
-      object-position: center;
-      filter: drop-shadow(0 16px 30px rgba(2, 8, 22, 0.55));
-      align-self: center;
-    }
-
-    .share-card-footer-panel {
-      margin-top: auto;
-      min-height: 186px;
-      padding: 22px 26px;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 18px;
-    }
-
-    .share-card-footer-left {
-      display: inline-flex;
-      align-items: center;
-      gap: 16px;
-      min-width: 0;
-    }
-
-    .share-card-footer-left img {
-      width: 104px;
-      height: 104px;
-      object-fit: contain;
-      filter: drop-shadow(0 0 16px rgba(95, 201, 255, 0.45));
-      flex-shrink: 0;
-    }
-
-    .share-card-footer-text {
-      margin: 0;
-      font-size: 58px;
-      line-height: 1.08;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: #eaf7ff;
-      text-wrap: balance;
-      word-break: keep-all;
-    }
-
-    .share-card-footer-text strong {
-      color: #6bd3ff;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .share-card-arrow {
-      width: 106px;
-      height: 106px;
-      border-radius: 999px;
-      border: 2px solid rgba(128, 220, 255, 0.66);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: #e6f7ff;
-      font-size: 56px;
-      line-height: 1;
-      box-shadow: inset 0 0 18px rgba(83, 191, 255, 0.18);
-      flex-shrink: 0;
-    }
-
-    .share-card-bottom-badge-wrap {
-      display: flex;
-      justify-content: center;
-      margin-top: 10px;
-    }
-
-    .share-card-bottom-badge-wrap .share-card-badge {
-      font-size: 38px;
-      padding: 14px 28px;
-    }
-
     .preview-footnote {
       margin-top: 14px;
       padding-top: 12px;
@@ -4062,7 +3767,6 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
 .share-controls .share-buttons { display: flex; gap: 9px; flex-wrap: wrap; }
 .share-controls .share-buttons button { flex: 1; min-width: 120px; border: 0; border-radius: 12px; padding: 13px; font-weight: 700; font-size: 13px; cursor: pointer; }
 #openSharePickerButton { color: #fff; background: linear-gradient(180deg, #4aa6ff, #2f7fe0); box-shadow: 0 8px 18px -8px rgba(59,157,255,.6); }
-#copyShareTextButton { background: rgba(120,170,235,.07); border: 1px solid var(--line-2) !important; color: var(--muted); }
 .share-controls select { width: 100%; background: var(--field); border: 1px solid var(--line-2); color: var(--text); border-radius: 11px; padding: 12px; font-size: 13.5px; font-weight: 600; color-scheme: dark; margin-bottom: 13px; }
 
 .coming-screen { padding-bottom: 0; }
@@ -4464,6 +4168,37 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
     }
   }
 
+
+  /* ---------- Share Studio ---------- */
+  .share-studio-panel{width:min(560px,100%);text-align:left}
+  .share-studio-panel h3{text-align:center}
+  .studio-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .studio-chips::-webkit-scrollbar{display:none}
+  .studio-chips button{flex:none;border:1px solid rgba(120,190,255,.28);background:rgba(120,170,235,.07);color:var(--text);font:inherit;font-size:13px;font-weight:700;padding:9px 14px;border-radius:999px;cursor:pointer;white-space:nowrap;transition:background .2s,border-color .2s}
+  .studio-chips button.active{color:#fff;background:linear-gradient(180deg,#4aa6ff,#2f7fe0);border-color:transparent;box-shadow:0 5px 14px -5px rgba(59,157,255,.6)}
+  .studio-chips button:disabled{opacity:.35;cursor:default}
+  .studio-chips button.locked{color:var(--muted)}
+  .studio-custom-range{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 10px}
+  .studio-custom-range label{display:flex;flex-direction:column;gap:5px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .studio-custom-range input{width:100%;background:var(--field,#0a0f1a);border:1px solid rgba(120,190,255,.28);color:var(--text);border-radius:10px;padding:10px;font:inherit;font-size:16px;color-scheme:dark}
+  .studio-preview{display:flex;align-items:center;justify-content:center;min-height:200px;margin:4px 0 12px}
+  .studio-preview canvas{display:block;height:min(40vh,440px);width:auto;max-width:100%;border-radius:14px;box-shadow:0 14px 34px rgba(0,0,0,.5)}
+  .studio-preview[data-format="post"] canvas{height:min(34vh,370px)}
+  .studio-custom-range[hidden],.studio-pack[hidden],.studio-preview canvas[hidden],.studio-preview-message[hidden]{display:none}
+  .studio-preview-message{margin:0;color:var(--muted);font-size:14px;text-align:center;padding:40px 12px}
+  .studio-format{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px;border-radius:12px;background:rgba(120,170,235,.07);border:1px solid rgba(120,190,255,.2);margin-bottom:12px}
+  .studio-format button{border:0;background:transparent;color:var(--muted);font:inherit;font-weight:700;font-size:13px;padding:9px;border-radius:9px;cursor:pointer}
+  .studio-format button small{font-weight:600;opacity:.7;margin-left:3px}
+  .studio-format button.active{color:#fff;background:linear-gradient(180deg,#4aa6ff,#2f7fe0)}
+  .studio-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+  .studio-actions .studio-share{grid-column:1 / -1;font-size:16px;padding:14px}
+  .studio-actions button:disabled{opacity:.55;cursor:default}
+  .studio-pack{display:block;width:100%;background:none;border:0;color:var(--cyan,#79e2ff);font:inherit;font-weight:700;font-size:13.5px;padding:10px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+  .studio-pack:disabled{color:var(--muted);text-decoration:none;cursor:default}
+  .studio-status{min-height:16px;font-size:12px;font-weight:600;text-align:center;margin:2px 0 10px}
+  .studio-close{display:block;width:100%;border:1px solid rgba(120,190,255,.22);background:rgba(120,170,235,.06);color:var(--muted);font:inherit;font-weight:700;font-size:14px;padding:12px;border-radius:12px;cursor:pointer}
+  .share-studio-blurb{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.45}
+  .rating-more-cards{display:block;margin:10px auto 0;background:none;border:0;color:var(--muted);font:inherit;font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
   </style>
 </head>
 <body>
@@ -4729,14 +4464,9 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           <article class="card" style="grid-column: span 12;">
             <div class="eyebrow" style="margin-bottom:14px">Share Your Report</div>
             <div class="share-controls share-scope">
-              <label for="shareScopeSelect">Share scope</label>
-              <select id="shareScopeSelect">
-                <option value="overall">Overall Stats</option>
-                <option value="latest">Latest Session</option>
-              </select>
+              <p class="share-studio-blurb">Turn any poop, week, month, or your all-time numbers into a card for Stories, feeds, or the group chat.</p>
               <div class="share-buttons share-btns">
-                <button id="openSharePickerButton" class="primary" type="button">↗ Share Summary</button>
-                <button id="copyShareTextButton" class="ghost" type="button">Copy Share Text</button>
+                <button id="openSharePickerButton" class="primary" type="button">↗ Open Share Studio</button>
               </div>
               <div id="shareStatus" class="share-status status"></div>
             </div>
@@ -4834,6 +4564,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           <button id="ratingShareSkipButton" class="button ghost" type="button">Skip</button>
           <button id="ratingShareCardButton" class="button" type="button">Share Card</button>
         </div>
+        <button id="ratingMoreCardsButton" class="rating-more-cards" type="button">More card options</button>
       </div>
     </div>
   </div>
@@ -4866,26 +4597,39 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
     </div>
   </div>
 
-  <div id="sharePickerModal" class="share-picker-modal" aria-hidden="true">
-    <div class="share-picker-panel sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sharePickerTitle">
+  <div id="sharePickerModal" class="share-picker-modal share-studio-modal" aria-hidden="true">
+    <div class="share-picker-panel share-studio-panel sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sharePickerTitle">
       <div class="sheet-grabber" aria-hidden="true"><span></span></div>
       <h3 id="sharePickerTitle">Share your Poop Profit</h3>
-      <p id="sharePickerDescription">Choose where to share.</p>
-      <div class="share-channel-grid" aria-label="Share channels">
-        <button type="button" data-share-channel="facebook">
-          <img src="fbicon.png" width="96" height="96" loading="lazy" decoding="async" alt="">
-          <span>Facebook</span>
-        </button>
-        <button type="button" data-share-channel="x">
-          <img src="xicon.png" width="96" height="96" loading="lazy" decoding="async" alt="">
-          <span>X</span>
-        </button>
-        <button type="button" data-share-channel="sms">
-          <img src="txticon.png" width="96" height="96" loading="lazy" decoding="async" alt="">
-          <span>Text</span>
-        </button>
+      <div id="studioChips" class="studio-chips" role="tablist" aria-label="Which card">
+        <button type="button" role="tab" data-studio-chip="session">Last poop</button>
+        <button type="button" role="tab" data-studio-chip="today">Today</button>
+        <button type="button" role="tab" data-studio-chip="week">This week</button>
+        <button type="button" role="tab" data-studio-chip="month">This month</button>
+        <button type="button" role="tab" data-studio-chip="year">This year</button>
+        <button type="button" role="tab" data-studio-chip="custom">Custom</button>
+        <button type="button" role="tab" data-studio-chip="alltime">All-time</button>
       </div>
-      <button id="closeSharePickerButton" class="button ghost full" type="button">Cancel</button>
+      <div id="studioCustomRange" class="studio-custom-range" hidden>
+        <label>Start <input id="studioStartDateInput" type="date"></label>
+        <label>End <input id="studioEndDateInput" type="date"></label>
+      </div>
+      <div id="studioPreview" class="studio-preview" data-format="story">
+        <canvas id="studioCanvas" width="1080" height="1920" aria-label="Share card preview"></canvas>
+        <p id="studioPreviewMessage" class="studio-preview-message" hidden></p>
+      </div>
+      <div class="studio-format" role="group" aria-label="Card size">
+        <button type="button" data-studio-format="story" class="active">Story <small>9:16</small></button>
+        <button type="button" data-studio-format="post">Post <small>4:5</small></button>
+      </div>
+      <div class="studio-actions">
+        <button id="studioShareButton" class="button studio-share" type="button" disabled>Share</button>
+        <button id="studioSaveButton" class="button ghost" type="button" disabled>Save image</button>
+        <button id="studioCopyButton" class="button ghost" type="button" disabled>Copy caption</button>
+      </div>
+      <button id="studioPackButton" class="studio-pack" type="button" hidden>Share the whole pack</button>
+      <div id="studioStatus" class="studio-status" aria-live="polite"></div>
+      <button id="closeSharePickerButton" class="studio-close" type="button">Close</button>
     </div>
   </div>
 
@@ -5069,53 +4813,6 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
     <div class="legal-bottom">
       <span>Signed in? Your sessions sync across all your devices. Signed out? Data stays on this device only.</span>
       <span>&copy; 2026 Poop Profit. All rights reserved.</span>
-    </div>
-  </div>
-
-  <div id="shareCardTemplate" class="share-card-template" aria-hidden="true">
-    <div class="share-card-canvas">
-      <header class="share-card-top">
-        <img id="shareCardLogoImage" data-src="icon-512.webp" alt="PoopProfit.com logo and wordmark" />
-      </header>
-
-      <section class="share-card-panel share-card-headline-panel" aria-label="Session earnings headline">
-        <p class="share-card-headline">
-          I got paid
-          <span id="shareCardAmountValue" class="share-card-amount">$0.00</span>
-          to poop.
-        </p>
-      </section>
-
-      <section class="share-card-main-row" aria-label="Session duration and mascot">
-        <div class="share-card-panel share-card-duration-panel">
-          <svg class="share-card-stopwatch" viewBox="0 0 64 64" aria-hidden="true">
-            <rect x="26" y="3" width="12" height="7" rx="2"></rect>
-            <rect x="42.5" y="8.5" width="9" height="5" rx="1.8"></rect>
-            <circle cx="32" cy="36" r="20"></circle>
-            <line x1="32" y1="36" x2="32" y2="24"></line>
-            <line x1="32" y1="36" x2="43" y2="36"></line>
-          </svg>
-          <p id="shareCardDurationValue" class="share-card-duration-value">0hr 0min</p>
-        </div>
-        <img id="shareCardMascotImage" class="share-card-mascot" data-src="herman-cash-suit.webp" alt="Herman mascot holding cash" />
-      </section>
-
-      <section class="share-card-panel share-card-footer-panel" aria-label="Poop Profit call to action">
-        <div class="share-card-footer-left">
-          <img id="shareCardToiletImage" data-src="icon-toilet.webp" alt="Toilet icon" />
-          <p class="share-card-footer-text">Track yours at <strong>PoopProfit.com</strong></p>
-        </div>
-        <div class="share-card-arrow" aria-hidden="true">→</div>
-      </section>
-
-      <div class="share-card-bottom-badge-wrap">
-        <div class="share-card-badge" aria-label="Anonymous and free">
-          <svg aria-hidden="true" viewBox="0 0 24 24">
-            <path d="M4.5 9.5h15a1.5 1.5 0 1 1 0 3h-15a1.5 1.5 0 1 1 0-3Zm4.84-5.11A3.86 3.86 0 0 1 12 3.4a3.86 3.86 0 0 1 2.66.99l4.35 4.08H4.99l4.35-4.08ZM12 15.1c2.79 0 5.05 1.71 5.05 3.82v1.28H6.95v-1.28c0-2.11 2.26-3.82 5.05-3.82Zm-2.05 2.3a1.1 1.1 0 1 0 0 2.2h4.1a1.1 1.1 0 1 0 0-2.2h-4.1Z"></path>
-          </svg>
-          <span>Anonymous &amp; Free</span>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -5323,25 +5020,29 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
       var logList = document.getElementById("logList");
       var clearAllButton = document.getElementById("clearAllButton");
 
-      var shareScopeSelect = document.getElementById("shareScopeSelect");
       var shareStatus = document.getElementById("shareStatus");
       var statShareButtons = document.querySelectorAll("[data-stat-share]");
       var openSharePickerButton = document.getElementById("openSharePickerButton");
-      var copyShareTextButton = document.getElementById("copyShareTextButton");
       var sharePickerModal = document.getElementById("sharePickerModal");
       var sharePickerPanel = sharePickerModal ? sharePickerModal.querySelector(".share-picker-panel") : null;
       var sharePickerGrabber = sharePickerPanel ? sharePickerPanel.querySelector(".sheet-grabber") : null;
-      var sharePickerDescription = document.getElementById("sharePickerDescription");
       var closeSharePickerButton = document.getElementById("closeSharePickerButton");
-      var shareChannelButtons = sharePickerModal ? sharePickerModal.querySelectorAll("[data-share-channel]") : [];
-      var shareCardTemplate = document.getElementById("shareCardTemplate");
-      var shareCardCanvas = shareCardTemplate ? shareCardTemplate.querySelector(".share-card-canvas") : null;
-      var shareCardAmountValue = document.getElementById("shareCardAmountValue");
-      var shareCardDurationValue = document.getElementById("shareCardDurationValue");
-      var shareCardLogoImage = document.getElementById("shareCardLogoImage");
-      var shareCardMascotImage = document.getElementById("shareCardMascotImage");
-      var shareCardToiletImage = document.getElementById("shareCardToiletImage");
-      var shareCardAssetsPromise = null;
+      var studioChips = document.getElementById("studioChips");
+      var studioChipButtons = studioChips ? studioChips.querySelectorAll("[data-studio-chip]") : [];
+      var studioCustomRange = document.getElementById("studioCustomRange");
+      var studioStartDateInput = document.getElementById("studioStartDateInput");
+      var studioEndDateInput = document.getElementById("studioEndDateInput");
+      var studioPreview = document.getElementById("studioPreview");
+      var studioCanvas = document.getElementById("studioCanvas");
+      var studioPreviewMessage = document.getElementById("studioPreviewMessage");
+      var studioFormatButtons = sharePickerModal ? sharePickerModal.querySelectorAll("[data-studio-format]") : [];
+      var studioShareButton = document.getElementById("studioShareButton");
+      var studioSaveButton = document.getElementById("studioSaveButton");
+      var studioCopyButton = document.getElementById("studioCopyButton");
+      var studioPackButton = document.getElementById("studioPackButton");
+      var studioStatus = document.getElementById("studioStatus");
+      var ratingMoreCardsButton = document.getElementById("ratingMoreCardsButton");
+      var pendingRatingCard = null;
       var statsRangeButtons = document.querySelectorAll("[data-stats-range]");
       var customRangeWrap = document.getElementById("customRangeWrap");
       var statsStartDateInput = document.getElementById("statsStartDateInput");
@@ -5369,7 +5070,6 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
       var wageModeCollapsed = state.wageModeCollapsed === false ? false : true;
       var statsRangeMode = "all";
       var CALENDAR_RANGE_MODES = ["week", "month", "year"];
-      var pendingShareText = "";
       var activeSheetModal = null;
       var tutorialHelpButton = document.getElementById("tutorialHelpButton");
       var tutorialOverlay = document.getElementById("tutorialOverlay");
@@ -5673,6 +5373,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         }
         prefillTpInput(guestResultTpInput);
         updateTpLiveHint(guestResultTpInput, guestResultTpHint);
+        if (shareCardsReady()) PPShareCards.preload();
         guestResultModal.classList.add("open");
         guestResultModal.setAttribute("aria-hidden", "false");
         document.body.classList.add("wallet-modal-open");
@@ -6687,7 +6388,9 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         var ctx = pendingTpContext;
         pendingTpContext = null;
 
-        var inputEl = ctx.sessionId ? ratingTpInput : guestResultTpInput;
+        // Guests enter TP in the result sheet, signed-in users in the rating sheet.
+        // (Both contexts carry a sessionId, so branch on ctx.guest.)
+        var inputEl = ctx.guest ? guestResultTpInput : ratingTpInput;
         var tpSquares = readTpSquaresValue(inputEl);
         var tpSavings = tpSquares !== null ? computeTpSavings(tpSquares) : null;
         saveTpSquaresLast(inputEl ? inputEl.value : "");
@@ -7167,7 +6870,10 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           if (guestResultShareButton) {
             guestResultShareButton.addEventListener("click", function () {
               if (!activeGuestResultSession) return;
-              shareSessionCard(activeGuestResultSession, "guest_result");
+              var guestShareId = activeGuestResultSession.id;
+              // Write TP squares to the local session first so the card shows them.
+              finalizePendingSession();
+              shareSessionCard(findSessionById(guestShareId) || activeGuestResultSession, "guest_result");
             });
           }
           if (guestResultContinueButton) {
@@ -7232,9 +6938,8 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         } else {
           renderGuestWallet();
         }
-        window.generateShareCardPng = generateShareCardPng;
-        // Share-card assets are intentionally NOT preloaded at startup; they load
-        // lazily the first time generateShareCardPng() runs (share flow opened).
+        // Share-card fonts and Herman load lazily (js/pp-share-cards.js preload()),
+        // the first time a share card can be made. Nothing extra loads at startup.
       }
 
       bootstrapAuth().then(function () {
@@ -7392,27 +7097,17 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
 
         if (openSharePickerButton) {
           openSharePickerButton.addEventListener("click", function () {
-            shareSummaryCard();
-          });
-        }
-
-        if (copyShareTextButton) {
-          copyShareTextButton.addEventListener("click", function () {
-            var text = getShareText();
-            if (!text) {
-              setStatus(shareStatus, "Nothing to share yet. Log a session first.", "warn");
-              return;
-            }
-            copyToClipboard(text);
+            openShareStudio({ chip: chipForStatsRange(), trigger: "report" });
           });
         }
 
         statShareButtons.forEach(function (button) {
           button.addEventListener("click", function () {
-            var statKey = button.getAttribute("data-stat-share");
-            shareStatByKey(statKey);
+            openShareStudio({ chip: chipForStatsRange(), trigger: "stat_" + (button.getAttribute("data-stat-share") || "hero") });
           });
         });
+
+        wireShareStudio();
 
         statsRangeButtons.forEach(function (button) {
           button.addEventListener("click", function () {
@@ -7456,17 +7151,6 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           });
         }
 
-        if (shareChannelButtons && shareChannelButtons.length) {
-          shareChannelButtons.forEach(function (button) {
-            button.addEventListener("click", function () {
-              var channel = button.getAttribute("data-share-channel");
-              if (!pendingShareText || !channel) return;
-              shareText(pendingShareText, channel);
-              closeSharePicker();
-            });
-          });
-        }
-
         if (closeSharePickerButton) {
           closeSharePickerButton.addEventListener("click", function () {
             closeSharePicker();
@@ -7495,6 +7179,10 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         if (saveRatingButton) {
           saveRatingButton.addEventListener("click", function () {
             if (pendingSessionRatingId) {
+              // TP squares live in this same sheet. Save them before the rating so the
+              // session handed to the share card already has TP. closeRatingModal()
+              // calls finalizePendingSession() again later; it is a no-op by then.
+              finalizePendingSession();
               var ratedSession = persistRatingForSession(pendingSessionRatingId, selectedRating);
               if (ratedSession) {
                 showRatingShareStep(ratedSession);
@@ -7526,7 +7214,18 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
             var originalText = ratingShareCardButton.textContent;
             ratingShareCardButton.disabled = true;
             ratingShareCardButton.textContent = "Generating...";
-            shareSessionCard(pendingRatingShareSession, "rating")
+            var prepared = pendingRatingCard;
+            var sharePromise = prepared
+              ? prepared.promise.then(function (blob) {
+                  trackCoreEvent("core_share_card_generate", cardEventProps(prepared.data, "story", { trigger: "rating" }));
+                  return deliverCardBlob(blob, prepared.data, "story", "rating");
+                }).catch(function (error) {
+                  console.error(error);
+                  announceShareStatus("Card share failed. Please try again.", "warn");
+                  return false;
+                })
+              : shareSessionCard(pendingRatingShareSession, "rating");
+            sharePromise
               .then(function (shared) {
                 if (shared) {
                   closeRatingModal();
@@ -7537,6 +7236,14 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
                 ratingShareCardButton.disabled = false;
                 ratingShareCardButton.textContent = originalText;
               });
+          });
+        }
+
+        if (ratingMoreCardsButton) {
+          ratingMoreCardsButton.addEventListener("click", function () {
+            var session = pendingRatingShareSession;
+            closeRatingModal();
+            openShareStudio({ chip: "session", session: session, trigger: "rating" });
           });
         }
 
@@ -7708,6 +7415,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         persist();
         renderTabs();
         if (tabName === "stats") {
+          if (shareCardsReady()) PPShareCards.preload();
           scheduleStatsCountUp();
         } else {
           resetStatsCountUpTimer();
@@ -7965,7 +7673,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         if (select && select.value !== code) select.value = code;
         // Blank placeholders baked into the markup ("$0.00") follow the currency until real numbers replace them.
         ["guestStatToday", "statAvgEarnings", "trendPeakLabel", "trendAverageLabel", "insightBestDay",
-          "insightProfitRate", "ratingProfitValue", "guestResultEarnings", "shareCardAmountValue", "statTpSavings"]
+          "insightProfitRate", "ratingProfitValue", "guestResultEarnings", "statTpSavings"]
           .forEach(function (id) {
             var el = document.getElementById(id);
             if (!el || !/^(US)?\$0\.00( \/ hr)?$|^[^0-9]*0(\.00)?( \/ hr)?$/.test(el.textContent.trim())) return;
@@ -8327,12 +8035,8 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         var profitRate = totalTimeSeconds > 0 ? totalEarnings / (totalTimeSeconds / 3600) : 0;
 
         var allSessions = Array.isArray(state.sessions) ? state.sessions.slice() : sessions;
-        var activeDays = new Set(allSessions.map(function (s) {
-          return new Date(s.endedAtMs).toDateString();
-        })).size || 1;
         var allTimeEarnings = allSessions.reduce(function (sum, s) { return sum + s.earnings; }, 0);
-        var perDay = allTimeEarnings / activeDays;
-        var projectedAnnual = perDay * 365;
+        var projectedAnnual = computeProjectedAnnual(allSessions);
         var tokenBalance = Math.max(0, Math.floor(Number(walletSnapshot.new_balance) || 0));
         var streakDays = Math.max(0, Math.floor(Number(walletSnapshot.window_day_count) || 0));
 
@@ -8381,11 +8085,12 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
 
         if (statStreak) statStreak.textContent = streakDays + " days";
 
-        var lifetimeTpSavings = allSessions.reduce(function (sum, s) {
+        // Follows the selected range like every other stat on this tab.
+        var rangeTpSavings = sessions.reduce(function (sum, s) {
           return sum + (Number(s.tp_savings) || 0);
         }, 0);
         if (statTpSavings) {
-          statTpSavings.textContent = moneyUsd(roundCurrency(lifetimeTpSavings));
+          statTpSavings.textContent = moneyUsd(roundCurrency(rangeTpSavings));
         }
 
         insightLongest.textContent = formatDuration(longestSession);
@@ -8393,6 +8098,17 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         insightProfitRate.textContent = money(profitRate) + " / hr";
 
         renderTrend(sessions);
+      }
+
+      // Projected Annual Yield: all-time earnings per day with a session, times 365.
+      // Shared by the Stats tab and the all-time share card so they always match.
+      function computeProjectedAnnual(allSessions) {
+        var list = Array.isArray(allSessions) ? allSessions : [];
+        var activeDays = new Set(list.map(function (s) {
+          return new Date(s.endedAtMs).toDateString();
+        })).size || 1;
+        var total = list.reduce(function (sum, s) { return sum + (Number(s.earnings) || 0); }, 0);
+        return (total / activeDays) * 365;
       }
 
       function countUpStatValue(element, target, formatter, generation) {
@@ -8582,104 +8298,165 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         }
       }
 
-      function handleShare(target) {
-        var text = getShareText();
-        if (!text) {
-          setStatus(shareStatus, "Nothing to share yet. Log a session first.", "warn");
-          return;
+      /* ---------------- Share cards (drawn by js/pp-share-cards.js) ---------------- */
+
+      var shareCardsConfigured = false;
+
+      // pp-share-cards.js loads with `defer`, after this inline script has run, so
+      // configure it lazily the first time a card is needed.
+      function shareCardsReady() {
+        if (!window.PPShareCards) return false;
+        if (!shareCardsConfigured) {
+          window.PPShareCards.configure({
+            basePath: "",
+            money: money,
+            moneyUsd: moneyUsd,
+            moneyWhole: moneyWhole
+          });
+          shareCardsConfigured = true;
         }
-        if (target === "copy") {
-          copyToClipboard(text);
-          return;
+        return true;
+      }
+
+      function findSessionById(sessionId) {
+        if (!Array.isArray(state.sessions)) return null;
+        for (var i = 0; i < state.sessions.length; i++) {
+          if (state.sessions[i].id === sessionId) return state.sessions[i];
         }
-        openSharePickerWithText(text, "Choose where to share your summary.");
+        return null;
       }
 
-      function shareSingleLog(session) {
-        shareSessionCard(session, "log");
+      function getLatestSession() {
+        if (!Array.isArray(state.sessions) || !state.sessions.length) return null;
+        return state.sessions.reduce(function (latest, s) {
+          return !latest || s.endedAtMs > latest.endedAtMs ? s : latest;
+        }, null);
       }
 
-      function shareStatByKey(statKey) {
-        var message = buildStatShareMessage(statKey);
-        if (!message) return;
-        openSharePickerWithText(message, "Share this stat card to:");
+      function sessionsBetween(startMs, endMs) {
+        if (!Array.isArray(state.sessions)) return [];
+        return state.sessions.filter(function (s) {
+          if (startMs !== null && s.endedAtMs < startMs) return false;
+          if (endMs !== null && s.endedAtMs > endMs) return false;
+          return true;
+        });
       }
 
-      function buildStatShareMessage(statKey) {
-        var sessions = getFilteredSessions();
-        var totalSessions = sessions.length;
-        var totalTimeSeconds = sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
-        var totalEarnings = sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
-        var avgTime = totalSessions ? totalTimeSeconds / totalSessions : 0;
-        var avgEarnings = totalSessions ? totalEarnings / totalSessions : 0;
-        var todaySessions = sessions.filter(function (session) {
-          return isSameDay(session.endedAtMs, Date.now());
-        }).length;
+      // Card data builders. Each returns null when there is nothing to share,
+      // so a $0.00 card can never be produced.
+      function buildSessionCardData(session) {
+        if (!session || !shareCardsReady()) return null;
+        return PPShareCards.buildSessionData(session);
+      }
 
-        var map = {
-          totalSessions: "My total poop sessions: " + totalSessions + ". Track yours at poopprofit.com",
-          totalTime: "My total poop time: " + formatDuration(totalTimeSeconds) + ". Track yours at poopprofit.com",
-          totalEarnings: "My total poop earnings: " + money(totalEarnings) + ". Track yours at poopprofit.com",
-          avgSession: "My average poop session: " + formatDuration(Math.floor(avgTime)) + ". Track yours at poopprofit.com",
-          avgEarnings: "My average poop earnings per session: " + money(avgEarnings) + ". Track yours at poopprofit.com",
-          todaySessions: "My poop sessions today: " + todaySessions + ". Track yours at poopprofit.com"
+      function buildRangeCardData(kind, startMs, endMs) {
+        if (!shareCardsReady()) return null;
+        var list = sessionsBetween(startMs, endMs);
+        if (!list.length) return null;
+        return PPShareCards.buildPeriodData(list, kind, startMs, endMs);
+      }
+
+      function buildAllTimeCardData() {
+        if (!shareCardsReady() || !Array.isArray(state.sessions) || !state.sessions.length) return null;
+        return PPShareCards.buildAllTimeData(state.sessions, {
+          projectedAnnual: computeProjectedAnnual(state.sessions)
+        });
+      }
+
+      function getCustomRangeBounds(startValue, endValue) {
+        return normalizeRangeBounds(parseDateInputStart(startValue), parseDateInputEnd(endValue));
+      }
+
+      function cardEventProps(cardData, format, extra) {
+        var props = {
+          card_type: cardData ? cardData.type : "none",
+          period_kind: cardData && cardData.type === "period" ? cardData.kind : "none",
+          format: format || "story"
         };
-        return map[statKey] || "";
+        Object.keys(extra || {}).forEach(function (key) { props[key] = extra[key]; });
+        return props;
       }
 
-      function shareSessionCard(session, source, options) {
-        if (!session) {
-          announceShareStatus("Session not found for sharing.", "warn");
+      function renderCardBlob(cardData, format) {
+        if (!shareCardsReady()) return Promise.reject(new Error("Share cards not loaded yet."));
+        return PPShareCards.render(cardData, { format: format || "story" }).then(PPShareCards.toBlob);
+      }
+
+      // Hands a finished PNG to the phone's share sheet. Where that is not
+      // possible (most desktops) it downloads the PNG and copies the caption.
+      function deliverCardBlob(blob, cardData, format, source) {
+        var caption = PPShareCards.captionFor(cardData);
+        var fileName = PPShareCards.fileNameFor(cardData, format);
+        var file = new File([blob], fileName, { type: "image/png" });
+        if (canNativeShareFile(file)) {
+          return navigator.share({
+            title: "Poop Profit",
+            text: caption,
+            files: [file]
+          }).then(function () {
+            trackCoreEvent("core_share_card_complete", cardEventProps(cardData, format, { trigger: source, method: "native" }));
+            trackCoreEvent("core_shared_result", cardEventProps(cardData, format, { trigger: source, method: "native", share_type: "card" }));
+            announceShareStatus("Share complete.", "ok");
+            return true;
+          }).catch(function (error) {
+            if (error && error.name === "AbortError") {
+              announceShareStatus("Share canceled.", "warn");
+              return false;
+            }
+            throw error;
+          });
+        }
+
+        downloadBlob(blob, fileName);
+        return copyTextSilently(caption).then(function (copied) {
+          trackCoreEvent("core_share_card_complete", cardEventProps(cardData, format, { trigger: source, method: "download" }));
+          trackCoreEvent("core_shared_result", cardEventProps(cardData, format, { trigger: source, method: "download", share_type: "card" }));
+          if (copied) {
+            announceShareStatus("Card downloaded and caption copied.", "ok");
+          } else {
+            announceShareStatus("Card downloaded. Caption copy failed.", "warn");
+          }
+          return true;
+        });
+      }
+
+      function shareCardData(cardData, source, format) {
+        if (!shareCardsReady()) {
+          announceShareStatus("Card share failed. Please try again.", "warn");
           return Promise.resolve(false);
         }
-        var shareSource = source || "log";
-        var resolvedOptions = options || {};
-        var caption = resolvedOptions.caption ||
-          ("I got paid " + money(Number(session.earnings || 0)) + " to poop. Track yours at poopprofit.com");
-        var fileName = resolvedOptions.fileName ||
-          ("poopprofit-" + Number(session.earnings || 0).toFixed(2).replace(".", "-") + ".png");
-
+        if (!cardData) {
+          announceShareStatus("Nothing to share yet. Log a session first.", "warn");
+          return Promise.resolve(false);
+        }
+        var cardFormat = format || "story";
         announceShareStatus("Generating card...", "ok");
-        return generateShareCardPng(session)
+        return renderCardBlob(cardData, cardFormat)
           .then(function (blob) {
-            trackCoreEvent("core_share_card_generate", { trigger: shareSource });
-            var file = new File([blob], fileName, { type: "image/png" });
-            if (canNativeShareFile(file)) {
-              return navigator.share({
-                title: "Poop Profit",
-                text: caption,
-                files: [file]
-              }).then(function () {
-                trackCoreEvent("core_share_card_complete", { trigger: shareSource, method: "native" });
-                trackCoreEvent("core_shared_result", { trigger: shareSource, method: "native", share_type: "card" });
-                announceShareStatus("Share complete.", "ok");
-                return true;
-              }).catch(function (error) {
-                if (error && error.name === "AbortError") {
-                  announceShareStatus("Share canceled.", "warn");
-                  return false;
-                }
-                throw error;
-              });
-            }
-
-            downloadBlob(blob, fileName);
-            return copyTextSilently(caption).then(function (copied) {
-              trackCoreEvent("core_share_card_complete", { trigger: shareSource, method: "download" });
-              trackCoreEvent("core_shared_result", { trigger: shareSource, method: "download", share_type: "card" });
-              if (copied) {
-                announceShareStatus("Card downloaded and caption copied.", "ok");
-              } else {
-                announceShareStatus("Card downloaded. Caption copy failed.", "warn");
-              }
-              return true;
-            });
+            trackCoreEvent("core_share_card_generate", cardEventProps(cardData, cardFormat, { trigger: source }));
+            return deliverCardBlob(blob, cardData, cardFormat, source);
           })
           .catch(function (error) {
             console.error(error);
             announceShareStatus("Card share failed. Please try again.", "warn");
             return false;
           });
+      }
+
+      function shareSessionCard(session, source) {
+        if (!session) {
+          announceShareStatus("Session not found for sharing.", "warn");
+          return Promise.resolve(false);
+        }
+        if (!shareCardsReady()) {
+          announceShareStatus("Card share failed. Please try again.", "warn");
+          return Promise.resolve(false);
+        }
+        return shareCardData(buildSessionCardData(session), source || "log", "story");
+      }
+
+      function shareSingleLog(session) {
+        openShareStudio({ chip: "session", session: session, trigger: "log" });
       }
 
       function canNativeShareFile(file) {
@@ -8693,262 +8470,351 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         }
       }
 
-      function shareText(text, target) {
-        var shareTarget = target || "native";
-        var url = "https://www.poopprofit.com";
-        trackCoreEvent("core_share_channel", { channel: shareTarget });
+      /* ---------------- Share Studio (one sheet for every card) ---------------- */
 
-        if (shareTarget === "native") {
-          if (navigator.share) {
-            navigator.share({ title: "Poop Profit", text: text, url: url })
-              .then(function () {
-                trackCoreEvent("core_shared_result", { channel: "native", share_type: "text" });
-                announceShareStatus("Shared successfully.", "ok");
-              })
-              .catch(function () { announceShareStatus("Share canceled.", "warn"); });
-          } else {
-            trackCoreEvent("core_shared_result", { channel: "copy", share_type: "text" });
-            copyToClipboard(text);
-          }
-          return;
+      var STUDIO_FORMAT_KEY = "pp_share_format_v1";
+      var STUDIO_CHIPS = ["session", "today", "week", "month", "year", "custom", "alltime"];
+      var STUDIO_PACK_CHIPS = ["session", "week", "month", "alltime"];
+      var studio = {
+        chip: "session",
+        format: "story",
+        session: null,
+        trigger: "studio",
+        cardData: null,
+        blob: null,
+        token: 0,
+        pack: null,
+        packToken: 0
+      };
+
+      function loadStudioFormat() {
+        try {
+          return localStorage.getItem(STUDIO_FORMAT_KEY) === "post" ? "post" : "story";
+        } catch (_error) {
+          return "story";
         }
+      }
 
-        if (shareTarget === "x") {
-          trackCoreEvent("core_shared_result", { channel: "x", share_type: "text" });
-          window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text), "_blank");
-          announceShareStatus("Opening X share...", "ok");
-          return;
+      function saveStudioFormat(format) {
+        try {
+          localStorage.setItem(STUDIO_FORMAT_KEY, format);
+        } catch (_error) {
+          // Private mode or blocked storage: the choice just won't be remembered.
         }
+      }
 
-        if (shareTarget === "facebook") {
-          trackCoreEvent("core_shared_result", { channel: "facebook", share_type: "text" });
-          window.open(
-            "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url) + "&quote=" + encodeURIComponent(text),
-            "_blank"
+      function chipForStatsRange() {
+        return statsRangeMode === "all" ? "alltime" : statsRangeMode;
+      }
+
+      // Guests can share single poops (the growth loop). Reports stay a signed-in perk,
+      // matching the "Shareable stat reports" teaser on the guest Stats tab.
+      function isStudioChipLocked(chip) {
+        return chip !== "session" && !isSignedInMode();
+      }
+
+      function buildStudioCardData(chip) {
+        if (chip === "session") return buildSessionCardData(studio.session || getLatestSession());
+        if (chip === "alltime") return buildAllTimeCardData();
+        if (chip === "custom") {
+          var custom = getCustomRangeBounds(
+            studioStartDateInput ? studioStartDateInput.value : "",
+            studioEndDateInput ? studioEndDateInput.value : ""
           );
-          announceShareStatus("Opening Facebook share...", "ok");
+          return buildRangeCardData("custom", custom.startMs, custom.endMs);
+        }
+        var bounds = getCalendarRangeBounds(chip);
+        return buildRangeCardData(chip, bounds.startMs, bounds.endMs);
+      }
+
+      function seedStudioCustomRange() {
+        if (!studioStartDateInput || !studioEndDateInput) return;
+        if (statsStartDateInput && statsEndDateInput && (statsStartDateInput.value || statsEndDateInput.value)) {
+          studioStartDateInput.value = statsStartDateInput.value;
+          studioEndDateInput.value = statsEndDateInput.value;
           return;
         }
+        if (studioStartDateInput.value || studioEndDateInput.value) return;
+        var quickBounds = getQuickRangeBounds(7);
+        studioStartDateInput.value = toDateInputValue(quickBounds.startMs);
+        studioEndDateInput.value = toDateInputValue(quickBounds.endMs);
+      }
 
-        if (shareTarget === "sms") {
-          trackCoreEvent("core_shared_result", { channel: "sms", share_type: "text" });
-          window.open("sms:?&body=" + encodeURIComponent(text));
-          announceShareStatus("Opening SMS share...", "ok");
+      function openShareStudio(options) {
+        var opts = options || {};
+        if (!sharePickerModal) return;
+        if (!shareCardsReady()) {
+          announceShareStatus("Share cards are still loading. Try again in a second.", "warn");
           return;
         }
+        PPShareCards.preload();
+        studio.session = opts.session || null;
+        studio.trigger = opts.trigger || "studio";
+        studio.format = loadStudioFormat();
+        seedStudioCustomRange();
 
-        if (shareTarget === "copy") {
-          trackCoreEvent("core_shared_result", { channel: "copy", share_type: "text" });
-          copyToClipboard(text);
+        var chip = opts.chip && STUDIO_CHIPS.indexOf(opts.chip) !== -1 ? opts.chip : "session";
+        if (isStudioChipLocked(chip) || (chip !== "custom" && !buildStudioCardData(chip))) {
+          chip = buildStudioCardData("session") ? "session" : (isSignedInMode() ? "alltime" : "session");
+        }
+        studio.chip = chip;
+        resetStudioPack();
+        setStatus(studioStatus, "", "ok");
+        renderStudioChips();
+        renderStudioFormat();
+        sharePickerModal.setAttribute("aria-hidden", "false");
+        openBottomSheet(sharePickerModal);
+        trackCoreEvent("core_share_studio_open", { trigger: studio.trigger, chip: chip });
+        renderStudioPreview();
+        scrollActiveStudioChipIntoView();
+      }
+
+      function renderStudioChips() {
+        studioChipButtons.forEach(function (button) {
+          var chip = button.getAttribute("data-studio-chip");
+          var locked = isStudioChipLocked(chip);
+          var empty = !locked && chip !== "custom" && !buildStudioCardData(chip);
+          var label = button.getAttribute("data-label") || button.textContent;
+          if (!button.getAttribute("data-label")) button.setAttribute("data-label", label);
+          if (chip === "session") label = studio.session ? "This poop" : "Last poop";
+          button.textContent = (locked ? "🔒 " : "") + label;
+          button.classList.toggle("active", chip === studio.chip);
+          button.classList.toggle("locked", locked);
+          button.setAttribute("aria-selected", chip === studio.chip ? "true" : "false");
+          button.disabled = empty;
+        });
+        if (studioCustomRange) studioCustomRange.hidden = studio.chip !== "custom";
+        if (studioPackButton) {
+          var packCount = STUDIO_PACK_CHIPS.filter(function (chip) {
+            return !isStudioChipLocked(chip) && buildStudioCardData(chip);
+          }).length;
+          studioPackButton.hidden = packCount < 2;
         }
       }
 
-      function getShareText() {
-        var scope = shareScopeSelect.value;
-        var sessions = getFilteredSessions();
-
-        if (scope === "latest") {
-          if (!sessions.length) return "";
-          var latest = sessions[0];
-          return "I just earned " + money(latest.earnings) + " in " + formatDuration(latest.durationSeconds) +
-            " with Poop Profit. Track your poop profits at poopprofit.com";
-        }
-
-        if (!sessions.length) return "";
-
-        var totalSessions = sessions.length;
-        var totalEarnings = sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
-        var totalTimeSeconds = sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
-
-        return "My Poop Profit stats: " + totalSessions + " sessions, " + money(totalEarnings) +
-          " earned, " + formatDuration(totalTimeSeconds) + " total time. Check yours at poopprofit.com";
+      function scrollActiveStudioChipIntoView() {
+        var active = studioChips ? studioChips.querySelector("button.active") : null;
+        if (!active || !studioChips) return;
+        var target = active.offsetLeft - (studioChips.clientWidth - active.offsetWidth) / 2;
+        studioChips.scrollLeft = Math.max(0, target);
       }
 
-      function shareSummaryCard() {
-        var scope = shareScopeSelect ? shareScopeSelect.value : "overall";
-        var sessions = getFilteredSessions();
-        if (!sessions.length) {
-          setStatus(shareStatus, "Nothing to share yet. Log a session first.", "warn");
-          return;
-        }
+      function renderStudioFormat() {
+        studioFormatButtons.forEach(function (button) {
+          var active = button.getAttribute("data-studio-format") === studio.format;
+          button.classList.toggle("active", active);
+          button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        if (studioPreview) studioPreview.setAttribute("data-format", studio.format);
+      }
 
-        if (scope === "latest") {
-          var latest = sessions[0];
-          shareSessionCard(latest, "summary_latest", {
-            caption:
-              "I just earned " + money(Number(latest.earnings || 0)) +
-              " in " + formatDuration(Math.max(0, Math.floor(latest.durationSeconds || 0))) +
-              ". Track yours at poopprofit.com",
-            fileName: "poopprofit-latest-" + Number(latest.earnings || 0).toFixed(2).replace(".", "-") + ".png"
-          });
-          return;
-        }
+      function setStudioActionsEnabled(enabled, preparing) {
+        [studioShareButton, studioSaveButton, studioCopyButton].forEach(function (button) {
+          if (button) button.disabled = !enabled;
+        });
+        if (studioShareButton) studioShareButton.textContent = preparing ? "Preparing..." : "Share";
+      }
 
-        var totalSessions = sessions.length;
-        var totalEarnings = sessions.reduce(function (sum, item) { return sum + item.earnings; }, 0);
-        var totalTimeSeconds = sessions.reduce(function (sum, item) { return sum + item.durationSeconds; }, 0);
-        shareSessionCard(
-          {
-            earnings: totalEarnings,
-            durationSeconds: totalTimeSeconds
-          },
-          "summary_overall",
-          {
-            caption:
-              "I've earned " + money(totalEarnings) +
-              " across " + totalSessions + " sessions (" + formatDuration(totalTimeSeconds) + " total). " +
-              "Track yours at poopprofit.com",
-            fileName: "poopprofit-overall-" + totalEarnings.toFixed(2).replace(".", "-") + ".png"
+      function renderStudioPreview() {
+        var token = ++studio.token;
+        studio.blob = null;
+        var cardData = buildStudioCardData(studio.chip);
+        studio.cardData = cardData;
+        if (!cardData) {
+          if (studioCanvas) studioCanvas.hidden = true;
+          if (studioPreviewMessage) {
+            studioPreviewMessage.hidden = false;
+            studioPreviewMessage.textContent = studio.chip === "custom"
+              ? "No sessions in these dates. Try a wider range."
+              : "Nothing to share here yet.";
           }
-        );
-      }
-
-      function generateShareCardPng(session) {
-        return preloadShareCardAssets()
-          .then(function () {
-            if (!shareCardTemplate || !shareCardCanvas) {
-              throw new Error("Share card template not found.");
-            }
-            if (!window.htmlToImage || typeof window.htmlToImage.toBlob !== "function") {
-              throw new Error("html-to-image library not available.");
-            }
-            populateShareCardTemplate(session);
-            return renderShareCardBlob();
+          setStudioActionsEnabled(false, false);
+          return;
+        }
+        setStudioActionsEnabled(false, true);
+        PPShareCards.render(cardData, { format: studio.format, canvas: studioCanvas })
+          .then(function (canvas) {
+            if (token !== studio.token) return null;
+            canvas.hidden = false;
+            if (studioPreviewMessage) studioPreviewMessage.hidden = true;
+            return PPShareCards.toBlob(canvas);
           })
           .then(function (blob) {
-            if (!blob) {
-              throw new Error("Failed to render share card PNG.");
-            }
-            return blob;
+            if (!blob || token !== studio.token) return;
+            // Rendered ahead of the tap so Share can open the share sheet instantly
+            // (iOS only allows it right after a tap).
+            studio.blob = blob;
+            setStudioActionsEnabled(true, false);
+          })
+          .catch(function (error) {
+            if (token !== studio.token) return;
+            console.error(error);
+            setStudioActionsEnabled(false, false);
+            setStatus(studioStatus, "Couldn't draw this card. Please try again.", "warn");
           });
       }
 
-      function populateShareCardTemplate(session) {
-        if (!shareCardAmountValue || !shareCardDurationValue) {
-          throw new Error("Share card content nodes not found.");
+      function studioSource() {
+        return "studio_" + studio.trigger;
+      }
+
+      function shareStudioCard() {
+        if (!studio.blob || !studio.cardData) return;
+        var cardData = studio.cardData;
+        trackCoreEvent("core_share_card_generate", cardEventProps(cardData, studio.format, { trigger: studioSource() }));
+        deliverCardBlob(studio.blob, cardData, studio.format, studioSource()).catch(function (error) {
+          console.error(error);
+          announceShareStatus("Card share failed. Please try again.", "warn");
+        });
+      }
+
+      function saveStudioCard() {
+        if (!studio.blob || !studio.cardData) return;
+        downloadBlob(studio.blob, PPShareCards.fileNameFor(studio.cardData, studio.format));
+        trackCoreEvent("core_share_card_complete", cardEventProps(studio.cardData, studio.format, { trigger: studioSource(), method: "save" }));
+        announceShareStatus("Card saved.", "ok");
+      }
+
+      function copyStudioCaption() {
+        if (!studio.cardData) return;
+        copyToClipboard(PPShareCards.captionFor(studio.cardData));
+        trackCoreEvent("core_share_caption_copy", cardEventProps(studio.cardData, studio.format, { trigger: studioSource() }));
+      }
+
+      /* Share pack: every available card at once (feed carousel, camera roll, group chat).
+         Two taps on purpose: the first renders, the second shares, because phones only
+         open the share sheet right after a tap and rendering four cards takes a moment. */
+
+      function resetStudioPack() {
+        studio.packToken += 1;
+        studio.pack = null;
+        if (studioPackButton) {
+          studioPackButton.disabled = false;
+          studioPackButton.textContent = "Share the whole pack";
         }
-        var earnings = Number(session && session.earnings);
-        var safeEarnings = Number.isFinite(earnings) ? Math.max(0, earnings) : 0;
-        var durationSeconds = Number(session && session.durationSeconds);
-        var safeDurationSeconds = Number.isFinite(durationSeconds) ? Math.max(0, Math.floor(durationSeconds)) : 0;
-        shareCardAmountValue.textContent = money(safeEarnings);
-        shareCardDurationValue.textContent = formatShareCardDuration(safeDurationSeconds);
       }
 
-      function formatShareCardDuration(durationSeconds) {
-        var safeSeconds = Math.max(0, Math.floor(Number(durationSeconds) || 0));
-        var hours = Math.floor(safeSeconds / 3600);
-        var minutes = Math.floor((safeSeconds % 3600) / 60);
-        return hours + "hr " + minutes + "min";
+      function prepareStudioPack() {
+        var items = STUDIO_PACK_CHIPS.map(function (chip) {
+          return { chip: chip, data: isStudioChipLocked(chip) ? null : buildStudioCardData(chip) };
+        }).filter(function (item) { return item.data; });
+        if (items.length < 2) return;
+        var format = studio.format;
+        var token = ++studio.packToken;
+        studioPackButton.disabled = true;
+        studioPackButton.textContent = "Preparing " + items.length + " cards...";
+        items.reduce(function (chain, item) {
+          return chain.then(function (files) {
+            return renderCardBlob(item.data, format).then(function (blob) {
+              return files.concat([new File([blob], PPShareCards.fileNameFor(item.data, format), { type: "image/png" })]);
+            });
+          });
+        }, Promise.resolve([]))
+          .then(function (files) {
+            if (token !== studio.packToken) return;
+            studio.pack = { files: files, format: format, items: items };
+            studioPackButton.disabled = false;
+            studioPackButton.textContent = "Tap to share pack (" + files.length + " cards)";
+          })
+          .catch(function (error) {
+            if (token !== studio.packToken) return;
+            console.error(error);
+            resetStudioPack();
+            setStatus(studioStatus, "Couldn't build the pack. Please try again.", "warn");
+          });
       }
 
-      function renderShareCardBlob() {
-        var previousInline = {
-          left: shareCardTemplate.style.left,
-          top: shareCardTemplate.style.top,
-          opacity: shareCardTemplate.style.opacity,
-          zIndex: shareCardTemplate.style.zIndex,
-          display: shareCardTemplate.style.display,
-          transform: shareCardTemplate.style.transform
-        };
-
-        shareCardTemplate.style.left = "0px";
-        shareCardTemplate.style.top = "0px";
-        shareCardTemplate.style.opacity = "0.01";
-        shareCardTemplate.style.zIndex = "-1";
-        shareCardTemplate.style.display = "block";
-        shareCardTemplate.style.transform = "translateZ(0)";
-        shareCardCanvas.classList.add("capture-safe");
-
-        return window.htmlToImage.toBlob(shareCardCanvas, {
-          cacheBust: true,
-          backgroundColor: "#061226",
-          width: 1080,
-          height: 1920,
-          pixelRatio: 1,
-          style: {
-            transform: "none",
-            margin: "0"
-          }
-        }).finally(function () {
-          shareCardTemplate.style.left = previousInline.left;
-          shareCardTemplate.style.top = previousInline.top;
-          shareCardTemplate.style.opacity = previousInline.opacity;
-          shareCardTemplate.style.zIndex = previousInline.zIndex;
-          shareCardTemplate.style.display = previousInline.display;
-          shareCardTemplate.style.transform = previousInline.transform;
-          shareCardCanvas.classList.remove("capture-safe");
-        });
-      }
-
-      function activateDeferredSrc(imageElement) {
-        // Share-card assets carry their URL in data-src so the browser does not
-        // fetch them until the user actually opens the share flow.
-        if (!imageElement) return null;
-        var deferred = imageElement.getAttribute("data-src");
-        if (deferred && !imageElement.getAttribute("src")) {
-          imageElement.setAttribute("src", deferred);
+      function canNativeShareFiles(files) {
+        if (!navigator || typeof navigator.share !== "function" || typeof navigator.canShare !== "function") return false;
+        try {
+          return navigator.canShare({ files: files });
+        } catch (_error) {
+          return false;
         }
-        return imageElement.getAttribute("src");
       }
 
-      function preloadShareCardAssets() {
-        if (shareCardAssetsPromise) return shareCardAssetsPromise;
-        var sources = [];
-        var logoSrc = activateDeferredSrc(shareCardLogoImage);
-        var mascotSrc = activateDeferredSrc(shareCardMascotImage);
-        var toiletSrc = activateDeferredSrc(shareCardToiletImage);
-        if (logoSrc) sources.push(logoSrc);
-        if (mascotSrc) sources.push(mascotSrc);
-        if (toiletSrc) sources.push(toiletSrc);
-        shareCardAssetsPromise = Promise.all(
-          sources.filter(Boolean).map(function (source) {
-            return preloadImageAsset(source);
-          }).concat([
-            waitForTemplateImage(shareCardLogoImage),
-            waitForTemplateImage(shareCardMascotImage),
-            waitForTemplateImage(shareCardToiletImage)
-          ])
-        ).catch(function (error) {
-          shareCardAssetsPromise = null;
-          throw error;
-        });
-        return shareCardAssetsPromise;
-      }
-
-      function preloadImageAsset(source) {
-        return new Promise(function (resolve, reject) {
-          var image = new Image();
-          image.decoding = "async";
-          image.onload = function () { resolve(image); };
-          image.onerror = function () {
-            reject(new Error("Unable to preload asset: " + source));
-          };
-          image.src = source;
-        });
-      }
-
-      function waitForTemplateImage(imageElement) {
-        if (!imageElement) return Promise.resolve();
-        if (imageElement.complete && imageElement.naturalWidth > 0) {
-          return Promise.resolve();
+      function shareStudioPack() {
+        var pack = studio.pack;
+        if (!pack) return;
+        var caption = "My Poop Profit earnings report. What do you make to poop? poopprofit.com";
+        var props = { trigger: studioSource(), card_type: "pack", period_kind: "none", format: pack.format, card_count: pack.files.length };
+        trackCoreEvent("core_share_card_generate", props);
+        if (canNativeShareFiles(pack.files)) {
+          navigator.share({ title: "Poop Profit", text: caption, files: pack.files })
+            .then(function () {
+              trackCoreEvent("core_share_card_complete", Object.assign({}, props, { method: "native" }));
+              trackCoreEvent("core_shared_result", Object.assign({}, props, { method: "native", share_type: "pack" }));
+              announceShareStatus("Pack shared.", "ok");
+            })
+            .catch(function (error) {
+              if (error && error.name === "AbortError") {
+                announceShareStatus("Share canceled.", "warn");
+                return;
+              }
+              console.error(error);
+              announceShareStatus("Pack share failed. Please try again.", "warn");
+            });
+          return;
         }
-        return new Promise(function (resolve, reject) {
-          function cleanup() {
-            imageElement.removeEventListener("load", onLoad);
-            imageElement.removeEventListener("error", onError);
-          }
-          function onLoad() {
-            cleanup();
-            resolve();
-          }
-          function onError() {
-            cleanup();
-            reject(new Error("Template image failed to load: " + (imageElement.currentSrc || imageElement.src)));
-          }
-          imageElement.addEventListener("load", onLoad);
-          imageElement.addEventListener("error", onError);
+        pack.files.forEach(function (file, index) {
+          window.setTimeout(function () { downloadBlob(file, file.name); }, index * 400);
         });
+        copyTextSilently(caption).then(function (copied) {
+          trackCoreEvent("core_share_card_complete", Object.assign({}, props, { method: "download" }));
+          trackCoreEvent("core_shared_result", Object.assign({}, props, { method: "download", share_type: "pack" }));
+          announceShareStatus(copied ? "Cards downloaded and caption copied." : "Cards downloaded.", "ok");
+        });
+      }
+
+      function handleStudioPackClick() {
+        if (studio.pack) {
+          shareStudioPack();
+          return;
+        }
+        prepareStudioPack();
+      }
+
+      function wireShareStudio() {
+        studioChipButtons.forEach(function (button) {
+          button.addEventListener("click", function () {
+            var chip = button.getAttribute("data-studio-chip");
+            if (!chip || button.disabled) return;
+            if (isStudioChipLocked(chip)) {
+              closeSharePicker();
+              openGuestCta("share_studio");
+              return;
+            }
+            if (chip === studio.chip) return;
+            studio.chip = chip;
+            resetStudioPack();
+            setStatus(studioStatus, "", "ok");
+            renderStudioChips();
+            renderStudioPreview();
+          });
+        });
+        studioFormatButtons.forEach(function (button) {
+          button.addEventListener("click", function () {
+            var format = button.getAttribute("data-studio-format") === "post" ? "post" : "story";
+            if (format === studio.format) return;
+            studio.format = format;
+            saveStudioFormat(format);
+            resetStudioPack();
+            renderStudioFormat();
+            renderStudioPreview();
+          });
+        });
+        [studioStartDateInput, studioEndDateInput].forEach(function (input) {
+          if (!input) return;
+          input.addEventListener("change", function () {
+            if (studio.chip !== "custom") return;
+            resetStudioPack();
+            renderStudioPreview();
+          });
+        });
+        if (studioShareButton) studioShareButton.addEventListener("click", shareStudioCard);
+        if (studioSaveButton) studioSaveButton.addEventListener("click", saveStudioCard);
+        if (studioCopyButton) studioCopyButton.addEventListener("click", copyStudioCaption);
+        if (studioPackButton) studioPackButton.addEventListener("click", handleStudioPackClick);
       }
 
       function downloadBlob(blob, fileName) {
@@ -9019,6 +8885,9 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
       function announceShareStatus(message, mode) {
         setStatus(shareStatus, message, mode);
         setStatus(statusMessage, message, mode);
+        if (sharePickerModal && sharePickerModal.classList.contains("open")) {
+          setStatus(studioStatus, message, mode);
+        }
       }
 
       function setStatus(element, message, mode) {
@@ -9185,24 +9054,13 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         });
       }
 
-      function openSharePickerWithText(text, description) {
-        pendingShareText = text || "";
-        if (!pendingShareText) return;
-        if (sharePickerDescription) {
-          sharePickerDescription.textContent = description || "Choose where to share.";
-        }
-        if (sharePickerModal) {
-          sharePickerModal.setAttribute("aria-hidden", "false");
-          openBottomSheet(sharePickerModal);
-        }
-      }
-
       function closeSharePicker() {
+        studio.token += 1;
+        resetStudioPack();
         if (sharePickerModal) {
           sharePickerModal.setAttribute("aria-hidden", "true");
           closeBottomSheet(sharePickerModal);
         }
-        pendingShareText = "";
       }
 
       function openRatingModal() {
@@ -9214,6 +9072,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           ratingProfitValue.textContent = money(roundCurrency(profitEarnings));
         }
         applyRatingSelection(0);
+        if (shareCardsReady()) PPShareCards.preload();
         prefillTpInput(ratingTpInput);
         updateTpLiveHint(ratingTpInput, ratingTpHint);
         showRatingInputStep();
@@ -9229,6 +9088,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         selectedRating = 0;
         pendingSessionRatingId = null;
         pendingRatingShareSession = null;
+        pendingRatingCard = null;
         showRatingInputStep();
       }
 
@@ -9243,6 +9103,13 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           return;
         }
         pendingRatingShareSession = session;
+        pendingRatingCard = null;
+        var ratingCardData = buildSessionCardData(session);
+        if (ratingCardData) {
+          // Render now so tapping "Share Card" can open the share sheet immediately.
+          pendingRatingCard = { data: ratingCardData, promise: renderCardBlob(ratingCardData, "story") };
+          pendingRatingCard.promise.catch(function () {});
+        }
         if (ratingShareMessage) {
           ratingShareMessage.textContent = "Share your " + money(Number(session.earnings || 0)) + " poop?";
         }
@@ -9265,22 +9132,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         state.sessions = state.sessions.map(function (session) {
           if (session.id !== sessionId) return session;
           updated = true;
-          updatedSession = {
-            id: session.id,
-            startedAtMs: session.startedAtMs,
-            endedAtMs: session.endedAtMs,
-            durationSeconds: session.durationSeconds,
-            hourlyWageSnapshot: session.hourlyWageSnapshot,
-            earnings: session.earnings,
-            rating: safeRating
-          };
-          if (session.dbId !== undefined && session.dbId !== null) {
-            updatedSession.dbId = session.dbId;
-          }
-          if (session.tp_squares !== undefined && session.tp_squares !== null) {
-            updatedSession.tp_squares = session.tp_squares;
-            updatedSession.tp_savings = session.tp_savings;
-          }
+          updatedSession = Object.assign({}, session, { rating: safeRating });
           return updatedSession;
         });
         if (updated) {
