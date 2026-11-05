@@ -22,6 +22,7 @@
 - [Home](https://www.poopprofit.com/): overview of features, Turd Token, merch, and FAQ
 - [FAQ](https://www.poopprofit.com/#faq): common questions about how Poop Profit works, accounts, salary mode, and Turd Tokens
 - [App](https://www.poopprofit.com/app.html): the timer and calculator
+- [UK Poo Calculator](https://www.poopprofit.com/poo-calculator/): the calculator in pounds for UK workers, with salary over a 37.5 hour week and statutory holiday taken off the year
 - [Sign in](https://www.poopprofit.com/auth.html): free account login
 - [Privacy Policy](https://www.poopprofit.com/privacy.html)
 

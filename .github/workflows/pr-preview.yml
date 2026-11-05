@@ -36,6 +36,8 @@ jobs:
             --exclude .git \
             --exclude CNAME \
             ./ /tmp/preview-src/
+          # Previews must not send data to the live Google Analytics property.
+          grep -rl "G-R1E17DCKNC" /tmp/preview-src --include=*.html | xargs -r sed -i 's/G-R1E17DCKNC/G-PREVIEWOFF/g'
 
       - name: Deploy preview
         uses: rossjrw/pr-preview-action@v1

@@ -2,6 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /supabase/
 Disallow: /TurdRaceGame.html
+Disallow: /pr-preview/
 
 User-agent: GPTBot
 Allow: /
