@@ -28,7 +28,7 @@ for (const a of assets) {
   console.log(a, (buf.length / 1024).toFixed(0) + ' KB');
 }
 // Sound effects, icons and menu art: every file in these folders is inlined as-is as a data URI.
-const INLINE_FOLDERS = { sfx: { '.mp3': 'audio/mpeg' }, icons: { '.webp': 'image/webp' }, menu: { '.webp': 'image/webp' } };
+const INLINE_FOLDERS = { sfx: { '.mp3': 'audio/mpeg' }, icons: { '.webp': 'image/webp' }, menu: { '.webp': 'image/webp' }, cabinet: { '.webp': 'image/webp' } };
 for (const [folder, types] of Object.entries(INLINE_FOLDERS)) {
   const dir = path.join(distDir, 'assets', folder);
   if (!fs.existsSync(dir)) continue;

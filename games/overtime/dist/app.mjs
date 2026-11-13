@@ -106,7 +106,47 @@ canvas.addEventListener('pointermove',e=>{if(!stick||e.pointerId!==stick.id)retu
 for(let ev of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(ev,e=>{if(stick?.id===e.pointerId)stick=null;});
 function input(){if(stick)return{x:stick.dx,y:stick.dy};return{x:(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),y:(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0)};}
 function showToast(text,seconds=2.8){$('toast').textContent=text;$('toast').style.opacity=1;toastUntil=performance.now()+seconds*1000;}
-function upgrades(){stick=null;keys={};$('upgradeTitle').textContent=g.upgradeKind==='briefcase'?'Severance package.':'Promotion earned.';$('upgradeIntro').textContent=g.upgradeKind==='briefcase'?'Executive briefcase: take a free upgrade.':'Max out a weapon and grab its partner perk to unlock a super version (after the first 45 seconds).';$('choices').innerHTML='';for(let c of g.choices){let w=WEAPONS[c.key]||PASSIVES[c.key]||{icon:'❤️',name:'Second Wind',desc:'Recover 35 health.'},evo=c.level===6&&EVOLUTIONS[c.key];let b=document.createElement('button');b.className='choice'+(evo?' evolution':'');let label=evo?'EVOLUTION':PASSIVES[c.key]?'PASSIVE · RANK '+c.level:c.key==='heal'?'RECOVERY':c.level===1?'NEW WEAPON':'UPGRADE · LEVEL '+c.level;let desc=evo?evo.desc:PASSIVES[c.key]?w.desc:c.level===1?w.desc:upgradeDesc(c.key,c.level);let recipe=EVOLUTIONS[c.key];b.innerHTML=`<span class="icon">${iconFor(evo?c.key+'2':c.key,w.icon)}</span><div><small>${label}</small><strong>${evo?evo.name:w.name}</strong><p>${desc}</p>${recipe&&!evo?`<em>Max it + ${PASSIVES[recipe.requires].name} = ${recipe.name}</em>`:''}</div>`;b.onclick=()=>{if(g.choose(c.key)){keys={};stick=null;$('upgrade').hidden=true;last=performance.now();updateUI();}};$('choices').append(b);}$('upgrade').hidden=false;}
+// Build 16: the promotion screen is a supply cabinet. One shelf per choice, the whole shelf is the button.
+const CABINET_ART={
+ plunger:'assets/cabinet/plunger.webp',tp:'assets/cabinet/tp.webp',gas:'assets/cabinet/gas.webp',flush:'assets/cabinet/flush.webp',bomb:'assets/cabinet/bomb.webp',
+ plunger2:'assets/cabinet/plunger2.webp',tp2:'assets/cabinet/tp2.webp',gas2:'assets/cabinet/gas2.webp',flush2:'assets/cabinet/flush2.webp',bomb2:'assets/cabinet/bomb2.webp',
+ speed:'assets/cabinet/speed.webp',coffee:'assets/cabinet/coffee.webp',magnet:'assets/cabinet/magnet.webp',chili:'assets/cabinet/chili.webp',heal:'assets/cabinet/heal.webp',
+};
+// Passives read as one big number plus a short line, so they fit a shelf at phone size.
+const PASSIVE_CARD={
+ speed:['+10%','MOVE SPEED','Per rank. Up to 30% faster.'],
+ coffee:['+8%','FASTER RECHARGE','Evolves Plungerang and Flush.'],
+ magnet:['+10%','XP, WIDER PICKUP','Evolves TP Tornado.'],
+ chili:['+15%','WEAPON DAMAGE','Evolves gas and Stink Bomb.'],
+};
+const UPGRADE_TAP_GUARD_MS=350; // a thumb already steering must not pick a shelf the instant the cabinet opens
+let upgradeShownAt=0;
+function upgrades(){
+ stick=null;keys={};
+ const brief=g.upgradeKind==='briefcase';
+ $('upgradeTitle').innerHTML=brief?'SEVERANCE <span>PACKAGE</span>':'PROMOTION <span>EARNED</span>';
+ $('upgradeIntro').textContent=brief?'Executive briefcase: take a free upgrade.':'More responsibility. Same pay.';
+ $('upgradeLabel').textContent=(brief?'FREE UPGRADE':'LEVEL '+g.level)+' · CHOOSE ONE';
+ $('upgradeFoot').textContent=!brief&&g.level<=4?'Max a weapon + its partner perk to evolve it after 45 seconds.':'';
+ $('choices').innerHTML='';
+ g.choices.forEach((c,i)=>{
+  const w=WEAPONS[c.key]||PASSIVES[c.key]||{icon:'❤️',name:'Second Wind',desc:'Recover 35 health.'},evo=c.level===6&&EVOLUTIONS[c.key];
+  const kind=evo?'evo':PASSIVES[c.key]?'pas':c.key==='heal'?'heal':c.level===1?'new':'up';
+  const label={evo:'★ EVOLUTION',pas:'PASSIVE · RANK '+c.level,heal:'RECOVERY',new:'NEW WEAPON',up:'UPGRADE · LEVEL '+c.level}[kind];
+  const desc=evo?evo.desc:PASSIVES[c.key]?w.desc:c.level===1?w.desc:upgradeDesc(c.key,c.level);
+  const recipe=EVOLUTIONS[c.key],card=PASSIVE_CARD[c.key],name=evo?evo.name:w.name,artKey=evo?c.key+'2':c.key;
+  const b=document.createElement('button');
+  b.className='cab-slot s'+(i+1)+(evo?' evolution':'');
+  b.innerHTML=(CABINET_ART[artKey]?`<img class="cab-item" src="${CABINET_ART[artKey]}" alt="">`:`<span class="cab-item cab-item-icon">${iconFor(artKey,w.icon)}</span>`)
+   +`<span class="cab-text"><small class="cab-chip ${kind}">${label}</small><strong class="cab-name${name.length>18?' long':''}">${name}</strong>`
+   +(card?`<b class="cab-stat"><i>${card[0]}</i> ${card[1]}</b><span class="cab-desc">${card[2]}</span>`:`<span class="cab-desc">${desc}</span>`)
+   +(recipe&&!evo?`<em class="cab-evo">★ Evolves with ${PASSIVES[recipe.requires].name}</em>`:'')
+   +`<span class="cab-choose">CHOOSE</span></span>`;
+  b.onclick=()=>{if(performance.now()-upgradeShownAt<UPGRADE_TAP_GUARD_MS)return;if(g.choose(c.key)){keys={};stick=null;$('upgrade').hidden=true;last=performance.now();updateUI();}};
+  $('choices').append(b);
+ });
+ upgradeShownAt=performance.now();$('upgrade').hidden=false;
+}
 function upgradeDesc(k,l){return{plunger:'More damage'+(l%2===0?' and an extra returning plunger.':', with faster automatic throws.'),tp:'An extra orbiting roll, more damage and wider reach.',gas:'Larger clouds that last longer and deal more damage.',flush:'Bigger waves, more damage and a shorter cooldown.',bomb:'Wider lure and blast, more damage, shorter manual recharge.'}[k]||'';}
 function finish(text){$('recovery').hidden=true;let earned=settle(progress,g);saveProgress();updateProgress();$('bombBtn').hidden=true;stick=null;keys={};$('upgrade').hidden=true;$('pauseScreen').hidden=true;$('endTitle').textContent=resultTitle(g);$('endEyebrow').textContent=g.state==='won'?'STAGE '+g.stage.id+' COMPLETE':'SHIFT REPORT / '+g.stage.name.toUpperCase();$('endDesc').textContent=text;$('nextStage').hidden=!(g.state==='won'&&g.stage.id===1);$('again').textContent='REPLAY '+g.stage.name.toUpperCase()+' ↗';$('receipt').innerHTML=`<div>Petty Cash collected <b>+${earned}</b></div><div>Best KO chain <b>${g.bestCombo}</b></div><div>Stink Bomb KOs <b>${g.bombKills}</b></div><div>Time survived <b>${format(g.t)}</b></div><div>Executive boss <b>${g.bossDefeated?'DEFEATED':g.phase==='boss'?'NOT DEFEATED':'NOT REACHED'}</b></div><div>Corporate KOs <b>${g.kills}</b></div><div>Final level <b>${g.level}</b></div>`;$('end').hidden=false;if(g.kills>wonBest){wonBest=g.kills;try{localStorage.setItem('pp-overtime-best',String(wonBest));}catch{}$('best').textContent='BEST: '+wonBest+' KOs';}}
 function format(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0');}
