@@ -1,3 +1,4 @@
+import {setupTutorial} from './tutorial.mjs';
 import {STAGES,stageFor,canPlayStage,resultTitle} from './stages.mjs';
 import {paintOffice,paintLobby} from './scene.mjs';
 import {PERKS,fresh,normalize,buy,cost,settle} from './progress.mjs';
@@ -92,14 +93,15 @@ const SPEAKER_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 function soundLabel(){let t=muted?'🔇 SOUND OFF':'🔊 SOUND ON';$('sound').innerHTML=muted?SPEAKER_OFF:SPEAKER_ON;$('sound').setAttribute('aria-label',muted?'Sound is off. Tap to turn on':'Sound is on. Tap to turn off');$('soundPause').textContent=t;}function toggleSound(){muted=!muted;try{localStorage.setItem('pp-overtime-sound',muted?'off':'on');}catch{}soundLabel();sound('upgrade');}soundLabel();$('sound').onclick=toggleSound;$('soundPause').onclick=toggleSound;
 function begin(){$('recovery').hidden=true;if(!canPlayStage(progress,selectedStage))selectedStage=1;sound('upgrade');g=new Game(Math.random,progress.perks,$('hardMode').checked&&progress.wins>0?1:0,progress.start,selectedStage);setFloor(selectedStage);cam={x:g.player.x,y:g.player.y};keys={};stick=null;for(let id of ['start','end','upgrade','pauseScreen','workshop'])$(id).hidden=true;for(let id of ['hud','loadout','hint','bombBtn','combo'])$(id).hidden=false;last=performance.now();showToast(g.stage.name.toUpperCase()+' · SURVIVE, THEN DEFEAT THE BOSS',4);updateUI();}
 $('nextStage').onclick=()=>{selectedStage=2;begin();};$('startBtn').onclick=begin;
-// How to Play sheet: opens from the menu, closes with GOT IT or a tap outside it.
-$('howBtn').onclick=()=>{$('howSheet').hidden=false;$('howClose').focus();};
-$('howClose').onclick=()=>{$('howSheet').hidden=true;$('howBtn').focus();};
-$('howSheet').onclick=e=>{if(e.target===$('howSheet'))$('howSheet').hidden=true;};$('again').onclick=begin;$('restartPause').onclick=begin;
+// Native modal keeps focus in the guide; practice never touches the live Game.
+const tutorial=setupTutorial({hermanSrc:herman.src,enemySrc:enemySheet.src,onOpen:()=>{keys={};stick=null;},onClose:()=>{keys={};stick=null;last=performance.now();}});
+$('howBtn').onclick=()=>tutorial.open($('howBtn'));
+$('howPause').onclick=()=>tutorial.open($('howPause'));
+$('again').onclick=begin;$('restartPause').onclick=begin;
 $('home').onclick=()=>{g=null;renderStagePicker();$('end').hidden=true;$('start').hidden=false;for(let id of ['hud','loadout','hint','bombBtn','combo','boost','recovery'])$(id).hidden=true;};
 function pause(){if(!g)return;if(g.state==='playing'||g.state==='countdown'){g.pausedFrom=g.state;g.state='paused';$('recovery').hidden=true;$('pauseScreen').hidden=false;stick=null;keys={};}else if(g.state==='paused'){g.state=g.pausedFrom||'playing';$('pauseScreen').hidden=true;last=performance.now();}}
 $('pause').onclick=pause;$('resume').onclick=pause;
-window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','p','P','Escape'].includes(e.key))e.preventDefault();if((e.key===' '||e.key.toLowerCase()==='b')&&!e.repeat)triggerBomb();if((e.key.toLowerCase()==='p'||e.key==='Escape')&&!e.repeat)pause();keys[e.key.toLowerCase()]=true;});window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+window.addEventListener('keydown',e=>{if($('howSheet').open)return;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','p','P','Escape'].includes(e.key))e.preventDefault();if((e.key===' '||e.key.toLowerCase()==='b')&&!e.repeat)triggerBomb();if((e.key.toLowerCase()==='p'||e.key==='Escape')&&!e.repeat)pause();keys[e.key.toLowerCase()]=true;});window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 window.addEventListener('blur',()=>{keys={};stick=null;if(g?.state==='playing'||g?.state==='countdown')pause();});document.addEventListener('visibilitychange',()=>{if(document.hidden&&(g?.state==='playing'||g?.state==='countdown'))pause();});
 canvas.addEventListener('pointerdown',e=>{if(!['playing','countdown'].includes(g?.state)||stick)return;let r=canvas.getBoundingClientRect();stick={id:e.pointerId,x:e.clientX-r.left,y:e.clientY-r.top,dx:0,dy:0};canvas.setPointerCapture(e.pointerId);});
 canvas.addEventListener('pointermove',e=>{if(!stick||e.pointerId!==stick.id)return;let r=canvas.getBoundingClientRect(),dx=e.clientX-r.left-stick.x,dy=e.clientY-r.top-stick.y,d=Math.hypot(dx,dy);stick.dx=dx/Math.max(45,d);stick.dy=dy/Math.max(45,d);});

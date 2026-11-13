@@ -182,3 +182,18 @@ These changes first went straight into the built page; Build 15 rewrote them her
 - **Sizing:** everything is a fraction of the stage width (`--u` in `style.css`), so the art and the text scale together and all three shelves fit without scrolling. Screens under 600 px tall keep the text size and let the note and floor run off the bottom.
 - **Not changed:** the 18 flat icons still serve the HUD, Break Room and Stink Bomb button. Paid Sick Leave, Hazard Pay and Deep Pockets renders are stored in `art-sources/cabinet/` for a later Break Room pass.
 - New suite `tests/cabinet.test.mjs`; the build script also inlines `dist/assets/cabinet/`.
+
+## Interactive How to Play
+
+The menu and pause screen now open a six-lesson field guide: movement and automatic attacks, cash and promotions, Stink Bomb timing, first aid, boss dodging, and a final controls/evolutions reference. Each lesson can be replayed, demonstrated with **Show me**, or skipped. Practice runs in `dist/tutorial-model.mjs`; it never creates a live `Game` or writes progress. `dist/tutorial.mjs` owns the dialog, input, and rendering. Closing a guide opened during a run returns to the pause screen.
+
+The guide supports drag controls, WASD/arrows, keyboard activation, Escape to close, contained focus, reduced motion, and phone/landscape layouts. It reuses the game's loaded character art. The unit suite checks practice rules and timing. Browser regression checks run separately against a served, rebuilt page:
+
+```sh
+# From the repository root, serve the site in another terminal:
+python3 -m http.server 8000
+# From games/overtime, with Playwright installed in your development environment:
+BASE_URL=http://127.0.0.1:8000/ PLAYWRIGHT_MODULE=/path/to/playwright node tests/tutorial.browser.mjs
+```
+
+Set `CHROMIUM_PATH` if Chromium is not at `/usr/bin/chromium`, and `ARTIFACT_DIR` to choose a screenshot folder (default `/tmp/overtime-guide`). Browser checks cover every lesson, pointer/keyboard controls, replay, modal focus, unchanged browser storage, paused-run isolation, and layouts at 1280×900, 390×844, 320×568, and 844×390.
