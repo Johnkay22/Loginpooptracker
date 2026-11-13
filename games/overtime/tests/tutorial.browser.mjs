@@ -28,10 +28,11 @@ try {
  await page.keyboard.press('Escape');assert.equal(await page.locator('#howSheet').evaluate(el=>el.open),false);assert.equal(await page.evaluate(()=>document.activeElement.id),'howBtn');assert.equal(await page.evaluate(()=>JSON.stringify(localStorage)),saved);
  await page.locator('#startBtn').click();await page.waitForTimeout(700);await page.locator('#pause').click();const timer=await page.locator('#timer').textContent(),hp=await page.locator('#hp').textContent();await page.locator('#howPause').click();await page.keyboard.press('p');await page.locator('[data-step="2"]').click();await page.keyboard.press('Space');await page.waitForTimeout(1200);assert.equal(await page.locator('#timer').textContent(),timer);assert.equal(await page.locator('#hp').textContent(),hp);await page.keyboard.press('Escape');assert.equal(await page.locator('#pauseScreen').isVisible(),true);assert.equal(await page.evaluate(()=>document.activeElement.id),'howPause');await page.locator('#resume').click();assert.equal(await page.locator('#pauseScreen').isVisible(),false);
  // All lessons remain reachable without horizontal overflow at phone, short phone and landscape sizes.
- for(const size of [{width:390,height:844},{width:320,height:568},{width:844,height:390}]){
+ for(const size of [{width:807,height:591},{width:390,height:844},{width:320,height:568},{width:844,height:390}]){
   await page.setViewportSize(size);await page.reload();await page.locator('#howBtn').click();
   for(let i=0;i<6;i++){await page.locator(`[data-step="${i}"]`).click();assert.ok(await page.locator('#howSheet').evaluate(el=>el.scrollWidth<=el.clientWidth+1),`overflow at ${size.width}, lesson ${i}`);await page.locator('#lessonNext').scrollIntoViewIfNeeded();assert.equal(await page.locator('#lessonNext').isVisible(),true);}
   await page.locator('[data-step="0"]').click();
+  if(size.width===807){await page.evaluate(()=>document.fonts.ready);assert.ok(await page.locator('#howSheet').evaluate(el=>el.scrollHeight<=el.clientHeight+1),'first lesson fits the reference-sized desktop');}
   if(size.width===390){await page.locator('#lessonTitle').scrollIntoViewIfNeeded();await page.screenshot({path:artifacts+'/guide-mobile.png'});}
   await page.keyboard.press('Escape');
  }

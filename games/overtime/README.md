@@ -197,3 +197,5 @@ BASE_URL=http://127.0.0.1:8000/ PLAYWRIGHT_MODULE=/path/to/playwright node tests
 ```
 
 Set `CHROMIUM_PATH` if Chromium is not at `/usr/bin/chromium`, and `ARTIFACT_DIR` to choose a screenshot folder (default `/tmp/overtime-guide`). Browser checks cover every lesson, pointer/keyboard controls, replay, modal focus, unchanged browser storage, paused-run isolation, and layouts at 1280×900, 390×844, 320×568, and 844×390.
+
+The guide uses the game’s navy-and-gold menu styling, steel-framed controls and condensed display font. Its practice arena is rendered by the existing `paintOffice` function through `tutorial-scene.mjs`, using the real office furniture, carpet, pathways and portrait. Practice furniture collision is derived from the same desk coordinates as the live game.

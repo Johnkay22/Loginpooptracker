@@ -1,3 +1,4 @@
+import {paintPracticeFloor} from './tutorial-scene.mjs';
 import {Practice} from './tutorial-model.mjs';
 import {WEAPONS,PASSIVES,EVOLUTIONS} from './engine.mjs';
 const STEPS=[
@@ -10,26 +11,29 @@ const STEPS=[
 ];
 const ART={plunger:'assets/icons/plunger.webp',speed:'assets/icons/speed.webp',bomb:'assets/icons/bomb.webp',coffee:'assets/icons/coffee.webp',heal:'assets/icons/heal.webp'};
 const icon=(key)=>`<img src="${ART[key]}" alt="">`;
-export function setupTutorial({hermanSrc,enemySrc,onOpen=()=>{},onClose=()=>{}}){
+export function setupTutorial({hermanSrc,enemySrc,portrait,onOpen=()=>{},onClose=()=>{}}){
  const $=id=>document.getElementById(id),dialog=$('howSheet'),content=$('lessonContent'),floor=$('practiceFloor');
  floor.style.setProperty('--corporate-sprite',`url("${enemySrc}")`);
  let step=0,practice,keys={},stick=null,raf=0,last=0,opener=null,completed=new Set(),lastMessage='',demo=false;
  $('lessonNav').innerHTML=STEPS.map((s,i)=>`<button type="button" data-step="${i}" aria-label="Lesson ${i+1}: ${s.label}"><span>${String(i+1).padStart(2,'0')}</span>${s.label}</button>`).join('');
+ portrait.addEventListener('load',()=>{const canvas=floor.querySelector('canvas');if(canvas)paintPracticeFloor(canvas,portrait);});
  const status=text=>{if(text!==lastMessage){$('lessonStatus').textContent=text;lastMessage=text;}};
  function resetInput(){keys={};stick=null;}
  function render(){
   resetInput();demo=false;practice=new Practice(step);lastMessage='';
   const s=STEPS[step];$('lessonCount').textContent=`FIELD GUIDE / ${String(step+1).padStart(2,'0')} OF 06`;
-  $('lessonTitle').textContent=s.title;$('lessonText').textContent=s.text;$('lessonTip').textContent=s.tip;
+  const split=s.title.indexOf('. ');$('lessonTitle').replaceChildren();if(split>=0){$('lessonTitle').append(s.title.slice(0,split+1)+' ',document.createElement('br'));const accent=document.createElement('span');accent.textContent=s.title.slice(split+2);$('lessonTitle').append(accent);}else $('lessonTitle').textContent=s.title;$('lessonText').textContent=s.text;$('lessonTip').textContent=s.tip;
   $('lessonNav').querySelectorAll('button').forEach((b,i)=>{b.setAttribute('aria-current',i===step?'step':'false');b.classList.toggle('is-complete',completed.has(i));});
   $('lessonBack').disabled=step===0;$('lessonNext').textContent=step===5?'BACK TO '+(opener?.id==='howPause'?'BREAK':'BRIEFING'):'NEXT LESSON →';
   $('lessonDemo').hidden=step===5;$('lessonReplay').hidden=step===5;
   floor.hidden=step===5;content.innerHTML='';
-  floor.innerHTML=`<div class="practice-label">PRACTICE FLOOR <span>NO DAMAGE · NO SAVES</span></div><div class="practice-mark" aria-hidden="true">PP / TRAINING</div><div class="practice-zone" aria-hidden="true" hidden></div><div class="practice-herman" aria-hidden="true"><img src="${hermanSrc}" alt=""><span>YOU</span></div><div class="practice-items"></div><div class="practice-effect" aria-hidden="true"></div>`;
-  if(step===0)floor.insertAdjacentHTML('beforeend',`<div class="practice-auto">${icon('plunger')}<span>AUTO ATTACK</span></div><div class="practice-destination" aria-hidden="true">MOVE →</div>`);
+  floor.innerHTML=`<div class="practice-label">PRACTICE FLOOR <span>NO DAMAGE · NO SAVES</span></div><div class="practice-arena"><canvas class="practice-office" aria-hidden="true"></canvas><div class="practice-zone" aria-hidden="true" hidden></div><div class="practice-herman" aria-hidden="true"><img src="${hermanSrc}" alt=""><span>YOU</span></div><div class="practice-items"></div><div class="practice-effect" aria-hidden="true"></div></div>`;
+  const arena=floor.querySelector('.practice-arena');
+  if(step!==5)paintPracticeFloor(floor.querySelector('canvas'),portrait);
+  if(step===0)arena.insertAdjacentHTML('beforeend',`<div class="practice-auto" aria-label="Automatic plunger attack">${icon('plunger')}</div><div class="practice-destination" aria-hidden="true"><svg viewBox="0 0 40 28" focusable="false"><path d="M37 25C18 25 10 17 7 5M2 12 7 4 14 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span>MOVE →</span></div>`);
   if(step===1)content.innerHTML=`<div class="practice-xp"><span id="practiceCash">0 / 5 XP</span><progress id="practiceXP" max="5" value="0" aria-label="Practice XP"></progress></div><div id="practiceChoices" class="practice-choices" hidden><button type="button" data-choice="plunger">${icon('plunger')}<span><b>Plungerang · Lv 2</b>Upgrade your starting weapon</span></button><button type="button" data-choice="speed">${icon('speed')}<span><b>Bathroom Dash</b>Move 10% faster</span></button></div>`;
-  if(step===2)floor.insertAdjacentHTML('beforeend','<div class="practice-crowd" aria-hidden="true"><i class="practice-worker"></i><i class="practice-worker"></i><i class="practice-worker"></i></div>');
-  if(step===4)floor.insertAdjacentHTML('beforeend','<div class="practice-boss" aria-hidden="true"><span>BOSS</span></div>');
+  if(step===2)arena.insertAdjacentHTML('beforeend','<div class="practice-crowd" aria-hidden="true"><i class="practice-worker"></i><i class="practice-worker"></i><i class="practice-worker"></i></div>');
+  if(step===4)arena.insertAdjacentHTML('beforeend','<div class="practice-boss" aria-hidden="true"><span>BOSS</span></div>');
   if(step===2)content.innerHTML=`<button id="practiceBomb" class="practice-action" type="button">${icon('bomb')}<span>STINK BOMB <small id="practiceBombState">READY</small></span></button>`;
   if(step===3){floor.querySelector('.practice-items').innerHTML=`<div class="practice-pickups"><button type="button" data-heal="coffee">${icon('coffee')}<span>Coffee</span></button><button type="button" data-heal="kit">${icon('heal')}<span>First aid kit</span></button></div>`;content.innerHTML='<div class="practice-hp"><span id="practiceHP">HEALTH 60 / 100</span><progress id="practiceHealth" max="100" value="60" aria-label="Practice health"></progress></div>';}
   if(step===4)content.innerHTML='<button id="practiceAttack" class="practice-action" type="button">START BOSS ATTACK</button>';
@@ -38,24 +42,25 @@ export function setupTutorial({hermanSrc,enemySrc,onOpen=()=>{},onClose=()=>{}})
  }
  function paint(){
   if(step===5)return;
-  const p=practice,hero=floor.querySelector('.practice-herman');hero.style.left=p.x/4.8+'%';hero.style.top=p.y/2.4+'%';
+  const p=practice,hero=floor.querySelector('.practice-herman');hero.style.left=p.x/4.8+'%';hero.style.top=p.y/3+'%';
   floor.classList.toggle('practice-done',p.complete);floor.classList.toggle('practice-blast',p.result==='blast');
+  floor.style.setProperty('--hero-x',p.x/4.8+'%');floor.style.setProperty('--hero-y',p.y/3+'%');
   if(step===0&&p.complete)status('Nice. Keep moving; Herman handles the attacks automatically.');
-  if(step===1){if(floor.querySelector('.practice-items').dataset.cash!==String(p.cash)){floor.querySelector('.practice-items').dataset.cash=p.cash;floor.querySelector('.practice-items').innerHTML=p.coins.map(c=>`<img class="practice-coin" src="assets/menu/coin.webp" alt="${c.value} Petty Cash" style="left:${c.x/4.8}%;top:${c.y/2.4}%">`).join('');}$('practiceCash').textContent=`${p.cash} / 5 XP`;$('practiceXP').value=p.cash;$('practiceChoices').hidden=p.cash<5;
+  if(step===1){if(floor.querySelector('.practice-items').dataset.cash!==String(p.cash)){floor.querySelector('.practice-items').dataset.cash=p.cash;floor.querySelector('.practice-items').innerHTML=p.coins.map(c=>`<img class="practice-coin" src="assets/menu/coin.webp" alt="${c.value} Petty Cash" style="left:${c.x/4.8}%;top:${c.y/3}%">`).join('');}$('practiceCash').textContent=`${p.cash} / 5 XP`;$('practiceXP').value=p.cash;$('practiceChoices').hidden=p.cash<5;
    if(p.cash>=5)status(p.choice?'Promotion chosen. In the game, a 2-second green countdown gets you ready to move again.':'Promotion earned! Choose one upgrade below.');
    content.querySelectorAll('[data-choice]').forEach(b=>{b.disabled=!!p.choice;b.classList.toggle('chosen',b.dataset.choice===p.choice);});
   }
   if(step===2){$('practiceBomb').disabled=p.cooldown>0;$('practiceBombState').textContent=p.cooldown>0?`RECHARGING · ${Math.ceil(p.cooldown)}s`:'READY';
    const b=p.bomb,items=floor.querySelector('.practice-items');
    if(b){
-    if(!items.firstElementChild)items.innerHTML=`<div class="practice-lure" style="left:${b.x/4.8}%;top:${b.y/2.4}%">${icon('bomb')}<span></span></div>`;
+    if(!items.firstElementChild)items.innerHTML=`<div class="practice-lure" style="left:${b.x/4.8}%;top:${b.y/3}%">${icon('bomb')}<span></span></div>`;
     items.querySelector('span').textContent=Math.ceil(b.left)+'s';
    }else items.replaceChildren();
-   floor.querySelectorAll('.practice-worker').forEach((enemy,i)=>{const x=300+i*55,y=65+i*55,t=b?Math.min(1,(3-b.left)/2):0;enemy.hidden=p.result==='blast';enemy.style.left=(x+((b?.x??x)+35-x)*t)/4.8+'%';enemy.style.top=(y+((b?.y??y)+(i-1)*30-y)*t)/2.4+'%';});
+   floor.querySelectorAll('.practice-worker').forEach((enemy,i)=>{const x=300+i*55,y=65+i*55,t=b?Math.min(1,(3-b.left)/2):0;enemy.hidden=p.result==='blast';enemy.style.left=(x+((b?.x??x)+35-x)*t)/4.8+'%';enemy.style.top=(y+((b?.y??y)+(i-1)*30-y)*t)/3+'%';});
    if(b)status('The crowd follows the bomb. Keep moving while its 3-second fuse burns.');else if(p.complete)status('Boom! The crowd took the blast. The bomb is recharging.');
   }
   if(step===3){$('practiceHealth').value=p.hp;$('practiceHP').textContent=`HEALTH ${p.hp} / 100`;if(p.result==='coffee')status('Coffee boosts you temporarily, but does not heal. Try the first aid kit.');if(p.complete)status('That’s it: +16 health. Watch for red kits after Corporate Rushes.');}
-  if(step===4){const z=floor.querySelector('.practice-zone'),w=p.warning;z.hidden=!w;if(w){z.style.left=w.x/4.8+'%';z.style.top=w.y/2.4+'%';} $('practiceAttack').disabled=!!w;$('practiceAttack').textContent=p.result&&!w?'TRY ANOTHER ATTACK':'START BOSS ATTACK';if(w)status('Move! Leave the red circle before the 1.1-second warning ends.');else if(p.result==='dodged')status('Dodged! Keep circling and let your weapons wear the boss down.');else if(p.result==='hit')status('Still inside the circle. No damage here — try again and move as soon as it appears.');}
+  if(step===4){const z=floor.querySelector('.practice-zone'),w=p.warning;z.hidden=!w;if(w){z.style.left=w.x/4.8+'%';z.style.top=w.y/3+'%';} $('practiceAttack').disabled=!!w;$('practiceAttack').textContent=p.result&&!w?'TRY ANOTHER ATTACK':'START BOSS ATTACK';if(w)status('Move! Leave the red circle before the 1.1-second warning ends.');else if(p.result==='dodged')status('Dodged! Keep circling and let your weapons wear the boss down.');else if(p.result==='hit')status('Still inside the circle. No damage here — try again and move as soon as it appears.');}
   if(p.complete){completed.add(step);$('lessonNav').querySelector(`[data-step="${step}"]`).classList.add('is-complete');}
  }
  function frame(now){

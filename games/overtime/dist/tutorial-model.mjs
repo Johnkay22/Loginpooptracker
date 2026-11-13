@@ -1,15 +1,17 @@
+import {resolvePracticeFurniture} from './tutorial-scene.mjs';
 // A deliberately isolated practice room: no Game instance, saves, rewards or audio.
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 export class Practice {
  constructor(step=0){
-  this.step=step;this.x=120;this.y=140;this.distance=0;this.complete=false;
+  this.step=step;this.x=step===1?120:240;this.y=140;this.distance=0;this.complete=false;
   this.cash=0;this.choice=null;this.hp=60;this.bomb=null;this.cooldown=0;
   this.warning=null;this.result='';this.coins=[{x:210,y:140,value:2},{x:290,y:140,value:2},{x:360,y:145,value:1}];
  }
  move(dx,dy,dt){
   if(![0,1,2,4].includes(this.step)||this.choice)return;
   const length=Math.max(1,Math.hypot(dx,dy)),oldX=this.x,oldY=this.y;
-  this.x=clamp(this.x+dx/length*145*dt,28,452);this.y=clamp(this.y+dy/length*145*dt,45,212);
+  this.x=clamp(this.x+dx/length*145*dt,28,452);this.y=clamp(this.y+dy/length*145*dt,24,272);
+  resolvePracticeFurniture(this);
   this.distance+=Math.hypot(this.x-oldX,this.y-oldY);
   if(this.step===0&&this.distance>=70)this.complete=true;
   if(this.step===1){this.coins=this.coins.filter(c=>{if(Math.hypot(c.x-this.x,c.y-this.y)<36){this.cash+=c.value;return false;}return true;});}
