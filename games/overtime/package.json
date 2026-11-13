@@ -1,6 +1,6 @@
 {
   "name": "poopprofit-overtime",
-  "version": "16.0.0",
+  "version": "17.0.0",
   "private": true,
   "description": "Poop Profit: Overtime, the survival game at poopprofit.com/beta-test-survival-game.html. Source of truth for that page.",
   "scripts": {
