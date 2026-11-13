@@ -5,10 +5,10 @@ export const WEAPONS={plunger:{name:'Plungerang',icon:'🪠',color:'#ffbd66',des
 export const PASSIVES={speed:{name:'Bathroom Dash',icon:'👟',desc:'Move 10% faster per rank. Three ranks, up to 30% faster.'},coffee:{name:'Double Espresso',icon:'☕',desc:'Weapons recharge 8% faster per rank. Evolves Plungerang and Courtesy Flush.'},magnet:{name:'Expense Account',icon:'🧲',desc:'Wider XP collection and 10% more XP per rank. Evolves TP Tornado.'},chili:{name:'Hot Sauce',icon:'🌶️',desc:'15% more weapon damage per rank. Evolves gas and Stink Bomb.'}};
 export const EVOLUTIONS={plunger:{name:'Double Plunge',requires:'coffee',desc:'Six giant plungers spiral out, pierce the crowd and return.'},tp:{name:'Wrap Sheet',requires:'magnet',desc:'Two counter-rotating rings of toilet rolls shred nearby enemies.'},gas:{name:'Chemical Warfare',requires:'chili',desc:'Huge lingering clouds slow enemies and deal double damage.'},flush:{name:'Royal Flush',requires:'coffee',desc:'Massive golden flushes hit twice and clear a wide escape route.'},bomb:{name:'Weapons of Ass Destruction',requires:'chili',desc:'A giant lure bomb detonates, then delivers a second blast.'}};
 export const RECOVERY_SECONDS=2;
-// Build 17: coins needed for the next promotion. The first still costs 5 so the first pick comes fast;
-// after that each one costs a lot more (19, 30, 43, 58, 75, 94...), like Vampire Survivors. Before this a
-// player chasing coins hit the 7-second floor and saw the promotion screen about 7 times a minute.
-export const promotionCost=level=>Math.floor(10+level*8+level*level);
+// Build 17: coins needed for the next promotion; level is the level just reached. The first promotion still
+// costs 5. After that the 2nd to 8th cost 16, 22, 29, 37, 45, 54, 64 (they were 11, 14, 18, 22, 26, 30, 35),
+// so the promotion screen opens a little less often without pushing evolutions out of a 3-minute run.
+export const promotionCost=level=>Math.floor(6+level*4.5+level*level*.35);
 export const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 export class Game{

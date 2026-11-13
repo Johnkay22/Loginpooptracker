@@ -183,9 +183,10 @@ These changes first went straight into the built page; Build 15 rewrote them her
 - **Not changed:** the 18 flat icons still serve the HUD, Break Room and Stink Bomb button. Paid Sick Leave, Hazard Pay and Deep Pockets renders are stored in `art-sources/cabinet/` for a later Break Room pass.
 - New suite `tests/cabinet.test.mjs`; the build script also inlines `dist/assets/cabinet/`.
 
-## Build 17: more coins between promotions (made with Claude, Nov 13)
-- **Why:** a player who chases coins was hitting the 7-second minimum gap and seeing the promotion screen about 7 times a minute (about 17 promotions before the boss). That was also a big part of why runs felt too easy.
-- **Change:** the coins needed for the next promotion now come from `promotionCost(level)` in `engine.mjs`: `10 + 8 x level + level squared`. The first promotion still costs 5 coins so it comes fast. After that: 19, 30, 43, 58, 75, 94, 115, 138... (was 7, 11, 14, 18, 22, 26, 30, 35). It keeps climbing in endless mode.
-- **Result in simulated runs:** a coin-chasing player gets about 10 promotions before the boss instead of about 17, roughly 4, 3 and 3 per minute. The 7-second minimum gap is unchanged and now rarely matters.
-- **Side effect to watch:** evolutions need a weapon at level 5 plus its perk, so fewer promotions make them rarer before the boss.
-- New suite `tests/xp-curve.test.mjs` pins the cost table and the promotion rate.
+## Build 17: promotions a little less often (made with Claude, Nov 13)
+- **Why:** a player who chases coins was hitting the 7-second minimum gap and seeing the promotion screen about 7 times a minute for the first two minutes (about 17 promotions before the boss).
+- **Change:** the coins needed for the next promotion come from `promotionCost(level)` in `engine.mjs`: `6 + 4.5 x level + 0.35 x level squared`. The first promotion still costs 5. The 2nd to 8th now cost 16, 22, 29, 37, 45, 54, 64 (they were 11, 14, 18, 22, 26, 30, 35).
+- **Result in simulated 3-minute runs (coin-chasing bot, unlimited health):** about 13 promotions before the boss instead of about 17; roughly 6, 5 and 2 per minute instead of 7, 7 and 3. A bot that plays for an evolution got one in 12 of 16 runs (15 of 16 before), about 20 seconds later.
+- **Tried and rejected:** a much steeper curve (`10 + 8 x level + level squared`) cut promotions to about 10 but left an evolution in only 2 of 16 runs, because an evolution takes about 10 picks.
+- The 7-second minimum gap is unchanged. Nothing else about the rules changed.
+- New suite `tests/xp-curve.test.mjs` pins the cost table, the promotion rate and the evolution rate.
