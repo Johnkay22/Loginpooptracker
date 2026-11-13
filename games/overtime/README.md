@@ -185,7 +185,7 @@ These changes first went straight into the built page; Build 15 rewrote them her
 
 ## Build 17: promotions a little less often (made with Claude, Nov 13)
 - **Why:** a player who chases coins was hitting the 7-second minimum gap and seeing the promotion screen about 7 times a minute for the first two minutes (about 17 promotions before the boss).
-- **Change:** the coins needed for the next promotion come from `promotionCost(level)` in `engine.mjs`: `6 + 4.5 x level + 0.35 x level squared`. The first promotion still costs 5. The 2nd to 8th now cost 16, 22, 29, 37, 45, 54, 64 (they were 11, 14, 18, 22, 26, 30, 35).
+- **Change:** the coins needed for the next promotion come from `promotionCost(level)` in `engine.mjs`: `6 + 4.5 x level + 0.35 x level squared`. The first promotion costs 12 (was 5), so it arrives about 14 seconds in for a player who chases coins instead of about 7. The 2nd to 8th now cost 16, 22, 29, 37, 45, 54, 64 (they were 11, 14, 18, 22, 26, 30, 35).
 - **Result in simulated 3-minute runs (coin-chasing bot, unlimited health):** about 13 promotions before the boss instead of about 17; roughly 6, 5 and 2 per minute instead of 7, 7 and 3. A bot that plays for an evolution got one in 12 of 16 runs (15 of 16 before), about 20 seconds later.
 - **Tried and rejected:** a much steeper curve (`10 + 8 x level + level squared`) cut promotions to about 10 but left an evolution in only 2 of 16 runs, because an evolution takes about 10 picks.
 - The 7-second minimum gap is unchanged. Nothing else about the rules changed.
