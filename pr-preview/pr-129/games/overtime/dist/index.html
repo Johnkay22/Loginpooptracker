@@ -20,13 +20,15 @@
 <section id="workshop" class="overlay" hidden><div class="panel"><div class="eyebrow">YOUR NEXT SHIFT STARTS STRONGER</div><h2>The break room.</h2><p><b id="workBank">0</b> Petty Cash available. Collect gold coins during a run to earn XP and buy perks. Progress saves on this browser. Petty Cash is game currency only, separate from your Poop Profit Turd Token wallet.</p><div id="perkChoices"></div><h3>Starting weapon</h3><div id="starts"></div><label class="hardMode"><input type="checkbox" id="hardMode"> Overtime difficulty <span id="hardLock"></span></label><button id="workBack" class="primary">BACK TO BRIEFING</button><p id="saveNote"></p></div></section></main>
 <dialog id="howSheet" class="field-guide" aria-labelledby="guideTitle">
  <div class="guide-shell">
-  <header class="guide-header"><div><span class="guide-kicker">POOP PROFIT / OVERTIME</span><h2 id="guideTitle">Your first shift.</h2></div><button id="howClose" type="button" aria-label="Close how to play">✕</button></header>
+  <div class="guide-stalls" aria-hidden="true"><i></i><i></i><i></i></div>
+  <header class="guide-header"><div><span class="guide-kicker">POOP PROFIT / OVERTIME</span><h2 id="guideTitle">Your <span>first shift.</span></h2></div><button id="howClose" type="button" aria-label="Close how to play">✕</button></header>
   <p class="guide-intro">A little practice. A lot less panic.</p>
   <nav id="lessonNav" class="guide-nav" aria-label="How to play lessons"></nav>
   <div class="guide-body">
    <div class="guide-copy"><p id="lessonCount" class="guide-kicker"></p><h3 id="lessonTitle" tabindex="-1"></h3><p id="lessonText"></p><aside class="guide-tip"><span>ON THE JOB</span><p id="lessonTip"></p></aside></div>
-   <div class="guide-practice"><div id="practiceFloor" class="practice-floor" tabindex="0" role="group" aria-label="Practice floor. Drag to move, or use WASD or arrow keys."></div><div id="lessonContent"></div><p id="lessonStatus" class="lesson-status" role="status"></p><div class="practice-tools"><button id="lessonDemo" type="button">▶ Show me</button><button id="lessonReplay" type="button">↺ Try again</button></div></div>
+   <div class="guide-practice"><div id="practiceFloor" class="practice-floor" tabindex="0" role="group" aria-label="Practice floor. Drag to move, or use WASD or arrow keys."></div><div id="lessonContent"></div><p id="lessonStatus" class="lesson-status" role="status"></p><div class="practice-tools"><button id="lessonDemo" type="button"><span class="guide-play" aria-hidden="true"></span> Show me</button><button id="lessonReplay" type="button">↺ Try again</button></div></div>
   </div>
   <footer class="guide-footer"><button id="lessonBack" type="button">← Back</button><span>Explore at your pace. Skip any lesson.</span><button id="lessonNext" class="primary" type="button">NEXT LESSON →</button></footer>
+  <div class="guide-brand" aria-label="Poop Profit dot com">Poop<span>Profit</span><b>.com</b></div>
  </div>
 </dialog><script type="module" src="app.mjs"></script></body></html>

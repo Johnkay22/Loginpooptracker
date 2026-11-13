@@ -94,7 +94,7 @@ function soundLabel(){let t=muted?'🔇 SOUND OFF':'🔊 SOUND ON';$('sound').in
 function begin(){$('recovery').hidden=true;if(!canPlayStage(progress,selectedStage))selectedStage=1;sound('upgrade');g=new Game(Math.random,progress.perks,$('hardMode').checked&&progress.wins>0?1:0,progress.start,selectedStage);setFloor(selectedStage);cam={x:g.player.x,y:g.player.y};keys={};stick=null;for(let id of ['start','end','upgrade','pauseScreen','workshop'])$(id).hidden=true;for(let id of ['hud','loadout','hint','bombBtn','combo'])$(id).hidden=false;last=performance.now();showToast(g.stage.name.toUpperCase()+' · SURVIVE, THEN DEFEAT THE BOSS',4);updateUI();}
 $('nextStage').onclick=()=>{selectedStage=2;begin();};$('startBtn').onclick=begin;
 // Native modal keeps focus in the guide; practice never touches the live Game.
-const tutorial=setupTutorial({hermanSrc:herman.src,enemySrc:enemySheet.src,onOpen:()=>{keys={};stick=null;},onClose:()=>{keys={};stick=null;last=performance.now();}});
+const tutorial=setupTutorial({hermanSrc:herman.src,enemySrc:enemySheet.src,portrait:brandPortrait,onOpen:()=>{keys={};stick=null;},onClose:()=>{keys={};stick=null;last=performance.now();}});
 $('howBtn').onclick=()=>tutorial.open($('howBtn'));
 $('howPause').onclick=()=>tutorial.open($('howPause'));
 $('again').onclick=begin;$('restartPause').onclick=begin;
