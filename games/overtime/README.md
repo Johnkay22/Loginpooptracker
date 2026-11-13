@@ -1,4 +1,4 @@
-# PoopProfit: Overtime (current: Build 15)
+# PoopProfit: Overtime (current: Build 16)
 
 Live game: https://poopprofit.com/beta-test-survival-game.html (built from this folder).
 The old private prototype link (https://poopprofit-overtime-prototype.johnkay.chatgpt.site) is out of date.
@@ -13,13 +13,13 @@ The old private prototype link (https://poopprofit-overtime-prototype.johnkay.ch
 
 Requirements: Node 20 or newer, and Python 3 with Pillow (the build re-encodes the PNG sprites to WebP). The build is reproducible: the same source with the same esbuild (pinned in `package.json`) and Pillow versions gives a byte-identical page. Build 15 was produced with Node 22.23, esbuild 0.24.0 and Pillow 12.3.0; a different Pillow or libwebp version can change the inlined sprite bytes without changing how the game plays.
 
-What the build does (`tools/build-single-file.mjs`): bundles and minifies the modules with esbuild, re-encodes the PNG sprites to WebP at the same size, inlines every file in `dist/assets/sfx/`, `dist/assets/icons/` and `dist/assets/menu/` as data URIs (in the code, the page and the stylesheet), inlines the stylesheet, and adds a noindex tag. Passing a password instead of `--plain` produces the old encrypted, password-gated page using `tools/gate.html` (not used since Build 10).
+What the build does (`tools/build-single-file.mjs`): bundles and minifies the modules with esbuild, re-encodes the PNG sprites to WebP at the same size, inlines every file in `dist/assets/sfx/`, `dist/assets/icons/`, `dist/assets/menu/` and `dist/assets/cabinet/` as data URIs (in the code, the page and the stylesheet), inlines the stylesheet, and adds a noindex tag. Passing a password instead of `--plain` produces the old encrypted, password-gated page using `tools/gate.html` (not used since Build 10).
 
 ## Folder layout
-- `dist/`: the game source. `app.mjs` (screens, input, sound, drawing), `engine.mjs` (game rules), `stages.mjs`, `progress.mjs`, `scene.mjs`, `navigation.mjs`, `index.html`, `style.css`, and `assets/` (sprites, `sfx/` sounds, `icons/` the 18 custom icons, `menu/` the menu stall art and coin).
+- `dist/`: the game source. `app.mjs` (screens, input, sound, drawing), `engine.mjs` (game rules), `stages.mjs`, `progress.mjs`, `scene.mjs`, `navigation.mjs`, `index.html`, `style.css`, and `assets/` (sprites, `sfx/` sounds, `icons/` the 18 custom icons, `menu/` the menu stall art and coin, `cabinet/` the promotion cabinet and its 15 shelf items).
 - `tests/`: Node test suites; `npm test` runs all of them (`tools/run-tests.mjs`).
 - `tools/`: the build script, the old password gate template, the test runner, and `prepare-sfx.py` (trims and levels new sound picks).
-- `art-sources/`: originals kept for reference, not used by the build: the untrimmed sound picks (`sfx-originals/`), Johnny's icon sheet and the menu mockup.
+- `art-sources/`: originals kept for reference, not used by the build: the untrimmed sound picks (`sfx-originals/`), Johnny's icon sheet, the menu mockup, and `cabinet/` (the promotion mockup, the empty cabinet without the note lettering, and all 18 item renders at 640 px).
 
 ## Premise and mission
 Herman intercepts a proposed corporate plan to cut paid bathroom breaks. Each stage now follows one clear loop: survive the swarm for 180 seconds, then defeat one executive boss. A six-second warning announces the boss. At zero the HUD switches to BOSS and shows a persistent named health bar. The boss pursues Herman around furniture and marks a fixed circular attack area for 1.1 seconds before it bursts. Step out to dodge it. Boss fights have no time limit. Zero player health is the only defeat condition; crossing a map edge never causes defeat. Boss defeat clears the stage immediately and unlocks the next playable location.
@@ -175,3 +175,10 @@ These changes first went straight into the built page; Build 15 rewrote them her
 - **Source in the repo:** this folder is now the only source of truth (it previously lived outside the repo). Added `package.json` (`npm run build`, `npm test`), the test runner, two new test suites, `tools/prepare-sfx.py` and the `art-sources/` originals. The build script now also inlines `assets/icons/` and `assets/menu/`, including image paths in `style.css`; Build 13 still rebuilds byte for byte with it.
 - **Rebuild check:** the page built from this source matches the live Build 15 page (PR #125) in its markup, its 59 embedded files and how every screen and sound behaves. The only differences are the minifier's short variable names, readable event names (`hit-boss` was `hboss`, `heartbeat` was `heart`) and equivalent code forms. Rebuilding replaced the hand-patched page once; from now on every build comes from here.
 
+## Build 16: the promotion screen is a supply cabinet (made with Claude, Nov 13)
+- **Look:** rebuilt from Johnny's mockup and art. The screen is his lit supply cabinet (`dist/assets/cabinet/cabinet.webp`); each choice sits on a shelf as one of his item renders (`CABINET_ART` in `app.mjs`, 240 px WebP) with a tag, the name, a short description and a CHOOSE button. Title is PROMOTION EARNED with "More responsibility. Same pay." (SEVERANCE PACKAGE for a briefcase). The cabinet label shows the level. The sticky note ("TAKE ONE. HR IS COUNTING.") is lettered into the cabinet image; the unlettered original is in `art-sources/cabinet/`.
+- **Whole shelf is the button.** CHOOSE is only a visual. Taps in the first 350 ms after the cabinet opens are ignored (`UPGRADE_TAP_GUARD_MS`), so a thumb that is already steering cannot pick by accident.
+- **Less reading:** passives show one big number plus a short line (`PASSIVE_CARD`); weapons show one gold line naming the perk that evolves them; the "how evolving works" line sits in the cabinet's bottom panel only through level 4. An evolution lights its shelf gold and always takes the top shelf (the engine already lists it first).
+- **Sizing:** everything is a fraction of the stage width (`--u` in `style.css`), so the art and the text scale together and all three shelves fit without scrolling. Screens under 600 px tall keep the text size and let the note and floor run off the bottom.
+- **Not changed:** the 18 flat icons still serve the HUD, Break Room and Stink Bomb button. Paid Sick Leave, Hazard Pay and Deep Pockets renders are stored in `art-sources/cabinet/` for a later Break Room pass.
+- New suite `tests/cabinet.test.mjs`; the build script also inlines `dist/assets/cabinet/`.

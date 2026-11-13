@@ -88,3 +88,43 @@
 .sv2-tips{margin:0 0 6px;padding-left:18px;display:grid;gap:7px;font-size:13px;line-height:1.45;color:#e6ecf5}
 .sv2-desk{display:none}@media (hover:hover) and (pointer:fine){.sv2-desk{display:list-item}}
 .sv2-sheet-in .footnote{text-align:left;margin:10px 0 14px}
+
+/* Build 16: the promotion screen is a supply cabinet. Every size is a fraction of the stage width (--u = 1%),
+   so the art, the shelves and the text scale together. The stage shows its top 92.5% (down to just past the sticky note). */
+#upgrade.cab{padding:0;display:block;overflow:hidden;background:linear-gradient(#181d25 45%,#2b2622);container-type:size}
+.cab-stage{--sw:min(108vw,520px,60.8vh);--u:calc(var(--sw)/100);position:absolute;left:50%;top:max(0px,calc((100% - var(--sw)*1.644)/2));width:var(--sw);aspect-ratio:941/1672;transform:translateX(-50%)}
+@supports (width:1cqw){.cab-stage{--sw:min(108cqw,520px,60.8cqh)}}
+/* Very short screens: keep the text readable and let the note and floor run off the bottom instead. */
+@container (max-height:600px){.cab-stage{--sw:min(108cqw,520px,70cqh)}}
+.cab-stage::before{content:'';position:absolute;inset:0;z-index:-1;background:url(assets/cabinet/cabinet.webp) center/100% 100% no-repeat;-webkit-mask-image:linear-gradient(transparent,#000 3%,#000 95%,transparent),linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(transparent,#000 3%,#000 95%,transparent),linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-composite:intersect}
+.cab-head{position:absolute;left:0;right:0;top:0;height:17.4%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-top:calc(var(--u)*1.5)}
+#upgradeTitle{margin:0;font:900 calc(var(--u)*10.8)/.9 'Barlow Condensed',Impact,sans-serif;color:#f4f7ef;text-shadow:0 calc(var(--u)*.9) 0 #0009;white-space:nowrap}
+#upgradeTitle span{color:#fac759}
+#upgradeIntro{margin:calc(var(--u)*1.7) 0 0;font:600 calc(var(--u)*3.5)/1.2 Inter,Arial,sans-serif;color:#e9eef5;text-shadow:0 1px 3px #000a}
+.cab-label{position:absolute;left:0;right:0;top:17.9%;height:3.1%;display:flex;align-items:center;justify-content:center;font:800 calc(var(--u)*2.1)/1 Inter,Arial,sans-serif;letter-spacing:.4em;text-indent:.4em;color:#c9d3e3}
+.cab-slot{--in:80%;position:absolute;left:10.1%;width:80.2%;padding:0;background:none;color:inherit;text-align:left;border-radius:calc(var(--u)*1.2);-webkit-tap-highlight-color:transparent;animation:cabIn .26s both}
+.cab-slot.s1{top:23.4%;height:20.5%;--in:84%}
+.cab-slot.s2{top:44.3%;height:17.3%;--in:78.6%;animation-delay:.05s}
+.cab-slot.s3{top:61.9%;height:18.5%;--in:79%;animation-delay:.1s}
+@keyframes cabIn{from{opacity:0;transform:translateY(6%)}}
+.cab-slot::before{content:'';position:absolute;left:3%;width:30%;top:calc(var(--in) + 1%);height:10%;background:radial-gradient(ellipse,#000b,transparent 68%)}
+.cab-item{position:absolute;left:3%;width:30%;bottom:calc(100% - var(--in) - 7%);height:calc(var(--in) - 5%);object-fit:contain;object-position:center bottom;filter:drop-shadow(0 calc(var(--u)*.5) calc(var(--u)*.8) #000c);transition:transform .12s}
+.cab-item-icon{display:grid;place-items:end center;font-size:calc(var(--u)*14)}
+.cab-text{position:absolute;left:36.5%;right:2.2%;top:0;height:var(--in);display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
+.cab-text>*{flex:none}
+.cab-chip{padding:calc(var(--u)*.55) calc(var(--u)*1.4);border-radius:99px;font:800 calc(var(--u)*2.3)/1 Inter,Arial,sans-serif;letter-spacing:.06em;white-space:nowrap;background:#fac759;color:#1a1300}
+.cab-chip.up,.cab-chip.pas,.cab-chip.heal{background:#0c1830d9;color:#ffd77a;box-shadow:inset 0 0 0 1px #fac75999}
+.cab-name{display:block;margin-top:calc(var(--u)*.55);font:900 calc(var(--u)*5)/.92 'Barlow Condensed',Impact,sans-serif;text-transform:uppercase;color:#fff;text-shadow:0 2px 0 #0009}
+.cab-name.long{font-size:calc(var(--u)*4.4)}
+.cab-stat{display:block;margin-top:calc(var(--u)*.4);font:800 calc(var(--u)*4)/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:.01em;color:#fac759}
+.cab-stat i{font-style:normal;color:#fff}
+.cab-desc{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin-top:calc(var(--u)*.35);padding-bottom:.08em;font:500 calc(var(--u)*2.65)/1.22 Inter,Arial,sans-serif;color:#d3dae6}
+.cab-evo{display:block;margin-top:calc(var(--u)*.25);font:700 calc(var(--u)*2.35)/1.2 Inter,Arial,sans-serif;font-style:normal;color:#ffd76a}
+.cab-choose{display:flex;align-items:center;justify-content:center;margin-top:calc(var(--u)*.75);height:calc(var(--u)*4.7);padding:0 calc(var(--u)*5.4);border-radius:calc(var(--u)*1.2);font:900 calc(var(--u)*3.2)/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:.07em;color:#141414;background:linear-gradient(#ffe391,#e9b84f);box-shadow:0 calc(var(--u)*.6) 0 #8e642b}
+.cab-slot:active .cab-choose{transform:translateY(calc(var(--u)*.4));box-shadow:0 calc(var(--u)*.2) 0 #8e642b}
+.cab-slot:active .cab-item{transform:scale(1.06)}
+.cab-slot.evolution::after{content:'';position:absolute;left:0;right:0;top:0;height:var(--in);border-radius:calc(var(--u)*1.2);box-shadow:inset 0 0 0 1.5px #fac759cc,inset 0 0 calc(var(--u)*7) #fac75955;pointer-events:none;animation:cabGlow 1.6s ease-in-out infinite alternate}
+.cab-slot.evolution .cab-name{color:#ffd76a}
+@keyframes cabGlow{from{opacity:.55}to{opacity:1}}
+.cab-foot{position:absolute;left:11%;width:66%;top:81.1%;height:7.3%;margin:0;display:flex;align-items:center;justify-content:center;text-align:center;text-wrap:balance;font:500 calc(var(--u)*2.5)/1.3 Inter,Arial,sans-serif;color:#b9c4d6}
+@media (prefers-reduced-motion:reduce){.cab-slot,.cab-slot.evolution::after{animation:none}}
