@@ -15,7 +15,8 @@ const exists=p=>fs.existsSync(path.join(dist,p));
 
 // 1. Shelf art: one image for every weapon, every evolution, every passive and Second Wind. Nothing unused on disk.
 const art=Object.fromEntries([...app.matchAll(/(\w+):'(assets\/cabinet\/[\w-]+\.webp)'/g)].map(m=>[m[1],m[2]]));
-const needed=[...Object.keys(WEAPONS),...Object.keys(EVOLUTIONS).map(k=>k+'2'),...Object.keys(PASSIVES),'heal'];
+// 'cash' is the Petty Cash bonus that survival mode offers once everything is maxed (Build 19).
+const needed=[...Object.keys(WEAPONS),...Object.keys(EVOLUTIONS).map(k=>k+'2'),...Object.keys(PASSIVES),'heal','cash'];
 for(const k of needed){assert.ok(art[k],'no shelf art mapped for '+k);assert.ok(exists(art[k]),'missing '+art[k]);}
 assert.equal(Object.keys(art).length,needed.length,'no shelf art mapped to an upgrade that does not exist');
 const onDisk=fs.readdirSync(path.join(dist,'assets/cabinet')).sort();
