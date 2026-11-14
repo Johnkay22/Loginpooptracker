@@ -1,4 +1,4 @@
-# PoopProfit: Overtime (current: Build 18)
+# PoopProfit: Overtime (current: Build 19)
 
 Live game: https://poopprofit.com/beta-test-survival-game.html (built from this folder).
 The old private prototype link (https://poopprofit-overtime-prototype.johnkay.chatgpt.site) is out of date.
@@ -198,3 +198,20 @@ These changes first went straight into the built page; Build 15 rewrote them her
 - **Stats:** Petty Cash collected, best KO chain, Stink Bomb KOs, time survived. The boss result, total KOs and final level rows are gone, per the mockup.
 - **Fit:** the art takes whatever height is left, so the screen fits one phone screen without scrolling; very short screens scroll.
 - No rule changes. New suite `tests/end-screen.test.mjs`; the build script also inlines `dist/assets/end/`.
+
+## Build 19: survival mode, "Survival of the Shittest" (made with Claude, Nov 14)
+A third mode on the menu card (the ∞ entry). The run never ends and time survived is the score. Both stages work exactly as before; nothing in stage mode reads the survival settings.
+
+- **Where the numbers live:** every tuning value is in the `SURVIVAL` object at the top of `dist/engine.mjs`, each with a one-line comment, plus `survivalPromotionCost`. The mode itself is `SURVIVAL_STAGE` in `dist/stages.mjs` (id 10, Office Floor map). `MODES` is what the menu lists.
+- **Tiers:** a tier is 3 minutes. Each tier adds enemy speed (capped) and damage, a faster spawn pace, a higher enemy cap and more runners and guards. Enemy health also climbs smoothly: from 2:30 on it multiplies by 2.3 every 3 minutes, on top of the old steady growth.
+- **Tighter opening:** spawns start at about twice stage mode's pace, runners join at 0:06, the first Corporate Rush is at 0:28.
+- **Bosses:** the Floor Manager arrives at every tier change (3:00, 6:00, ...), tougher each time. The swarm does not let up while a boss is alive, so stalling a boss buys nothing, and an unbeaten boss is still there when the next one arrives. A beaten boss drops a briefcase, 40 Petty Cash and 2 first aid kits.
+- **Briefcase executives:** a gold executive walks in at 1:00 and 2:00 of every tier. Knock it out for a briefcase.
+- **Promotions the Vampire Survivors way:** a run holds at most 4 weapons (Stink Bomb counts) and 3 perks. Promotions never offer an evolution. A briefcase evolves a ready weapon (level 5 plus its partner perk); with none ready it is a free upgrade. Once everything is maxed a promotion offers a Petty Cash bonus or Second Wind.
+- **First aid:** one kit per survived rush, two from tier 3; kits heal a little more each tier.
+- **End screen:** time survived is the big number, with "new personal best" or the best to beat, then Petty Cash, KOs and bosses beaten. The line under the headline says what ended the run. Personal best is saved as `bestSurvival` (saved-data version 4; older saves upgrade without losing anything).
+- **Fair scores later:** the rules file stays deterministic (the same random function and inputs give the same run), and Hard mode is ignored in survival. Break Room perks and the starting weapon still apply; that needs a decision before a leaderboard.
+- **Menu:** the card remembers the last mode picked.
+- **Tuning tool:** `node tools/survival-sim.mjs` plays seeded bot runs and prints a report (about a minute). At this build: standing still is hit at about 0:12 and out by 0:24; a dodging bot that picks for evolutions passes 3:00 in 8 of 12 runs and lasts about 11 to 12 minutes when it does; the same bot with random picks rarely passes the first boss. An unlimited-health bot sees 4 to 5 promotions a minute early and about 2 later, its first evolution between 2:15 and 3:30, and all four by about 7:00. Bots are a rough guide; playtests decide.
+- **Known soft spot:** between about minute 5 and 9 a strong build is barely threatened outside boss fights, then the health climb catches up fast around minute 10 to 12.
+- New suite `tests/survival.test.mjs`. `tests/cabinet.test.mjs` now expects the Petty Cash bonus shelf art (`dist/assets/cabinet/cash.webp`, from the Deep Pockets render).

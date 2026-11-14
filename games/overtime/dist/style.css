@@ -162,3 +162,13 @@
 .endv2.has-next .end-track{margin-top:1px}
 .end-track .sv2-logo{display:inline-block}
 .end-track small{display:block;margin-top:3px;font:600 11px/1.2 Inter,Arial,sans-serif;color:#9fb0c8}
+
+/* Build 19: survival mode. The end screen leads with time survived; long mode names shrink to fit the menu card. */
+#end.endv2 #receipt.surv{grid-template-columns:repeat(3,1fr)}
+#end.endv2 #receipt.surv>div{border:0;padding:8px 2px}
+#end.endv2 #receipt.surv>div.time{grid-column:1/-1;border-bottom:1px solid #2c3f62;padding:10px 2px 9px}
+#end.endv2 #receipt.surv>div.time b{font-size:clamp(50px,15.5vw,62px);color:#fff}
+#end.endv2 #receipt.surv>div.time.best b,#end.endv2 #receipt.surv>div.time.best small{color:#fac759}
+#end.endv2 #receipt.surv>div:nth-child(n+2):not(:last-child){border-right:1px solid #2c3f62}
+#end.endv2 #receipt.surv>div:nth-child(n+2) b{font-size:clamp(26px,8vw,34px)}
+.sv2-stage.long-name #stageName{font-size:.82em;letter-spacing:.2px}

@@ -1,34 +1,41 @@
-import {STAGES,stageFor,canPlayStage} from './stages.mjs';
+import {MODES,SURVIVAL_ID,stageFor,canPlayStage} from './stages.mjs';
 import {paintOffice,paintLobby} from './scene.mjs';
 import {PERKS,fresh,normalize,buy,cost,settle} from './progress.mjs';
-import {Game,WEAPONS,PASSIVES,EVOLUTIONS,RECOVERY_SECONDS,clamp} from './engine.mjs';
+import {Game,WEAPONS,PASSIVES,EVOLUTIONS,RECOVERY_SECONDS,SURVIVAL,clamp} from './engine.mjs';
 const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d');
 const brandPortrait=new Image();brandPortrait.src='assets/herman-brand.jpg';const herman=new Image();herman.src='assets/herman-battle.png';const hermanWalk=new Image();hermanWalk.src='assets/herman-walk.png';const enemySheet=new Image();enemySheet.src='assets/corporate-sprites.png';let g=null,W=0,H=0,scale=1,cam={x:900,y:900},keys={},stick=null,muted=false,audioCtx,toastUntil=0,last=performance.now(),lastUI=0,shake=0,wonBest=0;
 try{wonBest=Number(localStorage.getItem('pp-overtime-best')||0);}catch{}$('best').textContent=wonBest?'BEST: '+wonBest+' KOs':'';
 let selectedStage=1;let progress=fresh();try{progress=normalize(JSON.parse(localStorage.getItem('pp-overtime-progress')||'null'));}catch{}
+// Build 19: the menu lists MODES (both stages plus survival) and remembers the last one picked.
+try{const saved=Number(localStorage.getItem('pp-overtime-mode'));if(MODES.some(m=>m.id===saved)&&canPlayStage(progress,saved))selectedStage=saved;}catch{}
+function selectMode(id){selectedStage=id;try{localStorage.setItem('pp-overtime-mode',String(id));}catch{}}
+const modeNumber=stage=>stage.endless?'∞':String(stage.id).padStart(2,'0');
 function saveProgress(){try{localStorage.setItem('pp-overtime-progress',JSON.stringify(progress));}catch{$('saveNote').textContent='Browser storage is unavailable. Progress lasts for this session only.';}}
 function updateProgress(){ cardStage=selectedStage; renderStagePicker(); $('bank').textContent=progress.credits;$('nextGoal').textContent=progress.kills<200?`NEXT UNLOCK: TP Tornado start · ${progress.kills}/200 lifetime KOs`:progress.wins<1?'NEXT UNLOCK: Corporate Lobby + Gas start · Clear the office':progress.clearedStages.includes(2)?'BOTH STAGES CLEARED · TRY A NEW BUILD':'CORPORATE LOBBY UNLOCKED · SELECT STAGE 02';}
 function renderStagePicker(){
  $('stagePicker').innerHTML='';
- for(let stage of STAGES){let b=document.createElement('button');b.className='stage-option'+(selectedStage===stage.id?' selected':'');b.disabled=!canPlayStage(progress,stage.id);b.setAttribute('aria-pressed',String(selectedStage===stage.id));b.textContent=String(stage.id).padStart(2,'0')+' · '+stage.name+(b.disabled?' · LOCKED':progress.clearedStages.includes(stage.id)?' ✓':'');b.onclick=()=>{selectedStage=stage.id;renderStagePicker();};$('stagePicker').append(b);}
- const stage=stageFor(selectedStage);$('stageNumber').textContent=String(stage.id).padStart(2,'0');$('briefingTitle').textContent=stage.name+': '+stage.subtitle;$('briefingText').textContent=stage.briefing;
+ for(let stage of MODES){let b=document.createElement('button');b.className='stage-option'+(selectedStage===stage.id?' selected':'');b.disabled=!canPlayStage(progress,stage.id);b.setAttribute('aria-pressed',String(selectedStage===stage.id));b.textContent=modeNumber(stage)+' · '+stage.name+(b.disabled?' · LOCKED':progress.clearedStages.includes(stage.id)?' ✓':'');b.onclick=()=>{selectMode(stage.id);renderStagePicker();};$('stagePicker').append(b);}
+ const stage=stageFor(selectedStage);$('stageNumber').textContent=modeNumber(stage);$('briefingTitle').textContent=stage.name+': '+stage.subtitle;$('briefingText').textContent=stage.briefing;
  renderStageCard();
 }
 // Nov 7 menu: one stage card with arrows. Browsing to a locked stage shows how to unlock it and disables CLOCK IN.
 let cardStage=null;
 function renderStageCard(){
- if(cardStage==null||!STAGES.some(st=>st.id===cardStage))cardStage=selectedStage;
- const index=STAGES.findIndex(st=>st.id===cardStage),stage=STAGES[index],unlocked=canPlayStage(progress,stage.id);
- $('stageNumber').textContent=String(stage.id).padStart(2,'0');
+ if(cardStage==null||!MODES.some(st=>st.id===cardStage))cardStage=selectedStage;
+ const index=MODES.findIndex(st=>st.id===cardStage),stage=MODES[index],unlocked=canPlayStage(progress,stage.id);
+ $('stageNumber').textContent=modeNumber(stage);
  $('stageName').textContent=stage.name.toUpperCase();
- $('stageNote').textContent=unlocked
+ $('stageCard').classList.toggle('long-name',stage.name.length>18);
+ $('stageNote').textContent=stage.endless
+  ?'Endless · '+(progress.bestSurvival?'Your best: '+format(progress.bestSurvival):'How long can you last?')
+  :unlocked
   ?(progress.clearedStages.includes(stage.id)?'CLEARED ✓ · ':'')+'Survive '+Math.round(stage.survival/60)+' min · Beat the boss'
-  :'🔒 Clear '+(STAGES[index-1]?STAGES[index-1].name:'the previous stage')+' to unlock';
+  :'🔒 Clear '+(MODES[index-1]?MODES[index-1].name:'the previous stage')+' to unlock';
  $('stageCard').classList.toggle('locked',!unlocked);
  $('startBtn').disabled=!unlocked;
- const browse=step=>()=>{cardStage=STAGES[(index+step+STAGES.length)%STAGES.length].id;if(canPlayStage(progress,cardStage))selectedStage=cardStage;renderStagePicker();};
+ const browse=step=>()=>{cardStage=MODES[(index+step+MODES.length)%MODES.length].id;if(canPlayStage(progress,cardStage))selectMode(cardStage);renderStagePicker();};
  $('stagePrev').onclick=browse(-1);$('stageNext').onclick=browse(1);
- $('stagePrev').hidden=$('stageNext').hidden=STAGES.length<2;
+ $('stagePrev').hidden=$('stageNext').hidden=MODES.length<2;
 }
 function workshop(){$('recovery').hidden=true;for(let id of ['start','end','upgrade','pauseScreen','hud','bombBtn','loadout','combo','boost'])$(id).hidden=true;g=null;$('workshop').hidden=false;$('workBank').textContent=progress.credits;$('perkChoices').innerHTML='';for(let [k,v] of Object.entries(PERKS)){let rank=progress.perks[k],b=document.createElement('button');b.className='choice';b.disabled=rank>=3||progress.credits<cost(rank);b.innerHTML=`<span class="icon">${iconFor(k,v.icon)}</span><div><strong>${v.name} · ${rank}/3</strong><p>${v.desc}</p><small>${rank===3?'MAXED':cost(rank)+' PETTY CASH'}</small></div>`;b.onclick=()=>{if(buy(progress,k)){saveProgress();workshop();sound('upgrade');}};$('perkChoices').append(b);}$('starts').innerHTML='';for(let k of ['plunger','tp','gas']){let unlocked=k==='plunger'||k==='tp'&&progress.kills>=200||k==='gas'&&progress.wins>=1;let b=document.createElement('button');b.className='loadoutChoice'+(progress.start===k?' selected':'');b.disabled=!unlocked;b.innerHTML=iconFor(k,WEAPONS[k].icon)+' '+WEAPONS[k].name+(unlocked?'':k==='tp'?' · 200 KOs':' · 1 victory');b.onclick=()=>{progress.start=k;saveProgress();workshop();};$('starts').append(b);}$('hardMode').disabled=progress.wins<1;$('hardLock').textContent=progress.wins<1?'Unlock: win a mission':'Faster, tougher enemies';}
 $('perksBtn').onclick=workshop;$('endPerks').onclick=workshop;$('workBack').onclick=()=>{$('workshop').hidden=true;$('start').hidden=false;updateProgress();};updateProgress();
@@ -90,14 +97,15 @@ try{muted=localStorage.getItem('pp-overtime-sound')==='off';}catch{}// The menu'
 const SPEAKER_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
 const SPEAKER_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="m16 9 6 6M22 9l-6 6"/></svg>';
 function soundLabel(){let t=muted?'🔇 SOUND OFF':'🔊 SOUND ON';$('sound').innerHTML=muted?SPEAKER_OFF:SPEAKER_ON;$('sound').setAttribute('aria-label',muted?'Sound is off. Tap to turn on':'Sound is on. Tap to turn off');$('soundPause').textContent=t;}function toggleSound(){muted=!muted;try{localStorage.setItem('pp-overtime-sound',muted?'off':'on');}catch{}soundLabel();sound('upgrade');}soundLabel();$('sound').onclick=toggleSound;$('soundPause').onclick=toggleSound;
-function begin(){$('recovery').hidden=true;if(!canPlayStage(progress,selectedStage))selectedStage=1;sound('upgrade');g=new Game(Math.random,progress.perks,$('hardMode').checked&&progress.wins>0?1:0,progress.start,selectedStage);setFloor(selectedStage);cam={x:g.player.x,y:g.player.y};keys={};stick=null;for(let id of ['start','end','upgrade','pauseScreen','workshop'])$(id).hidden=true;for(let id of ['hud','loadout','hint','bombBtn','combo'])$(id).hidden=false;last=performance.now();showToast(g.stage.name.toUpperCase()+' · SURVIVE, THEN DEFEAT THE BOSS',4);updateUI();}
-$('nextStage').onclick=()=>{selectedStage=2;begin();};$('startBtn').onclick=begin;
+function begin(){$('recovery').hidden=true;if(!canPlayStage(progress,selectedStage))selectedStage=1;sound('upgrade');g=new Game(Math.random,progress.perks,selectedStage!==SURVIVAL_ID&&$('hardMode').checked&&progress.wins>0?1:0,progress.start,selectedStage);setFloor(selectedStage);cam={x:g.player.x,y:g.player.y};keys={};stick=null;for(let id of ['start','end','upgrade','pauseScreen','workshop'])$(id).hidden=true;for(let id of ['hud','loadout','hint','bombBtn','combo'])$(id).hidden=false;last=performance.now();showToast(g.stage.name.toUpperCase()+(g.endless?' · LAST AS LONG AS YOU CAN':' · SURVIVE, THEN DEFEAT THE BOSS'),4);updateUI();}
+$('nextStage').onclick=()=>{selectMode(2);begin();};$('startBtn').onclick=begin;
 // How to Play sheet: opens from the menu, closes with GOT IT or a tap outside it.
 $('howBtn').onclick=()=>{$('howSheet').hidden=false;$('howClose').focus();};
 $('howClose').onclick=()=>{$('howSheet').hidden=true;$('howBtn').focus();};
 $('howSheet').onclick=e=>{if(e.target===$('howSheet'))$('howSheet').hidden=true;};$('again').onclick=begin;$('restartPause').onclick=begin;
 $('home').onclick=()=>{g=null;renderStagePicker();$('end').hidden=true;$('start').hidden=false;for(let id of ['hud','loadout','hint','bombBtn','combo','boost','recovery'])$(id).hidden=true;};
-function pause(){if(!g)return;if(g.state==='playing'||g.state==='countdown'){g.pausedFrom=g.state;g.state='paused';$('recovery').hidden=true;$('pauseScreen').hidden=false;stick=null;keys={};}else if(g.state==='paused'){g.state=g.pausedFrom||'playing';$('pauseScreen').hidden=true;last=performance.now();}}
+const PAUSE_TEXT={stage:$('pauseText').textContent,survival:'There is no finish line. The office gets tougher every 3 minutes and a boss clocks in each time. Knock out gold executives and bosses for briefcases: a briefcase evolves a maxed weapon that has its partner perk. Move out of marked red circles before they burst.'};
+function pause(){if(!g)return;if(g.state==='playing'||g.state==='countdown'){$('pauseText').textContent=g.endless?PAUSE_TEXT.survival:PAUSE_TEXT.stage;g.pausedFrom=g.state;g.state='paused';$('recovery').hidden=true;$('pauseScreen').hidden=false;stick=null;keys={};}else if(g.state==='paused'){g.state=g.pausedFrom||'playing';$('pauseScreen').hidden=true;last=performance.now();}}
 $('pause').onclick=pause;$('resume').onclick=pause;
 window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','p','P','Escape'].includes(e.key))e.preventDefault();if((e.key===' '||e.key.toLowerCase()==='b')&&!e.repeat)triggerBomb();if((e.key.toLowerCase()==='p'||e.key==='Escape')&&!e.repeat)pause();keys[e.key.toLowerCase()]=true;});window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 window.addEventListener('blur',()=>{keys={};stick=null;if(g?.state==='playing'||g?.state==='countdown')pause();});document.addEventListener('visibilitychange',()=>{if(document.hidden&&(g?.state==='playing'||g?.state==='countdown'))pause();});
@@ -111,6 +119,7 @@ const CABINET_ART={
  plunger:'assets/cabinet/plunger.webp',tp:'assets/cabinet/tp.webp',gas:'assets/cabinet/gas.webp',flush:'assets/cabinet/flush.webp',bomb:'assets/cabinet/bomb.webp',
  plunger2:'assets/cabinet/plunger2.webp',tp2:'assets/cabinet/tp2.webp',gas2:'assets/cabinet/gas2.webp',flush2:'assets/cabinet/flush2.webp',bomb2:'assets/cabinet/bomb2.webp',
  speed:'assets/cabinet/speed.webp',coffee:'assets/cabinet/coffee.webp',magnet:'assets/cabinet/magnet.webp',chili:'assets/cabinet/chili.webp',heal:'assets/cabinet/heal.webp',
+ cash:'assets/cabinet/cash.webp',
 };
 // Passives read as one big number plus a short line, so they fit a shelf at phone size.
 const PASSIVE_CARD={
@@ -125,14 +134,16 @@ function upgrades(){
  stick=null;keys={};
  const brief=g.upgradeKind==='briefcase';
  $('upgradeTitle').innerHTML=brief?'SEVERANCE <span>PACKAGE</span>':'PROMOTION <span>EARNED</span>';
- $('upgradeIntro').textContent=brief?'Executive briefcase: take a free upgrade.':'More responsibility. Same pay.';
- $('upgradeLabel').textContent=(brief?'FREE UPGRADE':'LEVEL '+g.level)+' · CHOOSE ONE';
- $('upgradeFoot').textContent=!brief&&g.level<=4?'Max a weapon + its partner perk to evolve it after 45 seconds.':'';
+ const evolving=brief&&g.choices.some(c=>c.level===6);
+ $('upgradeIntro').textContent=evolving?'Executive briefcase: evolve a weapon.':brief?'Executive briefcase: take a free upgrade.':'More responsibility. Same pay.';
+ $('upgradeLabel').textContent=(evolving?'EVOLUTION':brief?'FREE UPGRADE':'LEVEL '+g.level)+(g.choices.length>1?' · CHOOSE ONE':' · TAKE IT');
+ // Survival: evolutions come from briefcases, and a run holds a limited number of weapons and perks.
+ $('upgradeFoot').textContent=g.endless?(evolving?'':g.level<=4&&!brief?'Max a weapon + its partner perk. An executive briefcase evolves it.':'Weapons '+g.ownedCount(g.weapons)+'/'+SURVIVAL.weaponSlots+' · Perks '+g.ownedCount(g.passives)+'/'+SURVIVAL.perkSlots):!brief&&g.level<=4?'Max a weapon + its partner perk to evolve it after 45 seconds.':'';
  $('choices').innerHTML='';
  g.choices.forEach((c,i)=>{
-  const w=WEAPONS[c.key]||PASSIVES[c.key]||{icon:'❤️',name:'Second Wind',desc:'Recover 35 health.'},evo=c.level===6&&EVOLUTIONS[c.key];
-  const kind=evo?'evo':PASSIVES[c.key]?'pas':c.key==='heal'?'heal':c.level===1?'new':'up';
-  const label={evo:'★ EVOLUTION',pas:'PASSIVE · RANK '+c.level,heal:'RECOVERY',new:'NEW WEAPON',up:'UPGRADE · LEVEL '+c.level}[kind];
+  const w=WEAPONS[c.key]||PASSIVES[c.key]||(c.key==='cash'?{icon:'💵',name:'Petty Cash Bonus',desc:'+'+SURVIVAL.cashBonus+' Petty Cash, banked right now.'}:{icon:'❤️',name:'Second Wind',desc:'Recover 35 health.'}),evo=c.level===6&&EVOLUTIONS[c.key];
+  const kind=evo?'evo':PASSIVES[c.key]?'pas':c.key==='heal'||c.key==='cash'?'heal':c.level===1?'new':'up';
+  const label={evo:'★ EVOLUTION',pas:'PASSIVE · RANK '+c.level,heal:c.key==='cash'?'BONUS':'RECOVERY',new:'NEW WEAPON',up:'UPGRADE · LEVEL '+c.level}[kind];
   const desc=evo?evo.desc:PASSIVES[c.key]?w.desc:c.level===1?w.desc:upgradeDesc(c.key,c.level);
   const recipe=EVOLUTIONS[c.key],card=PASSIVE_CARD[c.key],name=evo?evo.name:w.name,artKey=evo?c.key+'2':c.key;
   const b=document.createElement('button');
@@ -151,15 +162,25 @@ function upgradeDesc(k,l){return{plunger:'More damage'+(l%2===0?' and an extra r
 function finish(text){$('recovery').hidden=true;let earned=settle(progress,g);saveProgress();updateProgress();$('bombBtn').hidden=true;stick=null;keys={};$('upgrade').hidden=true;$('pauseScreen').hidden=true;const won=g.state==='won',hasNext=won&&g.stage.id===1,stageName=g.stage.name.toUpperCase(),boss=g.enemies.find(e=>e.boss),bossName=g.stage.bossName.replace(/\B\w+/g,w=>w.toLowerCase());
  // Build 18: end screen. One layout for a clear and a loss; the art, headline and main button change.
  $('end').classList.toggle('won',won);$('end').classList.toggle('has-next',hasNext);$('end').scrollTop=0;
- $('endEyebrow').textContent=won?stageName+' COMPLETE':stageName+' · SHIFT OVER';
  $('endTitle').innerHTML=won?'STAGE <span>CLEAR!</span>':'CLOCKED <span>OUT</span>';
- $('endDesc').textContent=hasNext?'Next stop: Corporate Lobby.':won?'Both stages are clear.':boss?bossName+' had '+Math.max(1,Math.ceil(boss.hp/boss.max*100))+'% health left.':'The boss shows up at '+format(g.stage.survival)+'.';
  $('nextStage').hidden=!hasNext;
  $('again').innerHTML=`<b>${hasNext?'REPLAY':won?'PLAY AGAIN':'TRY AGAIN'}</b><span>${stageName}</span><i aria-hidden="true">→</i>`;
  $('home').textContent=hasNext?'Back to briefing':'MAIN MENU';
- $('receipt').innerHTML=`<div class="cash"><b>+${earned.toLocaleString('en-US')}</b><small>PETTY CASH COLLECTED</small></div><div><b>${g.bestCombo}</b><small>BEST KO CHAIN</small></div><div><b>${g.bombKills}</b><small>STINK BOMB KOs</small></div><div><b>${format(g.t)}</b><small>TIME SURVIVED</small></div>`;$('end').hidden=false;if(g.kills>wonBest){wonBest=g.kills;try{localStorage.setItem('pp-overtime-best',String(wonBest));}catch{}$('best').textContent='BEST: '+wonBest+' KOs';}}
+ $('receipt').classList.toggle('surv',g.endless);
+ if(g.endless){
+  // Build 19: survival. Time survived is the score; the line under the headline says what ended the run.
+  const k=g.killedBy,who=!k?'':k.boss?(k.slam?bossName+"'s slam":bossName):{worker:'An office drone',runner:'A runner',guard:'An HR guard',exec:'An executive'}[k.type]||'The swarm';
+  $('endEyebrow').textContent=g.newBest?'NEW PERSONAL BEST':'SURVIVAL · SHIFT OVER';
+  $('endDesc').textContent=(who?who+' got you in':'You made it to')+' Tier '+(g.tier+1)+'.';
+  $('receipt').innerHTML=`<div class="time${g.newBest?' best':''}"><b>${format(g.t)}</b><small>TIME SURVIVED · ${g.newBest?(g.previousBest?'BEAT YOUR '+format(g.previousBest):'YOUR FIRST RECORD'):'YOUR BEST '+format(g.previousBest)}</small></div><div class="cash"><b>+${earned.toLocaleString('en-US')}</b><small>PETTY CASH</small></div><div><b>${g.kills.toLocaleString('en-US')}</b><small>KOs</small></div><div><b>${g.bossesBeaten}</b><small>BOSSES BEATEN</small></div>`;
+ }else{
+ $('endEyebrow').textContent=won?stageName+' COMPLETE':stageName+' · SHIFT OVER';
+ $('endDesc').textContent=hasNext?'Next stop: Corporate Lobby.':won?'Both stages are clear.':boss?bossName+' had '+Math.max(1,Math.ceil(boss.hp/boss.max*100))+'% health left.':'The boss shows up at '+format(g.stage.survival)+'.';
+ $('receipt').innerHTML=`<div class="cash"><b>+${earned.toLocaleString('en-US')}</b><small>PETTY CASH COLLECTED</small></div><div><b>${g.bestCombo}</b><small>BEST KO CHAIN</small></div><div><b>${g.bombKills}</b><small>STINK BOMB KOs</small></div><div><b>${format(g.t)}</b><small>TIME SURVIVED</small></div>`;
+ }
+ $('end').hidden=false;if(g.kills>wonBest){wonBest=g.kills;try{localStorage.setItem('pp-overtime-best',String(wonBest));}catch{}$('best').textContent='BEST: '+wonBest+' KOs';}}
 function format(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0');}
-function updateUI(){if(!g)return;$('recovery').hidden=g.state!=='countdown';$('recoveryCircle').style.setProperty('--resume-angle',(clamp(1-g.resumeLeft/RECOVERY_SECONDS,0,1)*360)+'deg');$('boost').hidden=g.caffeine<=0||!['playing','countdown','paused','upgrade'].includes(g.state);$('boost').textContent='☕ CAFFEINE RUSH · '+Math.ceil(g.caffeine)+'s';$('money').textContent=g.tokens.toLocaleString();$('timer').textContent=g.phase==='boss'?'BOSS':format(Math.max(0,g.stage.survival-g.t));$('health').style.width=g.player.hp/g.player.max*100+'%';$('hp').textContent=Math.ceil(g.player.hp);$('xp').style.width=clamp(g.xp/g.need*100,0,100)+'%';let wait=Math.ceil((g.nextUpgradeAt||0)-g.t);$('level').textContent='LVL '+g.level+((g.xp>=g.need||g.pendingBriefcases>0)&&wait>0?' · PROMOTION IN '+wait+'s':'');$('mission').textContent='STAGE '+g.stage.id+' · '+(g.phase==='boss'?'DEFEAT THE BOSS':'SURVIVE THE WAVES');$('bossHud').hidden=g.phase!=='boss'||g.state==='won'||g.state==='lost';$('hud').classList.toggle('boss-active',!$('bossHud').hidden);if(g.boss){let percent=Math.ceil(Math.max(0,g.boss.hp)/g.boss.max*100);$('bossName').textContent=g.stage.bossName;$('bossPercent').textContent=percent+'%';$('bossHealth').style.width=percent+'%';}$('kills').textContent=g.kills+' KOs';$('loadout').innerHTML=Object.entries(g.weapons).filter(([,l])=>l).map(([k,l])=>`<div title="${WEAPONS[k].name}">${iconFor(l===6?k+'2':k,WEAPONS[k].icon)}<small>${l===6?'EVOLVED':'LV '+l}</small></div>`).join('')+(g.passives.speed?`<div title="Bathroom Dash: ${g.passives.speed*10}% faster">${iconFor('speed','👟')}<small>+${g.passives.speed*10}%</small></div>`:'');$('hint').hidden=g.t>10;$('bombBtn').hidden=g.state==='won'||g.state==='lost';$('bombBtn').disabled=g.state!=='playing'||g.cd.bomb>0;$('bombStatus').textContent=g.cd.bomb>0?Math.ceil(g.cd.bomb)+'s':'READY';$('bombBtn').style.setProperty('--charge',Math.max(0,1-g.cd.bomb/g.bombCooldown())*100+'%');$('combo').textContent=g.combo>=5?g.combo+' KOs IN A ROW':'';let hb=$('hud').offsetHeight;if(hb){$('combo').style.top=(hb+10)+'px';$('toast').style.top=(hb+36)+'px';}}
+function updateUI(){if(!g)return;$('recovery').hidden=g.state!=='countdown';$('recoveryCircle').style.setProperty('--resume-angle',(clamp(1-g.resumeLeft/RECOVERY_SECONDS,0,1)*360)+'deg');$('boost').hidden=g.caffeine<=0||!['playing','countdown','paused','upgrade'].includes(g.state);$('boost').textContent='☕ CAFFEINE RUSH · '+Math.ceil(g.caffeine)+'s';$('money').textContent=g.tokens.toLocaleString();$('timer').textContent=g.endless?format(g.t):g.phase==='boss'?'BOSS':format(Math.max(0,g.stage.survival-g.t));$('health').style.width=g.player.hp/g.player.max*100+'%';$('hp').textContent=Math.ceil(g.player.hp);$('xp').style.width=clamp(g.xp/g.need*100,0,100)+'%';let wait=Math.ceil((g.nextUpgradeAt||0)-g.t);$('level').textContent='LVL '+g.level+((g.xp>=g.need||g.pendingBriefcases>0)&&wait>0?' · PROMOTION IN '+wait+'s':'');$('mission').textContent=g.endless?'SURVIVAL · TIER '+(g.tier+1):'STAGE '+g.stage.id+' · '+(g.phase==='boss'?'DEFEAT THE BOSS':'SURVIVE THE WAVES');$('bossHud').hidden=!(g.endless?g.boss:g.phase==='boss')||g.state==='won'||g.state==='lost';$('bossNote').textContent=g.endless?'BEAT THE BOSS FOR A BRIEFCASE':'DEFEAT THE BOSS TO CLEAR THE STAGE';$('hud').classList.toggle('boss-active',!$('bossHud').hidden);if(g.boss){let percent=Math.ceil(Math.max(0,g.boss.hp)/g.boss.max*100);$('bossName').textContent=g.stage.bossName;$('bossPercent').textContent=percent+'%';$('bossHealth').style.width=percent+'%';}$('kills').textContent=g.kills+' KOs';$('loadout').innerHTML=Object.entries(g.weapons).filter(([,l])=>l).map(([k,l])=>`<div title="${WEAPONS[k].name}">${iconFor(l===6?k+'2':k,WEAPONS[k].icon)}<small>${l===6?'EVOLVED':'LV '+l}</small></div>`).join('')+(g.passives.speed?`<div title="Bathroom Dash: ${g.passives.speed*10}% faster">${iconFor('speed','👟')}<small>+${g.passives.speed*10}%</small></div>`:'');$('hint').hidden=g.t>10;$('bombBtn').hidden=g.state==='won'||g.state==='lost';$('bombBtn').disabled=g.state!=='playing'||g.cd.bomb>0;$('bombStatus').textContent=g.cd.bomb>0?Math.ceil(g.cd.bomb)+'s':'READY';$('bombBtn').style.setProperty('--charge',Math.max(0,1-g.cd.bomb/g.bombCooldown())*100+'%');$('combo').textContent=g.combo>=5?g.combo+' KOs IN A ROW':'';let hb=$('hud').offsetHeight;if(hb){$('combo').style.top=(hb+10)+'px';$('toast').style.top=(hb+36)+'px';}}
 function rounded(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.stroke();}}
 function circle(x,y,r,color,stroke){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);if(color){ctx.fillStyle=color;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.stroke();}}
 function text(t,x,y,size=12,color='#d4e3dd',align='center'){ctx.fillStyle=color;ctx.font=`700 ${size}px Inter,Arial`;ctx.textAlign=align;ctx.fillText(t,x,y);}
@@ -211,7 +232,7 @@ function draw(){ctx.clearRect(0,0,W,H);ctx.fillStyle='#091d27';ctx.fillRect(0,0,
  for(let f of g.fx){ctx.globalAlpha=1-f.t/f.life;ctx.lineWidth=5;circle(f.x,f.y,f.r*f.t/f.life,f.color+'28',f.color);for(let i=0;i<8;i++){let a=i*Math.PI/4;circle(f.x+Math.cos(a)*f.r*f.t/f.life,f.y+Math.sin(a)*f.r*f.t/f.life,4,f.color);}ctx.globalAlpha=1;}
  ctx.restore();
  // Direction to executives uses screen edges and never obscures the health display.
- for(let e of g.enemies.filter(e=>e.type==='exec')){let x=W/2+(e.x-cam.x)*scale,y=H*.53+(e.y-cam.y)*scale;if(x<40||x>W-40||y<(g.phase==='boss'?245:175)||y>H-120){let a=Math.atan2(y-H*.53,x-W/2),ax=clamp(x,30,W-30),ay=clamp(y,g.phase==='boss'?260:190,H-120);ctx.save();ctx.translate(ax,ay);ctx.rotate(a);ctx.fillStyle='#ffce66';ctx.beginPath();ctx.moveTo(15,0);ctx.lineTo(-9,-10);ctx.lineTo(-9,10);ctx.fill();ctx.restore();text('BOSS',ax,ay+25,9,'#ffce66');}}
+ for(let e of g.enemies.filter(e=>e.type==='exec')){let x=W/2+(e.x-cam.x)*scale,y=H*.53+(e.y-cam.y)*scale;const bar=g.phase==='boss'||g.endless&&g.boss;if(x<40||x>W-40||y<(bar?245:175)||y>H-120){let a=Math.atan2(y-H*.53,x-W/2),ax=clamp(x,30,W-30),ay=clamp(y,bar?260:190,H-120);ctx.save();ctx.translate(ax,ay);ctx.rotate(a);ctx.fillStyle='#ffce66';ctx.beginPath();ctx.moveTo(15,0);ctx.lineTo(-9,-10);ctx.lineTo(-9,10);ctx.fill();ctx.restore();text(e.boss?'BOSS':'EXEC',ax,ay+25,9,'#ffce66');}}
  // Mini-map shows the pursuing boss and your position.
  let mx=W-87,my=H-215;rounded(mx-7,my-7,76,76,5,'#071e2bd9','#45656b');for(let e of g.enemies.filter(e=>e.type==='exec'))circle(mx+e.x/1800*60,my+e.y/1800*60,3.5,'#ffd36b');circle(mx+p.x/1800*60,my+p.y/1800*60,3,'#9de6c1');
  if(stick){circle(stick.x,stick.y,45,'#a6d3c015','#b2d3ca55');circle(stick.x+stick.dx*35,stick.y+stick.dy*35,17,'#b2dcc177','#c8edda');}
