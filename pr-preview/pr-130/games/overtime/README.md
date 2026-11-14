@@ -194,7 +194,7 @@ These changes first went straight into the built page; Build 15 rewrote them her
 ## Build 18: new end screens (made with Claude, Nov 13)
 - **Look:** rebuilt from Johnny's Stage Clear mockup (`art-sources/end/stage-clear-mockup.webp`). One layout serves a clear and a loss: art at the top, a gold eyebrow, a big slanted headline, one line of text, four stat tiles, one gold main button, two outline buttons and the PoopProfit.com logo, which is the tracker link.
 - **Stage clear:** victory art cropped from the mockup (`dist/assets/end/clear.webp`), "STAGE CLEAR!", and CONTINUE / CORPORATE LOBBY after Stage 1. After Stage 2 the main button is PLAY AGAIN.
-- **Loss:** "CLOCKED OUT", with either "The boss shows up at 03:00." or how much health the boss had left. Main button is TRY AGAIN. **The art is a stand-in:** the menu stall art, greyed. Replace `.end-hero`'s background in `style.css` when real defeat art exists.
+- **Loss:** "CLOCKED OUT", with either "The boss shows up at 03:00." or how much health the boss had left. Main button is TRY AGAIN. Art is Johnny's slumped Herman, cropped from his Clocked Out mockup (`dist/assets/end/clocked-out.webp`; full mockup in `art-sources/end/`).
 - **Stats:** Petty Cash collected, best KO chain, Stink Bomb KOs, time survived. The boss result, total KOs and final level rows are gone, per the mockup.
 - **Fit:** the art takes whatever height is left, so the screen fits one phone screen without scrolling; very short screens scroll.
 - No rule changes. New suite `tests/end-screen.test.mjs`; the build script also inlines `dist/assets/end/`.

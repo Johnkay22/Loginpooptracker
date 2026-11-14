@@ -25,13 +25,12 @@ for(const gone of ['Executive boss','Corporate KOs','Final level'])assert.ok(!fi
 for(const text of ['STAGE <span>CLEAR!</span>','CLOCKED <span>OUT</span>','Next stop: Corporate Lobby.','TRY AGAIN','PLAY AGAIN','REPLAY'])assert.ok(finish.includes(text),'copy: '+text);
 assert.match(finish,/settle\(progress,g\)/,'Petty Cash is still banked before the screen shows');
 
-assert.ok(fs.existsSync(path.join(dist,'assets/end/clear.webp')),'victory art exists');
-assert.ok(css.includes('url(assets/end/clear.webp)'),'victory art is wired up');
+for(const f of ['clear.webp','clocked-out.webp']){assert.ok(fs.existsSync(path.join(dist,'assets/end',f)),f+' exists');assert.ok(css.includes('url(assets/end/'+f+')'),f+' is wired up');}
 const out=path.join(root,'tools','tmp','test-build-end.html');
 fs.mkdirSync(path.dirname(out),{recursive:true});
 execFileSync('node',[path.join(root,'tools/build-single-file.mjs'),dist,out,'--plain'],{stdio:'ignore'});
 const built=fs.readFileSync(out,'utf8');
 assert.ok(!/assets\/end\//.test(built),'an end screen art path was not inlined');
-assert.ok(built.includes(fs.readFileSync(path.join(dist,'assets/end/clear.webp')).toString('base64')),'victory art not packed in');
+for(const f of fs.readdirSync(path.join(dist,'assets/end')))assert.ok(built.includes(fs.readFileSync(path.join(dist,'assets/end',f)).toString('base64')),f+' not packed in');
 fs.rmSync(out);
-console.log('PASS: end screen has its headline, four stat tiles, buttons and tracker link, and the build packs the victory art in.');
+console.log('PASS: end screen has its headline, four stat tiles, buttons and tracker link, and the build packs the stage clear and clocked out art in.');
