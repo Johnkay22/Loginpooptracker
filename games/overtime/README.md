@@ -1,4 +1,4 @@
-# PoopProfit: Overtime (current: Build 16)
+# PoopProfit: Overtime (current: Build 18)
 
 Live game: https://poopprofit.com/beta-test-survival-game.html (built from this folder).
 The old private prototype link (https://poopprofit-overtime-prototype.johnkay.chatgpt.site) is out of date.
@@ -13,7 +13,7 @@ The old private prototype link (https://poopprofit-overtime-prototype.johnkay.ch
 
 Requirements: Node 20 or newer, and Python 3 with Pillow (the build re-encodes the PNG sprites to WebP). The build is reproducible: the same source with the same esbuild (pinned in `package.json`) and Pillow versions gives a byte-identical page. Build 15 was produced with Node 22.23, esbuild 0.24.0 and Pillow 12.3.0; a different Pillow or libwebp version can change the inlined sprite bytes without changing how the game plays.
 
-What the build does (`tools/build-single-file.mjs`): bundles and minifies the modules with esbuild, re-encodes the PNG sprites to WebP at the same size, inlines every file in `dist/assets/sfx/`, `dist/assets/icons/`, `dist/assets/menu/` and `dist/assets/cabinet/` as data URIs (in the code, the page and the stylesheet), inlines the stylesheet, and adds a noindex tag. Passing a password instead of `--plain` produces the old encrypted, password-gated page using `tools/gate.html` (not used since Build 10).
+What the build does (`tools/build-single-file.mjs`): bundles and minifies the modules with esbuild, re-encodes the PNG sprites to WebP at the same size, inlines every file in `dist/assets/sfx/`, `dist/assets/icons/`, `dist/assets/menu/`, `dist/assets/cabinet/` and `dist/assets/end/` as data URIs (in the code, the page and the stylesheet), inlines the stylesheet, and adds a noindex tag. Passing a password instead of `--plain` produces the old encrypted, password-gated page using `tools/gate.html` (not used since Build 10).
 
 ## Folder layout
 - `dist/`: the game source. `app.mjs` (screens, input, sound, drawing), `engine.mjs` (game rules), `stages.mjs`, `progress.mjs`, `scene.mjs`, `navigation.mjs`, `index.html`, `style.css`, and `assets/` (sprites, `sfx/` sounds, `icons/` the 18 custom icons, `menu/` the menu stall art and coin, `cabinet/` the promotion cabinet and its 15 shelf items).
@@ -182,3 +182,19 @@ These changes first went straight into the built page; Build 15 rewrote them her
 - **Sizing:** everything is a fraction of the stage width (`--u` in `style.css`), so the art and the text scale together and all three shelves fit without scrolling. Screens under 600 px tall keep the text size and let the note and floor run off the bottom.
 - **Not changed:** the 18 flat icons still serve the HUD, Break Room and Stink Bomb button. Paid Sick Leave, Hazard Pay and Deep Pockets renders are stored in `art-sources/cabinet/` for a later Break Room pass.
 - New suite `tests/cabinet.test.mjs`; the build script also inlines `dist/assets/cabinet/`.
+
+## Build 17: promotions a little less often (made with Claude, Nov 13)
+- **Why:** a player who chases coins was hitting the 7-second minimum gap and seeing the promotion screen about 7 times a minute for the first two minutes (about 17 promotions before the boss).
+- **Change:** the coins needed for the next promotion come from `promotionCost(level)` in `engine.mjs`: `6 + 4.5 x level + 0.35 x level squared`. The first promotion costs 12 (was 5), so it arrives about 14 seconds in for a player who chases coins instead of about 7. The 2nd to 8th now cost 16, 22, 29, 37, 45, 54, 64 (they were 11, 14, 18, 22, 26, 30, 35).
+- **Result in simulated 3-minute runs (coin-chasing bot, unlimited health):** about 13 promotions before the boss instead of about 17; roughly 6, 5 and 2 per minute instead of 7, 7 and 3. A bot that plays for an evolution got one in 12 of 16 runs (15 of 16 before), about 20 seconds later.
+- **Tried and rejected:** a much steeper curve (`10 + 8 x level + level squared`) cut promotions to about 10 but left an evolution in only 2 of 16 runs, because an evolution takes about 10 picks.
+- The 7-second minimum gap is unchanged. Nothing else about the rules changed.
+- New suite `tests/xp-curve.test.mjs` pins the cost table, the promotion rate and the evolution rate.
+
+## Build 18: new end screens (made with Claude, Nov 13)
+- **Look:** rebuilt from Johnny's Stage Clear mockup (`art-sources/end/stage-clear-mockup.webp`). One layout serves a clear and a loss: art at the top, a gold eyebrow, a big slanted headline, one line of text, four stat tiles, one gold main button, two outline buttons and the PoopProfit.com logo, which is the tracker link.
+- **Stage clear:** victory art cropped from the mockup (`dist/assets/end/clear.webp`), "STAGE CLEAR!", and CONTINUE / CORPORATE LOBBY after Stage 1. After Stage 2 the main button is PLAY AGAIN.
+- **Loss:** "CLOCKED OUT", with either "The boss shows up at 03:00." or how much health the boss had left. Main button is TRY AGAIN. Art is Johnny's slumped Herman, cropped from his Clocked Out mockup (`dist/assets/end/clocked-out.webp`; full mockup in `art-sources/end/`).
+- **Stats:** Petty Cash collected, best KO chain, Stink Bomb KOs, time survived. The boss result, total KOs and final level rows are gone, per the mockup.
+- **Fit:** the art takes whatever height is left, so the screen fits one phone screen without scrolling; very short screens scroll.
+- No rule changes. New suite `tests/end-screen.test.mjs`; the build script also inlines `dist/assets/end/`.
