@@ -1,4 +1,4 @@
-# PoopProfit: Overtime (current: Build 21)
+# PoopProfit: Overtime (current: Build 22)
 
 Live game: https://poopprofit.com/beta-test-survival-game.html (built from this folder).
 The old private prototype link (https://poopprofit-overtime-prototype.johnkay.chatgpt.site) is out of date.
@@ -233,3 +233,6 @@ A third mode on the menu card (the ∞ entry). The run never ends and time survi
 - **Colour:** this screen uses cyan for things you press (buy, selected, back), as in the mockup. The menu, promotion and end screens use gold. Pick one before launch.
 - **Wording:** "win a mission" became "clear a stage", since survival has no win. Overtime difficulty says it applies to stages only.
 - New suite `tests/break-room.test.mjs`; the build script also inlines `dist/assets/breakroom/`.
+
+## Build 22: Break Room buttons are gold (made with Claude, Nov 15)
+- Johnny picked gold over the mockup's cyan, so the Break Room's buy buttons, selected weapon, difficulty switch and BACK TO MENU now match the menu, promotion and end screens. Colours only; nothing else changed.
