@@ -1,5 +1,5 @@
 // Build 23: survival leaderboard. Talks to the Poop Profit database through three server functions
-// (supabase/migrations/20261115100000_overtime_survival_leaderboard.sql). The game never touches the table.
+// (supabase/migrations/20261115110043_overtime_survival_leaderboard.sql). The game never touches the table.
 //   - Guests can read the board. That is a plain web request; no extra script is loaded for them.
 //   - Signed-in players (the same sign-in as the rest of poopprofit.com) get a run id when a survival run
 //     starts and hand it back with their time when it ends. The server decides whether it is a new best.
