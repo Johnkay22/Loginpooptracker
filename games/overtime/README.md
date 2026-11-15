@@ -1,4 +1,4 @@
-# PoopProfit: Overtime (current: Build 22)
+# PoopProfit: Overtime (current: Build 23)
 
 Live game: https://poopprofit.com/beta-test-survival-game.html (built from this folder).
 The old private prototype link (https://poopprofit-overtime-prototype.johnkay.chatgpt.site) is out of date.
@@ -236,3 +236,14 @@ A third mode on the menu card (the ∞ entry). The run never ends and time survi
 
 ## Build 22: Break Room buttons are gold (made with Claude, Nov 15)
 - Johnny picked gold over the mockup's cyan, so the Break Room's buy buttons, selected weapon, difficulty switch and BACK TO MENU now match the menu, promotion and end screens. Colours only; nothing else changed.
+
+## Build 23: survival leaderboard (made with Claude, Nov 15)
+- **What players see:** a LEADERBOARD button on the survival card, and a line on the survival end screen ("YOU ARE #4 ON THE LEADERBOARD", or "SIGN IN TO POST YOUR TIME" for guests). Both open the board: the top 10 survival times with usernames, plus your own row if you are outside the top 10.
+- **Who gets on it:** signed-in Poop Profit accounts only (the same sign-in as the rest of the site; the game reads it from the site's own storage). One spot per player, their best time. The board only changes when a run beats that player's best. A best set before signing in does not post; it takes a fresh run.
+- **Break Room perks count.** Johnny's call: Petty Cash should matter in the main mode, and perks cap out after a few runs.
+- **How it works:** `dist/leaderboard.mjs` calls three database functions from `supabase/migrations/20261115100000_overtime_survival_leaderboard.sql`. `overtime_start_run()` marks the start of a survival run and returns a one-time run id. `overtime_submit_run()` takes the id back with the time, KOs, level and bosses beaten, and decides whether it is a new best. `overtime_leaderboard()` returns the board. The table (`overtime_survival_scores`) has no direct access from the browser.
+- **Cheat checks (basic on purpose):** a time can never be longer than the real time since the run started on the server (plus 20 seconds for slow connections), a run id works once, and the other numbers must be possible. It is not cheat-proof: a modified game left running would pass. Set `hidden = true` on a row to take a score off the board.
+- **Guests** read the board with one plain request; the database library (the same script the site loads) is only fetched for signed-in players.
+- **Fails quietly:** offline, or before the database change is applied, the game plays as before and the board says it is on a break.
+- **Retuning warning:** times from before a difficulty change are not comparable. Each posted time stores the game build (`BUILD` in `app.mjs`); bump it when survival is retuned.
+- New suite `tests/leaderboard.test.mjs` (game module against a stand-in database, plus checks on the database change file).
