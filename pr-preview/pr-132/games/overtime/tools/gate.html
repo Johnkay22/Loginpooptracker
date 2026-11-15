@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#081c24">
+<title>Poop Profit: Overtime (Beta)</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+  :root { --bg:#081c24; --card:#0f2a35; --line:#1f4656; --text:#f4efe4; --muted:#9db4bd; --gold:#f2b632; --red:#ff6b5b; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { display:flex; align-items:center; justify-content:center; padding:16px; }
+  .card { width:100%; max-width:380px; background:var(--card); border:1px solid var(--line);
+    border-radius:18px; padding:28px 22px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.4); }
+  .tag { display:inline-block; font-size:11px; letter-spacing:.14em; font-weight:800; color:var(--bg);
+    background:var(--gold); padding:5px 10px; border-radius:999px; }
+  h1 { font-size:30px; line-height:1.05; margin:16px 0 6px; letter-spacing:-.01em; }
+  h1 span { color:var(--gold); }
+  p { color:var(--muted); font-size:14px; line-height:1.45; margin:0 0 20px; }
+  input { width:100%; font-size:17px; padding:14px; border-radius:12px; border:1px solid var(--line);
+    background:#071820; color:var(--text); outline:none; }
+  input:focus { border-color:var(--gold); }
+  button { width:100%; margin-top:12px; font-size:16px; font-weight:800; letter-spacing:.04em;
+    padding:14px; border:0; border-radius:12px; background:var(--gold); color:#1a1405; cursor:pointer; }
+  button:disabled { opacity:.6; cursor:wait; }
+  label.rem { display:flex; gap:8px; align-items:center; justify-content:center; margin-top:14px;
+    font-size:13px; color:var(--muted); }
+  #err { min-height:20px; margin-top:12px; font-size:14px; color:var(--red); font-weight:600; }
+</style>
+</head>
+<body>
+<form class="card" id="gate" autocomplete="off">
+  <span class="tag">BETA TEST · TESTERS ONLY</span>
+  <h1>OVER<span>TIME</span></h1>
+  <p>This build is under wraps. Enter the tester password to clock in.</p>
+  <input id="pw" type="password" placeholder="Password" aria-label="Password" autocomplete="current-password" required>
+  <button id="go" type="submit">UNLOCK</button>
+  <label class="rem"><input type="checkbox" id="remember" checked style="width:auto"> Remember me on this device</label>
+  <div id="err" role="alert"></div>
+</form>
+<script>
+(function () {
+  var SALT = "__SALT__", IV = "__IV__", ITER = __ITER__, DATA = "__DATA__";
+  var STORE = "pp-overtime-beta-key";
+  var b = function (s) { return Uint8Array.from(atob(s), function (c) { return c.charCodeAt(0); }); };
+  var form = document.getElementById("gate"), pw = document.getElementById("pw"),
+      go = document.getElementById("go"), err = document.getElementById("err"),
+      remember = document.getElementById("remember");
+
+  function store(get, val) {
+    try {
+      if (get) return localStorage.getItem(STORE);
+      if (val === null) localStorage.removeItem(STORE); else localStorage.setItem(STORE, val);
+    } catch (e) { return null; }
+  }
+
+  async function unlock(key) {
+    var plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b(IV) }, key, b(DATA));
+    return new TextDecoder().decode(plain);
+  }
+  function show(html) { document.open(); document.write(html); document.close(); }
+
+  async function fromPassword(p) {
+    var base = await crypto.subtle.importKey("raw", new TextEncoder().encode(p), "PBKDF2", false, ["deriveKey"]);
+    return crypto.subtle.deriveKey({ name: "PBKDF2", salt: b(SALT), iterations: ITER, hash: "SHA-256" },
+      base, { name: "AES-GCM", length: 256 }, true, ["decrypt"]);
+  }
+
+  if (!window.crypto || !crypto.subtle) {
+    err.textContent = "This browser can't unlock the page. Try Chrome or Safari over https.";
+    go.disabled = true; return;
+  }
+
+  // Try a remembered key first
+  var saved = store(true);
+  if (saved) {
+    crypto.subtle.importKey("raw", b(saved), "AES-GCM", false, ["decrypt"])
+      .then(unlock).then(show).catch(function () { store(false, null); });
+  }
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    err.textContent = ""; go.disabled = true; go.textContent = "CHECKING...";
+    try {
+      pw.blur();
+      var key = await fromPassword(pw.value);
+      var html = await unlock(key);
+      if (remember.checked) {
+        var raw = new Uint8Array(await crypto.subtle.exportKey("raw", key));
+        var s = ""; raw.forEach(function (x) { s += String.fromCharCode(x); });
+        store(false, btoa(s));
+      }
+      // Close the phone keyboard and let the screen settle before the game measures it
+      pw.blur(); if (document.activeElement) document.activeElement.blur();
+      go.textContent = "CLOCKING IN...";
+      setTimeout(function () { window.scrollTo(0, 0); show(html); }, 450);
+      return;
+    } catch (e2) {
+      err.textContent = "Wrong password. Try again.";
+      go.disabled = false; go.textContent = "UNLOCK"; pw.select();
+    }
+  });
+})();
+</script>
+</body>
+</html>
