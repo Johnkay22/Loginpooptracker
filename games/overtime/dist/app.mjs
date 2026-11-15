@@ -21,6 +21,7 @@ function renderStagePicker(){
 // Build 20 menu: the mode picker is a swipe carousel of art cards. Swiping, tapping a side card, the arrows and
 // the dots all move it. The card in the middle is the one CLOCK IN starts; a locked card disables CLOCK IN.
 const CARD_ART={1:'assets/menu/card-office.webp',2:'assets/menu/card-lobby.webp',[SURVIVAL_ID]:'assets/menu/card-survival.webp'};
+const COIN_ART='assets/menu/coin.webp';
 const LOCK_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 0 1 6 0v3H9z"/></svg>';
 let cardStage=null,settleTimer=0;
 const track=$('stageTrack');
@@ -59,7 +60,21 @@ function renderStageCard(){
  // Came here from somewhere other than a swipe (first load, back from a run): bring that card to the middle.
  if(track.clientWidth&&paintCarousel()!==index)goToCard(index,true);
 }
-function workshop(){$('recovery').hidden=true;for(let id of ['start','end','upgrade','pauseScreen','hud','bombBtn','loadout','combo','boost'])$(id).hidden=true;g=null;$('workshop').hidden=false;$('workBank').textContent=progress.credits;$('perkChoices').innerHTML='';for(let [k,v] of Object.entries(PERKS)){let rank=progress.perks[k],b=document.createElement('button');b.className='choice';b.disabled=rank>=3||progress.credits<cost(rank);b.innerHTML=`<span class="icon">${iconFor(k,v.icon)}</span><div><strong>${v.name} · ${rank}/3</strong><p>${v.desc}</p><small>${rank===3?'MAXED':cost(rank)+' PETTY CASH'}</small></div>`;b.onclick=()=>{if(buy(progress,k)){saveProgress();workshop();sound('upgrade');}};$('perkChoices').append(b);}$('starts').innerHTML='';for(let k of ['plunger','tp','gas']){let unlocked=k==='plunger'||k==='tp'&&progress.kills>=200||k==='gas'&&progress.wins>=1;let b=document.createElement('button');b.className='loadoutChoice'+(progress.start===k?' selected':'');b.disabled=!unlocked;b.innerHTML=iconFor(k,WEAPONS[k].icon)+' '+WEAPONS[k].name+(unlocked?'':k==='tp'?' · 200 KOs':' · 1 victory');b.onclick=()=>{progress.start=k;saveProgress();workshop();};$('starts').append(b);}$('hardMode').disabled=progress.wins<1;$('hardLock').textContent=progress.wins<1?'Unlock: win a mission':'Faster, tougher enemies';}
+function workshop(){$('recovery').hidden=true;for(let id of ['start','end','upgrade','pauseScreen','hud','bombBtn','loadout','combo','boost'])$(id).hidden=true;g=null;$('workshop').hidden=false;$('workshop').scrollTop=0;
+ // Build 21: Break Room from Johnny's mockup. Perk rows with a buy button, weapon tiles, a switch for hard mode.
+ $('workBank').textContent=progress.credits.toLocaleString('en-US');$('perkChoices').innerHTML='';
+ const perkArt={health:'assets/breakroom/health.webp',damage:'assets/breakroom/damage.webp',pickup:CABINET_ART.cash};
+ for(let [k,v] of Object.entries(PERKS)){const rank=progress.perks[k],maxed=rank>=3,price=cost(rank),row=document.createElement('div');row.className='br-perk'+(maxed?' maxed':'');
+  row.innerHTML=`<img class="br-perk-art" src="${perkArt[k]}" alt=""><div class="br-perk-text"><strong>${v.name}</strong><p>${v.desc}</p></div><div class="br-rank"><b>${rank}/3</b><span>${[0,1,2].map(i=>`<i${i<rank?' class="on"':''}></i>`).join('')}</span></div>`;
+  const b=document.createElement('button');b.type='button';b.className='br-buy';b.disabled=maxed||progress.credits<price;
+  b.innerHTML=maxed?'MAXED':`<img src="${COIN_ART}" alt="">${price.toLocaleString('en-US')}`;b.setAttribute('aria-label',maxed?v.name+' is maxed':'Buy '+v.name+' rank '+(rank+1)+' for '+price+' Petty Cash');
+  b.onclick=()=>{if(buy(progress,k)){saveProgress();workshop();sound('upgrade');}};row.append(b);$('perkChoices').append(row);}
+ $('starts').innerHTML='';
+ for(let k of ['plunger','tp','gas']){const unlocked=k==='plunger'||k==='tp'&&progress.kills>=200||k==='gas'&&progress.wins>=1,selected=progress.start===k,b=document.createElement('button');
+  b.type='button';b.className='br-weapon'+(selected?' selected':'')+(unlocked?'':' locked');b.disabled=!unlocked;
+  b.innerHTML=`<img src="${CABINET_ART[k]}" alt=""><strong>${WEAPONS[k].name}</strong><small>${selected?'✓ SELECTED':unlocked?'TAP TO SELECT':LOCK_ICON+(k==='tp'?'GET 200 KOs':'CLEAR 1 STAGE')}</small>`;
+  b.onclick=()=>{progress.start=k;saveProgress();workshop();};$('starts').append(b);}
+ $('hardMode').disabled=progress.wins<1;$('hardMode').closest('label').classList.toggle('locked',progress.wins<1);$('hardLock').textContent=progress.wins<1?'Unlock: clear a stage':'Stages only: faster, tougher enemies';}
 $('perksBtn').onclick=workshop;$('endPerks').onclick=workshop;$('workBack').onclick=()=>{$('workshop').hidden=true;$('start').hidden=false;updateProgress();};updateProgress();
 // Build 13: Plungerang and TP Tornado icons are drawn in the game's own art instead of emoji, which some phones can't show.
 const ICON_ART={};{const mk=f=>{let c=document.createElement('canvas');c.width=c.height=96;let x=c.getContext('2d');x.translate(48,48);f(x);return c.toDataURL();};

@@ -1,4 +1,4 @@
-# PoopProfit: Overtime (current: Build 20)
+# PoopProfit: Overtime (current: Build 21)
 
 Live game: https://poopprofit.com/beta-test-survival-game.html (built from this folder).
 The old private prototype link (https://poopprofit-overtime-prototype.johnkay.chatgpt.site) is out of date.
@@ -225,3 +225,11 @@ A third mode on the menu card (the ∞ entry). The run never ends and time survi
 - **Kept from the old menu:** Petty Cash coin, sound button (now top left), CLOCK IN in gold, Break Room, How to Play, PoopProfit.com link. On screens under 700 px tall the link row and the "A POOP PROFIT ORIGINAL" line give their space to the cards.
 - **Removed:** `dist/assets/menu/stall.webp` (the old menu image; the end screens have their own art).
 - New suite `tests/menu-carousel.test.mjs`. The built page is about 2.7 MB (was 2.2 MB).
+
+## Build 21: new Break Room (made with Claude, Nov 15)
+- **Look:** rebuilt from Johnny's mockup (`art-sources/breakroom/break-room-mockup.webp`). Header with Herman and his coffee, a Petty Cash pill, "Permanent perks" rows (art, name, what it does, rank pips, a buy button with the price), "Starting weapon" tiles, a switch for Overtime difficulty, and a BACK TO MENU button that stays docked at the bottom.
+- **Nothing about the rules changed.** Perk names, effects and prices still come from `PERKS`, `cost()` and `buy()` in `progress.mjs`; weapon unlocks are still 200 KOs for TP Tornado and one stage clear for Silent But Deadly.
+- **Art:** perks use Johnny's renders (`dist/assets/breakroom/health.webp`, `damage.webp`, and the Deep Pockets render already used by the cabinet). Weapon tiles reuse the cabinet renders. **The header Herman is cropped out of the mockup** (`herman.webp`), faded on the left where the mockup's title was; a clean break-room image without text would be sharper and could run full width.
+- **Colour:** this screen uses cyan for things you press (buy, selected, back), as in the mockup. The menu, promotion and end screens use gold. Pick one before launch.
+- **Wording:** "win a mission" became "clear a stage", since survival has no win. Overtime difficulty says it applies to stages only.
+- New suite `tests/break-room.test.mjs`; the build script also inlines `dist/assets/breakroom/`.
