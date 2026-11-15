@@ -2,6 +2,9 @@ import {MODES,SURVIVAL_ID,stageFor,canPlayStage} from './stages.mjs';
 import {paintOffice,paintLobby} from './scene.mjs';
 import {PERKS,fresh,normalize,buy,cost,settle} from './progress.mjs';
 import {Game,WEAPONS,PASSIVES,EVOLUTIONS,RECOVERY_SECONDS,SURVIVAL,clamp} from './engine.mjs';
+import {createBoard} from './leaderboard.mjs';
+// Build number sent with leaderboard times, so times from before a retune can be told apart.
+const BUILD=23;const board=createBoard({build:BUILD});
 const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d');
 const brandPortrait=new Image();brandPortrait.src='assets/herman-brand.jpg';const herman=new Image();herman.src='assets/herman-battle.png';const hermanWalk=new Image();hermanWalk.src='assets/herman-walk.png';const enemySheet=new Image();enemySheet.src='assets/corporate-sprites.png';let g=null,W=0,H=0,scale=1,cam={x:900,y:900},keys={},stick=null,muted=false,audioCtx,toastUntil=0,last=performance.now(),lastUI=0,shake=0,wonBest=0;
 try{wonBest=Number(localStorage.getItem('pp-overtime-best')||0);}catch{}$('best').textContent=wonBest?'BEST: '+wonBest+' KOs':'';
@@ -52,6 +55,7 @@ function renderStageCard(){
   :'Clear '+(MODES[index-1]?MODES[index-1].name:'the previous stage')+' to unlock';
  $('stageCard').classList.toggle('locked',!unlocked);
  $('startBtn').disabled=!unlocked;
+ $('boardBtn').hidden=!stage.endless;if(stage.endless)board.warm();
  MODES.forEach((st,i)=>{const card=track.children[i],open=canPlayStage(progress,st.id);card.classList.toggle('locked',!open);card.setAttribute('aria-selected',String(i===index));
   const lock=card.querySelector('.sv3-lock');lock.hidden=open;lock.querySelector('b').textContent=open?'':'Clear '+(MODES[i-1]?MODES[i-1].name:'the previous stage')+' to unlock';
   $('stageDots').children[i].classList.toggle('on',i===index);});
@@ -60,6 +64,31 @@ function renderStageCard(){
  // Came here from somewhere other than a swipe (first load, back from a run): bring that card to the middle.
  if(track.clientWidth&&paintCarousel()!==index)goToCard(index,true);
 }
+// Build 23: survival leaderboard. A finished survival run is handed to the server, which only changes the board
+// when the time beats that player's best. Guests can look at the board and are pointed to sign in.
+const ordinal=n=>'#'+Number(n).toLocaleString('en-US');
+function postSurvivalTime(run){
+ const row=$('endBoard'),label=text=>{if(g===run)row.innerHTML=text+' <i aria-hidden="true">›</i>';};
+ if(!board.signedIn()){label('SIGN IN TO POST YOUR TIME');return;}
+ label('POSTING YOUR TIME…');
+ board.submitRun({seconds:run.t,kills:run.kills,level:run.level,bosses:run.bossesBeaten}).then(r=>{
+  label(r&&r.posted&&r.rank?'YOU ARE '+ordinal(r.rank)+' ON THE LEADERBOARD':r&&r.rank?'LEADERBOARD · YOU ARE '+ordinal(r.rank):'LEADERBOARD');});
+}
+function showBoard(){
+ const list=$('boardList'),note=$('boardNote'),signedIn=board.signedIn();
+ $('board').hidden=false;$('board').scrollTop=0;list.innerHTML='';note.textContent='Loading…';$('boardSign').hidden=signedIn;
+ board.top(10).then(rows=>{
+  if($('board').hidden)return;list.innerHTML='';
+  const top=rows.slice(0,10),me=rows.find(r=>r.is_me),extra=me&&!top.includes(me)?me:null;
+  const add=r=>{const li=document.createElement('li');li.className='bd-row'+(r.is_me?' me':'')+(r.place<=3?' top':'');
+   const place=document.createElement('b');place.textContent=r.place;const name=document.createElement('span');name.textContent=r.username+(r.is_me?' (you)':'');const time=document.createElement('strong');time.textContent=format(Number(r.best_seconds));
+   li.append(place,name,time);list.append(li);};
+  top.forEach(add);
+  if(extra){const gap=document.createElement('li');gap.className='bd-gap';gap.textContent='· · ·';list.append(gap);add(extra);}
+  note.textContent=!rows.length?'No times yet. Be the first on the board.':signedIn?(me?'':'Finish a survival run to get on the board.'):'Sign in, then finish a survival run to get on the board.';
+ }).catch(()=>{if(!$('board').hidden){list.innerHTML='';note.textContent='The leaderboard is on a break. Try again in a bit.';}});
+}
+$('boardBtn').onclick=showBoard;$('endBoard').onclick=showBoard;$('boardBack').onclick=()=>{$('board').hidden=true;};
 function workshop(){$('recovery').hidden=true;for(let id of ['start','end','upgrade','pauseScreen','hud','bombBtn','loadout','combo','boost'])$(id).hidden=true;g=null;$('workshop').hidden=false;$('workshop').scrollTop=0;
  // Build 21: Break Room from Johnny's mockup. Perk rows with a buy button, weapon tiles, a switch for hard mode.
  $('workBank').textContent=progress.credits.toLocaleString('en-US');$('perkChoices').innerHTML='';
@@ -134,7 +163,7 @@ try{muted=localStorage.getItem('pp-overtime-sound')==='off';}catch{}// The menu'
 const SPEAKER_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
 const SPEAKER_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="m16 9 6 6M22 9l-6 6"/></svg>';
 function soundLabel(){let t=muted?'🔇 SOUND OFF':'🔊 SOUND ON';$('sound').innerHTML=muted?SPEAKER_OFF:SPEAKER_ON;$('sound').setAttribute('aria-label',muted?'Sound is off. Tap to turn on':'Sound is on. Tap to turn off');$('soundPause').textContent=t;}function toggleSound(){muted=!muted;try{localStorage.setItem('pp-overtime-sound',muted?'off':'on');}catch{}soundLabel();sound('upgrade');}soundLabel();$('sound').onclick=toggleSound;$('soundPause').onclick=toggleSound;
-function begin(){$('recovery').hidden=true;if(!canPlayStage(progress,selectedStage))selectedStage=1;sound('upgrade');g=new Game(Math.random,progress.perks,selectedStage!==SURVIVAL_ID&&$('hardMode').checked&&progress.wins>0?1:0,progress.start,selectedStage);setFloor(selectedStage);cam={x:g.player.x,y:g.player.y};keys={};stick=null;for(let id of ['start','end','upgrade','pauseScreen','workshop'])$(id).hidden=true;for(let id of ['hud','loadout','hint','bombBtn','combo'])$(id).hidden=false;last=performance.now();showToast(g.stage.name.toUpperCase()+(g.endless?' · LAST AS LONG AS YOU CAN':' · SURVIVE, THEN DEFEAT THE BOSS'),4);updateUI();}
+function begin(){$('recovery').hidden=true;if(!canPlayStage(progress,selectedStage))selectedStage=1;sound('upgrade');g=new Game(Math.random,progress.perks,selectedStage!==SURVIVAL_ID&&$('hardMode').checked&&progress.wins>0?1:0,progress.start,selectedStage);setFloor(selectedStage);cam={x:g.player.x,y:g.player.y};keys={};stick=null;for(let id of ['start','end','upgrade','pauseScreen','workshop'])$(id).hidden=true;for(let id of ['hud','loadout','hint','bombBtn','combo'])$(id).hidden=false;last=performance.now();showToast(g.stage.name.toUpperCase()+(g.endless?' · LAST AS LONG AS YOU CAN':' · SURVIVE, THEN DEFEAT THE BOSS'),4);if(g.endless)board.startRun();updateUI();}
 $('nextStage').onclick=()=>{selectMode(2);begin();};$('startBtn').onclick=begin;
 // How to Play sheet: opens from the menu, closes with GOT IT or a tap outside it.
 $('howBtn').onclick=()=>{$('howSheet').hidden=false;$('howClose').focus();};
@@ -203,8 +232,8 @@ function finish(text){$('recovery').hidden=true;let earned=settle(progress,g);sa
  $('nextStage').hidden=!hasNext;
  $('again').innerHTML=`<b>${hasNext?'REPLAY':won?'PLAY AGAIN':'TRY AGAIN'}</b><span>${stageName}</span><i aria-hidden="true">→</i>`;
  $('home').textContent=hasNext?'Back to briefing':'MAIN MENU';
- $('receipt').classList.toggle('surv',g.endless);
- if(g.endless){
+ $('receipt').classList.toggle('surv',g.endless);$('endBoard').hidden=!g.endless;
+ if(g.endless){postSurvivalTime(g);
   // Build 19: survival. Time survived is the score; the line under the headline says what ended the run.
   const k=g.killedBy,who=!k?'':k.boss?(k.slam?bossName+"'s slam":bossName):{worker:'An office drone',runner:'A runner',guard:'An HR guard',exec:'An executive'}[k.type]||'The swarm';
   $('endEyebrow').textContent=g.newBest?'NEW PERSONAL BEST':'SURVIVAL · SHIFT OVER';
