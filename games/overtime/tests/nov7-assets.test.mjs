@@ -36,10 +36,12 @@ for(const ev of ['hit-plunger','hit-tp','hit-gas','hit-flush','hit-boss','throw'
 assert.ok(!onDisk.some(f=>/ko\.mp3$|oof/.test(f)));
 
 // 3. Menu: the elements the app code uses are in the page, and the menu art exists.
-for(const id of ['bank','stageCard','stagePrev','stageNext','stageNumber','stageName','stageNote','stagePicker','startBtn','perksBtn','howBtn','howSheet','howClose','briefingTitle','briefingText','nextGoal','sound','best'])
+for(const id of ['bank','stageCard','stageTrack','stageDots','stagePrev','stageNext','stageNumber','stageName','stageNote','stagePicker','startBtn','perksBtn','howBtn','howSheet','howClose','briefingTitle','briefingText','nextGoal','sound','best'])
   assert.ok(html.includes(`id="${id}"`),'menu element #'+id);
 assert.ok(html.includes('assets/menu/coin.webp')&&exists('assets/menu/coin.webp'));
-assert.ok(css.includes('url(assets/menu/stall.webp)')&&exists('assets/menu/stall.webp'));
+// Build 20: the stall art gave way to three swipe cards, one per mode.
+for(const f of ['card-office','card-lobby','card-survival'])assert.ok(app.includes('assets/menu/'+f+'.webp')&&exists('assets/menu/'+f+'.webp'),f+' card art');
+assert.ok(!exists('assets/menu/stall.webp')&&!css.includes('stall.webp'),'old stall art is gone');
 assert.ok(!html.includes('class="memo"')&&!html.includes('class="hero"'),'old menu memo and hero are gone');
 
 // 4. Build: every asset gets packed in, and no asset path is left unresolved in the page.
