@@ -1,4 +1,4 @@
-# PoopProfit: Overtime (current: Build 19)
+# PoopProfit: Overtime (current: Build 20)
 
 Live game: https://poopprofit.com/beta-test-survival-game.html (built from this folder).
 The old private prototype link (https://poopprofit-overtime-prototype.johnkay.chatgpt.site) is out of date.
@@ -215,3 +215,13 @@ A third mode on the menu card (the ∞ entry). The run never ends and time survi
 - **Tuning tool:** `node tools/survival-sim.mjs` plays seeded bot runs and prints a report (about a minute). At this build: standing still is hit at about 0:12 and out by 0:24; a dodging bot that picks for evolutions passes 3:00 in 8 of 12 runs and lasts about 11 to 12 minutes when it does; the same bot with random picks rarely passes the first boss. An unlimited-health bot sees 4 to 5 promotions a minute early and about 2 later, its first evolution between 2:15 and 3:30, and all four by about 7:00. Bots are a rough guide; playtests decide.
 - **Known soft spot:** between about minute 5 and 9 a strong build is barely threatened outside boss fights, then the health climb catches up fast around minute 10 to 12.
 - New suite `tests/survival.test.mjs`. `tests/cabinet.test.mjs` now expects the Petty Cash bonus shelf art (`dist/assets/cabinet/cash.webp`, from the Deep Pockets render).
+
+## Build 20: swipe carousel on the menu (made with Claude, Nov 14)
+- **Look:** from Johnny's mockup. The single Herman image and the small mode bar are replaced by a carousel of three art cards under "CHOOSE YOUR SHIFT": Office Floor, Corporate Lobby, Survival of the Shittest. The middle card is the mode CLOCK IN starts; the cards on either side peek in, smaller and dimmed.
+- **Art:** Johnny's three cards (`dist/assets/menu/card-*.webp`, 720 px wide; full size in `art-sources/menu-cards/`). The mode name, tagline, gold frame and rounded corners are part of each image. To change a card, swap its file; to add a mode, add it to `MODES` and `CARD_ART` in `app.mjs`.
+- **Moving it:** swipe, tap a side card, tap an arrow, or tap a dot. Cards snap to the middle one at a time. It is a native scrolling row with scroll snap, so it follows the finger without any drag code.
+- **Under the cards:** dots, then one line for the middle card (what the stage asks, the unlock rule, or the survival best time).
+- **Locked mode:** its card is greyed with a lock and the unlock rule, and CLOCK IN is disabled while it is in the middle.
+- **Kept from the old menu:** Petty Cash coin, sound button (now top left), CLOCK IN in gold, Break Room, How to Play, PoopProfit.com link. On screens under 700 px tall the link row and the "A POOP PROFIT ORIGINAL" line give their space to the cards.
+- **Removed:** `dist/assets/menu/stall.webp` (the old menu image; the end screens have their own art).
+- New suite `tests/menu-carousel.test.mjs`. The built page is about 2.7 MB (was 2.2 MB).

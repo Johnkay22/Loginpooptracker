@@ -18,24 +18,46 @@ function renderStagePicker(){
  const stage=stageFor(selectedStage);$('stageNumber').textContent=modeNumber(stage);$('briefingTitle').textContent=stage.name+': '+stage.subtitle;$('briefingText').textContent=stage.briefing;
  renderStageCard();
 }
-// Nov 7 menu: one stage card with arrows. Browsing to a locked stage shows how to unlock it and disables CLOCK IN.
-let cardStage=null;
+// Build 20 menu: the mode picker is a swipe carousel of art cards. Swiping, tapping a side card, the arrows and
+// the dots all move it. The card in the middle is the one CLOCK IN starts; a locked card disables CLOCK IN.
+const CARD_ART={1:'assets/menu/card-office.webp',2:'assets/menu/card-lobby.webp',[SURVIVAL_ID]:'assets/menu/card-survival.webp'};
+const LOCK_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 0 1 6 0v3H9z"/></svg>';
+let cardStage=null,settleTimer=0;
+const track=$('stageTrack');
+MODES.forEach((stage,i)=>{
+ const card=document.createElement('button');card.type='button';card.className='sv3-card';card.setAttribute('role','option');card.setAttribute('aria-label',stage.name);
+ card.innerHTML=`<img src="${CARD_ART[stage.id]}" alt="" draggable="false"><span class="sv3-lock" hidden>${LOCK_ICON}<b></b></span>`;
+ card.onclick=()=>goToCard(i);track.append(card);
+ const dot=document.createElement('button');dot.type='button';dot.setAttribute('aria-label',stage.name);dot.onclick=()=>goToCard(i);$('stageDots').append(dot);
+});
+const cardIndex=()=>Math.max(0,MODES.findIndex(st=>st.id===cardStage));
+function goToCard(i,instant){const el=track.children[i];if(!el||!track.clientWidth)return;track.scrollTo({left:el.offsetLeft-(track.clientWidth-el.offsetWidth)/2,behavior:instant?'auto':'smooth'});}
+// Sizes each card by how far it is from the middle, and returns the index of the one nearest the middle.
+function paintCarousel(){const mid=track.scrollLeft+track.clientWidth/2;let best=0,bestDist=Infinity;
+ [...track.children].forEach((el,i)=>{const d=Math.abs(el.offsetLeft+el.offsetWidth/2-mid),k=Math.min(1,d/(el.offsetWidth||1));el.style.setProperty('--s',(1-k*.12).toFixed(3));el.style.setProperty('--o',(1-k*.45).toFixed(3));if(d<bestDist){bestDist=d;best=i;}});
+ return best;}
+track.addEventListener('scroll',()=>{const i=paintCarousel();clearTimeout(settleTimer);settleTimer=setTimeout(()=>{if(MODES[i].id===cardStage)return;cardStage=MODES[i].id;if(canPlayStage(progress,cardStage))selectMode(cardStage);renderStagePicker();},80);},{passive:true});
+// The menu is hidden during a run, and a hidden carousel cannot scroll: line it up again whenever it gets a size.
+new ResizeObserver(()=>{if(track.clientWidth){goToCard(cardIndex(),true);paintCarousel();}}).observe(track);
 function renderStageCard(){
  if(cardStage==null||!MODES.some(st=>st.id===cardStage))cardStage=selectedStage;
- const index=MODES.findIndex(st=>st.id===cardStage),stage=MODES[index],unlocked=canPlayStage(progress,stage.id);
+ const index=cardIndex(),stage=MODES[index],unlocked=canPlayStage(progress,stage.id);
  $('stageNumber').textContent=modeNumber(stage);
  $('stageName').textContent=stage.name.toUpperCase();
- $('stageCard').classList.toggle('long-name',stage.name.length>18);
  $('stageNote').textContent=stage.endless
   ?'Endless · '+(progress.bestSurvival?'Your best: '+format(progress.bestSurvival):'How long can you last?')
   :unlocked
   ?(progress.clearedStages.includes(stage.id)?'CLEARED ✓ · ':'')+'Survive '+Math.round(stage.survival/60)+' min · Beat the boss'
-  :'🔒 Clear '+(MODES[index-1]?MODES[index-1].name:'the previous stage')+' to unlock';
+  :'Clear '+(MODES[index-1]?MODES[index-1].name:'the previous stage')+' to unlock';
  $('stageCard').classList.toggle('locked',!unlocked);
  $('startBtn').disabled=!unlocked;
- const browse=step=>()=>{cardStage=MODES[(index+step+MODES.length)%MODES.length].id;if(canPlayStage(progress,cardStage))selectMode(cardStage);renderStagePicker();};
- $('stagePrev').onclick=browse(-1);$('stageNext').onclick=browse(1);
- $('stagePrev').hidden=$('stageNext').hidden=MODES.length<2;
+ MODES.forEach((st,i)=>{const card=track.children[i],open=canPlayStage(progress,st.id);card.classList.toggle('locked',!open);card.setAttribute('aria-selected',String(i===index));
+  const lock=card.querySelector('.sv3-lock');lock.hidden=open;lock.querySelector('b').textContent=open?'':'Clear '+(MODES[i-1]?MODES[i-1].name:'the previous stage')+' to unlock';
+  $('stageDots').children[i].classList.toggle('on',i===index);});
+ $('stagePrev').onclick=()=>goToCard(index-1);$('stageNext').onclick=()=>goToCard(index+1);
+ $('stagePrev').hidden=index===0;$('stageNext').hidden=index===MODES.length-1;
+ // Came here from somewhere other than a swipe (first load, back from a run): bring that card to the middle.
+ if(track.clientWidth&&paintCarousel()!==index)goToCard(index,true);
 }
 function workshop(){$('recovery').hidden=true;for(let id of ['start','end','upgrade','pauseScreen','hud','bombBtn','loadout','combo','boost'])$(id).hidden=true;g=null;$('workshop').hidden=false;$('workBank').textContent=progress.credits;$('perkChoices').innerHTML='';for(let [k,v] of Object.entries(PERKS)){let rank=progress.perks[k],b=document.createElement('button');b.className='choice';b.disabled=rank>=3||progress.credits<cost(rank);b.innerHTML=`<span class="icon">${iconFor(k,v.icon)}</span><div><strong>${v.name} · ${rank}/3</strong><p>${v.desc}</p><small>${rank===3?'MAXED':cost(rank)+' PETTY CASH'}</small></div>`;b.onclick=()=>{if(buy(progress,k)){saveProgress();workshop();sound('upgrade');}};$('perkChoices').append(b);}$('starts').innerHTML='';for(let k of ['plunger','tp','gas']){let unlocked=k==='plunger'||k==='tp'&&progress.kills>=200||k==='gas'&&progress.wins>=1;let b=document.createElement('button');b.className='loadoutChoice'+(progress.start===k?' selected':'');b.disabled=!unlocked;b.innerHTML=iconFor(k,WEAPONS[k].icon)+' '+WEAPONS[k].name+(unlocked?'':k==='tp'?' · 200 KOs':' · 1 victory');b.onclick=()=>{progress.start=k;saveProgress();workshop();};$('starts').append(b);}$('hardMode').disabled=progress.wins<1;$('hardLock').textContent=progress.wins<1?'Unlock: win a mission':'Faster, tougher enemies';}
 $('perksBtn').onclick=workshop;$('endPerks').onclick=workshop;$('workBack').onclick=()=>{$('workshop').hidden=true;$('start').hidden=false;updateProgress();};updateProgress();
