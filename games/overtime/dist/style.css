@@ -274,3 +274,34 @@
 .bd-back i{font:800 24px/1 Inter,Arial,sans-serif;font-style:normal}
 .bd-back:active{transform:translateY(3px);box-shadow:0 2px 0 #8e642b}
 .bd-dock{margin-top:auto;padding-top:16px}
+/* Build 24: pause screen. The game stays visible, dimmed and blurred, behind a card; tips sit under it. */
+#pauseScreen.pausev{display:block;padding:0;overflow:auto;z-index:11;background:#081226bd;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.pz-wrap{display:flex;flex-direction:column;justify-content:center;min-height:100%;max-width:440px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 20px max(18px,env(safe-area-inset-bottom))}
+.pz-card{position:relative;margin-top:54px;padding:64px 20px 6px;border:1.5px solid #6f8fc4;border-radius:18px;background:linear-gradient(#0e1c3a,#0a1530);box-shadow:0 24px 60px #000a;text-align:center}
+.pz-badge{position:absolute;left:50%;top:-54px;width:108px;height:108px;margin-left:-54px;border-radius:50%;border:3px solid #fac759;background:#0b1630 url(assets/breakroom/break.webp) center/cover no-repeat;box-shadow:0 6px 18px #0009}
+.pz-eyebrow{padding-left:.5em;font:700 13px/1 Inter,Arial,sans-serif;letter-spacing:.5em;color:#7f9bd0}
+.pz-card h2{margin:12px 0 0;font:900 48px/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:.5px;color:#fff}
+.pz-card h2 span{color:#fac759}
+.pz-sub{margin:8px 0 0;font:500 15px/1.3 Inter,Arial,sans-serif;color:#dfe6f2}
+.pz-go{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:58px;margin:20px 0 0;border:1px solid #ffe5a0;border-radius:12px;background:linear-gradient(#ffe391,#e9b84f);box-shadow:0 5px 0 #8e642b,0 10px 22px #0006;color:#141414;font:900 28px/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:.5px}
+.pz-go svg{flex:none;width:20px;height:20px}
+.pz-go:active{transform:translateY(3px);box-shadow:0 2px 0 #8e642b}
+.pz-restart{width:100%;min-height:48px;margin:17px 0 0;border:1.5px solid #9db6e0;border-radius:10px;background:transparent;color:#fff;font:900 22px/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:.5px}
+.pz-restart:active{background:#ffffff14}
+.pz-sound{display:flex;align-items:center;gap:14px;width:100%;margin:18px 0 0;padding:14px 4px;border-top:1px solid #2f4263;background:none;color:#fff;font:600 16px/1 Inter,Arial,sans-serif;text-align:left}
+.pz-spk svg{display:block;width:26px;height:26px}
+.pz-sound-label{flex:1}
+.pz-sound[aria-checked=true] .br-switch{background:#e9b84f;border-color:#ffe391}
+.pz-sound[aria-checked=true] .br-switch::after{transform:translateX(28px);background:#fff}
+.pz-go:focus-visible,.pz-restart:focus-visible,.pz-sound:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.pz-tips{position:relative;margin-top:18px;padding:0 4px}
+.pz-tips h3{margin:0 0 10px;text-align:center;font:900 23px/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:.06em;color:#fac759}
+#pauseTips{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+#pauseTips li{display:grid;grid-template-columns:34px 1fr;align-items:center;gap:14px;min-height:57px;font:500 14.5px/1.3 Inter,Arial,sans-serif;color:#eef2f8;transition:opacity .25s}
+#pauseTips li.out{opacity:0}
+.pz-ico{width:34px;height:34px;color:#fac759}.pz-ico.warn{color:#ff5a52}
+.pz-ico svg{display:block;width:100%;height:100%}
+@media (max-height:700px){.pz-card{margin-top:44px;padding-top:52px}.pz-badge{top:-44px;width:88px;height:88px;margin-left:-44px}.pz-card h2{font-size:40px;margin-top:9px}.pz-go{min-height:52px;margin-top:14px;font-size:25px}.pz-restart{min-height:44px;margin-top:13px}.pz-sound{margin-top:13px;padding:11px 4px}.pz-tips{margin-top:13px}.pz-wrap{padding-top:max(10px,env(safe-area-inset-top));padding-bottom:max(10px,env(safe-area-inset-bottom))}#pauseTips{gap:5px}}
+@media (max-height:610px){#pauseTips li:nth-child(3){display:none}}
+@media (max-height:590px){#pauseTips li:nth-child(2){display:none}.pz-sub{font-size:13.5px}}
+@media (prefers-reduced-motion:reduce){#pauseTips li{transition:none}}

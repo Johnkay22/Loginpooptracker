@@ -1,4 +1,4 @@
-# PoopProfit: Overtime (current: Build 23)
+# PoopProfit: Overtime (current: Build 24)
 
 Live game: https://poopprofit.com/beta-test-survival-game.html (built from this folder).
 The old private prototype link (https://poopprofit-overtime-prototype.johnkay.chatgpt.site) is out of date.
@@ -236,6 +236,17 @@ A third mode on the menu card (the ∞ entry). The run never ends and time survi
 
 ## Build 22: Break Room buttons are gold (made with Claude, Nov 15)
 - Johnny picked gold over the mockup's cyan, so the Break Room's buy buttons, selected weapon, difficulty switch and BACK TO MENU now match the menu, promotion and end screens. Colours only; nothing else changed.
+
+## Build 24: pause screen with rotating tips (made with Claude, Nov 15)
+- **What players see:** the pause screen from Johnny's mockup. The game stays visible behind it, dimmed and blurred. A card with Herman on his coffee break, PAUSED, "ON A BREAK.", a gold BACK TO BUSINESS button, an outlined RESTART MISSION button and a Sound switch. Under the card, WHILE YOU'RE HERE shows three tips, each with an icon.
+- **Tips change.** Every 5 seconds one of the three fades out for the next, so each stays up about 15 seconds. Each mode remembers how far it got, so the next pause shows different tips. The first pause of a session shows the three must-knows for that mode (for survival, the exact three in the mockup).
+- **Tips fit the run.** Stage mode and survival have their own lists (stage mode never mentions briefcases, slots or the leaderboard). Each weapon in hand that can still evolve gets a line naming its real partner perk. The keyboard tip only shows on a computer.
+- **Tips cannot go stale:** `dist/tips.mjs` builds them from the engine's own numbers and names (minutes per boss, slots, kits, weapon and perk names). `tests/pause-screen.test.mjs` checks each against the engine.
+- **To add or change a tip:** edit `tipsFor()` in `dist/tips.mjs`. Keep it under 96 characters so it fits three lines on a small phone. Icons are in `TIP_ICONS` in the same file.
+- **Sound switch is gold**, not the mockup's blue, to match Johnny's gold-buttons call and the Break Room switch.
+- **Small screens:** short phones show two tips or one so nothing scrolls. Phone landscape scrolls.
+- The portrait is `assets/breakroom/break.webp`, cropped from the Break Room header art.
+- No rule changes. `BUILD` in `app.mjs` stays 23 because survival was not retuned.
 
 ## Build 23: survival leaderboard (made with Claude, Nov 15)
 - **What players see:** a LEADERBOARD button on the survival card, and a line on the survival end screen ("YOU ARE #4 ON THE LEADERBOARD", or "SIGN IN TO POST YOUR TIME" for guests). Both open the board: the top 10 survival times with usernames, plus your own row if you are outside the top 10.
