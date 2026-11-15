@@ -65,7 +65,7 @@ assert.match(app,/board\.top\(10\)/,'the board shows the top 10');
 assert.ok(!/innerHTML=[^;]*username/.test(app),'usernames are written as text, never as markup');
 
 // 7. The database change: table locked down, functions limited to the right callers.
-const sql=fs.readFileSync(path.join(root,'..','..','supabase/migrations/20261115100000_overtime_survival_leaderboard.sql'),'utf8');
+const sql=fs.readFileSync(path.join(root,'..','..','supabase/migrations/20261115110043_overtime_survival_leaderboard.sql'),'utf8');
 assert.match(sql,/alter table public\.overtime_survival_scores enable row level security;/);
 assert.match(sql,/revoke all on table public\.overtime_survival_scores from anon, authenticated;/);
 assert.ok(!/create policy/i.test(sql),'no direct access policies: everything goes through the functions');
