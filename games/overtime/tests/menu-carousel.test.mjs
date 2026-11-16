@@ -20,7 +20,7 @@ assert.equal(Object.keys(art).length,MODES.length,'no card for a mode that does 
 assert.deepEqual(fs.readdirSync(path.join(dist,'assets/menu')).filter(f=>f.startsWith('card-')).sort(),Object.values(art).map(p=>path.basename(p)).sort());
 
 // The page has the carousel, and it sits above CLOCK IN with Break Room and How to Play still on the menu.
-const menu=html.slice(html.indexOf('id="start"'),html.indexOf('id="howSheet"'));
+const menu=html.slice(html.indexOf('id="start"'),html.indexOf('id="how"'));
 for(const id of ['stageCard','stageTrack','stageDots','stagePrev','stageNext','stageNote','startBtn','perksBtn','howBtn','sound','bank'])assert.ok(menu.includes(`id="${id}"`),'menu element #'+id);
 assert.ok(menu.indexOf('id="stageTrack"')<menu.indexOf('id="startBtn"')&&menu.indexOf('id="startBtn"')<menu.indexOf('id="perksBtn"'),'carousel, then CLOCK IN, then Break Room');
 assert.ok(!menu.includes('sv2-hero'),'the old single hero image is gone');

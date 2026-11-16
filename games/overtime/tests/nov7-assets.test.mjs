@@ -36,7 +36,7 @@ for(const ev of ['hit-plunger','hit-tp','hit-gas','hit-flush','hit-boss','throw'
 assert.ok(!onDisk.some(f=>/ko\.mp3$|oof/.test(f)));
 
 // 3. Menu: the elements the app code uses are in the page, and the menu art exists.
-for(const id of ['bank','stageCard','stageTrack','stageDots','stagePrev','stageNext','stageNumber','stageName','stageNote','stagePicker','startBtn','perksBtn','howBtn','howSheet','howClose','briefingTitle','briefingText','nextGoal','sound','best'])
+for(const id of ['bank','stageCard','stageTrack','stageDots','stagePrev','stageNext','stageNumber','stageName','stageNote','stagePicker','startBtn','perksBtn','howBtn','how','howTrack','howDots','howNext','howSkip','nextGoal','sound','best'])
   assert.ok(html.includes(`id="${id}"`),'menu element #'+id);
 assert.ok(html.includes('assets/menu/coin.webp')&&exists('assets/menu/coin.webp'));
 // Build 20: the stall art gave way to three swipe cards, one per mode.

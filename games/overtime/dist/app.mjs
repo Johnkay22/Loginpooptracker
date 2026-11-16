@@ -2,11 +2,11 @@ import {MODES,SURVIVAL_ID,stageFor,canPlayStage} from './stages.mjs';
 import {paintOffice,paintLobby} from './scene.mjs';
 import {PERKS,fresh,normalize,buy,cost,settle} from './progress.mjs';
 import {Game,WEAPONS,PASSIVES,EVOLUTIONS,RECOVERY_SECONDS,SURVIVAL,clamp} from './engine.mjs';
-import {createBoard} from './leaderboard.mjs';import {tipsFor,takeTip,TIP_ICONS} from './tips.mjs';
+import {createBoard} from './leaderboard.mjs';import {tipsFor,takeTip,TIP_ICONS} from './tips.mjs';import {slidesFor} from './howto.mjs';import {shareMessage,sendShare} from './share.mjs';import {track as logEvent,timeBand,modeName} from './track.mjs';
 // Build number sent with leaderboard times, so times from before a retune can be told apart.
 const BUILD=23;const board=createBoard({build:BUILD});
 const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d');
-const brandPortrait=new Image();brandPortrait.src='assets/herman-brand.jpg';const herman=new Image();herman.src='assets/herman-battle.png';const hermanWalk=new Image();hermanWalk.src='assets/herman-walk.png';const enemySheet=new Image();enemySheet.src='assets/corporate-sprites.png';let g=null,W=0,H=0,scale=1,cam={x:900,y:900},keys={},stick=null,muted=false,audioCtx,toastUntil=0,last=performance.now(),lastUI=0,shake=0,wonBest=0;
+const brandPortrait=new Image();brandPortrait.src='assets/herman-brand.jpg';const herman=new Image();herman.src='assets/herman-battle.png';const hermanWalk=new Image();hermanWalk.src='assets/herman-walk.png';const enemySheet=new Image();enemySheet.src='assets/corporate-sprites.png';const briefcaseArt=new Image();briefcaseArt.src='assets/howto/briefcase.webp';let g=null,W=0,H=0,scale=1,cam={x:900,y:900},keys={},stick=null,muted=false,audioCtx,toastUntil=0,last=performance.now(),lastUI=0,shake=0,wonBest=0;
 try{wonBest=Number(localStorage.getItem('pp-overtime-best')||0);}catch{}$('best').textContent=wonBest?'BEST: '+wonBest+' KOs':'';
 let selectedStage=1;let progress=fresh();try{progress=normalize(JSON.parse(localStorage.getItem('pp-overtime-progress')||'null'));}catch{}
 // Build 19: the menu lists MODES (both stages plus survival) and remembers the last one picked.
@@ -18,7 +18,7 @@ function updateProgress(){ cardStage=selectedStage; renderStagePicker(); $('bank
 function renderStagePicker(){
  $('stagePicker').innerHTML='';
  for(let stage of MODES){let b=document.createElement('button');b.className='stage-option'+(selectedStage===stage.id?' selected':'');b.disabled=!canPlayStage(progress,stage.id);b.setAttribute('aria-pressed',String(selectedStage===stage.id));b.textContent=modeNumber(stage)+' · '+stage.name+(b.disabled?' · LOCKED':progress.clearedStages.includes(stage.id)?' ✓':'');b.onclick=()=>{selectMode(stage.id);renderStagePicker();};$('stagePicker').append(b);}
- const stage=stageFor(selectedStage);$('stageNumber').textContent=modeNumber(stage);$('briefingTitle').textContent=stage.name+': '+stage.subtitle;$('briefingText').textContent=stage.briefing;
+ const stage=stageFor(selectedStage);$('stageNumber').textContent=modeNumber(stage);
  renderStageCard();
 }
 // Build 20 menu: the mode picker is a swipe carousel of art cards. Swiping, tapping a side card, the arrows and
@@ -74,7 +74,7 @@ function postSurvivalTime(run){
  board.submitRun({seconds:run.t,kills:run.kills,level:run.level,bosses:run.bossesBeaten}).then(r=>{
   label(r&&r.posted&&r.rank?'YOU ARE '+ordinal(r.rank)+' ON THE LEADERBOARD':r&&r.rank?'LEADERBOARD · YOU ARE '+ordinal(r.rank):'LEADERBOARD');});
 }
-function showBoard(){
+function showBoard(){logEvent('overtime_board_open',{signed_in:board.signedIn()});
  const list=$('boardList'),note=$('boardNote'),signedIn=board.signedIn();
  $('board').hidden=false;$('board').scrollTop=0;list.innerHTML='';note.textContent='Loading…';$('boardSign').hidden=signedIn;
  board.top(10).then(rows=>{
@@ -163,12 +163,34 @@ try{muted=localStorage.getItem('pp-overtime-sound')==='off';}catch{}// The menu'
 const SPEAKER_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
 const SPEAKER_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="m16 9 6 6M22 9l-6 6"/></svg>';
 function soundLabel(){$('sound').innerHTML=$('soundPauseIcon').innerHTML=muted?SPEAKER_OFF:SPEAKER_ON;$('sound').setAttribute('aria-label',muted?'Sound is off. Tap to turn on':'Sound is on. Tap to turn off');$('soundPause').setAttribute('aria-checked',String(!muted));}function toggleSound(){muted=!muted;try{localStorage.setItem('pp-overtime-sound',muted?'off':'on');}catch{}soundLabel();sound('upgrade');}soundLabel();$('sound').onclick=toggleSound;$('soundPause').onclick=toggleSound;
-function begin(){$('recovery').hidden=true;if(!canPlayStage(progress,selectedStage))selectedStage=1;sound('upgrade');g=new Game(Math.random,progress.perks,selectedStage!==SURVIVAL_ID&&$('hardMode').checked&&progress.wins>0?1:0,progress.start,selectedStage);setFloor(selectedStage);cam={x:g.player.x,y:g.player.y};keys={};stick=null;for(let id of ['start','end','upgrade','pauseScreen','workshop'])$(id).hidden=true;for(let id of ['hud','loadout','hint','bombBtn','combo'])$(id).hidden=false;last=performance.now();showToast(g.stage.name.toUpperCase()+(g.endless?' · LAST AS LONG AS YOU CAN':' · SURVIVE, THEN DEFEAT THE BOSS'),4);if(g.endless)board.startRun();updateUI();}
-$('nextStage').onclick=()=>{selectMode(2);begin();};$('startBtn').onclick=begin;
+function begin(){$('recovery').hidden=true;if(!canPlayStage(progress,selectedStage))selectedStage=1;sound('upgrade');g=new Game(Math.random,progress.perks,selectedStage!==SURVIVAL_ID&&$('hardMode').checked&&progress.wins>0?1:0,progress.start,selectedStage);logEvent('overtime_run_start',{mode:modeName(g.stage),hard:g.difficulty===1});setFloor(selectedStage);cam={x:g.player.x,y:g.player.y};keys={};stick=null;for(let id of ['start','end','upgrade','pauseScreen','workshop'])$(id).hidden=true;for(let id of ['hud','loadout','hint','bombBtn','combo'])$(id).hidden=false;last=performance.now();showToast(g.stage.name.toUpperCase()+(g.endless?' · LAST AS LONG AS YOU CAN':' · SURVIVE, THEN DEFEAT THE BOSS'),4);if(g.endless)board.startRun();updateUI();}
+$('nextStage').onclick=()=>{selectMode(2);begin();};$('startBtn').onclick=()=>howSeen()?begin():openHow(begin);
 // How to Play sheet: opens from the menu, closes with GOT IT or a tap outside it.
-$('howBtn').onclick=()=>{$('howSheet').hidden=false;$('howClose').focus();};
-$('howClose').onclick=()=>{$('howSheet').hidden=true;$('howBtn').focus();};
-$('howSheet').onclick=e=>{if(e.target===$('howSheet'))$('howSheet').hidden=true;};$('again').onclick=begin;$('restartPause').onclick=begin;
+// Build 25: How to Play is six swipe cards with moving pictures (words and markup in howto.mjs, drawing in
+// style.css). It opens from the menu button, and once by itself the first time a player taps CLOCK IN; there, the
+// last button and SKIP both start the run. Only the card in view animates.
+const HOW_KEY='pp-overtime-howto',howTrack=$('howTrack');let howThen=null,howAt=0,howLock=0;
+function howSeen(){try{return localStorage.getItem(HOW_KEY)==='1';}catch{return true;}}
+function setHow(i){howAt=i;let n=howTrack.children.length,last=i===n-1;[...howTrack.children].forEach((c,k)=>c.classList.toggle('on',k===i));[...$('howDots').children].forEach((d,k)=>{d.classList.toggle('on',k===i);d.setAttribute('aria-current',k===i?'step':'false');});$('howNext').textContent=last?(howThen?'CLOCK IN':'GOT IT'):'NEXT';$('howSkip').style.visibility=last?'hidden':'';$('how').classList.toggle('last',last);}
+function goHow(i){i=Math.max(0,Math.min(howTrack.children.length-1,i));howTrack.scrollTo({left:i*howTrack.clientWidth,behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});howLock=performance.now()+600;setHow(i);}
+function openHow(then){howThen=then||null;let slides=slidesFor(MODES.find(st=>st.id===cardStage)||stageFor(selectedStage));howTrack.replaceChildren();$('howDots').replaceChildren();
+ slides.forEach((s,i)=>{let card=document.createElement('article');card.className='hw-card';card.setAttribute('role','group');card.setAttribute('aria-label',`Step ${i+1} of ${slides.length}: ${s.title}`);
+  card.innerHTML=`<div class="hs s-${s.id} ${s.cls||''}" aria-hidden="true">${s.scene}</div><div class="hw-step">STEP ${i+1} OF ${slides.length}</div><h3></h3><p></p>`;card.querySelector('h3').textContent=s.title;card.querySelector('p').textContent=s.text;howTrack.append(card);
+  let dot=document.createElement('button');dot.type='button';dot.setAttribute('aria-label','Step '+(i+1)+': '+s.title);dot.onclick=()=>goHow(i);$('howDots').append(dot);});
+ $('how').hidden=false;howTrack.scrollLeft=0;setHow(0);$('howNext').focus();}
+function closeHow(action){logEvent('overtime_howto',{action,first_run:!!howThen,card:howAt+1});$('how').hidden=true;howTrack.replaceChildren();try{localStorage.setItem(HOW_KEY,'1');}catch{}let then=howThen;howThen=null;if(then)then();else $('howBtn').focus();}
+howTrack.addEventListener('scroll',()=>{if(!howTrack.clientWidth||performance.now()<howLock)return;let i=Math.round(howTrack.scrollLeft/howTrack.clientWidth);if(i!==howAt&&i>=0&&i<howTrack.children.length)setHow(i);},{passive:true});
+$('howNext').onclick=()=>howAt>=howTrack.children.length-1?closeHow('finished'):goHow(howAt+1);$('howSkip').onclick=()=>closeHow('skipped');$('howBtn').onclick=()=>openHow();
+$('how').addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();goHow(howAt+1);}else if(e.key==='ArrowLeft'){e.preventDefault();goHow(howAt-1);}else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeHow('skipped');}});$('again').onclick=begin;
+// Build 26: SHARE on the end screen. Uses the phone's share sheet when there is one, otherwise copies the line.
+const SHARE_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
+let shareIdle='SHARE',shareTimer=0;
+function shareLabel(t,hold){clearTimeout(shareTimer);if(!hold)shareIdle=t;$('endShare').innerHTML=SHARE_ICON+'<b></b>';$('endShare').lastChild.textContent=t;if(hold)shareTimer=setTimeout(()=>shareLabel(shareIdle),2200);}
+$('endShare').onclick=async()=>{if(!g)return;let how=await sendShare(shareMessage({endless:g.endless,won:g.state==='won',time:format(g.t),stageName:g.stage.name}),navigator);logEvent('overtime_share',{mode:modeName(g.stage),outcome:how});if(how==='copied')shareLabel('COPIED. PASTE IT ANYWHERE.',true);else if(how==='failed')shareLabel('COULD NOT SHARE FROM THIS BROWSER',true);};
+// Build 26: RESTART MISSION on the pause screen needs a second tap within 3 seconds, so a slip cannot wipe a run.
+let restartUntil=0,restartTimer=0;
+function disarmRestart(){clearTimeout(restartTimer);restartUntil=0;$('restartPause').textContent='RESTART MISSION';$('restartPause').classList.remove('armed');}
+$('restartPause').onclick=()=>{if(performance.now()<restartUntil){disarmRestart();begin();return;}restartUntil=performance.now()+3000;$('restartPause').textContent='TAP AGAIN TO RESTART';$('restartPause').classList.add('armed');restartTimer=setTimeout(disarmRestart,3000);};
 $('home').onclick=()=>{g=null;renderStagePicker();$('end').hidden=true;$('start').hidden=false;for(let id of ['hud','loadout','hint','bombBtn','combo','boost','recovery'])$(id).hidden=true;};
 // Build 24: tips under WHILE YOU'RE HERE. Three show at once; one swaps out every few seconds, so each stays long
 // enough to read. Each mode remembers how far it has got, so the next pause shows different tips.
@@ -178,7 +200,7 @@ function nextTip(){let showing=[...$('pauseTips').children].map(li=>li.dataset.t
 function swapTip(){if($('pauseScreen').hidden)return stopTips();let rows=[...$('pauseTips').children].filter(li=>li.offsetParent),li=rows[tipSlot++%rows.length];if(!li)return;li.classList.add('out');setTimeout(()=>{fillTip(li,nextTip());li.classList.remove('out');},260);}
 function stopTips(){clearInterval(tipTimer);tipTimer=0;}
 function showTips(){stopTips();tipMode=g.endless?'survival':'stage';tipPool=tipsFor({endless:g.endless,weapons:g.weapons,keyboard:matchMedia('(hover:hover) and (pointer:fine)').matches});tipSlot=0;let list=$('pauseTips');list.replaceChildren();for(let i=0;i<TIP_SLOTS;i++){let li=document.createElement('li');list.append(li);fillTip(li,nextTip());}tipTimer=setInterval(swapTip,TIP_SWAP_MS);}
-function pause(){if(!g)return;if(g.state==='playing'||g.state==='countdown'){showTips();g.pausedFrom=g.state;g.state='paused';$('recovery').hidden=true;$('pauseScreen').hidden=false;stick=null;keys={};}else if(g.state==='paused'){g.state=g.pausedFrom||'playing';$('pauseScreen').hidden=true;stopTips();last=performance.now();}}
+function pause(){if(!g)return;if(g.state==='playing'||g.state==='countdown'){showTips();disarmRestart();g.pausedFrom=g.state;g.state='paused';$('recovery').hidden=true;$('pauseScreen').hidden=false;stick=null;keys={};}else if(g.state==='paused'){g.state=g.pausedFrom||'playing';$('pauseScreen').hidden=true;stopTips();last=performance.now();}}
 $('pause').onclick=pause;$('resume').onclick=pause;
 window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','p','P','Escape'].includes(e.key))e.preventDefault();if((e.key===' '||e.key.toLowerCase()==='b')&&!e.repeat)triggerBomb();if((e.key.toLowerCase()==='p'||e.key==='Escape')&&!e.repeat)pause();keys[e.key.toLowerCase()]=true;});window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 window.addEventListener('blur',()=>{keys={};stick=null;if(g?.state==='playing'||g?.state==='countdown')pause();});document.addEventListener('visibilitychange',()=>{if(document.hidden&&(g?.state==='playing'||g?.state==='countdown'))pause();});
@@ -232,14 +254,14 @@ function upgrades(){
  upgradeShownAt=performance.now();$('upgrade').hidden=false;
 }
 function upgradeDesc(k,l){return{plunger:'More damage'+(l%2===0?' and an extra returning plunger.':', with faster automatic throws.'),tp:'An extra orbiting roll, more damage and wider reach.',gas:'Larger clouds that last longer and deal more damage.',flush:'Bigger waves, more damage and a shorter cooldown.',bomb:'Wider lure and blast, more damage, shorter manual recharge.'}[k]||'';}
-function finish(text){$('recovery').hidden=true;let earned=settle(progress,g);saveProgress();updateProgress();$('bombBtn').hidden=true;stick=null;keys={};$('upgrade').hidden=true;$('pauseScreen').hidden=true;const won=g.state==='won',hasNext=won&&g.stage.id===1,stageName=g.stage.name.toUpperCase(),boss=g.enemies.find(e=>e.boss),bossName=g.stage.bossName.replace(/\B\w+/g,w=>w.toLowerCase());
+function finish(text){$('recovery').hidden=true;let earned=settle(progress,g);saveProgress();updateProgress();$('bombBtn').hidden=true;stick=null;keys={};$('upgrade').hidden=true;$('pauseScreen').hidden=true;const won=g.state==='won',hasNext=won&&g.stage.id===1;logEvent('overtime_run_end',{mode:modeName(g.stage),result:won?'won':'lost',time_band:timeBand(g.t),bosses_beaten:g.bossesBeaten||0});const stageName=g.stage.name.toUpperCase(),boss=g.enemies.find(e=>e.boss),bossName=g.stage.bossName.replace(/\B\w+/g,w=>w.toLowerCase());
  // Build 18: end screen. One layout for a clear and a loss; the art, headline and main button change.
  $('end').classList.toggle('won',won);$('end').classList.toggle('has-next',hasNext);$('end').scrollTop=0;
  $('endTitle').innerHTML=won?'STAGE <span>CLEAR!</span>':'CLOCKED <span>OUT</span>';
  $('nextStage').hidden=!hasNext;
  $('again').innerHTML=`<b>${hasNext?'REPLAY':won?'PLAY AGAIN':'TRY AGAIN'}</b><span>${stageName}</span><i aria-hidden="true">→</i>`;
  $('home').textContent=hasNext?'Back to briefing':'MAIN MENU';
- $('receipt').classList.toggle('surv',g.endless);$('endBoard').hidden=!g.endless;
+ $('receipt').classList.toggle('surv',g.endless);$('endBoard').hidden=!g.endless;shareLabel(g.endless?'SHARE MY TIME':won?'SHARE THE WIN':'CHALLENGE A FRIEND');
  if(g.endless){postSurvivalTime(g);
   // Build 19: survival. Time survived is the score; the line under the headline says what ended the run.
   const k=g.killedBy,who=!k?'':k.boss?(k.slam?bossName+"'s slam":bossName):{worker:'An office drone',runner:'A runner',guard:'An HR guard',exec:'An executive'}[k.type]||'The swarm';
@@ -295,7 +317,7 @@ function draw(){ctx.clearRect(0,0,W,H);ctx.fillStyle='#091d27';ctx.fillRect(0,0,
  for(let e of g.enemies){if(e.windup>0||e.dash>0){ctx.strokeStyle=e.dash>0?'#ffb883':'#ff6d6688';ctx.lineWidth=22;ctx.beginPath();ctx.moveTo(e.x,e.y);ctx.lineTo(e.x+e.aim.x*145,e.y+e.aim.y*145);ctx.stroke();if(e.windup>0)text('!',e.x,e.y-42,22,'#ff9c7b');}}
  for(let c of g.clouds){let alpha=.14*(1-c.t/c.life);circle(c.x,c.y,c.r,`rgba(157,210,93,${alpha})`);for(let i=0;i<3;i++)circle(c.x+Math.cos(c.t+i*2)*c.r*.35,c.y+Math.sin(c.t+i*2)*c.r*.35,c.r*.65,`rgba(157,210,93,${alpha})`);}
  for(let b of g.bombs){ctx.setLineDash([6,9]);ctx.lineWidth=1.5;circle(b.x,b.y,b.lure,null,'#9dca5455');ctx.setLineDash([]);circle(b.x,b.y,b.blast,'#bde66b0a');let pulse=18+b.t/b.fuse*6+Math.sin(b.t*10)*2;for(let i=0;i<5;i++){let a=i*1.257+b.t,r=b.lure*(1-(b.t*.5+i*.2)%1);circle(b.x+Math.cos(a)*r,b.y+Math.sin(a)*r,3,'#dcff9277');}let crowd=g.enemies.filter(e=>e.attracted&&Math.hypot(e.x-b.x,e.y-b.y)<b.lure).length;if(crowd)text(crowd+' LURED',b.x,b.y+48,12,'#e2ff92');circle(b.x,b.y,pulse+7,'#b5e66d22');let shine=ctx.createRadialGradient(b.x-7,b.y-8,1,b.x,b.y,21);shine.addColorStop(0,'#81964b');shine.addColorStop(.45,'#344732');shine.addColorStop(1,'#111f22');circle(b.x,b.y,pulse,shine,'#d4ef87');rounded(b.x-6,b.y-25,12,10,3,'#d5c77f','#ffe7a5');circle(b.x,b.y,9,'#b9dc6e');text('☣',b.x,b.y+6,17,'#273b22');for(let i=0;i<3;i++){let a=b.t*2+i*2.1;circle(b.x+Math.cos(a)*12,b.y-30-(b.t*20+i*12)%35,5+i,'#bce77544');}text((b.fuse-b.t).toFixed(1)+'s',b.x,b.y-30,12,'#d8f79a');ctx.strokeStyle='#dfff95';ctx.lineWidth=3;ctx.beginPath();ctx.arc(b.x,b.y,25,-Math.PI/2,-Math.PI/2+Math.PI*2*b.t/b.fuse);ctx.stroke();}
- for(let d of g.drops){if(d.chest){circle(d.x,d.y,26+Math.sin(g.t*5)*3,'#ffca5b22','#ffcc67');rounded(d.x-14,d.y-10,28,21,3,'#97612d','#ffdc82');rounded(d.x-6,d.y-16,12,7,2,null,'#ffdc82');text('BONUS',d.x,d.y-24,8,'#ffdc82');}else if(d.coffee){circle(d.x,d.y,18,'#603d2d','#ffd981');text('☕',d.x,d.y+8,24);text('RUSH',d.x,d.y-25,10,'#ffdf91');}else if(d.magnet){circle(d.x,d.y,16,'#243e64','#a1dcff');if(magnetImg.complete&&magnetImg.naturalWidth)ctx.drawImage(magnetImg,d.x-12,d.y-12,24,24);}else if(d.heal){if(d.life!=null&&d.life<5&&Math.floor(d.life*6)%2)continue;circle(d.x+2,d.y+10,16,'#0004');healthKit(d.x,d.y);}else{let radius=d.value>1?13:10;circle(d.x,d.y+3,radius,'#0005');ctx.drawImage(tokenCanvas,d.x-radius,d.y-radius,radius*2,radius*2);if(d.value>1)text('×'+d.value,d.x,d.y+radius+10,9,'#ffdd83');}}
+ for(let d of g.drops){if(d.chest){circle(d.x,d.y,26+Math.sin(g.t*5)*3,'#ffca5b22','#ffcc67');if(briefcaseArt.complete&&briefcaseArt.naturalWidth)ctx.drawImage(briefcaseArt,d.x-19,d.y-20,38,38);else{rounded(d.x-14,d.y-10,28,21,3,'#97612d','#ffdc82');rounded(d.x-6,d.y-16,12,7,2,null,'#ffdc82');}text('BONUS',d.x,d.y-24,8,'#ffdc82');}else if(d.coffee){circle(d.x,d.y,18,'#603d2d','#ffd981');text('☕',d.x,d.y+8,24);text('RUSH',d.x,d.y-25,10,'#ffdf91');}else if(d.magnet){circle(d.x,d.y,16,'#243e64','#a1dcff');if(magnetImg.complete&&magnetImg.naturalWidth)ctx.drawImage(magnetImg,d.x-12,d.y-12,24,24);}else if(d.heal){if(d.life!=null&&d.life<5&&Math.floor(d.life*6)%2)continue;circle(d.x+2,d.y+10,16,'#0004');healthKit(d.x,d.y);}else{let radius=d.value>1?13:10;circle(d.x,d.y+3,radius,'#0005');ctx.drawImage(tokenCanvas,d.x-radius,d.y-radius,radius*2,radius*2);if(d.value>1)text('×'+d.value,d.x,d.y+radius+10,9,'#ffdd83');}}
  for(let e of [...g.enemies].sort((a,b)=>a.y-b.y))enemy(e);
  // Transparent full-body mascot, grounded shadow and movement animation.
  ctx.save();ctx.translate(p.x,p.y);ctx.scale(1,.38);circle(0,25,26,'#0007');ctx.restore();circle(p.x,p.y,21,null,'#f4dc8470');if(g.t<5&&g.state==='playing'){ctx.globalAlpha=1-g.t/5;text('YOU',p.x,p.y+56,15,'#9de6c1');circle(p.x,p.y+4,34,null,'#9de6c1');ctx.globalAlpha=1;}ctx.save();ctx.translate(p.x,p.y);let moving=g.moving&&g.state==='playing';ctx.scale(g.facingX,1);ctx.globalAlpha=p.inv>0&&Math.floor(p.inv*15)%2?.45:1;if(moving&&hermanWalk.complete&&hermanWalk.naturalWidth){let frame=Math.floor(g.walkDistance/20)%4,cw=hermanWalk.naturalWidth/2,ch=hermanWalk.naturalHeight/2;ctx.drawImage(hermanWalk,(frame%2)*cw,Math.floor(frame/2)*ch,cw,ch,-42,-62,84,84);}else if(herman.complete&&herman.naturalWidth)ctx.drawImage(herman,-42,-62,84,84);ctx.restore();
