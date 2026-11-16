@@ -69,15 +69,7 @@
 .sv2-logo{justify-self:center;font:800 21px Inter,Arial,sans-serif;color:#fff;text-decoration:none;letter-spacing:-.3px}
 .sv2-logo span{color:#45a8ff}.sv2-logo em{font-style:normal;font-size:11px;background:#f7c331;color:#1a1300;border-radius:5px;padding:2px 4px;margin-left:2px;vertical-align:3px}
 .sv2 #best{justify-self:end;font-size:10px;line-height:1.3;color:#a9b8d0;text-align:right}
-.sv2 button:focus-visible,.sv2 a:focus-visible,.sv2-sheet button:focus-visible{outline:3px solid #ffd76a;outline-offset:2px}
-.sv2-sheet{position:absolute;inset:0;z-index:3;display:flex;align-items:flex-end;justify-content:center;background:#040a16cc}
-.sv2-sheet[hidden]{display:none}
-.sv2-sheet-in{width:100%;max-width:460px;max-height:88%;overflow:auto;background:#13223f;border:1px solid #33466c;border-radius:18px 18px 0 0;padding:20px 20px max(18px,env(safe-area-inset-bottom))}
-.sv2-sheet-in h2{font:800 20px Inter,Arial,sans-serif;margin:6px 0 4px}
-.sv2-sheet-in>p{font-size:13px;line-height:1.55;color:#bdc9db;margin:0 0 10px}
-.sv2-tips{margin:0 0 6px;padding-left:18px;display:grid;gap:7px;font-size:13px;line-height:1.45;color:#e6ecf5}
-.sv2-desk{display:none}@media (hover:hover) and (pointer:fine){.sv2-desk{display:list-item}}
-.sv2-sheet-in .footnote{text-align:left;margin:10px 0 14px}
+.sv2 button:focus-visible,.sv2 a:focus-visible{outline:3px solid #ffd76a;outline-offset:2px}
 
 /* Build 16: the promotion screen is a supply cabinet. Every size is a fraction of the stage width (--u = 1%),
    so the art, the shelves and the text scale together. The stage shows its top 92.5% (down to just past the sticky note). */
@@ -305,3 +297,153 @@
 @media (max-height:610px){#pauseTips li:nth-child(3){display:none}}
 @media (max-height:590px){#pauseTips li:nth-child(2){display:none}.pz-sub{font-size:13.5px}}
 @media (prefers-reduced-motion:reduce){#pauseTips li{transition:none}}
+/* Build 25: How to Play. Six swipe cards; each has a picture (.hs) drawn from the game's art. Inside a picture
+   1em is 1% of its width, so every position below is a percentage of the picture and it scales as one piece. */
+#how.howv{display:block;padding:0;overflow:hidden;z-index:12;background:radial-gradient(ellipse at 50% 0,#1b3364,#081226 70%)}
+.hw-wrap{--u:min(calc((100vw - 40px)/100),4.2px,calc((100vh - 322px)/70));--u:min(calc((100vw - 40px)/100),4.2px,calc((100dvh - 322px)/70));display:flex;flex-direction:column;height:100%;max-width:520px;margin:0 auto;padding:max(12px,env(safe-area-inset-top)) 0 max(16px,env(safe-area-inset-bottom))}
+.hw-top{display:flex;align-items:center;justify-content:space-between;padding:0 20px;min-height:40px}
+.hw-top h2{margin:0;font:700 13px/1 Inter,Arial,sans-serif;letter-spacing:.34em;color:#7f9bd0}
+#howSkip{min-height:40px;margin-right:-10px;padding:0 10px;border:0;background:none;color:#dfe6f2;font:800 13px/1 Inter,Arial,sans-serif;letter-spacing:.12em}
+.hw-track{flex:1;min-height:0;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;outline:0}
+.hw-track::-webkit-scrollbar{display:none}
+.hw-card{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px;text-align:center}
+.hw-step{margin-top:16px;font:700 11px/1 Inter,Arial,sans-serif;letter-spacing:.3em;color:#7f9bd0}
+.hw-card h3{margin:7px 0 0;font:900 36px/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:.5px;color:#fac759}
+.hw-card p{max-width:360px;min-height:63px;margin:8px 0 0;font:500 15px/1.4 Inter,Arial,sans-serif;color:#eef2f8}
+.hw-wrap .sv3-dots{margin-top:6px}
+.hw-foot{min-height:15px;margin:8px 20px 0;text-align:center;font:700 10.5px/1.4 Inter,Arial,sans-serif;letter-spacing:.06em;color:#7f9bd0;visibility:hidden}
+#how.last .hw-foot{visibility:visible}
+.hw-wrap .pz-go{width:auto;margin:10px 20px 0}
+#howSkip:focus-visible,.hw-wrap .pz-go:focus-visible,.hw-wrap .sv3-dots button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.hs{position:relative;flex:none;width:100em;height:70em;font-size:var(--u);overflow:hidden;border:1px solid #3a4f7c;border-radius:5em;background:#16284a linear-gradient(#ffffff0a 1px,transparent 1px) 0 0/12.5em 12.5em;box-shadow:0 14px 36px #0007}
+.hs i,.hs b,.hs u,.hs em{position:absolute;display:block;font-style:normal;text-decoration:none}
+.hs-h{left:0;top:0;width:100%;height:100%;background:url(assets/howto/herman.webp) 0 0/400% 100% no-repeat}
+.hs-f{width:14em;height:21em;background:url(assets/howto/foes.webp) 0 0/400% 100% no-repeat}
+.hs-f.f2{background-position:33.333% 0}.hs-f.f3{background-position:66.667% 0}.hs-f.f4{background-position:100% 0}
+.hs-i{background:center/contain no-repeat}
+.i-plunger{background-image:url(assets/cabinet/plunger.webp)}.i-plunger2{background-image:url(assets/cabinet/plunger2.webp)}.i-coffee{background-image:url(assets/cabinet/coffee.webp)}.i-bomb{background-image:url(assets/cabinet/bomb.webp)}.i-heal{background-image:url(assets/cabinet/heal.webp)}.i-cash{background-image:url(assets/cabinet/cash.webp)}.i-case{background-image:url(assets/howto/briefcase.webp)}
+.hs .mv{width:26em;height:26em}
+.hs .bar{left:8em;top:5.5em;width:84em;height:4em;border-radius:2em;background:#0b1630;box-shadow:inset 0 0 0 1px #3a4f7c;overflow:hidden}
+.hs .bar b{inset:0 auto 0 0;width:100%;border-radius:2em;background:linear-gradient(#ffe391,#e9b84f)}
+.hs .lab{left:0;right:0;font:900 calc(5*var(--u))/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:.06em;text-align:center;color:#fac759}
+@keyframes hw-walk{to{background-position:133.333% 0}}
+@keyframes hw-pop{0%{opacity:0;transform:scale(.4)}70%{transform:scale(1.08)}100%{opacity:1;transform:none}}
+@keyframes hw-spin{to{transform:rotate(1turn)}}
+.hw-card.on .hs-h{animation:hw-walk .56s steps(4) infinite}
+/* 1 Move */
+.s-move .mv{left:30em;top:22em}.s-move .a{left:80em;top:3em}.s-move .b{left:4em;top:2em}
+.s-move .p{left:0;top:0;width:11em;height:11em;transform:translate(60em,14em) rotate(40deg)}
+.s-move .stick{left:66em;top:42em;width:22em;height:22em;border-radius:50%;border:.5em solid #ffffff59;background:#ffffff12}
+.s-move .stick b{left:6.5em;top:6.5em;width:8em;height:8em;border-radius:50%;background:#fff;box-shadow:0 0 0 1.4em #ffffff38;transform:translate(4.5em,-2.5em)}
+@keyframes s1mv{0%,100%{transform:translate(-16em,10em)}40%,50%{transform:translate(14em,-8em)}90%{transform:translate(-16em,10em)}}
+@keyframes s1flip{0%,49.9%{transform:scaleX(1)}50%,99.9%{transform:scaleX(-1)}100%{transform:scaleX(1)}}
+@keyframes s1p{0%{opacity:0;transform:translate(23em,41em) rotate(0)}4%{opacity:1}18%{transform:translate(82em,8em) rotate(540deg)}34%{opacity:1;transform:translate(48em,26em) rotate(1080deg)}36%,50%{opacity:0;transform:translate(50em,25em) rotate(1080deg)}54%{opacity:1}68%{transform:translate(6.5em,7.5em) rotate(1620deg)}84%{opacity:1;transform:translate(27em,39em) rotate(2160deg)}86%,100%{opacity:0;transform:translate(27em,39em) rotate(2160deg)}}
+@keyframes s1a{0%,17%{opacity:1;transform:none;filter:none}18.5%{opacity:1;filter:brightness(4)}24%,56%{opacity:0;transform:scale(.5)}62%,100%{opacity:1;transform:none}}
+@keyframes s1b{0%,67%{opacity:1;transform:none;filter:none}68.5%{opacity:1;filter:brightness(4)}74%,96%{opacity:0;transform:scale(.5)}100%{opacity:1;transform:none}}
+@keyframes s1k{0%,100%{transform:none}7%,40%{transform:translate(4.5em,-2.5em)}50%{transform:none}57%,90%{transform:translate(-4.5em,2.5em)}}
+.hw-card.on .s-move .mv{animation:s1mv 6s ease-in-out infinite}.hw-card.on .s-move .hs-h{animation:hw-walk .56s steps(4) infinite,s1flip 6s infinite}
+.hw-card.on .s-move .p{animation:s1p 6s linear infinite}.hw-card.on .s-move .a{animation:s1a 6s infinite}.hw-card.on .s-move .b{animation:s1b 6s infinite}.hw-card.on .s-move .stick b{animation:s1k 6s ease-in-out infinite}
+/* 2 Get promoted */
+.s-promo .mv{left:68em;top:9em}.s-promo .i-cash{top:21em;width:9em;height:11em}.s-promo .c1{left:26em}.s-promo .c2{left:40em}.s-promo .c3{left:54em}.s-promo .c4{left:68em}
+.s-promo .lab{top:calc(36*var(--u))}
+.s-promo .card{top:42.5em;width:24em;height:24em;border-radius:3em;border:.5em solid #6f8fc4;background:#0e1c3a}.s-promo .k1{left:10em}.s-promo .k2{left:38em;border-color:#fac759;box-shadow:0 0 0 1em #fac75944}.s-promo .k3{left:66em}
+.s-promo .card b{inset:2.5em}
+@keyframes s2mv{0%{opacity:1;transform:translateX(-66em)}50%,95%{opacity:1;transform:none}97%{opacity:0;transform:none}100%{opacity:0;transform:translateX(-66em)}}
+@keyframes s2bar{0%,12%{width:8%}15%,22%{width:31%}25%,32%{width:54%}35%,43%{width:77%}46%,95%{width:100%}100%{width:8%}}
+@keyframes s2c1{0%,12%{opacity:1;transform:none}15%,96%{opacity:0;transform:translateY(-11em) scale(.5)}100%{opacity:1;transform:none}}
+@keyframes s2c2{0%,22%{opacity:1;transform:none}25%,96%{opacity:0;transform:translateY(-11em) scale(.5)}100%{opacity:1;transform:none}}
+@keyframes s2c3{0%,32%{opacity:1;transform:none}35%,96%{opacity:0;transform:translateY(-11em) scale(.5)}100%{opacity:1;transform:none}}
+@keyframes s2c4{0%,43%{opacity:1;transform:none}46%,96%{opacity:0;transform:translateY(-11em) scale(.5)}100%{opacity:1;transform:none}}
+@keyframes s2up{0%,50%{opacity:0;transform:translateY(8em)}57%,95%{opacity:1;transform:none}100%{opacity:0;transform:none}}
+@keyframes s2lab{0%,50%{opacity:0;transform:translateY(1em)}57%,95%{opacity:1;transform:none}100%{opacity:0;transform:none}}
+@keyframes s2pick{0%,72%{border-color:#6f8fc4;box-shadow:none;transform:none}75%{transform:scale(.94)}78%,100%{border-color:#fac759;box-shadow:0 0 0 1em #fac75944;transform:none}}
+.hw-card.on .s-promo .mv{animation:s2mv 7s linear infinite}.hw-card.on .s-promo .bar b{animation:s2bar 7s infinite}
+.hw-card.on .s-promo .c1{animation:s2c1 7s infinite}.hw-card.on .s-promo .c2{animation:s2c2 7s infinite}.hw-card.on .s-promo .c3{animation:s2c3 7s infinite}.hw-card.on .s-promo .c4{animation:s2c4 7s infinite}
+.hw-card.on .s-promo .lab{animation:s2lab 7s infinite}.hw-card.on .s-promo .card{animation:s2up 7s infinite}
+.hw-card.on .s-promo .k1{animation-delay:0s}.hw-card.on .s-promo .k3{animation-delay:.16s}.hw-card.on .s-promo .k2{animation:s2up 7s .08s infinite,s2pick 7s infinite}
+/* 3 Evolve */
+.s-evolve .slot{top:4em;width:24em;height:24em}.s-evolve .slot b{left:4em;top:0;width:16em;height:16em}
+.s-evolve .slot u{left:calc(-4*var(--u));right:calc(-4*var(--u));top:calc(17.5*var(--u));font:800 calc(3.3*var(--u))/1 Inter,Arial,sans-serif;letter-spacing:.04em;text-align:center;color:#dfe6f2;white-space:nowrap}
+.s-evolve .slot em{left:calc(13*var(--u));top:calc(-1*var(--u));padding:calc(.8*var(--u)) calc(1.6*var(--u));border-radius:calc(2*var(--u));background:#fac759;color:#141414;font:900 calc(3.2*var(--u))/1 Inter,Arial,sans-serif}
+.s-evolve .a{left:5em}.s-evolve .b{left:38em}.s-evolve .c{left:71em}
+.s-evolve .plus{top:calc(5.5*var(--u));width:calc(9*var(--u));font:900 calc(11*var(--u))/1 Inter,Arial,sans-serif;text-align:center;color:#fac759}
+.s-evolve .p1{left:calc(29*var(--u))}.s-evolve .p2{left:calc(62*var(--u))}
+.s-evolve.two .a{left:20em}.s-evolve.two .b{left:56em}.s-evolve.two .p1{left:calc(45.5*var(--u))}
+.s-evolve .rays{left:28em;top:21em;width:44em;height:44em;border-radius:50%;background:repeating-conic-gradient(#fac75938 0 12deg,transparent 12deg 30deg);-webkit-mask:radial-gradient(#000 30%,transparent 68%);mask:radial-gradient(#000 30%,transparent 68%)}
+.s-evolve .res{left:36em;top:29em;width:28em;height:28em;filter:drop-shadow(0 0 2em #fac759aa)}
+.s-evolve .name{left:0;right:0;top:calc(60*var(--u));font:900 calc(6.4*var(--u))/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:.04em;text-align:center;color:#fac759}
+@keyframes s3res{0%{opacity:0;transform:scale(.2) rotate(-30deg)}60%{opacity:1;transform:scale(1.18)}100%{opacity:1;transform:none}}
+@keyframes s3glow{50%{transform:scale(1.06)}}
+.hw-card.on .s-evolve .slot,.hw-card.on .s-evolve .plus,.hw-card.on .s-evolve .name{animation:hw-pop .45s both}
+.hw-card.on .s-evolve .a{animation-delay:.3s}.hw-card.on .s-evolve .p1{animation-delay:.75s}.hw-card.on .s-evolve .b{animation-delay:1s}.hw-card.on .s-evolve .p2{animation-delay:1.45s}.hw-card.on .s-evolve .c{animation-delay:1.7s}
+.hw-card.on .s-evolve .res{animation:s3res .7s 2.5s both,s3glow 1.8s 3.2s ease-in-out infinite}.hw-card.on .s-evolve .name{animation-delay:3s}
+.hw-card.on .s-evolve .rays{animation:hw-pop .6s 2.5s both,hw-spin 14s 3.1s linear infinite}
+/* 4 Stink Bomb */
+.s-bomb .bm{left:42em;top:24em;width:16em;height:16em}
+.s-bomb .ring{left:35em;top:17em;width:30em;height:30em;border-radius:50%;border:.7em solid #b6e35a;opacity:.55}.s-bomb .r2{transform:scale(1.7);opacity:.25}
+.s-bomb .a{left:25em;top:4em}.s-bomb .b{left:62em;top:6em}.s-bomb .c{left:22em;top:36em}
+.s-bomb .boom{left:16em;top:-2em;width:68em;height:68em;border-radius:50%;background:radial-gradient(#f6ffc4,#b6e35a 42%,#b6e35a00 70%);opacity:0}
+.s-bomb .btn{left:76em;top:46em;width:20em;height:20em;border-radius:50%;border:.9em solid #d5e987;background:#7e9937;box-shadow:0 0 0 1.2em #0b2029}
+.s-bomb .btn b{inset:3em}
+@keyframes s4btn{0%,2%{transform:none;box-shadow:0 0 0 1.2em #0b2029}5%{transform:scale(.86);box-shadow:0 0 0 1.2em #0b2029,0 0 0 4em #ffffff55}9%,100%{transform:none;box-shadow:0 0 0 1.2em #0b2029}}
+@keyframes s4bm{0%,6%{opacity:0;transform:scale(0)}11%{opacity:1;transform:scale(1.15)}14%,30%{transform:none}38%{transform:scale(1.08)}46%{transform:none}54%{transform:scale(1.12)}61%{opacity:1;transform:scale(1.2)}63%,100%{opacity:0;transform:scale(1.2)}}
+@keyframes s4ring{0%,10%{opacity:0;transform:scale(.4)}12%{opacity:.8}34%{opacity:0;transform:scale(2.2)}35%{opacity:0;transform:scale(.4)}37%{opacity:.8}60%,100%{opacity:0;transform:scale(2.2)}}
+@keyframes s4a{0%,10%{opacity:1;transform:translate(-26em,-14em)}56%,61%{opacity:1;transform:none;filter:none}63%{opacity:1;filter:brightness(4)}72%,97%{opacity:0;transform:translate(-12em,-8em) scale(.5)}100%{opacity:1;transform:translate(-26em,-14em)}}
+@keyframes s4b{0%,10%{opacity:1;transform:translate(28em,-14em)}56%,61%{opacity:1;transform:none;filter:none}63%{opacity:1;filter:brightness(4)}72%,97%{opacity:0;transform:translate(12em,-8em) scale(.5)}100%{opacity:1;transform:translate(28em,-14em)}}
+@keyframes s4c{0%,10%{opacity:1;transform:translate(-28em,12em)}56%,61%{opacity:1;transform:none;filter:none}63%{opacity:1;filter:brightness(4)}72%,97%{opacity:0;transform:translate(-12em,8em) scale(.5)}100%{opacity:1;transform:translate(-28em,12em)}}
+@keyframes s4boom{0%,61%{opacity:0;transform:scale(.2)}65%{opacity:1;transform:scale(.9)}76%,100%{opacity:0;transform:scale(1.15)}}
+.hw-card.on .s-bomb .btn{animation:s4btn 5.5s infinite}.hw-card.on .s-bomb .bm{animation:s4bm 5.5s infinite}.hw-card.on .s-bomb .ring{animation:s4ring 5.5s linear infinite}.hw-card.on .s-bomb .r2{animation-delay:.45s}
+.hw-card.on .s-bomb .a{animation:s4a 5.5s infinite}.hw-card.on .s-bomb .b{animation:s4b 5.5s infinite}.hw-card.on .s-bomb .c{animation:s4c 5.5s infinite}.hw-card.on .s-bomb .boom{animation:s4boom 5.5s infinite}
+/* 5 Stay alive: step out of the red circle, then a Corporate Rush charges in, and surviving it drops a kit. */
+.s-alive .hp b{width:88%;background:linear-gradient(#8ff09a,#3fb857)}
+.s-alive .zone{left:5em;top:27em;width:36em;height:36em;border-radius:50%;border:.6em solid #ff5a52;background:#ff5a521f}
+.s-alive .zone b{inset:0;border-radius:50%;background:#ff5a5270;transform:scale(.72)}
+.s-alive .mv{left:50em;top:22em}.s-alive .lab{top:calc(13.5*var(--u))}.s-alive .warn{color:#ff7a72;opacity:0}.s-alive .kit{left:82em;top:36em;width:13em;height:13em}
+.s-alive .r1,.s-alive .r2,.s-alive .r3{opacity:0}.s-alive .r1{left:80em;top:16em}.s-alive .r2{left:86em;top:40em}.s-alive .r3{left:70em;top:46em}
+@keyframes s5zone{0%,30%{opacity:1;transform:none;background:#ff5a521f}32%{opacity:1;transform:scale(1.14);background:#ff8a80}37%,96%{opacity:0;transform:scale(1.2)}100%{opacity:1;transform:none}}
+@keyframes s5fill{0%{transform:scale(0)}30%,100%{transform:scale(1)}}
+@keyframes s5mv{0%,4%{transform:translate(-40em,6em)}26%,70%{transform:none}80%,96%{transform:translate(14em,0)}100%{transform:translate(-40em,6em)}}
+@keyframes s5run{0%,40%{opacity:0;transform:translateX(40em)}42%{opacity:1;transform:translateX(40em)}54%{opacity:1;transform:none;filter:none}56%{opacity:1;filter:brightness(4)}60%,100%{opacity:0;transform:scale(.5)}}
+@keyframes s5warn{0%,39%{opacity:0;transform:translateY(-1em)}42%,56%{opacity:1;transform:none}59%,100%{opacity:0}}
+@keyframes s5ok{0%,60%{opacity:0;transform:translateY(-1em)}63%,93%{opacity:1;transform:none}97%,100%{opacity:0}}
+@keyframes s5kit{0%,62%{opacity:0;transform:translateY(-16em)}68%,79%{opacity:1;transform:none}82%,100%{opacity:0;transform:scale(.4)}}
+@keyframes s5hp{0%,80%{width:52%}84%,96%{width:88%}100%{width:52%}}
+.hw-card.on .s-alive .zone{animation:s5zone 8s infinite}.hw-card.on .s-alive .zone b{animation:s5fill 8s linear infinite}.hw-card.on .s-alive .mv{animation:s5mv 8s ease-in-out infinite}
+.hw-card.on .s-alive .r1,.hw-card.on .s-alive .r2,.hw-card.on .s-alive .r3{animation:s5run 8s infinite}.hw-card.on .s-alive .r2{animation-delay:.12s}.hw-card.on .s-alive .r3{animation-delay:.24s}
+.hw-card.on .s-alive .warn{animation:s5warn 8s infinite}.hw-card.on .s-alive .ok{animation:s5ok 8s infinite}
+.hw-card.on .s-alive .hp b{animation:s5hp 8s infinite}.hw-card.on .s-alive .kit{animation:s5kit 8s infinite}
+/* 6 The mission */
+.s-mission .clock{left:36em;top:5em;width:28em;height:10em;border-radius:5em;background:#0b1630;box-shadow:inset 0 0 0 1px #3a4f7c}
+.s-mission .clock b{inset:0;font:900 calc(7*var(--u))/calc(10*var(--u)) 'Barlow Condensed',Impact,sans-serif;letter-spacing:.04em;text-align:center;color:#fff;opacity:0}.s-mission .clock b:last-child{opacity:1}
+.s-mission .mv{left:6em;top:36em}
+.s-mission .p{left:0;top:0;width:11em;height:11em;transform:translate(44em,38em) rotate(40deg)}
+.s-mission .boss{left:60em;top:17em;width:30em;height:48em}
+.s-mission .boss .tag{left:0;right:0;top:0;font:900 calc(4.2*var(--u))/1 Inter,Arial,sans-serif;letter-spacing:.12em;text-align:center;color:#fac759}
+.s-mission .bhp{left:2em;top:6em;width:26em;height:2.4em;border-radius:1.2em;background:#513c28;overflow:hidden}.s-mission .bhp u{inset:0 auto 0 0;width:60%;background:#fac759}
+.s-mission .boss .hs-f{left:3em;top:10em;width:24em;height:36em}
+.s-mission .won{left:0;right:0;top:calc(20*var(--u));font:900 calc(13*var(--u))/1 'Barlow Condensed',Impact,sans-serif;text-align:center;color:#fac759;text-shadow:0 calc(.8*var(--u)) 0 #8e642b,0 0 calc(6*var(--u)) #000;transform:rotate(-6deg);opacity:0}
+@keyframes s6c1{0%,7.9%{opacity:1}8%,100%{opacity:0}}@keyframes s6c2{0%,7.9%{opacity:0}8%,15.9%{opacity:1}16%,100%{opacity:0}}@keyframes s6c3{0%,15.9%{opacity:0}16%,23.9%{opacity:1}24%,100%{opacity:0}}@keyframes s6c4{0%,23.9%{opacity:0}24%,100%{opacity:1}}
+@keyframes s6boss{0%,25%{opacity:0;transform:translateX(34em)}34%,84%{opacity:1;transform:none}88%,100%{opacity:0;transform:scale(.7)}}
+@keyframes s6hp{0%,38%{width:100%}84%,100%{width:0}}
+@keyframes s6hit{0%,45%,47%,61%,63%,77%,79%,100%{filter:none}46%,62%,78%{filter:brightness(3.5)}}
+@keyframes s6p{0%,37%{opacity:0;transform:translate(26em,44em) rotate(0)}38%{opacity:1}46%{transform:translate(66em,36em) rotate(720deg)}54%{transform:translate(26em,44em) rotate(1440deg)}62%{transform:translate(66em,36em) rotate(2160deg)}70%{transform:translate(26em,44em) rotate(2880deg)}78%{opacity:1;transform:translate(66em,36em) rotate(3600deg)}84%,100%{opacity:0;transform:translate(26em,44em) rotate(4320deg)}}
+@keyframes s6won{0%,86%{opacity:0;transform:rotate(-6deg) scale(2.2)}90%,97%{opacity:1;transform:rotate(-6deg)}100%{opacity:0;transform:rotate(-6deg)}}
+.hw-card.on .s-mission .clock b:nth-child(1){animation:s6c1 7.5s infinite}.hw-card.on .s-mission .clock b:nth-child(2){animation:s6c2 7.5s infinite}.hw-card.on .s-mission .clock b:nth-child(3){animation:s6c3 7.5s infinite}.hw-card.on .s-mission .clock b:nth-child(4){animation:s6c4 7.5s infinite}
+.hw-card.on .s-mission .boss{animation:s6boss 7.5s infinite}.hw-card.on .s-mission .bhp u{animation:s6hp 7.5s linear infinite}.hw-card.on .s-mission .boss .hs-f{animation:s6hit 7.5s infinite}
+.hw-card.on .s-mission .p{animation:s6p 7.5s linear infinite}.hw-card.on .s-mission .won{animation:s6won 7.5s infinite}
+/* 6 The mission, survival: the clock runs, a boss arrives at each mark, then the leaderboard row. */
+.s-mission.surv .mv{top:30em}.s-mission.surv .boss{top:12em}.s-mission.surv .boss .hs-f{top:6em}
+.s-mission .line{left:8em;top:61em;width:84em;height:2.4em;border-radius:1.2em;background:#0b1630;box-shadow:inset 0 0 0 1px #3a4f7c}
+.s-mission .line b{inset:0 auto 0 0;width:100%;border-radius:1.2em;background:linear-gradient(#ffe391,#e9b84f)}
+.s-mission .line u{top:-1.3em;width:5em;height:5em;margin-left:-2.5em;border-radius:50%;background:#fac759;box-shadow:0 0 0 1em #0b1630}.s-mission .line u:nth-of-type(1){left:33.33%}.s-mission .line u:nth-of-type(2){left:66.66%}.s-mission .line u:nth-of-type(3){left:100%;margin-left:-4em}
+.s-mission .row{left:calc(6*var(--u));top:calc(19*var(--u));display:flex;gap:calc(3*var(--u));padding:calc(1.6*var(--u)) calc(3*var(--u));border-radius:calc(2.4*var(--u));border:calc(.5*var(--u)) solid #fac759;background:#0e1c3a;font:900 calc(5.4*var(--u))/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:.04em;color:#fff}
+.s-mission .row b{position:static}.s-mission .row b:first-child{color:#fac759}
+@keyframes s7fill{0%{width:0}78%,100%{width:100%}}
+@keyframes s7c1{0%,25.9%{opacity:1}26%,100%{opacity:0}}@keyframes s7c2{0%,25.9%{opacity:0}26%,51.9%{opacity:1}52%,100%{opacity:0}}@keyframes s7c3{0%,51.9%{opacity:0}52%,77.9%{opacity:1}78%,100%{opacity:0}}@keyframes s7c4{0%,77.9%{opacity:0}78%,100%{opacity:1}}
+@keyframes s7boss{0%,24%{opacity:0;transform:translateX(34em)}27%,34%{opacity:1;transform:none;filter:none}36%{opacity:1;filter:brightness(3.5)}40%,50%{opacity:0;transform:scale(.7)}50.1%{opacity:0;transform:translateX(34em)}53%,60%{opacity:1;transform:none;filter:none}62%{opacity:1;filter:brightness(3.5)}66%,76%{opacity:0;transform:scale(.7)}76.1%{opacity:0;transform:translateX(34em)}79%,86%{opacity:1;transform:none;filter:none}88%{opacity:1;filter:brightness(3.5)}92%,100%{opacity:0;transform:scale(.7)}}
+@keyframes s7row{0%,88%{opacity:0;transform:translateY(1em)}92%,100%{opacity:1;transform:none}}
+.hw-card.on .s-mission.surv .clock b:nth-child(1){animation:s7c1 9s infinite}.hw-card.on .s-mission.surv .clock b:nth-child(2){animation:s7c2 9s infinite}.hw-card.on .s-mission.surv .clock b:nth-child(3){animation:s7c3 9s infinite}.hw-card.on .s-mission.surv .clock b:nth-child(4){animation:s7c4 9s infinite}
+.hw-card.on .s-mission.surv .line b{animation:s7fill 9s linear infinite}.hw-card.on .s-mission.surv .boss{animation:s7boss 9s infinite}.hw-card.on .s-mission.surv .boss .hs-f{animation:none}.hw-card.on .s-mission.surv .row{animation:s7row 9s infinite}
+@media (max-height:620px){.hw-card h3{font-size:30px}.hw-card p{font-size:14px;min-height:59px}.hw-step{margin-top:11px}}
+@media (prefers-reduced-motion:reduce){.hw-card.on .hs *{animation:none!important}}
+

@@ -1,4 +1,4 @@
-# PoopProfit: Overtime (current: Build 24)
+# PoopProfit: Overtime (current: Build 25)
 
 Live game: https://poopprofit.com/beta-test-survival-game.html (built from this folder).
 The old private prototype link (https://poopprofit-overtime-prototype.johnkay.chatgpt.site) is out of date.
@@ -236,6 +236,16 @@ A third mode on the menu card (the ∞ entry). The run never ends and time survi
 
 ## Build 22: Break Room buttons are gold (made with Claude, Nov 15)
 - Johnny picked gold over the mockup's cyan, so the Break Room's buy buttons, selected weapon, difficulty switch and BACK TO MENU now match the menu, promotion and end screens. Colours only; nothing else changed.
+
+## Build 25: How to Play as swipe cards with moving pictures (made with Claude, Nov 15)
+- **What players see:** HOW TO PLAY is now six swipe cards instead of a list of sentences. Each card has a small animated picture made from the game's own art, a title and one line: Move, Get Promoted, Evolve, Stink Bomb, Stay Alive, The Mission. Swipe, tap a dot, or tap NEXT. SKIP is in the corner.
+- **Shows once by itself.** The first time a player taps CLOCK IN, the cards open first. The last button (CLOCK IN) and SKIP both start the run. After that it only opens from the HOW TO PLAY button. The "seen" flag is `pp-overtime-howto` in the browser's storage.
+- **Cards fit the mode on the menu.** Survival: Evolve shows weapon + partner perk + briefcase, and The Mission shows the clock, a boss every 3 minutes and the leaderboard. Levels: Evolve has no briefcase, and The Mission shows the timer, the boss fight and that level's briefing.
+- **Where things live:** the words and picture markup are in `dist/howto.mjs` (names and numbers come from the engine). The drawing and animation are the `.hs` rules at the end of `dist/style.css`; inside a picture, 1em is 1% of its width, so it scales as one piece. Only the card in view animates. With "reduce motion" on, each picture is a still that reads on its own.
+- **New art:** `assets/howto/` has Herman's four walk frames, the four enemies and the gold briefcase (Johnny's render, original in `art-sources/howto/`). The build inlines this folder.
+- **Briefcases on the floor now use the gold briefcase render** instead of the small brown box, so the game matches the card. Still labelled BONUS.
+- **Gone:** the old text sheet (`#howSheet`). The level briefing moved to the last card. The NEXT UNLOCK line shows under the last card.
+- No rule changes. `BUILD` in `app.mjs` stays 23.
 
 ## Build 24: pause screen with rotating tips (made with Claude, Nov 15)
 - **What players see:** the pause screen from Johnny's mockup. The game stays visible behind it, dimmed and blurred. A card with Herman on his coffee break, PAUSED, "ON A BREAK.", a gold BACK TO BUSINESS button, an outlined RESTART MISSION button and a Sound switch. Under the card, WHILE YOU'RE HERE shows three tips, each with an icon.
