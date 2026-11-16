@@ -22,11 +22,11 @@ assert.ok(!/to earn a first aid kit/.test(html),'old sentence list is gone');
 
 // The wiring: first CLOCK IN shows the cards, then starts the run; text goes in as text.
 assert.match(app,/\$\('startBtn'\)\.onclick=\(\)=>howSeen\(\)\?begin\(\):openHow\(begin\);/,'first CLOCK IN opens the cards');
-assert.match(app,/function closeHow\(\)\{[^}]*localStorage\.setItem\(HOW_KEY,'1'\)/,'closing remembers it was seen');
+assert.match(app,/function closeHow\(action\)\{[^\n]*?localStorage\.setItem\(HOW_KEY,'1'\)/,'closing remembers it was seen');
 assert.match(app,/function howSeen\(\)\{try\{return localStorage\.getItem\(HOW_KEY\)==='1';\}catch\{return true;\}\}/,'blocked storage does not nag every run');
 assert.match(app,/card\.querySelector\('h3'\)\.textContent=s\.title;card\.querySelector\('p'\)\.textContent=s\.text;/);
 assert.match(app,/howThen\?'CLOCK IN':'GOT IT'/,'last button says what it does');
-assert.match(app,/\$\('howSkip'\)\.onclick=closeHow;\$\('howBtn'\)\.onclick=\(\)=>openHow\(\);/);
+assert.match(app,/\$\('howSkip'\)\.onclick=\(\)=>closeHow\('skipped'\);\$\('howBtn'\)\.onclick=\(\)=>openHow\(\);/);
 assert.match(app,/e\.key==='ArrowRight'[^;]*;goHow\(howAt\+1\)/,'arrow keys move between cards');
 
 // The cards, for every mode on the menu.

@@ -451,4 +451,9 @@
 .end-actions .end-share svg{flex:none;width:18px;height:18px}
 .end-actions .end-share:active{background:#fac75922}
 .pz-restart.armed{border-color:#ff7a72;color:#ffc2bd;background:#ff5a521f}
-
+/* Build 27: the analytics notice on the menu. Same consent key as the rest of the site, so "Got it" on either counts for both. */
+#cookieConsent{position:sticky;bottom:max(8px,env(safe-area-inset-bottom));z-index:2;align-items:center;gap:12px;margin-top:10px;padding:8px 8px 8px 12px;border:1px solid #33466c;border-radius:12px;background:#0b1630f5;box-shadow:0 6px 18px #0008;color:#cfd9ea;font:500 11.5px/1.35 Inter,Arial,sans-serif;text-align:left}
+#cookieConsent p{flex:1;margin:0}
+#cookieConsent a{color:#fac759;font-weight:700}
+#cookieConsentAccept{flex:none;width:auto;min-height:34px;margin:0;padding:0 14px;border:0;border-radius:9px;background:linear-gradient(#ffe391,#e9b84f);color:#141414;font:800 12px/1 Inter,Arial,sans-serif;letter-spacing:.02em}
+@media (max-height:620px){#cookieConsent{padding:5px 6px 5px 10px;font-size:11px}#cookieConsentAccept{min-height:30px}}
