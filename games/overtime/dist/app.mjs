@@ -2,7 +2,7 @@ import {MODES,SURVIVAL_ID,stageFor,canPlayStage} from './stages.mjs';
 import {paintOffice,paintLobby} from './scene.mjs';
 import {PERKS,fresh,normalize,buy,cost,settle} from './progress.mjs';
 import {Game,WEAPONS,PASSIVES,EVOLUTIONS,RECOVERY_SECONDS,SURVIVAL,clamp} from './engine.mjs';
-import {createBoard} from './leaderboard.mjs';import {tipsFor,takeTip,TIP_ICONS} from './tips.mjs';import {slidesFor} from './howto.mjs';
+import {createBoard} from './leaderboard.mjs';import {tipsFor,takeTip,TIP_ICONS} from './tips.mjs';import {slidesFor} from './howto.mjs';import {shareMessage,sendShare} from './share.mjs';
 // Build number sent with leaderboard times, so times from before a retune can be told apart.
 const BUILD=23;const board=createBoard({build:BUILD});
 const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d');
@@ -181,7 +181,16 @@ function openHow(then){howThen=then||null;let slides=slidesFor(MODES.find(st=>st
 function closeHow(){$('how').hidden=true;howTrack.replaceChildren();try{localStorage.setItem(HOW_KEY,'1');}catch{}let then=howThen;howThen=null;if(then)then();else $('howBtn').focus();}
 howTrack.addEventListener('scroll',()=>{if(!howTrack.clientWidth||performance.now()<howLock)return;let i=Math.round(howTrack.scrollLeft/howTrack.clientWidth);if(i!==howAt&&i>=0&&i<howTrack.children.length)setHow(i);},{passive:true});
 $('howNext').onclick=()=>howAt>=howTrack.children.length-1?closeHow():goHow(howAt+1);$('howSkip').onclick=closeHow;$('howBtn').onclick=()=>openHow();
-$('how').addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();goHow(howAt+1);}else if(e.key==='ArrowLeft'){e.preventDefault();goHow(howAt-1);}else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeHow();}});$('again').onclick=begin;$('restartPause').onclick=begin;
+$('how').addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();goHow(howAt+1);}else if(e.key==='ArrowLeft'){e.preventDefault();goHow(howAt-1);}else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeHow();}});$('again').onclick=begin;
+// Build 26: SHARE on the end screen. Uses the phone's share sheet when there is one, otherwise copies the line.
+const SHARE_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
+let shareIdle='SHARE',shareTimer=0;
+function shareLabel(t,hold){clearTimeout(shareTimer);if(!hold)shareIdle=t;$('endShare').innerHTML=SHARE_ICON+'<b></b>';$('endShare').lastChild.textContent=t;if(hold)shareTimer=setTimeout(()=>shareLabel(shareIdle),2200);}
+$('endShare').onclick=async()=>{if(!g)return;let how=await sendShare(shareMessage({endless:g.endless,won:g.state==='won',time:format(g.t),stageName:g.stage.name}),navigator);if(how==='copied')shareLabel('COPIED. PASTE IT ANYWHERE.',true);else if(how==='failed')shareLabel('COULD NOT SHARE FROM THIS BROWSER',true);};
+// Build 26: RESTART MISSION on the pause screen needs a second tap within 3 seconds, so a slip cannot wipe a run.
+let restartUntil=0,restartTimer=0;
+function disarmRestart(){clearTimeout(restartTimer);restartUntil=0;$('restartPause').textContent='RESTART MISSION';$('restartPause').classList.remove('armed');}
+$('restartPause').onclick=()=>{if(performance.now()<restartUntil){disarmRestart();begin();return;}restartUntil=performance.now()+3000;$('restartPause').textContent='TAP AGAIN TO RESTART';$('restartPause').classList.add('armed');restartTimer=setTimeout(disarmRestart,3000);};
 $('home').onclick=()=>{g=null;renderStagePicker();$('end').hidden=true;$('start').hidden=false;for(let id of ['hud','loadout','hint','bombBtn','combo','boost','recovery'])$(id).hidden=true;};
 // Build 24: tips under WHILE YOU'RE HERE. Three show at once; one swaps out every few seconds, so each stays long
 // enough to read. Each mode remembers how far it has got, so the next pause shows different tips.
@@ -191,7 +200,7 @@ function nextTip(){let showing=[...$('pauseTips').children].map(li=>li.dataset.t
 function swapTip(){if($('pauseScreen').hidden)return stopTips();let rows=[...$('pauseTips').children].filter(li=>li.offsetParent),li=rows[tipSlot++%rows.length];if(!li)return;li.classList.add('out');setTimeout(()=>{fillTip(li,nextTip());li.classList.remove('out');},260);}
 function stopTips(){clearInterval(tipTimer);tipTimer=0;}
 function showTips(){stopTips();tipMode=g.endless?'survival':'stage';tipPool=tipsFor({endless:g.endless,weapons:g.weapons,keyboard:matchMedia('(hover:hover) and (pointer:fine)').matches});tipSlot=0;let list=$('pauseTips');list.replaceChildren();for(let i=0;i<TIP_SLOTS;i++){let li=document.createElement('li');list.append(li);fillTip(li,nextTip());}tipTimer=setInterval(swapTip,TIP_SWAP_MS);}
-function pause(){if(!g)return;if(g.state==='playing'||g.state==='countdown'){showTips();g.pausedFrom=g.state;g.state='paused';$('recovery').hidden=true;$('pauseScreen').hidden=false;stick=null;keys={};}else if(g.state==='paused'){g.state=g.pausedFrom||'playing';$('pauseScreen').hidden=true;stopTips();last=performance.now();}}
+function pause(){if(!g)return;if(g.state==='playing'||g.state==='countdown'){showTips();disarmRestart();g.pausedFrom=g.state;g.state='paused';$('recovery').hidden=true;$('pauseScreen').hidden=false;stick=null;keys={};}else if(g.state==='paused'){g.state=g.pausedFrom||'playing';$('pauseScreen').hidden=true;stopTips();last=performance.now();}}
 $('pause').onclick=pause;$('resume').onclick=pause;
 window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','p','P','Escape'].includes(e.key))e.preventDefault();if((e.key===' '||e.key.toLowerCase()==='b')&&!e.repeat)triggerBomb();if((e.key.toLowerCase()==='p'||e.key==='Escape')&&!e.repeat)pause();keys[e.key.toLowerCase()]=true;});window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 window.addEventListener('blur',()=>{keys={};stick=null;if(g?.state==='playing'||g?.state==='countdown')pause();});document.addEventListener('visibilitychange',()=>{if(document.hidden&&(g?.state==='playing'||g?.state==='countdown'))pause();});
@@ -252,7 +261,7 @@ function finish(text){$('recovery').hidden=true;let earned=settle(progress,g);sa
  $('nextStage').hidden=!hasNext;
  $('again').innerHTML=`<b>${hasNext?'REPLAY':won?'PLAY AGAIN':'TRY AGAIN'}</b><span>${stageName}</span><i aria-hidden="true">→</i>`;
  $('home').textContent=hasNext?'Back to briefing':'MAIN MENU';
- $('receipt').classList.toggle('surv',g.endless);$('endBoard').hidden=!g.endless;
+ $('receipt').classList.toggle('surv',g.endless);$('endBoard').hidden=!g.endless;shareLabel(g.endless?'SHARE MY TIME':won?'SHARE THE WIN':'CHALLENGE A FRIEND');
  if(g.endless){postSurvivalTime(g);
   // Build 19: survival. Time survived is the score; the line under the headline says what ended the run.
   const k=g.killedBy,who=!k?'':k.boss?(k.slam?bossName+"'s slam":bossName):{worker:'An office drone',runner:'A runner',guard:'An HR guard',exec:'An executive'}[k.type]||'The swarm';

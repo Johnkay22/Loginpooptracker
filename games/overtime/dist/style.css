@@ -446,4 +446,9 @@
 .hw-card.on .s-mission.surv .line b{animation:s7fill 9s linear infinite}.hw-card.on .s-mission.surv .boss{animation:s7boss 9s infinite}.hw-card.on .s-mission.surv .boss .hs-f{animation:none}.hw-card.on .s-mission.surv .row{animation:s7row 9s infinite}
 @media (max-height:620px){.hw-card h3{font-size:30px}.hw-card p{font-size:14px;min-height:59px}.hw-step{margin-top:11px}}
 @media (prefers-reduced-motion:reduce){.hw-card.on .hs *{animation:none!important}}
+/* Build 26: SHARE on the end screen, and the armed state of RESTART MISSION on the pause screen. */
+.end-actions .end-share{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:9px;min-height:44px;border-color:#fac759;color:#fac759;letter-spacing:1.2px}
+.end-actions .end-share svg{flex:none;width:18px;height:18px}
+.end-actions .end-share:active{background:#fac75922}
+.pz-restart.armed{border-color:#ff7a72;color:#ffc2bd;background:#ff5a521f}
 

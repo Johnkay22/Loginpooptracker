@@ -3,6 +3,7 @@ Allow: /
 Disallow: /supabase/
 Disallow: /TurdRaceGame.html
 Disallow: /pr-preview/
+Disallow: /games/overtime/
 
 User-agent: GPTBot
 Allow: /

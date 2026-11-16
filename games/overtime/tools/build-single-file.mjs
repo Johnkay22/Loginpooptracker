@@ -46,14 +46,16 @@ const bundled = await esbuild.build({
 });
 let js = swapAssets(bundled.outputFiles[0].text).replace(/<\/script/gi, '<\\/script');
 
-// 3. Build the full game page
+// 3. Build the full game page. The plain (public) page is meant to be found by search engines; only the
+// password-gated build is marked noindex.
+const plain = !password || password === '--plain';
 let css = fs.readFileSync(path.join(distDir, 'style.css'), 'utf8');
 const fontImport = (css.match(/@import url\([^)]*\);/) || [''])[0];
 css = swapAssets(css.replace(fontImport, ''));
 let html = fs.readFileSync(path.join(distDir, 'index.html'), 'utf8');
 html = swapAssets(html)
   .replace('<link rel="stylesheet" href="style.css">',
-    `<meta name="robots" content="noindex,nofollow">${fontImport ? `<link rel="stylesheet" href="${fontImport.match(/url\('?"?([^'")]*)/)[1]}">` : ''}<style>${css}</style>`)
+    `${plain ? '' : '<meta name="robots" content="noindex,nofollow">'}${fontImport ? `<link rel="stylesheet" href="${fontImport.match(/url\('?"?([^'")]*)/)[1]}">` : ''}<style>${css}</style>`)
   .replace('<script type="module" src="app.mjs"></script>', () => `<script type="module">${js}</script>`);
 if (html.includes('src="app.mjs"') || html.includes('href="style.css"')) throw new Error('inline step failed');
 

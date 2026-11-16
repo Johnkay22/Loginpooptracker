@@ -1,15 +1,15 @@
-# PoopProfit: Overtime (current: Build 25)
+# PoopProfit: Overtime (current: Build 26)
 
-Live game: https://poopprofit.com/beta-test-survival-game.html (built from this folder).
+Live game: https://www.poopprofit.com/overtime (the file `overtime.html` in the repo root, built from this folder). The old address, `beta-test-survival-game.html`, is now a small redirect page; do not build into it.
 The old private prototype link (https://poopprofit-overtime-prototype.johnkay.chatgpt.site) is out of date.
 
 ## How to build
-**This folder (`games/overtime/`) is the source of the game. Never edit `beta-test-survival-game.html` in the repo root directly**: it is generated, and any hand edit is lost on the next build.
+**This folder (`games/overtime/`) is the source of the game. Never edit `overtime.html` in the repo root directly**: it is generated, and any hand edit is lost on the next build.
 
 1. Edit only files in `games/overtime/dist/` (code, page, styles, art, sounds). Add tests in `games/overtime/tests/` when you change behavior.
-2. From `games/overtime/`, run `npm install` (first time only), then `npm run build`. This writes `../../beta-test-survival-game.html`.
+2. From `games/overtime/`, run `npm install` (first time only), then `npm run build`. This writes `../../overtime.html`.
 3. Run `npm test`. Every suite must pass.
-4. Commit **both** the source changes and the rebuilt `beta-test-survival-game.html` in the same pull request.
+4. Commit **both** the source changes and the rebuilt `overtime.html` in the same pull request.
 
 Requirements: Node 20 or newer, and Python 3 with Pillow (the build re-encodes the PNG sprites to WebP). The build is reproducible: the same source with the same esbuild (pinned in `package.json`) and Pillow versions gives a byte-identical page. Build 15 was produced with Node 22.23, esbuild 0.24.0 and Pillow 12.3.0; a different Pillow or libwebp version can change the inlined sprite bytes without changing how the game plays.
 
@@ -236,6 +236,17 @@ A third mode on the menu card (the ∞ entry). The run never ends and time survi
 
 ## Build 22: Break Room buttons are gold (made with Claude, Nov 15)
 - Johnny picked gold over the mockup's cyan, so the Break Room's buy buttons, selected weapon, difficulty switch and BACK TO MENU now match the menu, promotion and end screens. Colours only; nothing else changed.
+
+## Build 26: launch address, share button, restart confirm (made with Claude, Nov 15)
+- **New address:** the game now lives at **poopprofit.com/overtime** (`overtime.html` in the repo root; GitHub Pages serves it without the `.html`). The build writes there. `beta-test-survival-game.html` is now a tiny redirect that keeps anything after `?` or `#`, so old links still work. Progress is kept: it is stored per site, not per page.
+- **Findable:** the public build is no longer marked "noindex". The page has a real title and description, a canonical address, share-preview tags and a VideoGame description for search engines (all in `dist/index.html`). Only the password-gated build stays noindex.
+- **Share preview:** `/images/overtime-share.jpg` (1200x630), made from the three mode cards. The same picture as `/images/overtime-banner.webp` is the banner on the home page (above the FAQ) and at the top of the app's Soon tab. Both link to `/overtime`. The home page footer has a link too.
+- **Site files:** `/overtime` is in `sitemap.xml` and `llms.txt`. `robots.txt` blocks `/games/overtime/` so the working copy in this folder is not indexed as a second copy of the game.
+- **SHARE on the end screen:** opens the phone's share sheet with one line and the link ("I lasted 07:42 in Survival of the Shittest. Think you can outlast me?"). Where there is no share sheet (most desktop browsers) it copies the line and says so. Words are in `dist/share.mjs`.
+- **RESTART MISSION needs two taps:** the first tap turns the button into TAP AGAIN TO RESTART for 3 seconds. A slip can no longer wipe a run.
+- **Previews:** a pull request preview is now at `.../pr-preview/pr-<number>/overtime`.
+- No rule changes. `BUILD` in `app.mjs` stays 23.
+- **Not done here:** the game page has no visitor analytics, so plays are not counted anywhere yet.
 
 ## Build 25: How to Play as swipe cards with moving pictures (made with Claude, Nov 15)
 - **What players see:** HOW TO PLAY is now six swipe cards instead of a list of sentences. Each card has a small animated picture made from the game's own art, a title and one line: Move, Get Promoted, Evolve, Stink Bomb, Stay Alive, The Mission. Swipe, tap a dot, or tap NEXT. SKIP is in the corner.
