@@ -2,7 +2,7 @@ import {MODES,SURVIVAL_ID,stageFor,canPlayStage} from './stages.mjs';
 import {paintOffice,paintLobby} from './scene.mjs';
 import {PERKS,fresh,normalize,buy,cost,settle} from './progress.mjs';
 import {Game,WEAPONS,PASSIVES,EVOLUTIONS,RECOVERY_SECONDS,SURVIVAL,clamp} from './engine.mjs';
-import {createBoard} from './leaderboard.mjs';import {tipsFor,takeTip,TIP_ICONS} from './tips.mjs';import {slidesFor} from './howto.mjs';import {shareMessage,sendShare} from './share.mjs';
+import {createBoard} from './leaderboard.mjs';import {tipsFor,takeTip,TIP_ICONS} from './tips.mjs';import {slidesFor} from './howto.mjs';import {shareMessage,sendShare} from './share.mjs';import {track as logEvent,timeBand,modeName} from './track.mjs';
 // Build number sent with leaderboard times, so times from before a retune can be told apart.
 const BUILD=23;const board=createBoard({build:BUILD});
 const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d');
@@ -74,7 +74,7 @@ function postSurvivalTime(run){
  board.submitRun({seconds:run.t,kills:run.kills,level:run.level,bosses:run.bossesBeaten}).then(r=>{
   label(r&&r.posted&&r.rank?'YOU ARE '+ordinal(r.rank)+' ON THE LEADERBOARD':r&&r.rank?'LEADERBOARD · YOU ARE '+ordinal(r.rank):'LEADERBOARD');});
 }
-function showBoard(){
+function showBoard(){logEvent('overtime_board_open',{signed_in:board.signedIn()});
  const list=$('boardList'),note=$('boardNote'),signedIn=board.signedIn();
  $('board').hidden=false;$('board').scrollTop=0;list.innerHTML='';note.textContent='Loading…';$('boardSign').hidden=signedIn;
  board.top(10).then(rows=>{
@@ -163,7 +163,7 @@ try{muted=localStorage.getItem('pp-overtime-sound')==='off';}catch{}// The menu'
 const SPEAKER_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
 const SPEAKER_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="m16 9 6 6M22 9l-6 6"/></svg>';
 function soundLabel(){$('sound').innerHTML=$('soundPauseIcon').innerHTML=muted?SPEAKER_OFF:SPEAKER_ON;$('sound').setAttribute('aria-label',muted?'Sound is off. Tap to turn on':'Sound is on. Tap to turn off');$('soundPause').setAttribute('aria-checked',String(!muted));}function toggleSound(){muted=!muted;try{localStorage.setItem('pp-overtime-sound',muted?'off':'on');}catch{}soundLabel();sound('upgrade');}soundLabel();$('sound').onclick=toggleSound;$('soundPause').onclick=toggleSound;
-function begin(){$('recovery').hidden=true;if(!canPlayStage(progress,selectedStage))selectedStage=1;sound('upgrade');g=new Game(Math.random,progress.perks,selectedStage!==SURVIVAL_ID&&$('hardMode').checked&&progress.wins>0?1:0,progress.start,selectedStage);setFloor(selectedStage);cam={x:g.player.x,y:g.player.y};keys={};stick=null;for(let id of ['start','end','upgrade','pauseScreen','workshop'])$(id).hidden=true;for(let id of ['hud','loadout','hint','bombBtn','combo'])$(id).hidden=false;last=performance.now();showToast(g.stage.name.toUpperCase()+(g.endless?' · LAST AS LONG AS YOU CAN':' · SURVIVE, THEN DEFEAT THE BOSS'),4);if(g.endless)board.startRun();updateUI();}
+function begin(){$('recovery').hidden=true;if(!canPlayStage(progress,selectedStage))selectedStage=1;sound('upgrade');g=new Game(Math.random,progress.perks,selectedStage!==SURVIVAL_ID&&$('hardMode').checked&&progress.wins>0?1:0,progress.start,selectedStage);logEvent('overtime_run_start',{mode:modeName(g.stage),hard:g.difficulty===1});setFloor(selectedStage);cam={x:g.player.x,y:g.player.y};keys={};stick=null;for(let id of ['start','end','upgrade','pauseScreen','workshop'])$(id).hidden=true;for(let id of ['hud','loadout','hint','bombBtn','combo'])$(id).hidden=false;last=performance.now();showToast(g.stage.name.toUpperCase()+(g.endless?' · LAST AS LONG AS YOU CAN':' · SURVIVE, THEN DEFEAT THE BOSS'),4);if(g.endless)board.startRun();updateUI();}
 $('nextStage').onclick=()=>{selectMode(2);begin();};$('startBtn').onclick=()=>howSeen()?begin():openHow(begin);
 // How to Play sheet: opens from the menu, closes with GOT IT or a tap outside it.
 // Build 25: How to Play is six swipe cards with moving pictures (words and markup in howto.mjs, drawing in
@@ -178,15 +178,15 @@ function openHow(then){howThen=then||null;let slides=slidesFor(MODES.find(st=>st
   card.innerHTML=`<div class="hs s-${s.id} ${s.cls||''}" aria-hidden="true">${s.scene}</div><div class="hw-step">STEP ${i+1} OF ${slides.length}</div><h3></h3><p></p>`;card.querySelector('h3').textContent=s.title;card.querySelector('p').textContent=s.text;howTrack.append(card);
   let dot=document.createElement('button');dot.type='button';dot.setAttribute('aria-label','Step '+(i+1)+': '+s.title);dot.onclick=()=>goHow(i);$('howDots').append(dot);});
  $('how').hidden=false;howTrack.scrollLeft=0;setHow(0);$('howNext').focus();}
-function closeHow(){$('how').hidden=true;howTrack.replaceChildren();try{localStorage.setItem(HOW_KEY,'1');}catch{}let then=howThen;howThen=null;if(then)then();else $('howBtn').focus();}
+function closeHow(action){logEvent('overtime_howto',{action,first_run:!!howThen,card:howAt+1});$('how').hidden=true;howTrack.replaceChildren();try{localStorage.setItem(HOW_KEY,'1');}catch{}let then=howThen;howThen=null;if(then)then();else $('howBtn').focus();}
 howTrack.addEventListener('scroll',()=>{if(!howTrack.clientWidth||performance.now()<howLock)return;let i=Math.round(howTrack.scrollLeft/howTrack.clientWidth);if(i!==howAt&&i>=0&&i<howTrack.children.length)setHow(i);},{passive:true});
-$('howNext').onclick=()=>howAt>=howTrack.children.length-1?closeHow():goHow(howAt+1);$('howSkip').onclick=closeHow;$('howBtn').onclick=()=>openHow();
-$('how').addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();goHow(howAt+1);}else if(e.key==='ArrowLeft'){e.preventDefault();goHow(howAt-1);}else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeHow();}});$('again').onclick=begin;
+$('howNext').onclick=()=>howAt>=howTrack.children.length-1?closeHow('finished'):goHow(howAt+1);$('howSkip').onclick=()=>closeHow('skipped');$('howBtn').onclick=()=>openHow();
+$('how').addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();goHow(howAt+1);}else if(e.key==='ArrowLeft'){e.preventDefault();goHow(howAt-1);}else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeHow('skipped');}});$('again').onclick=begin;
 // Build 26: SHARE on the end screen. Uses the phone's share sheet when there is one, otherwise copies the line.
 const SHARE_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
 let shareIdle='SHARE',shareTimer=0;
 function shareLabel(t,hold){clearTimeout(shareTimer);if(!hold)shareIdle=t;$('endShare').innerHTML=SHARE_ICON+'<b></b>';$('endShare').lastChild.textContent=t;if(hold)shareTimer=setTimeout(()=>shareLabel(shareIdle),2200);}
-$('endShare').onclick=async()=>{if(!g)return;let how=await sendShare(shareMessage({endless:g.endless,won:g.state==='won',time:format(g.t),stageName:g.stage.name}),navigator);if(how==='copied')shareLabel('COPIED. PASTE IT ANYWHERE.',true);else if(how==='failed')shareLabel('COULD NOT SHARE FROM THIS BROWSER',true);};
+$('endShare').onclick=async()=>{if(!g)return;let how=await sendShare(shareMessage({endless:g.endless,won:g.state==='won',time:format(g.t),stageName:g.stage.name}),navigator);logEvent('overtime_share',{mode:modeName(g.stage),outcome:how});if(how==='copied')shareLabel('COPIED. PASTE IT ANYWHERE.',true);else if(how==='failed')shareLabel('COULD NOT SHARE FROM THIS BROWSER',true);};
 // Build 26: RESTART MISSION on the pause screen needs a second tap within 3 seconds, so a slip cannot wipe a run.
 let restartUntil=0,restartTimer=0;
 function disarmRestart(){clearTimeout(restartTimer);restartUntil=0;$('restartPause').textContent='RESTART MISSION';$('restartPause').classList.remove('armed');}
@@ -254,7 +254,7 @@ function upgrades(){
  upgradeShownAt=performance.now();$('upgrade').hidden=false;
 }
 function upgradeDesc(k,l){return{plunger:'More damage'+(l%2===0?' and an extra returning plunger.':', with faster automatic throws.'),tp:'An extra orbiting roll, more damage and wider reach.',gas:'Larger clouds that last longer and deal more damage.',flush:'Bigger waves, more damage and a shorter cooldown.',bomb:'Wider lure and blast, more damage, shorter manual recharge.'}[k]||'';}
-function finish(text){$('recovery').hidden=true;let earned=settle(progress,g);saveProgress();updateProgress();$('bombBtn').hidden=true;stick=null;keys={};$('upgrade').hidden=true;$('pauseScreen').hidden=true;const won=g.state==='won',hasNext=won&&g.stage.id===1,stageName=g.stage.name.toUpperCase(),boss=g.enemies.find(e=>e.boss),bossName=g.stage.bossName.replace(/\B\w+/g,w=>w.toLowerCase());
+function finish(text){$('recovery').hidden=true;let earned=settle(progress,g);saveProgress();updateProgress();$('bombBtn').hidden=true;stick=null;keys={};$('upgrade').hidden=true;$('pauseScreen').hidden=true;const won=g.state==='won',hasNext=won&&g.stage.id===1;logEvent('overtime_run_end',{mode:modeName(g.stage),result:won?'won':'lost',time_band:timeBand(g.t),bosses_beaten:g.bossesBeaten||0});const stageName=g.stage.name.toUpperCase(),boss=g.enemies.find(e=>e.boss),bossName=g.stage.bossName.replace(/\B\w+/g,w=>w.toLowerCase());
  // Build 18: end screen. One layout for a clear and a loss; the art, headline and main button change.
  $('end').classList.toggle('won',won);$('end').classList.toggle('has-next',hasNext);$('end').scrollTop=0;
  $('endTitle').innerHTML=won?'STAGE <span>CLEAR!</span>':'CLOCKED <span>OUT</span>';

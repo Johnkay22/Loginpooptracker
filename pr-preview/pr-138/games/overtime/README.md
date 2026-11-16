@@ -1,4 +1,4 @@
-# PoopProfit: Overtime (current: Build 26)
+# PoopProfit: Overtime (current: Build 27)
 
 Live game: https://www.poopprofit.com/overtime (the file `overtime.html` in the repo root, built from this folder). The old address, `beta-test-survival-game.html`, is now a small redirect page; do not build into it.
 The old private prototype link (https://poopprofit-overtime-prototype.johnkay.chatgpt.site) is out of date.
@@ -237,6 +237,22 @@ A third mode on the menu card (the ∞ entry). The run never ends and time survi
 ## Build 22: Break Room buttons are gold (made with Claude, Nov 15)
 - Johnny picked gold over the mockup's cyan, so the Break Room's buy buttons, selected weapon, difficulty switch and BACK TO MENU now match the menu, promotion and end screens. Colours only; nothing else changed.
 
+## Build 27: game analytics (made with Claude, Nov 15)
+- **What it is:** the game page now reports to the same Google Analytics property as the rest of poopprofit.com, set up the same way (loader at the bottom of `dist/index.html`). Page views are counted, plus five game events.
+- **Consent works like the site:** Google Analytics runs cookieless (no cookies, anonymous pings only) until the visitor taps **Got it**. The notice is on the game's menu. It uses the site's consent key (`pp_analytics_consent_v1`), so Got it on the site counts for the game and the other way round.
+- **Events** (sent from `app.mjs` through `dist/track.mjs`):
+  - `overtime_run_start`: mode (`survival`, `stage_1`, `stage_2`), hard mode on or off
+  - `overtime_run_end`: mode, won or lost, a time range (for example `6_9m`), bosses beaten
+  - `overtime_howto`: finished or skipped, whether it was the first-run showing, which card they were on
+  - `overtime_share`: mode, and whether it was shared, copied, cancelled or failed
+  - `overtime_board_open`: whether the player was signed in
+- **Nothing exact or personal is sent.** Time goes out as a range, matching the promise on the privacy page. No usernames, emails or scores.
+- **Not counted:** runs on a developer's machine (the loader skips localhost) and pull request previews (the workflow swaps the property id out of `.html` files, which is why the id must stay in `index.html` and never move into a `.mjs` file).
+- **Know this about the numbers:** visitors who never tap Got it are only sent as cookieless pings, which Google Analytics shows through modelling, if at all. Expect the counts to run low, the same as on the rest of the site.
+- **Privacy page:** section 04 now lists the game events, and its last line was corrected. It used to say analytics does not load until the notice is used; the site has loaded it in cookieless mode for everyone since the Consent Mode setup.
+- On the two smallest phone sizes the notice covers part of BREAK ROOM / HOW TO PLAY until Got it is tapped.
+- No rule changes. `BUILD` in `app.mjs` stays 23.
+
 ## Build 26: launch address, share button, restart confirm (made with Claude, Nov 15)
 - **New address:** the game now lives at **poopprofit.com/overtime** (`overtime.html` in the repo root; GitHub Pages serves it without the `.html`). The build writes there. `beta-test-survival-game.html` is now a tiny redirect that keeps anything after `?` or `#`, so old links still work. Progress is kept: it is stored per site, not per page.
 - **Findable:** the public build is no longer marked "noindex". The page has a real title and description, a canonical address, share-preview tags and a VideoGame description for search engines (all in `dist/index.html`). Only the password-gated build stays noindex.
@@ -246,7 +262,6 @@ A third mode on the menu card (the ∞ entry). The run never ends and time survi
 - **RESTART MISSION needs two taps:** the first tap turns the button into TAP AGAIN TO RESTART for 3 seconds. A slip can no longer wipe a run.
 - **Previews:** a pull request preview is now at `.../pr-preview/pr-<number>/overtime`.
 - No rule changes. `BUILD` in `app.mjs` stays 23.
-- **Not done here:** the game page has no visitor analytics, so plays are not counted anywhere yet.
 
 ## Build 25: How to Play as swipe cards with moving pictures (made with Claude, Nov 15)
 - **What players see:** HOW TO PLAY is now six swipe cards instead of a list of sentences. Each card has a small animated picture made from the game's own art, a title and one line: Move, Get Promoted, Evolve, Stink Bomb, Stay Alive, The Mission. Swipe, tap a dot, or tap NEXT. SKIP is in the corner.
