@@ -7547,7 +7547,8 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         var top = rows.filter(function (e) { return Number(e.place) <= GAMES_TOP; }).slice(0, GAMES_TOP);
         var me = rows.filter(function (e) { return e.is_me; })[0] || null;
         rowsEl.textContent = "";
-        for (var n = 0; n < Math.max(GAMES_MIN_ROWS, top.length); n++) rowsEl.appendChild(gamesRow(n + 1, top[n] || null));
+        // Real rows show the place the server gave them, so tied times share a rank (two #1s both get the crown).
+        for (var n = 0; n < Math.max(GAMES_MIN_ROWS, top.length); n++) rowsEl.appendChild(gamesRow(top[n] ? Number(top[n].place) : n + 1, top[n] || null));
         status.hidden = true;
         var full = top.length >= GAMES_TOP, cutoff = full ? Number(top[GAMES_TOP - 1].best_seconds) : 0;
         goal.textContent = full ? "Time to beat: " + gamesClock(cutoff) : (GAMES_TOP - top.length) + " of " + GAMES_TOP + " spots open";

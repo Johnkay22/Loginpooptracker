@@ -936,14 +936,15 @@ html.js .reveal.is-in{opacity:1;transform:none}
     i.textContent = place === 1 && !open ? "\u{1F451}" : "#" + place; b.textContent = time;
     li.appendChild(i); li.appendChild(span); li.appendChild(b); return li;
   }
-  /* Shows as many real times as exist, up to 10, and never fewer than 3 rows: empty spots read as an open invitation. */
+  /* Shows as many real times as exist, up to 10, and never fewer than 3 rows: empty spots read as an open invitation.
+     Real rows show the place the server gave them, so tied times share a rank (two #1s both get the crown). */
   function showBoard(list) {
     if (!board || !rows || !Array.isArray(list)) return;
     var top = list.filter(function (e) { return e && e.username && Number(e.place) >= 1 && Number(e.place) <= TOP; }).slice(0, TOP);
     rows.textContent = "";
     for (var n = 0; n < Math.max(MIN_ROWS, top.length); n++) {
       var entry = top[n];
-      rows.appendChild(entry ? row(n + 1, String(entry.username), clock(entry.best_seconds), false) : row(n + 1, "Open spot. Take it.", "--:--", true));
+      rows.appendChild(entry ? row(Number(entry.place), String(entry.username), clock(entry.best_seconds), false) : row(n + 1, "Open spot. Take it.", "--:--", true));
     }
     var goal = doc.getElementById("boardGoal");
     if (goal) goal.textContent = top.length >= TOP ? "Time to beat: " + clock(top[TOP - 1].best_seconds) : (TOP - top.length) + " of " + TOP + " spots open";
