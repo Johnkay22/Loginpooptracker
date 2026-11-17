@@ -19,7 +19,7 @@ function play(seed0,cost){
  if(cost)g.levelCheck=function(){if(this.state!=='playing'||this.t<this.nextUpgradeAt)return;if(this.xp>=this.need){this.xp-=this.need;this.level++;this.need=cost(this.level);this.openUpgrade();}};
  for(let i=0;i<20*180&&g.phase!=='boss'&&g.state!=='won';i++){
   if(g.state==='upgrade'){if(!n)first=g.t;n++;perMinute[Math.min(2,Math.floor(g.t/60))]++;const c=g.choices;
-   g.choose((c.find(x=>x.level===6&&x.key in g.weapons)||c.find(x=>x.key===main)||c.find(x=>x.key===perk&&g.passives[perk]===0)||c.find(x=>g.weapons[x.key]>0)||c.find(x=>x.key in g.weapons)||c[0]).key);}
+   g.choose((c.find(x=>x.level===6&&x.key in g.weapons)||c.find(x=>x.key===main)||c.find(x=>x.key===perk&&g.passives[perk]===0)||c.find(x=>g.passives[x.key]===0&&Object.keys(WEAPONS).some(k=>g.weapons[k]>=3&&EVOLUTIONS[k].requires===x.key))||c.find(x=>g.weapons[x.key]>0)||c.find(x=>x.key in g.weapons)||c[0]).key);}
   ang+=.012;let inp={x:Math.cos(ang),y:Math.sin(ang)};const P=g.player;let best=null,bd=1e9;
   for(const d of g.drops){if(!d.value)continue;const dd=Math.hypot(d.x-P.x,d.y-P.y);if(dd<bd){bd=dd;best=d;}}
   if(best&&bd>5&&bd<260)inp={x:(best.x-P.x)/bd,y:(best.y-P.y)/bd};

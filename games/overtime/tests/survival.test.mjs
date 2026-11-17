@@ -27,7 +27,7 @@ assert.equal(new Game(()=>.5,{},0,'plunger',1).endless,false);assert.equal(new G
  assert.equal(g.tier,2);
  assert.ok(b.max>a.max*1.5&&c.max>b.max*1.5,'health climbs');assert.ok(b.speed>a.speed&&c.speed>b.speed,'speed climbs');assert.ok(b.damage>a.damage&&c.damage>b.damage,'damage climbs');
  const far=at(20*T);assert.ok(far.speed<=92*S.speedCap+1e-9,'speed is capped so nothing outruns Herman');
- g.t=S.healthFrom;assert.equal(g.healthScale(),1,'no extra health growth during the opening');g.t=S.healthFrom+T;assert.ok(Math.abs(g.healthScale()-S.tierHealth)<1e-9);
+ g.t=S.healthFrom;assert.equal(g.healthScale(),1,'no extra health growth during the opening');const early=S.tierHealth**((S.lateFrom-S.healthFrom)/T);g.t=S.lateFrom;assert.ok(Math.abs(g.healthScale()-early)<1e-9,'tierHealth per tier until lateFrom');g.t=S.lateFrom+T;assert.ok(Math.abs(g.healthScale()-early*S.lateHealth)<1e-9,'lateHealth per tier after that');
  g.t=30;g.tier=0;assert.equal(g.spawnGap(),S.spawnStart-30*.0022);g.t=2;assert.equal(g.spawnGap(),S.spawnStart*2-2*.0022*2,'half pace for the first few seconds');
  g.t=5000;g.tier=20;assert.equal(g.spawnGap(),S.spawnMin);}
 
@@ -66,10 +66,10 @@ assert.equal(new Game(()=>.5,{},0,'plunger',1).endless,false);assert.equal(new G
 
 // 7. Everything maxed: a promotion offers a Petty Cash bonus or a heal, never an empty screen.
 {const g=quiet();Object.assign(g.weapons,{plunger:6,tp:6,gas:6,flush:0,bomb:6});Object.assign(g.passives,{coffee:3,magnet:3,chili:3,speed:0});
- g.xp=g.need;g.levelCheck();assert.deepEqual(g.choices.map(c=>c.key),['cash','heal']);
+ g.xp=g.need;g.levelCheck();assert.deepEqual(g.choices.map(c=>c.key),['boost','cash','heal']);
  const before=g.tokens;assert.ok(g.choose('cash'));assert.equal(g.tokens,before+S.cashBonus);
  // Level 5 weapons waiting for a briefcase count as maxed for promotions too.
- const h=quiet();Object.assign(h.weapons,{plunger:5,tp:5,gas:5,flush:0,bomb:5});Object.assign(h.passives,{coffee:3,magnet:3,chili:3,speed:0});assert.deepEqual(h.options('promotion').map(c=>c.key),['cash','heal']);}
+ const h=quiet();Object.assign(h.weapons,{plunger:5,tp:5,gas:5,flush:0,bomb:5});Object.assign(h.passives,{coffee:3,magnet:3,chili:3,speed:0});assert.deepEqual(h.options('promotion').map(c=>c.key),['boost','cash','heal']);}
 
 // 8. Promotion cost: survival has its own, steeper curve; stage mode keeps its own.
 assert.equal(new Game(()=>.5,{},0,'plunger',SURVIVAL_ID).need,S.firstCost);
