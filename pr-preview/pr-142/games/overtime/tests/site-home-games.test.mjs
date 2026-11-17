@@ -75,4 +75,8 @@ assert.match(app,/var t = new URLSearchParams\(window\.location\.search\)\.get\(
 assert.ok(app.includes('if (seen || addressTab) return;')&&app.includes('if (addressTab) setActiveTab(addressTab);'));
 assert.ok(app.indexOf('var addressTab =')<app.indexOf('function setupTutorial'),'addressTab is set up before the tutorial looks at it');
 assert.ok(!/—/.test(text(gp))&&!/\bwage\b/i.test(text(gp)));
+// Tied times share the server's rank on both boards (the server ranks with rank(), so ties give 1, 1, 3).
+assert.ok(home.includes('row(Number(entry.place), String(entry.username)'),'home board keeps tied ranks');
+assert.ok(app.includes('gamesRow(top[n] ? Number(top[n].place) : n + 1, top[n] || null)'),'Games tab keeps tied ranks');
+assert.ok(fs.readFileSync(path.join(root,'dist/app.mjs'),'utf8').includes('place.textContent=r.place'),'the in-game board already does');
 console.log('PASS: the new home page keeps its search and share tags and shows a growing top 10; the app Games tab carries the full board; Merch has its own tab; /games opens the Games tab.');
