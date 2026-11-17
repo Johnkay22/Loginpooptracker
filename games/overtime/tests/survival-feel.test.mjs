@@ -38,7 +38,7 @@ const gapAt=(g,t)=>{g.t=t;g.tier=Math.floor(t/T);return g.spawnGap();};
 // 3. Rushes: every rushGap until rushLateFrom, every rushGapLate after, and never within rushBossGap of a boss.
 {const g=new Game(rng(5),{},0,'plunger',SURVIVAL_ID);g.player.max=1e9;g.player.hp=1e9;const rushes=[],bossAt=[];let seen=0;
  for(let i=0;i<40000&&g.t<660;i++){if(g.state==='upgrade')g.choose(g.choices[0].key);g.step(.05,{x:0,y:0});
-  for(const e of g.events){if(e.type==='alert'&&e.text.startsWith('CORPORATE RUSH'))rushes.push(g.t);if(e.type==='boss-arrive')bossAt.push(g.t);}g.events.length=0;}
+  for(const e of g.events){if(e.type==='rush')rushes.push(g.t);if(e.type==='boss-arrive')bossAt.push(g.t);}g.events.length=0;}
  assert.ok(Math.abs(rushes[0]-S.firstRush)<.1);
  const gaps=rushes.slice(1).map((t,i)=>[rushes[i],t-rushes[i]]);
  for(const [from,gap] of gaps)assert.ok(Math.abs(gap-(from>=S.rushLateFrom?S.rushGapLate:S.rushGap))<9.1,'gap of '+gap.toFixed(1)+' after '+from.toFixed(0));
@@ -53,7 +53,7 @@ const gapAt=(g,t)=>{g.t=t;g.tier=Math.floor(t/T);return g.spawnGap();};
  g.t=T+40;g.raidAt=T+40;assert.equal(g.rushHeldForBoss(),false);
  const stage=new Game(()=>.5,{},0,'plunger',1);stage.t=176;assert.equal(stage.rushHeldForBoss(),false,'the two levels are unchanged');}
 // The rush warning says what surviving it is worth.
-assert.ok(fs.readFileSync(path.join(root,'dist/engine.mjs'),'utf8').includes("'CORPORATE RUSH · FIND THE GAP · SURVIVE FOR A FIRST AID KIT'"));
+assert.ok(fs.readFileSync(path.join(root,'dist/engine.mjs'),'utf8').includes("event('rush','CORPORATE RUSH · FIND THE GAP · SURVIVE FOR A FIRST AID KIT')"));
 
 // 4. First aid kits: heal more, wait longer, in survival only.
 {const g=quiet();assert.equal(g.kitHeal(),S.kitHeal);assert.ok(S.kitHeal>=25&&S.kitLife>=45);g.tier=20;assert.equal(g.kitHeal(),S.kitHealMax);assert.equal(g.kitLife(),S.kitLife);

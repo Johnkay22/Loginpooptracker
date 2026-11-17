@@ -1,4 +1,4 @@
-# PoopProfit: Overtime (current: Build 28)
+# PoopProfit: Overtime (current: Build 29)
 
 Live game: https://www.poopprofit.com/overtime (the file `overtime.html` in the repo root, built from this folder). The old address, `beta-test-survival-game.html`, is now a small redirect page; do not build into it.
 The old private prototype link (https://poopprofit-overtime-prototype.johnkay.chatgpt.site) is out of date.
@@ -236,6 +236,26 @@ A third mode on the menu card (the ∞ entry). The run never ends and time survi
 
 ## Build 22: Break Room buttons are gold (made with Claude, Nov 15)
 - Johnny picked gold over the mockup's cyan, so the Break Room's buy buttons, selected weapon, difficulty switch and BACK TO MENU now match the menu, promotion and end screens. Colours only; nothing else changed.
+
+## Build 29: Herman speaks, separate Sound Effects and Music switches (made with Claude, Nov 16)
+- **Herman's voice lines:** 13 lines Johnny picked, made with his "Herman B" ElevenLabs voice. Audio only, no speech bubble. Clips are in `dist/assets/voice/`; which line goes with which moment is in `dist/voice.mjs`.
+  - Clock in: "Time to do my business." / "Let's get this potty started." (always one, never the same twice running)
+  - Promotion: "I'm kind of a big dump around here."
+  - Evolution: "Number two just became number one." / "Now THAT'S a movement."
+  - KO streak (every 25 in a row): "I'm on a roll! Preferably two-ply!" / "Wipe 'em out!"
+  - Stink Bomb gets 5 or more: "Silent? No. Deadly? Oh yes."
+  - Health under 25%: "'Tis but a skid mark."
+  - Rush survived: "Tight squeeze. I know the feeling." / "Slipped right out. Like a pro."
+  - Executive walks in: "Look who it is. A professional brown-noser."
+  - Clocked out: "Welp. I'm pooped." (always)
+- **How often:** apart from the clock-in and clocked-out lines, at least 45 seconds of run time between lines (`VOICE_GAP`), and each clip at most once per run. A 3-minute run hears about 4 lines.
+- **To swap a take or add a line:** each line was generated twice; the other takes are in Johnny's ElevenLabs flow. Replace the mp3 in `dist/assets/voice/` (mono, short), or add a file and list it under a moment in `voice.mjs`.
+- **Two switches:** Sound Effects and Music are separate, on the menu (two icons) and on the pause screen. Voice lines follow Sound Effects. Sound Effects keeps its old saved setting (`pp-overtime-sound`); Music has its own (`pp-overtime-music`) and starts out matching it.
+- **Music is wired but there are no tracks yet,** so the Music switch stays hidden. To add music: put the mp3s in `dist/assets/music/` and write the file names in `dist/music.mjs`. Slots: `menu`, `levels`, `survival`, `boss` (loops) and `win`, `lose` (play once). A missing loop borrows the nearest one (survival and levels stand in for each other). Loops crossfade; the boss loop fades in while a boss is on the floor; on the pause and promotion screens the music is muffled like it is coming through a bathroom door. A `win`/`lose` track replaces the old fanfare/trombone.
+- **Voice and music are not packed into the game page.** The build points them at `games/overtime/dist/assets/...` on the site, so the page stays about 3 MB. Voice clips (about 250 KB in all) are fetched in the background after the page loads.
+- **Warnings sound different now:** rush, executive, "boss in 6 seconds" and boss arrival were one shared siren. Each has its own event (`rush`, `exec-in`, `boss-warn`, `boss-arrive`). For now they are the same siren clip at four pitches; proper sounds can replace them in `SFX_FILES`.
+- **Runner charge sound:** quieter, at most once every 2.5 seconds (was 0.6), rotating three pitches.
+- New suite `tests/audio.test.mjs`. No rule changes; `BUILD` stays 28.
 
 ## Build 28: survival feel (made with Claude, Nov 16)
 Johnny's playtest: 2:30 to 3:30 was a wall and it was hard to tell when the boss arrives. Rushes were never faster there; four things piled into one minute (spawns doubling, extra enemy health from 2:30, bigger rush rings, and a rush 2 seconds after the boss). This build spreads them out. **The two levels are unchanged** except where noted.

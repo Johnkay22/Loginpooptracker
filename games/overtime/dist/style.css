@@ -469,4 +469,10 @@
 #mission.boss-soon{margin:-3px 0;padding:3px 9px;border-radius:999px;background:#c63f2a;color:#fff;font-size:11px;letter-spacing:.08em;animation:bossSoon .9s ease-in-out infinite}
 @keyframes bossSoon{50%{background:#8f2b1c}}
 @media (prefers-reduced-motion:reduce){#banner,#mission.boss-soon{animation:none}}
+/* Build 29: separate Sound Effects and Music switches. The Music ones stay hidden until a track is listed in music.mjs. */
+.sv2-audio{display:flex;align-items:center}
+#music.sv2-icon{width:44px;height:44px;padding:0;background:none;border:0;color:#fff;display:grid;place-items:center;cursor:pointer}
+#music.sv2-icon svg{width:26px;height:26px}
+#music.sv2-icon[hidden],.pz-sound[hidden]{display:none}
+.pz-sound+.pz-sound{margin-top:0;border-top:0;padding-top:2px}
 

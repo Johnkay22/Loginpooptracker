@@ -37,7 +37,10 @@ for (const [folder, types] of Object.entries(INLINE_FOLDERS)) {
     if (mime) dataUri[`assets/${folder}/${f}`] = `data:${mime};base64,` + fs.readFileSync(path.join(dir, f)).toString('base64');
   }
 }
-const swapAssets = s => { for (const [k, v] of Object.entries(dataUri)) s = s.split(k).join(v); return s; };
+// Voice lines and music are NOT inlined (they would add megabytes to the page). The built page sits in the repo
+// root, so their paths are rewritten to point back into this folder.
+const REMOTE_FOLDERS = ['voice', 'music'];
+const swapAssets = s => { for (const [k, v] of Object.entries(dataUri)) s = s.split(k).join(v); for (const f of REMOTE_FOLDERS) s = s.split(`assets/${f}/`).join(`games/overtime/dist/assets/${f}/`); return s; };
 
 // 2. Bundle the ES modules into one script
 const bundled = await esbuild.build({
