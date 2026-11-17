@@ -36,7 +36,8 @@ for(const m of read('poo-calculator/index.html').matchAll(/href="\/#([a-z-]+)"/g
 // 2. Home game section: right facts, a growing top 10, #1 is Employee of the Month, and a way to the full board.
 const gameSec=home.slice(home.indexOf('id="game"'),home.indexOf('id="token"'));
 assert.ok(gameSec.includes('<li><b>2</b> levels + <b>Survival</b></li>')&&!/\b3<\/b> modes/.test(gameSec),'two levels plus survival, not "3 modes"');
-assert.ok(gameSec.includes('<span>Top 10</span>')&&gameSec.includes('href="/games/"'));
+assert.ok(gameSec.includes('<span>Top 10</span>')&&gameSec.includes('href="games/"'));
+assert.ok(!/href="\/(games|app)/.test(home),'links stay relative, so a preview copy of the site links to itself');
 assert.match(home,/var TOP = 10, MIN_ROWS = 3;/);assert.match(home,/body: JSON\.stringify\(\{ p_limit: TOP \}\)/);
 assert.match(home,/for \(var n = 0; n < Math\.max\(MIN_ROWS, top\.length\); n\+\+\)/);
 assert.ok(home.includes('tag.textContent = "Employee of the Month"')&&home.includes('span.textContent = name')&&!/innerHTML/.test(home),'names go in as text');
@@ -44,7 +45,7 @@ assert.match(home,/"Time to beat: " \+ clock\(top\[TOP - 1\]\.best_seconds\)/);
 {const key=home.match(/var DB_PUBLIC_KEY = "([^"]+)"/)[1];assert.equal(JSON.parse(Buffer.from(key.split('.')[1],'base64url')).role,'anon','only the public key');}
 
 // 3. poopprofit.com/games opens the app on the Games tab, and is not a page of its own in search.
-assert.ok(games.includes('<meta name="robots" content="noindex">')&&games.includes('content="0;url=/app.html?tab=games"')&&games.includes("location.replace('/app.html?tab=games')"));
+assert.ok(games.includes('<meta name="robots" content="noindex">')&&games.includes('content="0;url=../app.html?tab=games"')&&games.includes("location.replace(location.pathname.replace(/games\\/?(index\\.html)?$/,'')+'app.html?tab=games')"));
 
 // 4. App: Games took over Soon, Merch has its own tab, and both are wired into the tab switcher.
 assert.ok(!app.includes('data-tab="coming"')&&!app.includes('id="panel-coming"'),'the Soon tab is gone');
