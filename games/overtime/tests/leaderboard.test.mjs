@@ -59,7 +59,7 @@ assert.ok(site.includes(SUPABASE_ANON_KEY)&&site.includes(SUPABASE_URL),'same pr
 // 6. The page and the game are wired up.
 const html=fs.readFileSync(path.join(root,'dist/index.html'),'utf8'),app=fs.readFileSync(path.join(root,'dist/app.mjs'),'utf8');
 for(const id of ['boardBtn','endBoard','board','boardList','boardNote','boardSign','boardBack'])assert.ok(html.includes(`id="${id}"`),'element #'+id);
-assert.match(app,/if\(g\.endless\)board\.startRun\(\)/,'a survival run asks for a run id');
+assert.match(app,/if\(g\.endless\)\{board\.startRun\(\);/,'a survival run asks for a run id');
 assert.match(app,/if\(g\.endless\)\{postSurvivalTime\(g\);/,'a finished survival run is posted');
 assert.match(app,/board\.top\(10\)/,'the board shows the top 10');
 assert.ok(!/innerHTML=[^;]*username/.test(app),'usernames are written as text, never as markup');

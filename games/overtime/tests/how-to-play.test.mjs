@@ -13,7 +13,7 @@ const dist=path.join(root,'dist');
 const app=fs.readFileSync(path.join(dist,'app.mjs'),'utf8');
 const html=fs.readFileSync(path.join(dist,'index.html'),'utf8');
 const css=fs.readFileSync(path.join(dist,'style.css'),'utf8');
-const how=css.slice(css.indexOf('/* Build 25: How to Play'));
+const howFrom=css.indexOf('/* Build 25: How to Play'),how=css.slice(howFrom,css.indexOf('/* Build 26:',howFrom));
 
 // The page: the overlay is there, the old sheet is gone, and the menu button stays.
 for(const id of ['how','howTitle','howSkip','howTrack','howDots','howNext','nextGoal','howBtn'])assert.ok(html.includes(`id="${id}"`),'element #'+id);

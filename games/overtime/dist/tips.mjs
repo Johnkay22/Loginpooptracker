@@ -44,6 +44,7 @@ export function tipsFor({endless=false,weapons={},keyboard=false}={}){
  const boxes=tip('boxes','coffee','Supply boxes hide cash and coffee. Coffee is 8 seconds of speed and rapid fire.');
  const sweep=tip('sweep','magnet','Every 60 KOs drops a Cash Sweep. Grab it to pull in the Petty Cash on the floor.');
  const rush=tip('rush','kit','Survive a Corporate Rush and a first aid kit drops near Herman.');
+ const kitWait=tip('kit-wait','kit',`A first aid kit waits ${S.kitLife} seconds and blinks before it goes. An arrow points to it.`);
  const bar=tip('bar','up','Petty Cash fills the bar under Herman’s health. A full bar is a promotion.');
  const perks=tip('perks','shield','Petty Cash from finished runs buys permanent perks in the Break Room.');
  const keys=keyboard?[tip('keys','keyboard','Keyboard: WASD or arrows to move, Space for the bomb, P to pause.')]:[];
@@ -53,11 +54,14 @@ export function tipsFor({endless=false,weapons={},keyboard=false}={}){
   bomb,
   tip('boss-drop','crown',`Beat a boss and it drops a briefcase and ${S.bossKits} first aid kits.`),
   boxes,
+  tip('restock','coffee','Supply boxes restock every time a boss clocks in.'),
   tip('board','trophy','Signed in? A new best time posts to the leaderboard. The top 10 are public.'),
   sweep,rush,
   tip('execs','briefcase','Gold executives walk in twice before each boss. Each one carries a briefcase.'),
   bar,
   tip('kit-growth','kit','First aid kits heal more the longer the run goes.'),
+  kitWait,
+  tip('boost','up','Everything maxed? Extra Hot Sauce keeps adding damage, with no limit.'),
   perks,
  ]:[
   move,bomb,

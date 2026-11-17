@@ -1,4 +1,4 @@
-# PoopProfit: Overtime (current: Build 27)
+# PoopProfit: Overtime (current: Build 28)
 
 Live game: https://www.poopprofit.com/overtime (the file `overtime.html` in the repo root, built from this folder). The old address, `beta-test-survival-game.html`, is now a small redirect page; do not build into it.
 The old private prototype link (https://poopprofit-overtime-prototype.johnkay.chatgpt.site) is out of date.
@@ -236,6 +236,24 @@ A third mode on the menu card (the ∞ entry). The run never ends and time survi
 
 ## Build 22: Break Room buttons are gold (made with Claude, Nov 15)
 - Johnny picked gold over the mockup's cyan, so the Break Room's buy buttons, selected weapon, difficulty switch and BACK TO MENU now match the menu, promotion and end screens. Colours only; nothing else changed.
+
+## Build 28: survival feel (made with Claude, Nov 16)
+Johnny's playtest: 2:30 to 3:30 was a wall and it was hard to tell when the boss arrives. Rushes were never faster there; four things piled into one minute (spawns doubling, extra enemy health from 2:30, bigger rush rings, and a rush 2 seconds after the boss). This build spreads them out. **The two levels are unchanged** except where noted.
+- **Spawn pace:** same as before until 2:00, then it eases down and reaches full pace at 4:30 (was 2:53). About 5 enemies a second when the first boss arrives, was 9.
+- **Rushes:** every 22 seconds until 2:00, then every 30. No rush starts within 10 seconds of a boss arriving.
+- **Enemy health:** the extra growth starts at 3:30 (was 2:30). From 6:00 it multiplies by 1.9 every 3 minutes (was 2.3), so a strong build can push past the old 9 to 12 minute wall. It still climbs forever, so every run ends.
+- **Extra Hot Sauce:** once everything is maxed, promotions offer +10% weapon damage that stacks with no limit (plus the old Petty Cash and Second Wind choices). It uses the Hot Sauce render.
+- **Briefcases steer:** with nothing ready to evolve, a briefcase offers the missing partner perk first, then levels for the weapon closest to level 5. No luck. It used to be three random choices.
+- **Every perk evolves something:** Bathroom Dash is now Courtesy Flush's partner (was Double Espresso, which still evolves Plungerang). This applies in the two levels too.
+- **First aid kits (survival):** heal 25 (was 16, about one hit), up to 40 late on, and wait 45 seconds (was 20). They still blink for the last 5. The rush warning now says "SURVIVE FOR A FIRST AID KIT".
+- **Supply boxes restock** every time a boss arrives, so coffee comes back.
+- **Boss clarity:** a red "BOSS IN 0:30" countdown in the status row (levels too), and a big centre-screen banner with the boss's name when it arrives. The boss arrow at the screen edge is bigger and red. Briefcases (CASE) and first aid kits (KIT) get edge arrows too; the kit arrow only shows while Herman can use one.
+- **Live leaderboard moments:** in survival, a banner when the run beats your own best ("NEW PERSONAL BEST") and each time it passes a time on the public top 10 ("YOU PASSED #3"). The board is read once when the run starts (`dist/rivals.mjs`). Usernames go in as text.
+- **Wording:** Expense Account no longer says "XP".
+- **`BUILD` in `app.mjs` is now 28** because the rules changed. Times posted from older builds were played on harder rules.
+- **Bots (`node tools/survival-sim.mjs`), before to after:** dodging bot that picks for evolutions: past 3:00 in 8/12 to 9/12 runs, median 11:11 to 15:24, best 12:27 to 18:15. Dodging bot with random picks: past 3:00 in 3/12 to 7/12, median 2:44 to 3:41. The opening minute is unchanged (stand still: out at 0:24). Bots dodge better than people, so treat these as direction, not as real times.
+- All tuning numbers are in the `SURVIVAL` table at the top of `dist/engine.mjs`.
+- New suite `tests/survival-feel.test.mjs`. The engine event for a boss arriving is now `boss-arrive` (was a plain `alert`).
 
 ## Build 27: game analytics (made with Claude, Nov 15)
 - **What it is:** the game page now reports to the same Google Analytics property as the rest of poopprofit.com, set up the same way (loader at the bottom of `dist/index.html`). Page views are counted, plus five game events.

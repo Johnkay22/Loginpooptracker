@@ -5,7 +5,7 @@ import {Game,WEAPONS,PASSIVES,EVOLUTIONS,SURVIVAL} from '../dist/engine.mjs';
 import {SURVIVAL_ID} from '../dist/stages.mjs';
 export const rng=s0=>{let seed=s0>>>0;return()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};};
 // upgrade pickers
-export const pickSmart=g=>{const c=g.choices;if(c.some(x=>x.key==='cash'))return g.player.hp<g.player.max*.6?'heal':'cash';
+export const pickSmart=g=>{const c=g.choices;if(c.some(x=>x.key==='cash'))return g.player.hp<g.player.max*.6?'heal':c.some(x=>x.key==='boost')?'boost':'cash';
  const evo=c.find(x=>x.level===6);if(evo)return evo.key;
  const partner=k=>EVOLUTIONS[k]?.requires;
  const owned=c.filter(x=>g.weapons[x.key]>0).sort((a,b)=>b.level-a.level);
