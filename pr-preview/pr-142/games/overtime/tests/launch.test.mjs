@@ -58,8 +58,8 @@ assert.ok(fs.statSync(path.join(repo,'images/overtime-share.jpg')).size<300000,'
 const home=read(repo,'index.html'),siteApp=read(repo,'app.html');
 assert.ok((home.match(/href="\/?overtime"/g)||[]).length>=4,'home page links to the game');
 assert.ok(home.indexOf('id="features"')<home.indexOf('id="game"')&&home.indexOf('id="game"')<home.indexOf('id="token"')&&home.indexOf('id="token"')<home.indexOf('id="faq"'),'home game section sits between the toolkit and the Turd Token');
-assert.ok(home.includes('href="/games/"'),'home page links to the Games screen');
-assert.ok(siteApp.includes('<section id="panel-games"')&&siteApp.includes('class="games-fan" href="/overtime"'),'app Games tab links to the game');
+assert.ok(home.includes('href="games/"'),'home page links to the Games screen');
+assert.ok(siteApp.includes('<section id="panel-games"')&&siteApp.includes('class="games-fan" href="overtime"'),'app Games tab links to the game');
 assert.ok(!/—/.test(home.slice(home.indexOf('id="game"'),home.indexOf('id="faq"'))));
 
 // 5. SHARE: the words, and what happens with and without a share sheet.
