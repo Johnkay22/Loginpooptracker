@@ -4199,6 +4199,66 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
   .share-studio-blurb{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.45}
   .rating-more-cards{display:block;margin:10px auto 0;background:none;border:0;color:var(--muted);font:inherit;font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
   </style>
+<style>
+/* Games tab (took over the old Soon tab) and Merch tab. Gold marks the game; the board is the Overtime survival top 10. */
+#panel-games{--g-gold:#fac759;--g-gold-2:#e9b84f}
+.games-screen{display:grid;gap:16px}
+.games-feature,.games-board,.games-more{border:1px solid rgba(250,199,89,.28);border-radius:20px;background:radial-gradient(120% 80% at 0% 0%,rgba(250,199,89,.10),transparent 60%),linear-gradient(180deg,rgba(10,22,44,.92),rgba(6,14,30,.96));box-shadow:0 16px 34px -18px rgba(0,0,0,.8);overflow:hidden}
+.games-feature{display:grid;gap:4px;padding:18px 18px 20px}
+.games-fan{position:relative;display:block;aspect-ratio:5/3;margin:4px 0 10px}
+.games-fan img{position:absolute;top:8%;left:50%;width:37%;height:auto;border-radius:12px;box-shadow:0 14px 28px rgba(0,0,0,.55);transition:transform .25s ease}
+.games-fan img:nth-child(1){transform:translateX(-118%) rotate(-11deg)}
+.games-fan img:nth-child(2){transform:translateX(18%) rotate(9deg)}
+.games-fan img:nth-child(3){top:0;width:42%;transform:translateX(-50%);z-index:2;box-shadow:0 0 0 2px var(--g-gold),0 18px 34px rgba(0,0,0,.6)}
+.games-eyebrow{margin:0;font:700 .68rem/1.3 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--g-gold)}
+.games-title{margin:4px 0 0;font-size:clamp(1.8rem,7vw,2.4rem);line-height:1.02;color:#fff;letter-spacing:-.01em}
+.games-title span{color:var(--g-gold);font-style:italic}
+.games-pitch{margin:8px 0 14px;color:#c9d6ea;font-size:.98rem;line-height:1.5}
+.games-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:0 22px;border-radius:14px;border:1px solid #ffe5a0;background:linear-gradient(#ffe391,var(--g-gold-2));box-shadow:0 4px 0 #8e642b,0 10px 20px rgba(0,0,0,.4);color:#141414;font-weight:800;font-size:1rem;text-decoration:none;justify-self:start}
+.games-btn svg{width:16px;height:16px}
+.games-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #8e642b}
+.games-btn--ghost{background:transparent;border-color:rgba(250,199,89,.6);box-shadow:none;color:var(--g-gold)}
+.games-btn[hidden]{display:none}
+.games-board{padding:16px 0 0}
+.games-board-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:0 16px 12px}
+.games-board-head h3{margin:3px 0 0;font-size:1.5rem;color:#fff}
+.games-goal{flex:none;padding:6px 10px;border-radius:999px;background:rgba(250,199,89,.14);border:1px solid rgba(250,199,89,.4);color:var(--g-gold);font:700 .72rem/1.2 "JetBrains Mono",ui-monospace,monospace;white-space:nowrap}
+.games-goal:empty{display:none}
+.games-rows{margin:0;padding:0;list-style:none;border-top:1px solid rgba(250,199,89,.18)}
+.games-rows li{display:grid;grid-template-columns:2.4rem minmax(0,1fr) auto;align-items:center;gap:10px;padding:11px 16px;font-size:.98rem;color:#eaf1fb}
+.games-rows li+li{border-top:1px solid rgba(255,255,255,.06)}
+.games-rows li i{font:700 .82rem/1 "JetBrains Mono",ui-monospace,monospace;font-style:normal;color:var(--g-gold)}
+.games-rows li span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+.games-rows li b{font:700 1rem/1 "JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.games-rows li.is-first{background:linear-gradient(90deg,rgba(250,199,89,.18),transparent 75%);padding-top:14px;padding-bottom:14px}
+.games-rows li.is-first i{font-size:1.25rem}
+.games-rows li.is-first span{display:flex;flex-direction:column;gap:3px;white-space:normal}
+.games-rows li small{font:700 .62rem/1.2 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--g-gold)}
+.games-rows li em{margin-left:8px;padding:2px 7px;border-radius:999px;background:#3b9dff;color:#fff;font:800 .62rem/1.4 "Plus Jakarta Sans",system-ui,sans-serif;font-style:normal;letter-spacing:.06em;text-transform:uppercase;vertical-align:2px}
+.games-rows li.is-first em{align-self:flex-start;margin-left:0}
+.games-rows li.is-me{box-shadow:inset 3px 0 0 #3b9dff}
+.games-rows li.is-open span,.games-rows li.is-open b{font-weight:500;color:#7f8fa8}
+.games-status{margin:0;padding:14px 16px;color:#8ba0bd;font-size:.9rem}
+.games-status[hidden],.games-you[hidden]{display:none}
+.games-you{margin:0;padding:12px 16px;border-top:1px solid rgba(255,255,255,.06);background:rgba(59,157,255,.08);color:#d7e6fb;font-size:.9rem;line-height:1.45}
+.games-how{padding:16px;border-top:1px solid rgba(250,199,89,.18)}
+.games-how h4{margin:0 0 10px;font-size:1rem;color:#fff}
+.games-how ol{margin:0 0 16px;padding:0;list-style:none;counter-reset:how;display:grid;gap:8px}
+.games-how li{counter-increment:how;display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:center;color:#c9d6ea;font-size:.94rem}
+.games-how li::before{content:counter(how);display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:rgba(250,199,89,.16);border:1px solid rgba(250,199,89,.45);color:var(--g-gold);font-weight:800;font-size:.8rem}
+.games-how li b{color:#fff}
+.games-how-actions{display:flex;flex-wrap:wrap;gap:10px}
+.games-more{padding:16px}
+.games-more h3{margin:0 0 12px;font-size:1.05rem;color:#fff}
+.games-more img,.merch-screen img{display:block;width:100%;height:auto;border-radius:16px}
+.merch-screen{display:grid;gap:16px}
+@media (min-width:900px){
+  .games-screen{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}
+  .games-feature{grid-row:span 2}
+  .games-more{grid-column:2}
+}
+@media (prefers-reduced-motion:reduce){.games-fan img{transition:none}}
+</style>
 </head>
 <body>
   <main class="page">
@@ -4473,15 +4533,53 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         </div>
       </section>
 
-      <section id="panel-coming" class="tab-panel" aria-label="Coming soon tab">
-        <div class="coming-screen">
-          <div class="coming-images">
-            <a class="coming-game-link" href="/overtime" aria-label="Play Poop Profit: Overtime, the free survival game"><img src="images/overtime-banner.webp" width="1200" height="630" loading="lazy" decoding="async" alt="Play Poop Profit: Overtime, a free survival game starring Herman"></a>
-            <img src="gamescomingsoong.png" loading="lazy" decoding="async" alt="Poop Profit games coming soon">
+      <section id="panel-games" class="tab-panel" aria-label="Games tab">
+          <div class="games-screen">
+            <article class="games-feature">
+              <a class="games-fan" href="overtime" aria-label="Play Poop Profit: Overtime">
+                <img src="images/overtime-card-office.webp" width="480" height="643" loading="lazy" decoding="async" alt="">
+                <img src="images/overtime-card-lobby.webp" width="480" height="643" loading="lazy" decoding="async" alt="">
+                <img src="images/overtime-card-survival.webp" width="480" height="643" loading="lazy" decoding="async" alt="">
+              </a>
+              <div class="games-feature-copy">
+                <p class="games-eyebrow">New · A Poop Profit original</p>
+                <h2 class="games-title">Poop Profit: <span>Overtime</span></h2>
+                <p class="games-pitch">Corporate wants to cut paid bathroom breaks. Herman Bowels disagrees. Two levels and an endless survival mode, free in your browser.</p>
+                <a class="games-btn" href="overtime"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></svg>Play now</a>
+              </div>
+            </article>
+            <article class="games-board" aria-labelledby="gamesBoardTitle">
+              <div class="games-board-head">
+                <div><p class="games-eyebrow">Survival of the Shittest</p><h3 id="gamesBoardTitle">The Top 10</h3></div>
+                <span id="gamesBoardGoal" class="games-goal"></span>
+              </div>
+              <ol id="gamesBoardRows" class="games-rows"></ol>
+              <p id="gamesBoardStatus" class="games-status" role="status">Loading the board...</p>
+              <p id="gamesBoardYou" class="games-you" hidden></p>
+              <div class="games-how">
+                <h4>How to get on the board</h4>
+                <ol>
+                  <li><span><b>Sign in.</b> It is free.</span></li>
+                  <li><span><b>Play Survival of the Shittest.</b></span></li>
+                  <li><span><b>Beat the time to beat.</b> Your best time posts by itself.</span></li>
+                </ol>
+                <div class="games-how-actions">
+                  <a class="games-btn" href="overtime" data-overtime-mode="10"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></svg>Play Survival</a>
+                  <a id="gamesSignIn" class="games-btn games-btn--ghost" href="auth.html">Log in</a>
+                </div>
+              </div>
+            </article>
+            <article class="games-more">
+              <h3>More games on the way</h3>
+              <img src="gamescomingsoong.png" width="1536" height="1024" loading="lazy" decoding="async" alt="Poop Profit games coming soon">
+            </article>
+          </div>
+        </section>
+        <section id="panel-merch" class="tab-panel" aria-label="Merch tab">
+          <div class="merch-screen">
             <img src="merch%20coming%20soon.png" loading="lazy" decoding="async" alt="Poop Profit merch coming soon">
           </div>
-        </div>
-      </section>
+        </section>
 
       <footer class="preview-footnote">
         <div class="social-follow-links">
@@ -4522,7 +4620,8 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
       <div class="dock-ind" id="dockInd"></div>
       <button class="nav-btn active" data-tab="calculator" type="button" aria-label="Calculator"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 13V9M10 3h4M18 6l1.5-1.5"/></svg></button>
       <button class="nav-btn" data-tab="stats" type="button" aria-label="Stats"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 16v-4M12 16V8M16 16v-6"/></svg></button>
-      <button class="nav-btn" data-tab="coming" type="button" aria-label="Soon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M6 6l1.4 1.4M16.6 16.6 18 18M18 6l-1.4 1.4M7.4 16.6 6 18"/></svg></button>
+      <button class="nav-btn" data-tab="games" type="button" aria-label="Games"><svg viewBox="0 0 24 24"><rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M7.5 10.5v4M5.5 12.5h4"/><circle cx="15.6" cy="11.4" r="1" fill="currentColor" stroke="none"/><circle cx="17.8" cy="13.8" r="1" fill="currentColor" stroke="none"/></svg></button>
+        <button class="nav-btn" data-tab="merch" type="button" aria-label="Merch"><svg viewBox="0 0 24 24"><path d="M8.5 3.5 4 5.8 2.5 10l3.5 1.2V20.5h12V11.2l3.5-1.2L20 5.8l-4.5-2.3c-.5 1.7-1.9 2.8-3.5 2.8s-3-1.1-3.5-2.8z"/></svg></button>
     </div>
   </nav>
 
@@ -4934,11 +5033,23 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
       var tabPanels = {
         calculator: document.getElementById("panel-calculator"),
         stats: document.getElementById("panel-stats"),
-        coming: document.getElementById("panel-coming")
+        games: document.getElementById("panel-games"),
+        merch: document.getElementById("panel-merch")
       };
       var mobileTabButtons = document.querySelectorAll("[data-mobile-tab]");
       var comingBackButton = document.getElementById("comingBackButton");
-      var TAB_ORDER = ["calculator", "stats", "coming"];
+      var TAB_ORDER = ["calculator", "stats", "games", "merch"];
+      // A tab named in the address (app.html?tab=games) opens first. The name is then taken out of the address so a
+      // refresh does not keep forcing that tab. poopprofit.com/games sends people here.
+      var addressTab = (function () {
+        try {
+          var t = new URLSearchParams(window.location.search).get("tab");
+          if (!t || TAB_ORDER.indexOf(t) === -1 || t === "calculator") return null;
+          var u = new URL(window.location.href); u.searchParams.delete("tab");
+          window.history.replaceState(window.history.state, "", u.pathname + u.search + u.hash);
+          return t;
+        } catch (e) { return null; }
+      })();
       var tabTransitionClass = "";
       var tabTransitionResetTimerId = null;
 
@@ -6927,6 +7038,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
           scheduleStatsCountUp();
         }
         restoreRunningSession();
+        if (addressTab) setActiveTab(addressTab);
         setupTutorial();
         maybeShowGuestReturnNudge();
         trackReturnVisitWithin7Days();
@@ -7407,6 +7519,62 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         setActiveTab("calculator");
       }
 
+      // Games tab: the Overtime survival leaderboard. The same public, read-only request the game makes; a signed-in
+      // player sends their own sign-in so their own place comes back too. Usernames only ever go in as text.
+      var GAMES_TOP = 10, GAMES_MIN_ROWS = 3, gamesBoardLoadedAt = 0, gamesBoardBusy = false;
+      function gamesClock(seconds) { var t = Math.max(0, Math.floor(Number(seconds) || 0)); var m = Math.floor(t / 60), r = t % 60; return (m < 10 ? "0" : "") + m + ":" + (r < 10 ? "0" : "") + r; }
+      function gamesRow(place, entry) {
+        var li = document.createElement("li"), num = document.createElement("i"), name = document.createElement("span"), time = document.createElement("b");
+        if (!entry) { li.className = "is-open"; num.textContent = "#" + place; name.textContent = "Open spot. Take it."; time.textContent = "--:--"; }
+        else {
+          if (place === 1) li.classList.add("is-first");
+          if (entry.is_me) li.classList.add("is-me");
+          num.textContent = place === 1 ? "\u{1F451}" : "#" + place;
+          name.appendChild(document.createTextNode(String(entry.username)));
+          if (entry.is_me) { var you = document.createElement("em"); you.textContent = "You"; name.appendChild(you); }
+          if (place === 1) { var tag = document.createElement("small"); tag.textContent = "Employee of the Month"; name.appendChild(tag); }
+          time.textContent = gamesClock(entry.best_seconds);
+        }
+        li.appendChild(num); li.appendChild(name); li.appendChild(time); return li;
+      }
+      // Shows as many real times as exist, up to 10, and never fewer than 3 rows: empty spots read as an invitation.
+      function renderGamesBoard(list) {
+        var rowsEl = document.getElementById("gamesBoardRows"), goal = document.getElementById("gamesBoardGoal"), status = document.getElementById("gamesBoardStatus"), youEl = document.getElementById("gamesBoardYou"), signIn = document.getElementById("gamesSignIn");
+        if (!rowsEl) return;
+        if (signIn) signIn.hidden = isSignedInMode();
+        if (!Array.isArray(list)) { status.textContent = "The board is on a break. Try again in a minute."; status.hidden = false; return; }
+        var rows = list.filter(function (e) { return e && e.username && Number(e.place) >= 1; });
+        var top = rows.filter(function (e) { return Number(e.place) <= GAMES_TOP; }).slice(0, GAMES_TOP);
+        var me = rows.filter(function (e) { return e.is_me; })[0] || null;
+        rowsEl.textContent = "";
+        // Real rows show the place the server gave them, so tied times share a rank (two #1s both get the crown).
+        for (var n = 0; n < Math.max(GAMES_MIN_ROWS, top.length); n++) rowsEl.appendChild(gamesRow(top[n] ? Number(top[n].place) : n + 1, top[n] || null));
+        status.hidden = true;
+        var full = top.length >= GAMES_TOP, cutoff = full ? Number(top[GAMES_TOP - 1].best_seconds) : 0;
+        goal.textContent = full ? "Time to beat: " + gamesClock(cutoff) : (GAMES_TOP - top.length) + " of " + GAMES_TOP + " spots open";
+        var note = "";
+        if (me && Number(me.place) > GAMES_TOP) note = "You are #" + me.place + " with " + gamesClock(me.best_seconds) + ". " + gamesClock(Math.floor(Math.max(0, cutoff - Number(me.best_seconds))) + 1) + " more gets you on the board.";
+        else if (!me && isSignedInMode()) note = full ? "You are not on the board yet. Last longer than " + gamesClock(cutoff) + " in Survival to get on it." : "You are not on the board yet. Finish one Survival run and you are on it.";
+        else if (!me) note = full ? "Sign in, then last longer than " + gamesClock(cutoff) + " in Survival to take a spot." : "Spots are open. Sign in and finish one Survival run to take one.";
+        youEl.textContent = note; youEl.hidden = !note;
+      }
+      function loadGamesBoard() {
+        if (gamesBoardBusy || Date.now() - gamesBoardLoadedAt < 60000 || !window.fetch) return;
+        gamesBoardBusy = true;
+        var ask = function (token) {
+          return fetch(SUPABASE_URL + "/rest/v1/rpc/overtime_leaderboard", { method: "POST", headers: { "Content-Type": "application/json", apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + token }, body: JSON.stringify({ p_limit: GAMES_TOP }) })
+            .then(function (res) { return res.ok ? res.json() : Promise.reject(res.status); });
+        };
+        var signedToken = isSignedInMode() && authContext.accessToken ? authContext.accessToken : null;
+        (signedToken ? ask(signedToken).catch(function () { return ask(SUPABASE_ANON_KEY); }) : ask(SUPABASE_ANON_KEY))
+          .then(function (list) { gamesBoardLoadedAt = Date.now(); renderGamesBoard(list); })
+          .catch(function () { renderGamesBoard(null); })
+          .then(function () { gamesBoardBusy = false; });
+      }
+      // "Play Survival" opens the game with Survival of the Shittest already picked (the game remembers the last mode).
+      document.querySelectorAll("[data-overtime-mode]").forEach(function (link) {
+        link.addEventListener("click", function () { try { localStorage.setItem("pp-overtime-mode", link.getAttribute("data-overtime-mode")); } catch (e) {} });
+      });
       function setActiveTab(tabName) {
         if (!tabPanels[tabName]) return;
         var previousTab = state.activeTab || "calculator";
@@ -7414,6 +7582,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         state.activeTab = tabName;
         persist();
         renderTabs();
+        if (tabName === "games") loadGamesBoard();
         if (tabName === "stats") {
           if (shareCardsReady()) PPShareCards.preload();
           scheduleStatsCountUp();
@@ -9467,7 +9636,7 @@ body.guest-mode #panel-stats .stats-panel-grid { display: none !important; }
         }
         buildTutorialProgressDots();
         var seen = localStorage.getItem(TUTORIAL_SEEN_KEY) === "1";
-        if (seen) return;
+        if (seen || addressTab) return;
         window.setTimeout(function () {
           if (!tutorialState.open) {
             startTutorial(false);
