@@ -29,6 +29,14 @@ export function createBoard({build=0,client=defaultClient,storage=globalThis.loc
  const signedIn=()=>!!sessionUser(storage);
  return {
   signedIn,
+  // Build 30: checks the login is still good (the library refreshes it if it can) and looks up the player's
+  // name. Resolves to {signedIn, name}. Offline or slow (over `wait` ms) counts as signed in with no name, so a
+  // flaky connection never blocks a run.
+  who(wait=2500){if(!signedIn())return Promise.resolve({signedIn:false,name:null});
+   const look=client().then(async c=>{const {data}=await c.auth.getSession();const s=data&&data.session;if(!s)return {signedIn:false,name:null};
+    let name=null;try{const r=await c.from('profiles').select('username').eq('user_id',s.user.id).maybeSingle();name=r&&r.data&&r.data.username||null;}catch{}
+    return {signedIn:true,name};}).catch(()=>({signedIn:true,name:null}));
+   return Promise.race([look,new Promise(r=>setTimeout(()=>r({signedIn:signedIn(),name:null}),wait))]);},
   // Get the library ready ahead of the first run so starting a run is quick.
   warm(){if(signedIn())client().catch(()=>{});},
   // Call when a survival run starts. Resolves to the run id, or null for guests and when offline.

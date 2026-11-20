@@ -220,6 +220,12 @@ var APP_URL = "app.html";
 function appRedirectUrl() {
   return new URL(APP_URL, window.location.href).href;
 }
+/* Build 30 (Overtime): the game links here with ?next=overtime so players land back in the game after logging in.
+   Only known pages are allowed. Email links still go to the app. */
+function afterSignInUrl() {
+  var next = new URLSearchParams(window.location.search).get("next");
+  return next === "overtime" ? new URL("overtime", window.location.href).href : appRedirectUrl();
+}
 /* ========================================== */
 
 var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -229,7 +235,7 @@ function track(ev, params){ if (typeof gtag === "function") gtag("event", ev, pa
 
 /* Already signed in? Straight to the app. */
 sb.auth.getSession().then(function(res){
-  if (res.data && res.data.session) window.location.replace(appRedirectUrl());
+  if (res.data && res.data.session) window.location.replace(afterSignInUrl());
 });
 
 /* Responsive art swap (portrait under 900px, landscape above) */
@@ -255,7 +261,7 @@ async function handleGoogle(response){
   var res = await sb.auth.signInWithIdToken({ provider: "google", token: response.credential });
   if (res.error) { setStatus("Google sign-in failed: " + res.error.message, false); return; }
   track("auth_signin_success", { method: "google" });
-  window.location.replace(appRedirectUrl());
+  window.location.replace(afterSignInUrl());
 }
 window.addEventListener("load", function(){
   if (!window.google || !google.accounts) return; /* script blocked; visible button still shows guidance */

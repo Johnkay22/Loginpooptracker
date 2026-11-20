@@ -21,7 +21,7 @@ assert.ok(!html.includes('howSheet')&&!html.includes('sv2-tips')&&!css.includes(
 assert.ok(!/to earn a first aid kit/.test(html),'old sentence list is gone');
 
 // The wiring: first CLOCK IN shows the cards, then starts the run; text goes in as text.
-assert.match(app,/\$\('startBtn'\)\.onclick=\(\)=>howSeen\(\)\?begin\(\):openHow\(begin\);/,'first CLOCK IN opens the cards');
+assert.ok(app.includes("const go=()=>howSeen()?begin():openHow(begin);")&&app.includes("$('startBtn').onclick=startShift;"),'first CLOCK IN opens the cards');
 assert.match(app,/function closeHow\(action\)\{[^\n]*?localStorage\.setItem\(HOW_KEY,'1'\)/,'closing remembers it was seen');
 assert.match(app,/function howSeen\(\)\{try\{return localStorage\.getItem\(HOW_KEY\)==='1';\}catch\{return true;\}\}/,'blocked storage does not nag every run');
 assert.match(app,/card\.querySelector\('h3'\)\.textContent=s\.title;card\.querySelector\('p'\)\.textContent=s\.text;/);
