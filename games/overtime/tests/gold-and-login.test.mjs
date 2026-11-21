@@ -81,6 +81,9 @@ assert.ok(html.includes('id="loginNudge"')&&html.includes('id="nudgePlay"')&&htm
 assert.ok(html.includes('<span id="whoami" class="sv3-who" hidden></span>'));
 assert.ok(app.includes("if(r.signedIn||nudged)return go();nudged=true;$('loginNudge').hidden=false;"),'asks once per visit, only when logged out');
 assert.ok(app.includes("if(selectedStage!==SURVIVAL_ID)return go();"),'the two levels start as before');
+assert.ok(app.includes("if(!stillOnMenu(ticket,stage))return;if(r.signedIn||nudged)return go();"),'a start is dropped if the player left the menu during the check');
+assert.ok(app.includes("ticket===startTicket&&selectedStage===stage&&!$('start').hidden&&$('workshop').hidden&&$('how').hidden"));
+assert.ok(app.includes("function selectMode(id){startTicket++;"),'changing mode cancels a pending start');
 assert.ok(app.includes("label('NOT POSTED · LOG IN BEFORE YOUR NEXT RUN')")&&!app.includes('SIGN IN TO POST YOUR TIME'),'the end screen no longer promises to post this run');
 assert.ok(app.includes("showToast('COULD NOT REACH THE LEADERBOARD · THIS RUN WON\\'T POST',4)"));
 assert.ok(html.includes('href="auth.html?next=overtime" hidden>LOG IN TO POST YOUR TIMES</a>'));
