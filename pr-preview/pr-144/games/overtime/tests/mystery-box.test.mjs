@@ -66,9 +66,10 @@ assert.equal(BOX_SPOTS.length,4);
 {const g=quiet();g.cd.bomb=7;g.pocket=['bomb'];assert.equal(g.usePocket(0),true);assert.equal(g.bombs.length,1);assert.equal(g.cd.bomb,7);assert.deepEqual(g.pocket,[]);}
 
 // 8. Air Horn: knocks nearby enemies back and stuns them; executives get a third of the push and no stun.
-{const g=quiet();const p=g.player,w=g.spawn('worker',p.x+60,p.y),x=g.spawn('exec',p.x-60,p.y,{hp:500,speed:60}),far=g.spawn('worker',p.x+500,p.y);
- g.pocket=['horn'];g.usePocket(0);assert.ok(w.x>p.x+60+100,'worker blown back ('+(w.x-p.x).toFixed(0)+')');assert.equal(w.frozen,MYSTERY.hornStun);
- assert.ok(x.x<p.x-60&&x.x>p.x-60-60,'exec only nudged');assert.ok(!x.frozen);assert.equal(far.x,p.x+500,'out of range');assert.ok(g.events.some(e=>e.type==='horn'));}
+{const g=quiet();const p=g.player;g.player.hp=g.player.max=1e9;g.player.y=1300;const w=g.spawn('worker',p.x+60,p.y),edge=g.spawn('worker',p.x,p.y-500),x=g.spawn('exec',p.x-60,p.y,{hp:1e6,speed:0}),far=g.spawn('worker',p.x+560,p.y);far.speed=0;
+ g.pocket=['horn'];g.usePocket(0);assert.equal(w.frozen,MYSTERY.hornStun);assert.ok(!x.frozen);for(let i=0;i<8;i++)g.step(.05,{x:0,y:0});
+ assert.ok(w.x-p.x>350,'worker blown far back ('+(w.x-p.x).toFixed(0)+')');assert.ok(p.y-edge.y>800,'even at the edge of the blast ('+(p.y-edge.y).toFixed(0)+')');
+ assert.ok(p.x-x.x>200&&p.x-x.x<320,'exec gets half ('+(p.x-x.x).toFixed(0)+')');assert.equal(far.x,p.x+560,'out of range');assert.ok(g.events.some(e=>e.type==='horn'));assert.equal(MYSTERY.hornR,520);}
 
 // 9. Company Health Plan: full heal any time, but not when already full (it stays in the pocket).
 {const g=quiet();g.pocket=['health'];assert.equal(g.usePocket(0),false);assert.deepEqual(g.pocket,['health']);assert.ok(g.events.some(e=>e.text==='ALREADY AT FULL HEALTH'));
@@ -103,5 +104,6 @@ for(const k of ['horn','freeze','wet','bidet'])assert.ok(new RegExp('\\b'+k+'\\(
 // The Plungerang squeak and the executive groan, much less often and quieter.
 assert.ok(app.includes("'hit-plunger':{vol:.3,gap:.45,jitter:.1}"));
 assert.ok(app.includes("'hit-boss':{vol:.45,gap:1.1,jitter:.05}"));
+{const g=quiet();const w=g.spawn('guard',1000,900),x=g.spawn('exec',1050,900,{hp:999,speed:0});g.hit(w,1,'plunger');g.hit(x,1,'tp');g.hit(x,1,'plunger');assert.ok(!g.events.some(e=>e.type==='hit-plunger'||e.type==='hit-boss'),'squeak and groan are gone');}
 
-console.log('PASS: mystery boxes roll the agreed odds, refill after 90 seconds, fill a two-slot pocket, and every item works; the squeak and groan are calmer.');
+console.log('PASS: mystery boxes roll the agreed odds, refill after 90 seconds, fill a two-slot pocket, and every item works; the squeak and groan are gone.');

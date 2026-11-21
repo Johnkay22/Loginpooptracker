@@ -8,7 +8,7 @@ export const ITEMS={
  wet:   {name:'Wet Floor',          weight:18,use:'now',   desc:'A slippery puddle for 10s. Enemies slow, and 1 in 6 slip and go down.'},
  freeze:{name:'Out of Order',       weight:12,use:'now',   desc:'Every enemy freezes for 3s. Bosses for 1.5s.'},
  bomb:  {name:'Free Stink Bomb',    weight:11,use:'pocket',desc:'One extra bomb. Your recharging one is untouched.'},
- horn:  {name:'Air Horn',           weight:10,use:'pocket',desc:'Blasts nearby enemies back and stuns them.'},
+ horn:  {name:'Air Horn',           weight:10,use:'pocket',desc:'Blasts everyone around you far back and stuns them.'},
  bidet: {name:'Executive Bidet',    weight:6, use:'now',   desc:'5 seconds of high-pressure water. Blasts enemies back and hits hard.'},
  health:{name:'Company Health Plan',weight:4, use:'pocket',desc:'Tap any time for a full heal.'},
  card:  {name:'Company Credit Card',weight:1, use:'pocket',desc:'Tap any time and pick any item you want.'},
@@ -18,7 +18,7 @@ export const MYSTERY={
  pocket:2,           // pocket slots
  puddleLife:10,puddleR:62,slipChance:1/6,slowFor:2.5,slow:.45, // Wet Floor: executives and bosses only slow down
  freeze:3,freezeBoss:1.5,                                       // Out of Order (executives count as bosses here)
- hornR:300,hornPush:170,hornStun:.8,                            // Air Horn: bosses and executives get a third of the push, no stun
+ hornR:520,hornPush:450,hornStun:1.2,hornTime:.35,              // Air Horn: everyone in range flies 450 back over 0.35s; bosses and executives half, no stun
  bidetTime:5,bidetLength:150,bidetWidth:34,bidetDps:110,bidetPush:140, // about 3 enemy body lengths of spray
  cardCommon:['sweep','coffee','wet','freeze','bomb','horn'],    // the Credit Card always offers these...
  cardRares:['bidet','health'],                                  // ...plus one of these, taking turns
