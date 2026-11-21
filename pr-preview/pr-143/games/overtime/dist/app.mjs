@@ -11,7 +11,7 @@ try{wonBest=Number(localStorage.getItem('pp-overtime-best')||0);}catch{}$('best'
 let selectedStage=1;let progress=fresh();try{progress=normalize(JSON.parse(localStorage.getItem('pp-overtime-progress')||'null'));}catch{}
 // Build 19: the menu lists MODES (both stages plus survival) and remembers the last one picked.
 try{const saved=Number(localStorage.getItem('pp-overtime-mode'));if(MODES.some(m=>m.id===saved)&&canPlayStage(progress,saved))selectedStage=saved;}catch{}
-function selectMode(id){selectedStage=id;try{localStorage.setItem('pp-overtime-mode',String(id));}catch{}}
+function selectMode(id){startTicket++;selectedStage=id;try{localStorage.setItem('pp-overtime-mode',String(id));}catch{}}
 const modeNumber=stage=>stage.endless?'∞':String(stage.id).padStart(2,'0');
 function saveProgress(){try{localStorage.setItem('pp-overtime-progress',JSON.stringify(progress));}catch{$('saveNote').textContent='Browser storage is unavailable. Progress lasts for this session only.';}}
 function updateProgress(){ cardStage=selectedStage; renderStagePicker(); $('bank').textContent=progress.credits;$('nextGoal').textContent=progress.kills<200?`NEXT UNLOCK: TP Tornado start · ${progress.kills}/200 lifetime KOs`:progress.wins<1?'NEXT UNLOCK: Corporate Lobby + Gas start · Clear the office':progress.clearedStages.includes(2)?'BOTH STAGES CLEARED · TRY A NEW BUILD':'CORPORATE LOBBY UNLOCKED · SELECT STAGE 02';}
@@ -197,8 +197,13 @@ function showWho(r){const el=$('whoami');if(selectedStage!==SURVIVAL_ID){el.hidd
  if(r.signedIn){whoName=r.name;el.replaceChildren('PLAYING AS ');const b=document.createElement('b');b.textContent=r.name||'YOU';el.append(b);}
  else{whoName=null;el.innerHTML='NOT LOGGED IN · <a href="auth.html?next=overtime">LOG IN</a> TO POST TIMES';}}
 function refreshWho(){if(selectedStage!==SURVIVAL_ID){$('whoami').hidden=true;return Promise.resolve({signedIn:board.signedIn()});}return board.who().then(r=>{showWho(r);return r;});}
+// The check can take a moment. If the player leaves the menu meanwhile (Break Room, How to Play, another mode),
+// the pending start is dropped instead of starting a run on top of wherever they went.
+let startTicket=0;
+const stillOnMenu=(ticket,stage)=>ticket===startTicket&&selectedStage===stage&&!$('start').hidden&&$('workshop').hidden&&$('how').hidden;
 function startShift(){const go=()=>howSeen()?begin():openHow(begin);if(selectedStage!==SURVIVAL_ID)return go();
- $('startBtn').disabled=true;refreshWho().then(r=>{$('startBtn').disabled=false;if(r.signedIn||nudged)return go();nudged=true;$('loginNudge').hidden=false;$('nudgePlay').onclick=()=>{$('loginNudge').hidden=true;go();};});}
+ const ticket=++startTicket,stage=selectedStage;
+ $('startBtn').disabled=true;refreshWho().then(r=>{$('startBtn').disabled=false;if(!stillOnMenu(ticket,stage))return;if(r.signedIn||nudged)return go();nudged=true;$('loginNudge').hidden=false;$('nudgePlay').onclick=()=>{$('loginNudge').hidden=true;go();};});}
 $('startBtn').onclick=startShift;
 // How to Play sheet: opens from the menu, closes with GOT IT or a tap outside it.
 // Build 25: How to Play is six swipe cards with moving pictures (words and markup in howto.mjs, drawing in
