@@ -97,22 +97,25 @@ export class Game{
  dropBomb(){const l=Math.max(1,this.weapons.bomb||0),evolved=l===6;this.bombs.push({x:this.player.x-this.face.x*27,y:this.player.y-this.face.y*27,t:0,fuse:3,lure:evolved?340:160+l*23,blast:evolved?245:100+l*15,damage:evolved?450:105+l*30,level:l});}
  // ---- Build 31: mystery boxes (rules and numbers in mystery.mjs) ----
  openBox(box){this.fx.push({x:box.x,y:box.y,t:0,life:.45,r:45,color:'#f2cd87'});box.refillAt=this.t+MYSTERY.refill;const k=rollItem(this.random);
-  if(k==='wet')this.addPuddle(box.x,box.y);
+  if(k==='wet'){this.addPuddle(box.x,box.y);this.event('got','wet');}
   else if(k==='sweep')this.drops.push({x:box.x,y:box.y,magnet:true,value:0});
   else if(k==='coffee')this.drops.push({x:box.x,y:box.y,coffee:true,value:0});
   else this.drops.push({x:box.x,y:box.y,item:k,value:0});
   this.event('supply','MYSTERY BOX · '+ITEMS[k].name.toUpperCase());return k;}
  // A picked-up item: pocket items go in the pocket; with the pocket full, a random "now" item happens instead.
- gainItem(k){if(ITEMS[k].use==='pocket'){if(this.pocket.length<MYSTERY.pocket){this.pocket.push(k);this.event('pocket',ITEMS[k].name.toUpperCase()+' · IN YOUR POCKET');return k;}
+ gainItem(k){if(ITEMS[k].use==='pocket'){if(this.pocket.length<MYSTERY.pocket){this.pocket.push(k);this.event('pocket',ITEMS[k].name.toUpperCase()+' · IN YOUR POCKET');this.event('got',k);return k;}
    const swap=rollItem(this.random,NOW_ITEMS);this.useNow(swap,'POCKET FULL · '+ITEMS[swap].name.toUpperCase()+' INSTEAD');return swap;}
   this.useNow(k);return k;}
- useNow(k,note){const p=this.player,say=t=>this.event(k==='coffee'?'coffee':k==='sweep'?'upgrade':k,note||t);
+ useNow(k,note){if(k!=='bomb'&&k!=='horn'&&k!=='health'&&k!=='card')this.event('got',k);const p=this.player,say=t=>this.event(k==='coffee'?'coffee':k==='sweep'?'upgrade':k,note||t);
   if(k==='sweep'){this.magnetTime=5;say('CASH SWEEP · COLLECT IT ALL');}
   else if(k==='coffee'){this.caffeine=8;say('CAFFEINE RUSH · 8s OF SPEED + RAPID FIRE');}
   else if(k==='wet'){this.addPuddle(p.x,p.y);say('WET FLOOR · WATCH THEM SLIP');}
   else if(k==='freeze'){this.freezeAll();say('OUT OF ORDER · EVERYONE FREEZE');}
   else if(k==='bidet'){this.bidet=MYSTERY.bidetTime;say('EXECUTIVE BIDET · 5s OF PRESSURE');}
   else if(k==='bomb'||k==='horn'||k==='health'||k==='card'){this.pocket.push(k);this.usePocket(this.pocket.length-1);}}
+ // The app pauses the run while Herman's first-time bubble is up, then counts back in like a promotion.
+ intro(){if(this.state!=='playing'&&this.state!=='countdown')return false;this.state='intro';return true;}
+ endIntro(){if(this.state!=='intro')return false;this.state='countdown';this.resumeLeft=RECOVERY_SECONDS;this.moving=false;return true;}
  addPuddle(x,y){this.puddles.push({x,y,r:MYSTERY.puddleR,t:0,life:MYSTERY.puddleLife,seen:new Set()});}
  freezeAll(){for(const e of this.enemies)if(e.hp>0){e.frozen=Math.max(e.frozen||0,e.boss||e.type==='exec'?MYSTERY.freezeBoss:MYSTERY.freeze);e.windup=0;e.dash=0;}}
  airHorn(){const p=this.player;this.fx.push({x:p.x,y:p.y,t:0,life:.5,r:MYSTERY.hornR,color:'#ffe08a'});
@@ -131,7 +134,7 @@ export class Game{
  // Company Credit Card: the game pauses on a menu of every common and uncommon item plus one rare, taking turns.
  openCard(){this.cardChoices=[...MYSTERY.cardCommon,MYSTERY.cardRares[this.cardUses%MYSTERY.cardRares.length]];this.cardUses++;this.state='card';this.event('card','COMPANY CREDIT CARD · PICK ANYTHING');}
  buyItem(k){if(this.state!=='card'||!this.cardChoices.includes(k))return false;this.cardChoices=[];this.state='countdown';this.resumeLeft=RECOVERY_SECONDS;this.moving=false;
-  if(ITEMS[k].use==='pocket'&&this.pocket.length<MYSTERY.pocket){this.pocket.push(k);this.event('pocket',ITEMS[k].name.toUpperCase()+' · IN YOUR POCKET');}
+  if(ITEMS[k].use==='pocket'&&this.pocket.length<MYSTERY.pocket){this.pocket.push(k);this.event('pocket',ITEMS[k].name.toUpperCase()+' · IN YOUR POCKET');this.event('got',k);}
   else{const was=this.state;this.state='playing';this.useNow(k);if(this.state==='playing')this.state=was;}return true;}
  stepMystery(dt){
   for(const u of this.puddles){u.t+=dt;for(const e of this.enemies){if(e.hp<=0||dist(e,u)>u.r+e.r*.5)continue;e.slowT=MYSTERY.slowFor;if(u.seen.has(e.id))continue;u.seen.add(e.id);
@@ -140,7 +143,7 @@ export class Game{
   if(this.bidet>0){this.bidet=Math.max(0,this.bidet-dt);const p=this.player,f=this.face,hs=this.endless?this.healthScale():1;
    for(const e of this.combatTargets()){if(e.hp<=0)continue;const dx=e.x-p.x,dy=e.y-p.y,along=dx*f.x+dy*f.y,across=Math.abs(dx*f.y-dy*f.x);
     if(along<8||along>MYSTERY.bidetLength+e.r||across>MYSTERY.bidetWidth+e.r+along*.12)continue;
-    this.hit(e,MYSTERY.bidetDps*hs*dt,'bidet');if(e.type!=='supply'&&!e.boss&&e.type!=='exec'&&e.hp>0){e.x=clamp(e.x+f.x*MYSTERY.bidetPush*dt,35,1765);e.y=clamp(e.y+f.y*MYSTERY.bidetPush*dt,35,1765);}}}}
+    if(e.type!=='supply'&&!e.boss&&e.type!=='exec'){e.flash=.12;this.hit(e,e.hp*99+1e6,'bidet');}else this.hit(e,MYSTERY.bidetDps*hs*dt,'bidet');}}}
  hurtPlayer(amount,by,slam=false){if(this.player.inv>0||this.state!=='playing')return false;this.player.hp=Math.max(0,this.player.hp-amount);this.player.inv=.65;this.combo=0;this.comboTime=0;this.event('hurt','');if(this.player.hp===0){this.state='lost';this.killedBy=by?{type:by.type,boss:!!by.boss,slam}:null;this.event('end','Herman ran out of health. Spend Petty Cash on perks or try a different weapon build.');}return true;}
  bossSpot(distance=240){
   const p=this.player;let spot=null,best=-Infinity;
@@ -215,7 +218,7 @@ export class Game{
  l=this.weapons.tp;this.orbits=[];if(l){for(let i=0;i<(l===6?12:l+1);i++){let a=this.t*(1.8+l*.16)*(l===6&&i>=6?-1:1)+i*Math.PI*2/(l===6?6:l+1);let radius=l===6?(i<6?75:125):61+l*5;let o={x:p.x+Math.cos(a)*radius,y:p.y+Math.sin(a)*radius};this.orbits.push(o);for(let e of this.combatTargets())if(e.hp>0&&e.hit===0&&dist(e,o)<e.r+14){this.hit(e,12+l*7,'tp');e.hit=.35;let d=Math.max(1,dist(e,p));if(e.type!=='supply'){e.x+=(e.x-p.x)/d*10;e.y+=(e.y-p.y)/d*10;}}}}
  for(let c of this.clouds){c.t+=dt;for(let e of this.combatTargets())if(e.hp>0&&dist(e,c)<c.r+e.r)this.hit(e,c.dps*dt,'gas');}this.clouds=this.clouds.filter(c=>c.t<c.life);this.stepMystery(dt);
  for(let w of this.waves){w.t+=dt;if(w.t<0)continue;let r=w.max*w.t/w.life;for(let e of this.combatTargets())if(e.hp>0&&!w.hit.has(e.id)&&dist(e,w)<r+e.r){w.hit.add(e.id);this.hit(e,w.damage,'flush');let d=Math.max(1,dist(e,w));let force=e.type==='supply'?0:e.type==='exec'?12:55;e.x=clamp(e.x+(e.x-w.x)/d*force,30,1770);e.y=clamp(e.y+(e.y-w.y)/d*force,30,1770);}}this.waves=this.waves.filter(w=>w.t<w.life);
- for(let d of this.drops){if(d.heal){if(d.life!=null){d.life-=dt;if(d.life<=0){d.taken=true;continue;}}if(p.hp>p.max-8)continue;}let r=dist(d,p);if(r<100+this.passives.magnet*35+(this.perks.pickup||0)*20||this.magnetTime>0&&!d.chest&&!d.heal&&!d.coffee&&!d.item){d.x+=(p.x-d.x)/Math.max(1,r)*300*dt;d.y+=(p.y-d.y)/Math.max(1,r)*300*dt;}if(r<23){d.taken=true;if(d.item){this.gainItem(d.item);}else if(d.chest){this.pendingBriefcases++;}else if(d.magnet){this.magnetTime=5;this.event('upgrade','CASH SWEEP · COLLECT IT ALL');}else if(d.coffee){this.caffeine=8;this.event('coffee','CAFFEINE RUSH · 8s OF SPEED + RAPID FIRE');}else if(d.heal){p.hp=Math.min(p.max,p.hp+this.kitHeal());this.healCount++;this.event('heal',''); /* Herman's relieved ahh */}else{this.tokens+=d.value;this.xp+=d.value*(1+this.passives.magnet*.1);if(!this.events.some(e=>e.type==='pickup'))this.event('pickup','');}}}this.drops=this.drops.filter(d=>!d.taken);if(this.drops.length>500){let loose=this.drops.filter(d=>!d.heal&&!d.chest&&!d.magnet&&!d.coffee&&!d.item);if(loose.length>1){loose[1].value+=loose[0].value;this.drops.splice(this.drops.indexOf(loose[0]),1);}}
+ for(let d of this.drops){if(d.heal){if(d.life!=null){d.life-=dt;if(d.life<=0){d.taken=true;continue;}}if(p.hp>p.max-8)continue;}let r=dist(d,p);if(r<100+this.passives.magnet*35+(this.perks.pickup||0)*20||this.magnetTime>0&&!d.chest&&!d.heal&&!d.coffee&&!d.item){d.x+=(p.x-d.x)/Math.max(1,r)*300*dt;d.y+=(p.y-d.y)/Math.max(1,r)*300*dt;}if(r<23){d.taken=true;if(d.item){this.gainItem(d.item);}else if(d.chest){this.pendingBriefcases++;}else if(d.magnet){this.magnetTime=5;this.event('upgrade','CASH SWEEP · COLLECT IT ALL');this.event('got','sweep');}else if(d.coffee){this.caffeine=8;this.event('coffee','CAFFEINE RUSH · 8s OF SPEED + RAPID FIRE');this.event('got','coffee');}else if(d.heal){p.hp=Math.min(p.max,p.hp+this.kitHeal());this.healCount++;this.event('heal',''); /* Herman's relieved ahh */}else{this.tokens+=d.value;this.xp+=d.value*(1+this.passives.magnet*.1);if(!this.events.some(e=>e.type==='pickup'))this.event('pickup','');}}}this.drops=this.drops.filter(d=>!d.taken);if(this.drops.length>500){let loose=this.drops.filter(d=>!d.heal&&!d.chest&&!d.magnet&&!d.coffee&&!d.item);if(loose.length>1){loose[1].value+=loose[0].value;this.drops.splice(this.drops.indexOf(loose[0]),1);}}
  for(let n of this.numbers)n.t+=dt;this.numbers=this.numbers.filter(n=>n.t<n.life);this.enemies=this.enemies.filter(e=>e.hp>0);for(let f of this.fx)f.t+=dt;this.fx=this.fx.filter(f=>f.t<f.life);
  if(this.endless)this.boss=this.enemies.find(e=>e.boss)||null;
  if(this.phase==='boss'&&this.bossDefeated&&this.state==='playing'){this.state='won';this.bossAttacks=[];this.event('end',this.stage.clear);return;}this.levelCheck();}

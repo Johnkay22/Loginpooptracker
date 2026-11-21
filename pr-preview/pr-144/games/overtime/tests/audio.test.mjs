@@ -47,7 +47,7 @@ for(const [when,moment] of [["event.type==='upgrade'&&g.upgradeKind==='promotion
 assert.match(app,/voice\.reset\(\);fetchVoice\(\);say\('start',\.35\);/);assert.match(app,/if\(!won\)say\('lose',/);
 assert.ok(engine.includes("'RUSH SURVIVED · FIRST AID KIT DROPPED'")&&engine.includes("this.event('combo'"),'the engine still raises what the lines listen for');
 // No speech bubble: the lines are audio only.
-assert.ok(!/speech|bubble/i.test(html));
+assert.ok(!/speech/i.test(html),'voice lines are audio only');assert.ok(!/bubble/i.test(fs.readFileSync(path.join(root,'dist/voice.mjs'),'utf8')),'no bubble for voice lines (Build 31 bubbles are for first-time items only)');
 
 // 4. Warnings have their own events, and each has its own sound setting (one siren clip at different pitches for now).
 {const g=new Game(()=>.5,{},0,'plunger',SURVIVAL_ID);g.player.max=1e9;g.player.hp=1e9;const seen=new Set();
@@ -97,7 +97,7 @@ assert.equal(hasMusic(),Object.values(MUSIC).some(Boolean));assert.equal(hasMusi
  p.enable(false);assert.equal(p.current,null);p.set('menu');assert.equal(p.current,null,'off means off');
  p.enable(true);p.set('menu');assert.equal(p.current,'menu');p.muffle(true);p.muffle(false);
  await new Promise(r=>setTimeout(r,120));assert.ok(made[1].paused,'the old loop stops after its fade');}
-assert.ok(app.includes("music.muffle(s==='paused'||s==='upgrade'||s==='card');"),'muffled on the pause, promotion and Credit Card screens');
+assert.ok(app.includes("music.muffle(s==='paused'||s==='upgrade'||s==='card'||s==='intro');"),'muffled on the pause, promotion, Credit Card and item bubble screens');
 
 // 7. Build: sound effects stay inside the page; voice and music stay outside it and are pointed at this folder.
 const out=path.join(root,'tools','tmp','test-build-audio.html');

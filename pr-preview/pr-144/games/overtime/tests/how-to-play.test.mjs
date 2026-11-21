@@ -1,4 +1,4 @@
-// Build 25: How to Play as six swipe cards with moving pictures. Checks the page and wiring, that every card's
+// Build 25: How to Play as swipe cards (six in Build 25, seven since Build 31) with moving pictures. Checks the page and wiring, that every card's
 // words match the engine, that each picture only uses art and styles that exist, and that the build packs it in.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -30,11 +30,11 @@ assert.match(app,/\$\('howSkip'\)\.onclick=\(\)=>closeHow\('skipped'\);\$\('howB
 assert.match(app,/e\.key==='ArrowRight'[^;]*;goHow\(howAt\+1\)/,'arrow keys move between cards');
 
 // The cards, for every mode on the menu.
-const IDS=['move','promo','evolve','bomb','alive','mission'];
+const IDS=['move','promo','evolve','bomb','boxes','alive','mission'];
 const artClasses=new Map([...how.matchAll(/\.(i-[a-z0-9]+)\{background-image:url\(([^)]+)\)\}/g)].map(m=>[m[1],m[2]]));
 for(const stage of MODES){
  const slides=slidesFor(stage);
- assert.deepEqual(slides.map(s=>s.id),IDS,stage.name+' has the six cards in order');
+ assert.deepEqual(slides.map(s=>s.id),IDS,stage.name+' has the seven cards in order');
  for(const s of slides){
   assert.ok(s.title&&s.title===s.title.toUpperCase(),s.id+' title');
   assert.ok(s.text.length>=30&&s.text.length<=160,`${stage.name} ${s.id} text length ${s.text.length}`);
@@ -53,9 +53,9 @@ assert.ok(!stage[2].scene.includes('i-case')&&!/briefcase/i.test(stage[2].text+s
 {const g=new Game(()=>.5,{},0,'plunger',1);g.weapons.plunger=5;g.passives[EVOLUTIONS.plunger.requires]=1;g.t=60;assert.ok(g.options().some(o=>o.key==='plunger'&&o.level===6),'in a level, max weapon + partner perk really offers the evolution');}
 // The mission: survival quotes the engine's minutes; a level shows its own briefing.
 const m=SURVIVAL.tierSeconds/60;
-assert.ok(surv[5].text.includes(`every ${m} minutes`)&&/leaderboard/.test(surv[5].text)&&surv[5].cls==='surv');
-for(const t of [`${m}:00`,`${m*2}:00`,`${m*3}:00`])assert.ok(surv[5].scene.includes(t),'survival clock shows '+t);
-for(const st of STAGES){const s=slidesFor(st)[5];assert.equal(s.text,st.briefing);assert.ok(!s.cls&&s.scene.includes('STAGE CLEAR'));}
+assert.ok(surv[6].text.includes(`every ${m} minutes`)&&/leaderboard/.test(surv[6].text)&&surv[6].cls==='surv');
+for(const t of [`${m}:00`,`${m*2}:00`,`${m*3}:00`])assert.ok(surv[6].scene.includes(t),'survival clock shows '+t);
+for(const st of STAGES){const s=slidesFor(st)[6];assert.equal(s.text,st.briefing);assert.ok(!s.cls&&s.scene.includes('STAGE CLEAR'));}
 // Facts quoted on the shared cards.
 {const g=new Game(()=>.5,{},0,'plunger',SURVIVAL_ID);g.dropBomb();assert.equal(g.bombs[0].fuse,3,'bomb card says 3 seconds');}
 assert.match(fs.readFileSync(path.join(dist,'engine.mjs'),'utf8'),/RUSH SURVIVED · FIRST AID KIT DROPPED/,'a survived rush drops a kit');
@@ -87,4 +87,4 @@ for(const f of art)assert.ok(built.includes(fs.readFileSync(path.join(dist,'asse
 assert.ok(!built.includes('assets/howto/')&&!built.includes('url(assets/'),'no art path left pointing at a file');
 assert.ok(built.includes('Drag anywhere to move. Herman attacks on his own.')&&built.includes('GET PROMOTED'),'cards are bundled into the single file');
 fs.rmSync(out);
-console.log('PASS: How to Play has six cards per mode that match the game rules, pictures with complete animations, and the build packs the art in.');
+console.log('PASS: How to Play has seven cards per mode that match the game rules, pictures with complete animations, and the build packs the art in.');

@@ -85,12 +85,29 @@ assert.equal(BOX_SPOTS.length,4);
 {const g=quiet();g.state='paused';g.pocket=['horn'];assert.equal(g.usePocket(0),false,'not while paused');}
 
 // 11. Executive Bidet: 5 seconds of spray in the way Herman faces; hurts what is in front, not behind.
-{const g=quiet();g.face={x:1,y:0};const p=g.player,front=g.spawn('guard',p.x+90,p.y),back=g.spawn('guard',p.x-90,p.y),side=g.spawn('guard',p.x,p.y+120);
- [front,back,side].forEach(e=>e.speed=0);const h=[front.hp,back.hp,side.hp];g.useNow('bidet');for(let i=0;i<20;i++)g.step(.05,{x:0,y:0});
- assert.ok(front.hp<h[0]-50,'front soaked');assert.equal(back.hp,h[1]);assert.equal(side.hp,h[2]);assert.ok(front.x>p.x+90,'pushed back');
+{const g=quiet();g.face={x:1,y:0};const p=g.player,front=g.spawn('guard',p.x+90,p.y),back=g.spawn('guard',p.x-90,p.y),side=g.spawn('guard',p.x,p.y+120),boss=g.spawn('exec',p.x+130,p.y,{hp:5000,speed:0});
+ [front,back,side].forEach(e=>e.speed=0);const h=[back.hp,side.hp];g.useNow('bidet');g.step(.05,{x:0,y:0});
+ assert.ok(front.hp<=0,'a regular enemy in the spray dies instantly');assert.ok(!g.numbers.some(n=>typeof n.text==='number'&&n.text>1000),'no giant damage number');
+ for(let i=0;i<19;i++)g.step(.05,{x:0,y:0});assert.equal(back.hp,h[0]);assert.equal(side.hp,h[1]);assert.ok(boss.hp<5000&&boss.hp>0,'executives take heavy damage but are not wiped out ('+boss.hp.toFixed(0)+')');
  for(let i=0;i<90;i++)g.step(.05,{x:0,y:0});assert.equal(g.bidet,0,'over after 5 seconds');assert.ok(!g.events.some(e=>e.type==='hit-bidet'),'the spray has its own sound, not a hit sound per tick');}
 
-// 12. The screen: icons, pocket buttons above the Stink Bomb, Credit Card menu, keys 1 and 2, sounds.
+// 12. Herman's first-time bubble: every way of getting an item reports it, and the run pauses and counts back in.
+{const {INTRO}=await import('../dist/mystery.mjs');assert.deepEqual(Object.keys(INTRO),Object.keys(ITEMS));
+ assert.equal(INTRO.wet,"Enemies who walk through slow down, some even slip and go down for good. They should have read the sign.");
+ for(const v of Object.values(INTRO))assert.ok(!/—|–/.test(v),'no em dashes');
+ const got=g=>g.events.filter(e=>e.type==='got').map(e=>e.text);
+ let g=quiet();g.gainItem('horn');assert.deepEqual(got(g),['horn']);g=quiet();g.gainItem('freeze');assert.deepEqual(got(g),['freeze']);
+ g=quiet();g.pocket=['horn','bomb'];const sw=g.gainItem('card');assert.deepEqual(got(g),[sw],'a pocket-full swap explains what you actually got');
+ g=quiet();g.drops.push({x:g.player.x,y:g.player.y,magnet:true,value:0},{x:g.player.x,y:g.player.y,coffee:true,value:0});g.step(.05,{x:0,y:0});assert.deepEqual(got(g).sort(),['coffee','sweep']);
+ g=quiet();g.random=()=>.5;g.hit(g.supplies[0],999);assert.deepEqual(got(g),['wet'],'Wet Floor from a box');
+ g=quiet();g.pocket=['card'];g.usePocket(0);g.buyItem('bomb');assert.deepEqual(got(g),['bomb']);
+ g=quiet();assert.equal(g.intro(),true);assert.equal(g.state,'intro');const t=g.t;g.step(.5,{x:1,y:0});assert.equal(g.t,t,'frozen while the bubble is up');
+ assert.equal(g.endIntro(),true);assert.equal(g.state,'countdown');assert.equal(g.resumeLeft,2);g.state='paused';assert.equal(g.intro(),false,'never over the pause screen');}
+assert.ok(app.includes("const ITEMS_SEEN_KEY='pp-overtime-items-seen'"),'remembered per device');
+assert.ok(app.includes("if(event.type==='got')noteItem(event.text);"));
+assert.ok(app.includes("function frame(now){let elapsed=Math.max(0,(now-last)/1000),dt=Math.min(elapsed,.25);last=now;if(g){nextIntro();"));
+assert.ok(html.includes('<section id="itemIntro" class="overlay introv" hidden>')&&html.includes('id="iiPocket"')&&html.includes('>GOT IT</button>'));
+// 12b. The screen: icons, pocket buttons above the Stink Bomb, Credit Card menu, keys 1 and 2, sounds.
 for(const f of ['wet','freeze','horn','bidet','healthplan','card']){assert.ok(fs.existsSync(path.join(root,'dist/assets/icons/'+f+'.webp')),f);assert.ok(fs.existsSync(path.join(root,'art-sources/mystery/'+f+'.png')));assert.ok(app.includes(`${f}:'assets/icons/${f}.webp'`));}
 assert.ok(app.includes("const ITEM_ICON={sweep:'sweep',coffee:'coffee',wet:'wet',freeze:'freeze',bomb:'bomb',horn:'horn',bidet:'bidet',health:'healthplan',card:'card'};"));
 assert.ok(html.includes('<div id="pocket" hidden><button class="pk" type="button" hidden></button><button class="pk" type="button" hidden></button></div>'));
@@ -112,4 +129,4 @@ assert.ok(app.includes("'hit-boss':{vol:.45,gap:1.1,jitter:.05}"));
   const below=o.y>900;g.player.x=o.x+o.w/2;g.player.y=below?o.y-60:o.y+o.h+60;for(let i=0;i<40;i++)g.step(.05,{x:0,y:below?1:-1});
   assert.ok(below?g.player.y<=o.y-17:g.player.y>=o.y+o.h+17,'Herman stops at the desk at '+o.x+','+o.y+' (y '+g.player.y.toFixed(0)+')');}}
  assert.ok(BOX_SPOTS.every(b=>furnitureFor(1).every(o=>b.x<o.x-30||b.x>o.x+o.w+30||b.y<o.y-30||b.y>o.y+o.h+30)),'no box sits on a desk');}
-console.log('PASS: mystery boxes roll the agreed odds, refill after 90 seconds, fill a two-slot pocket, and every item works; the squeak and groan are gone.');
+console.log('PASS: mystery boxes roll the agreed odds, refill after 90 seconds, fill a two-slot pocket, and every item works, Herman explains each one once; the squeak and groan are gone.');
