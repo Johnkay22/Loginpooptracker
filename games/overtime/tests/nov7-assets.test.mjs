@@ -14,12 +14,12 @@ const exists=p=>fs.existsSync(path.join(dist,p));
 
 // 1. Icons: all 18 custom icons are mapped and on disk; every weapon has an evolved icon.
 const icons=[...app.matchAll(/(\w+):'(assets\/icons\/[\w-]+\.webp)'/g)].map(m=>[m[1],m[2]]);
-assert.equal(icons.length,18,'18 custom icons');
+assert.equal(icons.length,24,'18 custom icons plus 6 mystery box items (Build 31)');
 for(const [,p] of icons)assert.ok(exists(p),'missing '+p);
 const iconKeys=new Set(icons.map(([k])=>k));
 for(const w of ['plunger','tp','gas','flush','bomb']){assert.ok(iconKeys.has(w));assert.ok(iconKeys.has(w+'2'),'evolved icon for '+w);}
 for(const k of ['speed','coffee','magnet','chili','health','damage','pickup','heal'])assert.ok(iconKeys.has(k),'icon for '+k);
-assert.equal(fs.readdirSync(path.join(dist,'assets/icons')).length,18,'no stray icon files');
+assert.equal(fs.readdirSync(path.join(dist,'assets/icons')).length,24,'no stray icon files');
 
 // 2. Sounds: every sound file named in the code exists, every event plays only known files, nothing on disk is unused.
 const sfxFiles=Object.fromEntries([...app.matchAll(/'?([\w-]+)'?:'(assets\/sfx\/[\w-]+\.mp3)'/g)].map(m=>[m[1],m[2]]));

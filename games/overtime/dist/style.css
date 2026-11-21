@@ -490,3 +490,28 @@
 .ng p{margin:12px 0 0;font:500 14px/1.4 Inter,Arial,sans-serif;color:#c9d4e6}
 .ng .pz-go{text-decoration:none}
 .ng-play{display:block;width:100%;margin:12px 0 0;padding:12px;border:0;background:none;color:#b9c6da;font:800 13px/1 Inter,Arial,sans-serif;letter-spacing:.14em;cursor:pointer}
+
+/* Build 31: Herman's pocket (above the Stink Bomb) and the Company Credit Card menu. */
+#pocket{position:absolute;right:23px;bottom:calc(max(24px,env(safe-area-inset-bottom)) + 94px);z-index:4;display:flex;flex-direction:column-reverse;gap:10px}
+#pocket[hidden],#pocket .pk[hidden]{display:none}
+#pocket .pk{position:relative;width:60px;height:60px;padding:0;border-radius:50%;border:2.5px solid #ffd45e;background:radial-gradient(#183650,#0b2029);box-shadow:0 0 0 4px #0b2029,0 6px 18px #0008;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:pointer}
+#pocket .pk .art-icon{width:42px;height:42px;object-fit:contain}
+#pocket .pk:disabled{opacity:.55}
+#pocket .pk:active:not(:disabled){transform:scale(.92)}
+#pocket .pk em,.cm-icon em{position:absolute;right:-4px;top:-4px;padding:2px 5px;border-radius:9px;background:#ffd45e;color:#2a1a05;font:900 10px/1 Inter,Arial,sans-serif;font-style:normal}
+#cardMenu.cardv{z-index:13;display:flex;align-items:center;justify-content:center;padding:16px;background:#050c18e8}
+#cardMenu[hidden]{display:none}
+.cm{width:100%;max-width:420px;max-height:100%;overflow:auto;padding:20px 14px 16px;border:1.5px solid #6d5a2a;border-radius:18px;background:linear-gradient(#15233a,#0a1424);text-align:center;box-shadow:0 20px 50px #000a}
+.cm h2{margin:8px 0 0;font:900 34px/1 'Barlow Condensed',Impact,sans-serif;color:#fff}
+.cm h2 span{color:#fac759}
+.cm>p{margin:6px 0 12px;font:500 13px/1.3 Inter,Arial,sans-serif;color:#c9d4e6}
+.cm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cm-item{display:flex;align-items:center;gap:8px;padding:9px 8px;border:1.5px solid #2f4263;border-radius:12px;background:#0f1d33;color:#fff;text-align:left;cursor:pointer;min-height:64px}
+.cm-item:active{transform:scale(.97)}
+.cm-item.rare{grid-column:1/-1;border-color:#fac759;background:linear-gradient(90deg,#3a2b0b,#0f1d33)}
+.cm-icon{position:relative;flex:0 0 40px;height:40px}
+.cm-icon .art-icon{width:40px;height:40px;object-fit:contain}
+.cm-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+.cm-text small{font:900 9px/1 Inter,Arial,sans-serif;letter-spacing:.14em;color:#fac759}
+.cm-text strong{font:800 13px/1.1 Inter,Arial,sans-serif}
+.cm-text span{font:500 10.5px/1.25 Inter,Arial,sans-serif;color:#aebcd2}

@@ -97,7 +97,7 @@ assert.equal(hasMusic(),Object.values(MUSIC).some(Boolean));assert.equal(hasMusi
  p.enable(false);assert.equal(p.current,null);p.set('menu');assert.equal(p.current,null,'off means off');
  p.enable(true);p.set('menu');assert.equal(p.current,'menu');p.muffle(true);p.muffle(false);
  await new Promise(r=>setTimeout(r,120));assert.ok(made[1].paused,'the old loop stops after its fade');}
-assert.match(app,/music\.muffle\(s==='paused'\|\|s==='upgrade'\);/,'muffled on the pause and promotion screens');
+assert.ok(app.includes("music.muffle(s==='paused'||s==='upgrade'||s==='card');"),'muffled on the pause, promotion and Credit Card screens');
 
 // 7. Build: sound effects stay inside the page; voice and music stay outside it and are pointed at this folder.
 const out=path.join(root,'tools','tmp','test-build-audio.html');

@@ -42,7 +42,8 @@ export function tipsFor({endless=false,weapons={},keyboard=false}={}){
  const evolve=Object.keys(WEAPONS).filter(k=>weapons[k]>0&&weapons[k]<6).map(k=>tip('evolve-'+k,'spark',`${WEAPONS[k].name} evolves into ${EVOLUTIONS[k].name}. Its partner perk is ${PASSIVES[EVOLUTIONS[k].requires].name}.`));
  const move=tip('move','move','Drag anywhere to move. Herman attacks on his own.');
  const bomb=tip('bomb','bomb','Stink Bomb lures the crowd, then blows after 3 seconds. Executives and bosses ignore the lure.');
- const boxes=tip('boxes','coffee','Supply boxes hide cash and coffee. Coffee is 8 seconds of speed and rapid fire.');
+ const boxes=tip('boxes','coffee','Smash the ? boxes for a random item. The stronger it is, the rarer. They refill every 90s.');
+ const pocketTip=tip('pocket','briefcase','Air Horn, Health Plan and other keepers go in your pocket above the Stink Bomb. Tap to use.');
  const sweep=tip('sweep','magnet','Every 60 KOs drops a Cash Sweep. Grab it to pull in the Petty Cash on the floor.');
  const rush=tip('rush','kit','Survive a Corporate Rush and a first aid kit drops near Herman.');
  const kitWait=tip('kit-wait','kit',`A first aid kit waits ${S.kitLife} seconds and blinks before it goes. An arrow points to it.`);
@@ -55,7 +56,7 @@ export function tipsFor({endless=false,weapons={},keyboard=false}={}){
   bomb,
   tip('boss-drop','crown',`Beat a boss and it drops a briefcase and ${S.bossKits} first aid kits.`),
   boxes,
-  tip('restock','coffee','Supply boxes restock every time a boss clocks in.'),
+  tip('restock','coffee','Mystery boxes also restock every time a boss clocks in.'),pocketTip,
   tip('board','trophy','Signed in? A new best time posts to the leaderboard. The top 10 are public.'),
   sweep,rush,
   tip('execs','briefcase','Gold executives walk in twice before each boss. Each one carries a briefcase.'),
