@@ -116,7 +116,7 @@ assert.ok(css.includes('#banner[hidden]{display:none}')&&css.includes('#mission.
 assert.ok(app.includes("'boss-arrive':['siren']"),'the boss arrival is never a fallback beep');
 
 // 11. Rules changed, so leaderboard times are tagged with the new build number, and the tips keep up.
-assert.match(app,/const BUILD=30;/);
+assert.match(app,/const BUILD=31;/);
 {const tips=tipsFor({endless:true}).map(t=>t.id);for(const id of ['restock','kit-wait','boost'])assert.ok(tips.includes(id),'tip '+id);
  assert.ok(tipsFor({endless:true}).find(t=>t.id==='kit-wait').text.includes(S.kitLife+' seconds'));assert.ok(!tipsFor({endless:false}).some(t=>t.id==='restock'||t.id==='boost'));}
 console.log('PASS: survival eases the 2:00 to 4:30 stretch, keeps rushes off boss arrivals, heals and restocks more, steers briefcases to evolutions, lets a maxed build keep growing, and shows live leaderboard moments.');
