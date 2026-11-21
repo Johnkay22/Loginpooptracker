@@ -106,4 +106,10 @@ assert.ok(app.includes("'hit-plunger':{vol:.3,gap:.45,jitter:.1}"));
 assert.ok(app.includes("'hit-boss':{vol:.45,gap:1.1,jitter:.05}"));
 {const g=quiet();const w=g.spawn('guard',1000,900),x=g.spawn('exec',1050,900,{hp:999,speed:0});g.hit(w,1,'plunger');g.hit(x,1,'tp');g.hit(x,1,'plunger');assert.ok(!g.events.some(e=>e.type==='hit-plunger'||e.type==='hit-boss'),'squeak and groan are gone');}
 
+// 13. Desks: all twelve painted desks on the office floor block movement (the eight along the walls used not to).
+{const {furnitureFor}=await import('../dist/scene.mjs');for(const stage of [1,SURVIVAL_ID]){const F=furnitureFor(stage);assert.equal(F.length,12);
+ for(const o of F.slice(4)){const g=new Game(()=>.5,{},0,'plunger',stage);g.spawnCd=1e9;g.raidAt=1e9;g.nextExecAt=1e9;g.nextBossAt=1e9;g.player.hp=g.player.max=1e9;for(const k in g.weapons)g.weapons[k]=0;
+  const below=o.y>900;g.player.x=o.x+o.w/2;g.player.y=below?o.y-60:o.y+o.h+60;for(let i=0;i<40;i++)g.step(.05,{x:0,y:below?1:-1});
+  assert.ok(below?g.player.y<=o.y-17:g.player.y>=o.y+o.h+17,'Herman stops at the desk at '+o.x+','+o.y+' (y '+g.player.y.toFixed(0)+')');}}
+ assert.ok(BOX_SPOTS.every(b=>furnitureFor(1).every(o=>b.x<o.x-30||b.x>o.x+o.w+30||b.y<o.y-30||b.y>o.y+o.h+30)),'no box sits on a desk');}
 console.log('PASS: mystery boxes roll the agreed odds, refill after 90 seconds, fill a two-slot pocket, and every item works; the squeak and groan are gone.');
