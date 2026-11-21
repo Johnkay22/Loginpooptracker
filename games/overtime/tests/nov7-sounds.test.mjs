@@ -14,13 +14,13 @@ const types=g=>g.events.map(e=>e.type);
 const take=g=>g.events.splice(0).map(e=>e.type);
 
 // 1. A blow that doesn't knock out plays that weapon's hit sound.
-for(const weapon of ['plunger','tp','gas','flush']){
+for(const weapon of ['tp','gas','flush']){ // Build 31: the Plungerang hit is silent
   const g=quiet();const guard=g.spawn('guard',1000,900);
   g.hit(guard,1,weapon);
   assert.deepEqual(take(g),['hit-'+weapon],weapon+' hit sound');
 }
 // 2. Executives and bosses get the heavy hit, whatever the weapon.
-{const g=quiet();const exec=g.spawn('exec',1000,900);g.hit(exec,1,'tp');assert.deepEqual(take(g),['hit-boss']);}
+{const g=quiet();const exec=g.spawn('exec',1000,900);g.hit(exec,1,'tp');assert.deepEqual(take(g),[],'Build 31: no executive groan');}
 // 3. The final blow plays a knockout impact instead of the hit sound.
 {const g=quiet();const worker=g.spawn('worker',1000,900);g.hit(worker,1e6,'plunger');const t=take(g);assert.ok(t.includes('ko'));assert.ok(!t.includes('hit-plunger'));}
 // 4. Stink Bomb blows stay quiet (the blast sound covers them), but its knockouts still play.
@@ -29,7 +29,8 @@ for(const weapon of ['plunger','tp','gas','flush']){
 {const g=quiet();const guard=g.spawn('guard',1000,900);g.hit(guard,1);assert.deepEqual(take(g),[]);}
 {const g=quiet();g.t=180;g.step(.05);take(g);g.hit(g.boss,1e9,'plunger');assert.ok(!types(g).includes('ko'));}
 // 6. Every weapon passes its name to hit() when it actually fires.
-for(const [weapon,expected] of [['plunger','hit-plunger'],['tp','hit-tp'],['gas','hit-gas'],['flush','hit-flush']]){
+{const g=quiet();const w=g.spawn('guard',1000,900);g.hit(w,1,'plunger');assert.deepEqual(take(g),[],'Build 31: no Plungerang squeak');}
+for(const [weapon,expected] of [['tp','hit-tp'],['gas','hit-gas'],['flush','hit-flush']]){
   const g=quiet();g.weapons[weapon]=1;g.cd[weapon]=0;
   const guard=g.spawn('guard',g.player.x+(weapon==='tp'?66:40),g.player.y);guard.hp=1e6;guard.speed=0;
   const seen=new Set();for(let i=0;i<60;i++){g.step(.05);for(const t of take(g))seen.add(t);}

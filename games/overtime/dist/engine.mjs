@@ -60,8 +60,9 @@ export class Game{
  // bosses and executives get the heavy hit, and Stink Bomb blasts stay quiet (the blast sound covers them).
  hitSound(e,weapon){
   if(e.hp<=0){if(!e.boss)this.event('ko','');return;}
-  if(!weapon||weapon==='bomb'||weapon==='bidet'||weapon==='wet')return;
-  this.event(e.type==='exec'?'hit-boss':'hit-'+weapon,'');
+  // Build 31: Johnny cut the Plungerang hit (squeak) and the executive and boss grunt (groan); knockouts still sound.
+  if(!weapon||weapon==='bomb'||weapon==='bidet'||weapon==='wet'||weapon==='plunger'||e.type==='exec')return;
+  this.event('hit-'+weapon,'');
  }
  hit(e,amount,weapon){if(e.hp<=0||this.state==='won'||this.state==='lost')return;amount*=1+(this.perks.damage||0)*.06+this.passives.chili*.15+this.boosts*SURVIVAL.boost;e.hp-=amount;if(e.type==='supply'){e.flash=.12;if(e.hp<=0)this.openBox(e);return;}if(amount>=8&&e.flash===0&&this.numbers.length<45)this.numbers.push({x:e.x,y:e.y-22,text:Math.round(amount),t:0,life:.65,color:'#fff3c8'});e.flash=.12;this.hitSound(e,weapon);if(e.hp<=0){this.kills++;this.combo++;this.comboTime=2.5;this.bestCombo=Math.max(this.bestCombo,this.combo);if(this.combo%25===0)this.event('combo',this.combo+' KOs · KEEP IT GOING');if(this.kills%60===0){this.drops.push({x:e.x,y:e.y,magnet:true,value:0});}let value=e.type==='exec'?14:e.type==='guard'?4:1;if(e.boss&&this.endless)value=SURVIVAL.bossCash;if(!e.boss||this.endless)this.drops.push({x:e.x,y:e.y+(this.endless&&e.type==='exec'?26:0),value,heal:false});if(e.type==='exec'){if(e.boss&&!this.endless)this.bossDefeated=true;else this.drops.push({x:e.x,y:e.y,chest:true,value:0});if(e.boss&&this.endless){this.bossesBeaten++;for(let i=0;i<SURVIVAL.bossKits;i++)this.drops.push({x:clamp(e.x+(i*2-1)*46,80,1720),y:e.y,heal:true,value:0,life:this.kitLife()});}this.stopped++;this.event('exec',this.endless?(e.boss?'BOSS':'EXECUTIVE')+' DEFEATED · GRAB THE BRIEFCASE':'EXECUTIVE DEFEATED');}this.fx.push({x:e.x,y:e.y,t:0,life:.35,r:25,color:e.type==='exec'?'#ffcc67':'#91dcbe'});}}
  // Survival: weapons and perks are limited to a few slots, evolutions only come from briefcases, and once
@@ -115,8 +116,9 @@ export class Game{
  addPuddle(x,y){this.puddles.push({x,y,r:MYSTERY.puddleR,t:0,life:MYSTERY.puddleLife,seen:new Set()});}
  freezeAll(){for(const e of this.enemies)if(e.hp>0){e.frozen=Math.max(e.frozen||0,e.boss||e.type==='exec'?MYSTERY.freezeBoss:MYSTERY.freeze);e.windup=0;e.dash=0;}}
  airHorn(){const p=this.player;this.fx.push({x:p.x,y:p.y,t:0,life:.5,r:MYSTERY.hornR,color:'#ffe08a'});
-  for(const e of this.enemies){if(e.hp<=0)continue;const d=dist(e,p);if(d>MYSTERY.hornR)continue;const big=e.boss||e.type==='exec',push=MYSTERY.hornPush*(1-d/MYSTERY.hornR*.5)*(big?1/3:1),k=Math.max(1,d);
-   e.x=clamp(e.x+(e.x-p.x)/k*push,35,1765);e.y=clamp(e.y+(e.y-p.y)/k*push,35,1765);resolveFurniture(e,e.r,this.furniture);if(!big){e.frozen=Math.max(e.frozen||0,MYSTERY.hornStun);e.windup=0;e.dash=0;}}}
+  for(const e of this.enemies){if(e.hp<=0)continue;const d=dist(e,p);if(d>MYSTERY.hornR)continue;const big=e.boss||e.type==='exec',push=MYSTERY.hornPush*(big?.5:1),k=Math.max(1,d),v=2*push/MYSTERY.hornTime;
+   // A shove that plays out over hornTime (fast, then easing off) instead of a jump.
+   e.kb={vx:(e.x-p.x)/k*v,vy:(e.y-p.y)/k*v,t:MYSTERY.hornTime};if(!big){e.frozen=Math.max(e.frozen||0,MYSTERY.hornStun);e.windup=0;e.dash=0;}}}
  // Tap a pocket slot. Returns false when nothing happens (paused, empty slot, or already at full health).
  usePocket(i){if(this.state!=='playing')return false;const k=this.pocket[i];if(!k)return false;const p=this.player;
   if(k==='health'&&p.hp>=p.max){this.event('note','ALREADY AT FULL HEALTH');return false;}
@@ -195,7 +197,7 @@ export class Game{
  l=this.weapons.flush;if(l&&this.cd.flush<=0){this.cd.flush=(5.5-l*.5)*rate;this.waves.push({x:p.x,y:p.y,t:0,life:.65,max:l===6?370:100+l*25,hit:new Set(),damage:l===6?160:20+l*12,royal:l===6});if(l===6)this.waves.push({x:p.x,y:p.y,t:-.4,life:.65,max:370,hit:new Set(),damage:100,royal:true});this.event('flush','');}
  for(let b of this.bombs){b.t+=dt;if(b.t>=b.fuse&&!b.done){b.done=true;let before=this.kills;for(let e of this.combatTargets())if(dist(e,b)<b.blast+e.r)this.hit(e,b.damage,'bomb');this.fx.push({x:b.x,y:b.y,t:0,life:.6,r:b.blast,color:'#c7f76b'});this.bombKills+=this.kills-before;if(this.kills>before)this.numbers.push({x:b.x,y:b.y-45,text:(this.kills-before)+' KOs!',t:0,life:1.2,color:'#e2ff92',big:true});this.event('boom',this.kills-before>=5?(this.kills-before)+' IN ONE BLAST!':'');if(b.level===6)this.waves.push({x:b.x,y:b.y,t:-.5,life:.6,max:b.blast*1.2,hit:new Set(),damage:b.damage*.7,royal:true});}}
  this.bombs=this.bombs.filter(b=>!b.done);
- for(let e of this.enemies){if(e.hp<=0)continue;e.flash=Math.max(0,e.flash-dt);e.hit=Math.max(0,e.hit-dt);if(e.slowT>0)e.slowT=Math.max(0,e.slowT-dt);if(e.frozen>0){e.frozen=Math.max(0,e.frozen-dt);continue;}let target=p;e.attracted=false;if(e.type!=='exec'){let near=this.bombs.filter(b=>dist(e,b)<b.lure).sort((a,b)=>dist(e,a)-dist(e,b))[0];if(near){target=near;e.attracted=true;}}let d=dist(e,target);let charging=false;
+ for(let e of this.enemies){if(e.hp<=0)continue;e.flash=Math.max(0,e.flash-dt);e.hit=Math.max(0,e.hit-dt);if(e.slowT>0)e.slowT=Math.max(0,e.slowT-dt);if(e.kb){const f=e.kb.t/MYSTERY.hornTime,s=Math.min(dt,e.kb.t);e.x=clamp(e.x+e.kb.vx*f*s,35,1765);e.y=clamp(e.y+e.kb.vy*f*s,35,1765);resolveFurniture(e,e.r,this.furniture);e.kb.t-=dt;if(e.kb.t<=0)e.kb=null;}if(e.frozen>0){e.frozen=Math.max(0,e.frozen-dt);continue;}let target=p;e.attracted=false;if(e.type!=='exec'){let near=this.bombs.filter(b=>dist(e,b)<b.lure).sort((a,b)=>dist(e,a)-dist(e,b))[0];if(near){target=near;e.attracted=true;}}let d=dist(e,target);let charging=false;
  if(e.boss){this.stepBoss(e,dt);if(this.state==='lost')return;charging=true;}
  if(e.type==='runner'){
  if(e.attracted){e.windup=0;e.dash=0;e.chargeCd=Math.max(e.chargeCd,1);}
