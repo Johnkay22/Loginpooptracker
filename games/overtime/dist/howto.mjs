@@ -12,11 +12,12 @@ const SCENES={
  evolve:briefcase=>`<i class="slot a"><b class="hs-i i-plunger"></b><em>MAX</em><u>${W}</u></i><i class="plus p1">+</i><i class="slot b"><b class="hs-i i-coffee"></b><u>${P}</u></i>${briefcase?'<i class="plus p2">+</i><i class="slot c"><b class="hs-i i-case"></b><u>BRIEFCASE</u></i>':''}<i class="rays"></i><i class="hs-i i-plunger2 res"></i><i class="name">${E}</i>`,
  bomb:`<i class="ring"></i><i class="ring r2"></i><i class="hs-i i-bomb bm"></i><i class="hs-f f1 a"></i><i class="hs-f f2 b"></i><i class="hs-f f3 c"></i><i class="boom"></i><i class="btn"><b class="hs-i i-bomb"></b></i>`,
  alive:`<i class="bar hp"><b></b></i><i class="zone"><b></b></i>${herman}<i class="hs-f f2 r1"></i><i class="hs-f f1 r2"></i><i class="hs-f f2 r3"></i><i class="lab warn">CORPORATE RUSH</i><i class="lab ok">RUSH SURVIVED</i><i class="hs-i i-heal kit"></i>`,
+ boxes:`<i class="bx"><b></b></i><i class="hs-i i-wet it n1"></i><i class="hs-i i-horn it n2"></i><i class="hs-i i-bidet it n3"></i><i class="hs-i i-card it n4"></i><i class="pk q1"><b class="hs-i i-horn"></b></i><i class="pk q2"><b class="hs-i i-card"></b></i>`,
  stage:`<i class="clock"><b>0:03</b><b>0:02</b><b>0:01</b><b>0:00</b></i>${herman}<i class="hs-i i-plunger p"></i><i class="boss"><b class="tag">BOSS</b><b class="bhp"><u></u></b><b class="hs-f f4"></b></i><i class="won">STAGE CLEAR</i>`,
  survival:m=>`<i class="clock"><b>0:00</b><b>${m}:00</b><b>${m*2}:00</b><b>${m*3}:00</b></i>${herman}<i class="boss"><b class="tag">BOSS</b><b class="hs-f f4"></b></i><i class="line"><b></b><u></u><u></u><u></u></i><i class="row"><b>#1</b><b>YOU</b><b>${m*3}:00</b></i>`,
 };
 
-// The six cards for the mode on the menu. `stage` is an entry from stages.mjs.
+// The seven cards for the mode on the menu (Build 31 added Mystery Boxes). `stage` is an entry from stages.mjs.
 export function slidesFor(stage){
  const endless=!!stage.endless,m=Math.round(SURVIVAL.tierSeconds/60);
  return [
@@ -26,6 +27,7 @@ export function slidesFor(stage){
    ?'Max a weapon, carry its partner perk, then open a briefcase. Gold unlocks at 3:00, and early briefcases wait for it.'
    :'Max a weapon and carry its partner perk. Its evolution shows up as a promotion choice.',scene:SCENES.evolve(endless)},
   {id:'bomb',title:'STINK BOMB',text:'Tap the button to drop it. It lures the crowd, then blows after 3 seconds.',scene:SCENES.bomb},
+  {id:'boxes',title:'MYSTERY BOXES',text:'Smash the ? boxes for a random item. The stronger it is, the rarer. Keepers wait in your pocket above the Stink Bomb.',scene:SCENES.boxes},
   {id:'alive',title:'STAY ALIVE',text:'Step out of red circles before they burst. Survive a Corporate Rush and a first aid kit drops.',scene:SCENES.alive},
   endless
    ?{id:'mission',title:'THE MISSION',cls:'surv',text:`Corporate cancelled the end of your shift. No finish line: a boss clocks in every ${m} minutes. Sign in and your best time posts to the leaderboard.`,scene:SCENES.survival(m)}

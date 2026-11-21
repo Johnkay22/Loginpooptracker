@@ -247,6 +247,9 @@ Johnny's call: the cash boxes were dead weight (6 promotion coins), so every sup
 - **Sounds:** Johnny cut the Plungerang hit (the squeak) and the executive and boss grunt (the groan) entirely; knockouts still sound. `hitSound()` in `engine.mjs` no longer raises them (the clips stay in `SFX_FILES` in case they come back).
 - **Air Horn (after Johnny's playtest):** everyone within 520 (was 300) flies 450 back (was up to 170) over 0.35s instead of jumping, and regular enemies are stunned 1.2s. Executives and bosses get half the push and no stun.
 - **Desks:** the eight desks painted along the top and bottom walls of the office (Office Floor and Survival) had no collision, so Herman and enemies walked over them. They now block like the four in the middle (`OFFICE_FURNITURE` in `scene.mjs`). The boardroom table, kitchenette and other decor are still walk-through.
+- **Executive Bidet (Johnny's call):** regular enemies in the spray die instantly. Executives, bosses and boxes still take heavy damage instead, so it cannot one-shot a boss.
+- **Herman explains each item once:** the first time a player gets an item on a device (`pp-overtime-items-seen`), the run pauses, the screen dims except a spotlight on Herman, and a speech bubble above him shows the item's art, name and Johnny's line (`INTRO` in `mystery.mjs`). Pocket items light up the pocket with a "SAVED IN YOUR POCKET" pointer. GOT IT resumes with the usual countdown. The engine raises a `got` event for every way of getting an item (box, pickup, pocket-full swap, Credit Card), and pauses with `intro()` / `endIntro()`.
+- **How to Play:** a seventh card, Mystery Boxes (step 5), with a moving picture of a ? box popping items and the pocket.
 - Pause tips updated. `BUILD` is 31. New suite `tests/mystery-box.test.mjs`.
 
 ## Build 30: gold on the clock, and no more surprise logouts (made with Claude, Nov 20)

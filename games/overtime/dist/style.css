@@ -446,6 +446,26 @@
 .hw-card.on .s-mission.surv .line b{animation:s7fill 9s linear infinite}.hw-card.on .s-mission.surv .boss{animation:s7boss 9s infinite}.hw-card.on .s-mission.surv .boss .hs-f{animation:none}.hw-card.on .s-mission.surv .row{animation:s7row 9s infinite}
 @media (max-height:620px){.hw-card h3{font-size:30px}.hw-card p{font-size:14px;min-height:59px}.hw-step{margin-top:11px}}
 @media (prefers-reduced-motion:reduce){.hw-card.on .hs *{animation:none!important}}
+/* How to Play card 5: mystery boxes. */
+.i-horn{background-image:url(assets/icons/horn.webp)}
+.i-bidet{background-image:url(assets/icons/bidet.webp)}
+.i-card{background-image:url(assets/icons/card.webp)}
+.i-wet{background-image:url(assets/icons/wet.webp)}
+.s-boxes .bx{position:absolute;left:12em;top:30em;width:24em;height:24em;border-radius:3em;background:#b98a4f;border:.9em solid #e9c27d;box-shadow:inset 0 0 0 .5em #8f6534}
+.s-boxes .bx b{position:absolute;left:50%;top:50%;width:13em;height:13em;margin:-6.5em 0 0 -6.5em;border-radius:50%;background:#3a2414;border:.6em solid #ffd45e}
+.s-boxes .bx b::before{content:'?';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#ffd45e;font:900 9em/1 Inter,Arial,sans-serif}
+.s-boxes .it{left:13em;top:3em;width:22em;height:22em;opacity:0}
+.s-boxes .pk{left:66em;width:18em;height:18em;border-radius:50%;border:.7em solid #ffd45e;background:#0b2029}
+.s-boxes .pk b{inset:2.5em}
+.s-boxes .q1{top:9em}
+.s-boxes .q2{top:34em}
+.hw-card.on .s-boxes .bx{animation:s5bx 2.5s infinite}
+.hw-card.on .s-boxes .it{animation:s5pop 10s infinite}
+.hw-card.on .s-boxes .n2{animation-delay:2.5s}
+.hw-card.on .s-boxes .n3{animation-delay:5s}
+.hw-card.on .s-boxes .n4{animation-delay:7.5s}
+@keyframes s5bx{0%,12%,100%{transform:none}3%{transform:rotate(-6deg) scale(1.04)}6%{transform:rotate(6deg) scale(1.04)}9%{transform:rotate(-3deg)}}
+@keyframes s5pop{0%{opacity:0;transform:translateY(8em) scale(.4)}3%{opacity:1;transform:none}21%{opacity:1;transform:none}25%,100%{opacity:0;transform:translateY(-4em)}}
 /* Build 26: SHARE on the end screen, and the armed state of RESTART MISSION on the pause screen. */
 .end-actions .end-share{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:9px;min-height:44px;border-color:#fac759;color:#fac759;letter-spacing:1.2px}
 .end-actions .end-share svg{flex:none;width:18px;height:18px}
@@ -515,3 +535,24 @@
 .cm-text small{font:900 9px/1 Inter,Arial,sans-serif;letter-spacing:.14em;color:#fac759}
 .cm-text strong{font:800 13px/1.1 Inter,Arial,sans-serif}
 .cm-text span{font:500 10.5px/1.25 Inter,Arial,sans-serif;color:#aebcd2}
+
+/* Build 31: Herman's first-time item bubble. The screen dims except a spotlight on Herman (--hx, --hy). */
+#itemIntro.introv{z-index:13;background:radial-gradient(circle at var(--hx,50%) var(--hy,53%),#0000 0,#0000 46px,#050c18d9 96px)}
+#itemIntro[hidden]{display:none}
+.ii-bubble{position:fixed;left:50%;transform:translateX(-50%);width:min(88vw,350px);padding:16px 16px 14px;border-radius:20px;background:#fffdf4;color:#1d2433;border:3px solid #fac759;box-shadow:0 14px 40px #000a;text-align:left}
+.ii-tail{position:fixed;left:calc(var(--hx,50%) - 15px);width:30px;height:20px;background:#fac759;clip-path:polygon(0 0,100% 0,50% 100%)}
+.ii-tail::after{content:'';position:absolute;left:4px;top:0;width:22px;height:14px;background:#fffdf4;clip-path:polygon(0 0,100% 0,50% 100%)}
+#pocket.lit{z-index:14}
+.ii-tail[hidden]{display:none}
+.ii-head{display:flex;align-items:center;gap:12px}
+.ii-art{position:relative;flex:0 0 66px;height:66px;border-radius:16px;background:radial-gradient(#22406a,#0b2029);display:grid;place-items:center}
+.ii-art .art-icon{width:52px;height:52px;object-fit:contain}
+.ii-art em{position:absolute;right:-5px;top:-5px;padding:2px 6px;border-radius:9px;background:#fac759;color:#2a1a05;font:900 11px/1 Inter,Arial,sans-serif;font-style:normal}
+.ii-head small{display:block;font:900 10px/1 Inter,Arial,sans-serif;letter-spacing:.16em;color:#b8860b}
+.ii-head strong{display:block;margin-top:4px;font:900 27px/1 'Barlow Condensed',Impact,sans-serif;color:#13203a}
+#iiText{margin:12px 0 14px;font:600 15px/1.4 Inter,Arial,sans-serif;color:#2a3346}
+.ii-bubble .pz-go{width:100%}
+.ii-pocket{position:fixed;right:96px;bottom:calc(max(24px,env(safe-area-inset-bottom)) + 113px);padding:7px 10px;border-radius:10px;background:#fac759;color:#2a1a05;font:900 11px/1 Inter,Arial,sans-serif;letter-spacing:.08em;animation:iiNudge 1s ease-in-out infinite}
+.ii-pocket[hidden]{display:none}
+.ii-pocket b{font-size:15px}
+@keyframes iiNudge{50%{transform:translateX(6px)}}
