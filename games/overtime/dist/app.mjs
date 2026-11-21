@@ -4,14 +4,14 @@ import {PERKS,fresh,normalize,buy,cost,settle} from './progress.mjs';
 import {Game,WEAPONS,PASSIVES,EVOLUTIONS,RECOVERY_SECONDS,SURVIVAL,clamp} from './engine.mjs';
 import {createBoard} from './leaderboard.mjs';import {tipsFor,takeTip,TIP_ICONS} from './tips.mjs';import {slidesFor} from './howto.mjs';import {rivalsFrom,passRivals} from './rivals.mjs';import {createVoice,VOICE_CLIPS} from './voice.mjs';import {MUSIC,hasMusic,trackFor,createMusicPlayer} from './music.mjs';import {shareMessage,sendShare} from './share.mjs';import {track as logEvent,timeBand,modeName} from './track.mjs';
 // Build number sent with leaderboard times, so times from before a retune can be told apart.
-const BUILD=28;const board=createBoard({build:BUILD});
+const BUILD=30;const board=createBoard({build:BUILD});
 const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d');
 const brandPortrait=new Image();brandPortrait.src='assets/herman-brand.jpg';const herman=new Image();herman.src='assets/herman-battle.png';const hermanWalk=new Image();hermanWalk.src='assets/herman-walk.png';const enemySheet=new Image();enemySheet.src='assets/corporate-sprites.png';const briefcaseArt=new Image();briefcaseArt.src='assets/howto/briefcase.webp';let g=null,W=0,H=0,scale=1,cam={x:900,y:900},keys={},stick=null,muted=false,audioCtx,toastUntil=0,last=performance.now(),lastUI=0,shake=0,wonBest=0;
 try{wonBest=Number(localStorage.getItem('pp-overtime-best')||0);}catch{}$('best').textContent=wonBest?'BEST: '+wonBest+' KOs':'';
 let selectedStage=1;let progress=fresh();try{progress=normalize(JSON.parse(localStorage.getItem('pp-overtime-progress')||'null'));}catch{}
 // Build 19: the menu lists MODES (both stages plus survival) and remembers the last one picked.
 try{const saved=Number(localStorage.getItem('pp-overtime-mode'));if(MODES.some(m=>m.id===saved)&&canPlayStage(progress,saved))selectedStage=saved;}catch{}
-function selectMode(id){selectedStage=id;try{localStorage.setItem('pp-overtime-mode',String(id));}catch{}}
+function selectMode(id){startTicket++;selectedStage=id;try{localStorage.setItem('pp-overtime-mode',String(id));}catch{}}
 const modeNumber=stage=>stage.endless?'∞':String(stage.id).padStart(2,'0');
 function saveProgress(){try{localStorage.setItem('pp-overtime-progress',JSON.stringify(progress));}catch{$('saveNote').textContent='Browser storage is unavailable. Progress lasts for this session only.';}}
 function updateProgress(){ cardStage=selectedStage; renderStagePicker(); $('bank').textContent=progress.credits;$('nextGoal').textContent=progress.kills<200?`NEXT UNLOCK: TP Tornado start · ${progress.kills}/200 lifetime KOs`:progress.wins<1?'NEXT UNLOCK: Corporate Lobby + Gas start · Clear the office':progress.clearedStages.includes(2)?'BOTH STAGES CLEARED · TRY A NEW BUILD':'CORPORATE LOBBY UNLOCKED · SELECT STAGE 02';}
@@ -55,7 +55,7 @@ function renderStageCard(){
   :'Clear '+(MODES[index-1]?MODES[index-1].name:'the previous stage')+' to unlock';
  $('stageCard').classList.toggle('locked',!unlocked);
  $('startBtn').disabled=!unlocked;
- $('boardBtn').hidden=!stage.endless;if(stage.endless)board.warm();
+ $('boardBtn').hidden=!stage.endless;if(stage.endless){board.warm();refreshWho();}else $('whoami').hidden=true;
  MODES.forEach((st,i)=>{const card=track.children[i],open=canPlayStage(progress,st.id);card.classList.toggle('locked',!open);card.setAttribute('aria-selected',String(i===index));
   const lock=card.querySelector('.sv3-lock');lock.hidden=open;lock.querySelector('b').textContent=open?'':'Clear '+(MODES[i-1]?MODES[i-1].name:'the previous stage')+' to unlock';
   $('stageDots').children[i].classList.toggle('on',i===index);});
@@ -69,7 +69,7 @@ function renderStageCard(){
 const ordinal=n=>'#'+Number(n).toLocaleString('en-US');
 function postSurvivalTime(run){
  const row=$('endBoard'),label=text=>{if(g===run)row.innerHTML=text+' <i aria-hidden="true">›</i>';};
- if(!board.signedIn()){label('SIGN IN TO POST YOUR TIME');return;}
+ if(!board.signedIn()){label('NOT POSTED · LOG IN BEFORE YOUR NEXT RUN');return;}
  label('POSTING YOUR TIME…');
  board.submitRun({seconds:run.t,kills:run.kills,level:run.level,bosses:run.bossesBeaten}).then(r=>{
   label(r&&r.posted&&r.rank?'YOU ARE '+ordinal(r.rank)+' ON THE LEADERBOARD':r&&r.rank?'LEADERBOARD · YOU ARE '+ordinal(r.rank):'LEADERBOARD');});
@@ -85,7 +85,7 @@ function showBoard(){logEvent('overtime_board_open',{signed_in:board.signedIn()}
    li.append(place,name,time);list.append(li);};
   top.forEach(add);
   if(extra){const gap=document.createElement('li');gap.className='bd-gap';gap.textContent='· · ·';list.append(gap);add(extra);}
-  note.textContent=!rows.length?'No times yet. Be the first on the board.':signedIn?(me?'':'Finish a survival run to get on the board.'):'Sign in, then finish a survival run to get on the board.';
+  note.textContent=!rows.length?'No times yet. Be the first on the board.':signedIn?(me?'':'Finish a survival run to get on the board.'):'Log in, then finish a survival run to get on the board. Runs played while logged out can\'t be posted.';
  }).catch(()=>{if(!$('board').hidden){list.innerHTML='';note.textContent='The leaderboard is on a break. Try again in a bit.';}});
 }
 $('boardBtn').onclick=showBoard;$('endBoard').onclick=showBoard;$('boardBack').onclick=()=>{$('board').hidden=true;};
@@ -188,8 +188,23 @@ function endAudio(won){const key=won?'win':'lose',sting=music&&musicOn&&MUSIC[ke
 for(const ev of ['pointerdown','keydown'])addEventListener(ev,()=>{gestured=true;},{capture:true,passive:true});
 document.addEventListener('visibilitychange',()=>{if(music)music.enable(musicOn&&!document.hidden);});
 function soundLabel(){$('sound').innerHTML=$('soundPauseIcon').innerHTML=muted?SPEAKER_OFF:SPEAKER_ON;$('sound').setAttribute('aria-label',muted?'Sound effects are off. Tap to turn on':'Sound effects are on. Tap to turn off');$('soundPause').setAttribute('aria-checked',String(!muted));}function toggleSound(){muted=!muted;try{localStorage.setItem('pp-overtime-sound',muted?'off':'on');}catch{}soundLabel();sound('upgrade');}soundLabel();$('sound').onclick=toggleSound;$('soundPause').onclick=toggleSound;musicLabel();$('music').onclick=toggleMusic;$('musicPause').onclick=toggleMusic;
-function begin(){$('recovery').hidden=true;if(!canPlayStage(progress,selectedStage))selectedStage=1;sound('upgrade');g=new Game(Math.random,progress.perks,selectedStage!==SURVIVAL_ID&&$('hardMode').checked&&progress.wins>0?1:0,progress.start,selectedStage);logEvent('overtime_run_start',{mode:modeName(g.stage),hard:g.difficulty===1});voice.reset();fetchVoice();say('start',.35);setFloor(selectedStage);cam={x:g.player.x,y:g.player.y};keys={};stick=null;for(let id of ['start','end','upgrade','pauseScreen','workshop'])$(id).hidden=true;for(let id of ['hud','loadout','hint','bombBtn','combo'])$(id).hidden=false;last=performance.now();showToast(g.stage.name.toUpperCase()+(g.endless?' · LAST AS LONG AS YOU CAN':' · SURVIVE, THEN DEFEAT THE BOSS'),4);bannerQueue=[];bannerUntil=0;$('banner').hidden=true;rivals=[];bestToBeat=g.endless?progress.bestSurvival||0:0;if(g.endless){board.startRun();const run=g;board.top(10).then(rows=>{if(g===run)rivals=rivalsFrom(rows,run.t);}).catch(()=>{});}updateUI();}
-$('nextStage').onclick=()=>{selectMode(2);begin();};$('startBtn').onclick=()=>howSeen()?begin():openHow(begin);
+function begin(){$('recovery').hidden=true;if(!canPlayStage(progress,selectedStage))selectedStage=1;sound('upgrade');g=new Game(Math.random,progress.perks,selectedStage!==SURVIVAL_ID&&$('hardMode').checked&&progress.wins>0?1:0,progress.start,selectedStage);logEvent('overtime_run_start',{mode:modeName(g.stage),hard:g.difficulty===1});voice.reset();fetchVoice();say('start',.35);setFloor(selectedStage);cam={x:g.player.x,y:g.player.y};keys={};stick=null;for(let id of ['start','end','upgrade','pauseScreen','workshop'])$(id).hidden=true;for(let id of ['hud','loadout','hint','bombBtn','combo'])$(id).hidden=false;last=performance.now();showToast(g.stage.name.toUpperCase()+(g.endless?' · LAST AS LONG AS YOU CAN':' · SURVIVE, THEN DEFEAT THE BOSS'),4);bannerQueue=[];bannerUntil=0;$('banner').hidden=true;rivals=[];bestToBeat=g.endless?progress.bestSurvival||0:0;if(g.endless){const run=g;board.startRun().then(id=>{if(!id&&board.signedIn()&&g===run)showToast('COULD NOT REACH THE LEADERBOARD · THIS RUN WON\'T POST',4);});board.top(10).then(rows=>{if(g===run)rivals=rivalsFrom(rows,run.t);}).catch(()=>{});}updateUI();}
+$('nextStage').onclick=()=>{selectMode(2);begin();};
+// Build 30: before a Survival run, check the login is still good. Logged out, the player hears it now, not after
+// their best run: LOG IN goes to the sign-in page and back, PLAY ANYWAY starts the run (asked once per visit).
+let nudged=false,whoName=null;
+function showWho(r){const el=$('whoami');if(selectedStage!==SURVIVAL_ID){el.hidden=true;return;}el.hidden=false;
+ if(r.signedIn){whoName=r.name;el.replaceChildren('PLAYING AS ');const b=document.createElement('b');b.textContent=r.name||'YOU';el.append(b);}
+ else{whoName=null;el.innerHTML='NOT LOGGED IN · <a href="auth.html?next=overtime">LOG IN</a> TO POST TIMES';}}
+function refreshWho(){if(selectedStage!==SURVIVAL_ID){$('whoami').hidden=true;return Promise.resolve({signedIn:board.signedIn()});}return board.who().then(r=>{showWho(r);return r;});}
+// The check can take a moment. If the player leaves the menu meanwhile (Break Room, How to Play, another mode),
+// the pending start is dropped instead of starting a run on top of wherever they went.
+let startTicket=0;
+const stillOnMenu=(ticket,stage)=>ticket===startTicket&&selectedStage===stage&&!$('start').hidden&&$('workshop').hidden&&$('how').hidden;
+function startShift(){const go=()=>howSeen()?begin():openHow(begin);if(selectedStage!==SURVIVAL_ID)return go();
+ const ticket=++startTicket,stage=selectedStage;
+ $('startBtn').disabled=true;refreshWho().then(r=>{$('startBtn').disabled=false;if(!stillOnMenu(ticket,stage))return;if(r.signedIn||nudged)return go();nudged=true;$('loginNudge').hidden=false;$('nudgePlay').onclick=()=>{$('loginNudge').hidden=true;go();};});}
+$('startBtn').onclick=startShift;
 // How to Play sheet: opens from the menu, closes with GOT IT or a tap outside it.
 // Build 25: How to Play is six swipe cards with moving pictures (words and markup in howto.mjs, drawing in
 // style.css). It opens from the menu button, and once by itself the first time a player taps CLOCK IN; there, the
@@ -366,7 +381,7 @@ function draw(){ctx.clearRect(0,0,W,H);ctx.fillStyle='#091d27';ctx.fillRect(0,0,
  let mx=W-87,my=H-215;rounded(mx-7,my-7,76,76,5,'#071e2bd9','#45656b');for(let e of g.enemies.filter(e=>e.type==='exec'))circle(mx+e.x/1800*60,my+e.y/1800*60,3.5,'#ffd36b');circle(mx+p.x/1800*60,my+p.y/1800*60,3,'#9de6c1');
  if(stick){circle(stick.x,stick.y,45,'#a6d3c015','#b2d3ca55');circle(stick.x+stick.dx*35,stick.y+stick.dy*35,17,'#b2dcc177','#c8edda');}
 }
-function frame(now){let elapsed=Math.max(0,(now-last)/1000),dt=Math.min(elapsed,.25);last=now;if(g){if(g.state==='countdown')g.step(elapsed,input());else{let remaining=dt;while(remaining>0){let step=Math.min(remaining,.05);g.step(step,input());remaining-=step;}}for(let event of g.events.splice(0)){if(event.type==='boss-arrive')banner(g.stage.bossName,event.text,'boss');else if(event.text&&event.type!=='end')showToast(event.text);if(event.type==='end')endAudio(g.state==='won');else sound(event.type);
+function frame(now){let elapsed=Math.max(0,(now-last)/1000),dt=Math.min(elapsed,.25);last=now;if(g){if(g.state==='countdown')g.step(elapsed,input());else{let remaining=dt;while(remaining>0){let step=Math.min(remaining,.05);g.step(step,input());remaining-=step;}}for(let event of g.events.splice(0)){if(event.type==='boss-arrive')banner(g.stage.bossName,event.text,'boss');else if(event.type==='gold-open')banner('GOLD UNLOCKED','YOUR NEXT BRIEFCASE TURNS IT GOLD','best');else if(event.text&&event.type!=='end')showToast(event.text);if(event.type==='end')endAudio(g.state==='won');else sound(event.type==='gold-saved'?'upgrade':event.type==='gold-open'?'evolve':event.type);
  // Herman speaks at a few moments (voice.mjs decides whether he actually does).
  if(event.type==='upgrade'&&g.upgradeKind==='promotion')say('promotion',.3);else if(event.type==='evolve')say('evolve',.6);else if(event.type==='combo')say('streak');else if(event.type==='boom'&&event.text)say('bomb',.5);else if(event.type==='supply'&&event.text.startsWith('RUSH SURVIVED'))say('rush');else if(event.type==='exec-in')say('exec',.8);else if(event.type==='hurt'&&g.player.hp>0&&g.player.hp<g.player.max*.25)say('low',.3);if(event.type==='level')upgrades();if(event.type==='end')finish(event.text);if(event.type==='boom')shake=9;if(event.type==='evolve')shake=12;if(event.type==='hurt')shake=5;}
  // Build 28: live leaderboard moments in survival. One banner when the run beats the player's own best, and one

@@ -84,7 +84,7 @@ assert.ok(fs.readFileSync(path.join(root,'dist/engine.mjs'),'utf8').includes("ev
  Object.assign(g.passives,{coffee:0,magnet:1,chili:1,speed:1});const picks=g.options('briefcase').map(c=>c.key);
  assert.ok(!picks.includes('coffee')&&picks[0]==='tp'&&picks.length>=1&&picks.length<=3);
  // A ready weapon still evolves.
- Object.assign(g.weapons,{plunger:5});Object.assign(g.passives,{coffee:1,magnet:1,chili:1,speed:0});assert.deepEqual(g.options('briefcase').map(c=>[c.key,c.level]),[['plunger',6]]);
+ g.t=S.goldAt[0];Object.assign(g.weapons,{plunger:5});Object.assign(g.passives,{coffee:1,magnet:1,chili:1,speed:0});assert.deepEqual(g.options('briefcase').map(c=>[c.key,c.level]),[['plunger',6]]);
  // Every choice is a legal upgrade.
  for(let seed=1;seed<=40;seed++){const h=new Game(rng(seed),{},0,'plunger',SURVIVAL_ID);h.player.max=1e9;h.player.hp=1e9;let n=0;
   while(h.t<200&&n<400){n++;if(h.state==='upgrade'){for(const c of h.choices){if(c.key in WEAPONS)assert.ok(c.level<=6&&c.level===h.weapons[c.key]+1);else if(c.key in PASSIVES)assert.ok(c.level<=3&&c.level===h.passives[c.key]+1);}h.choose(h.choices[h.choices.length-1].key);assert.ok(h.ownedCount(h.weapons)<=S.weaponSlots&&h.ownedCount(h.passives)<=S.perkSlots,'slots hold');}h.pendingBriefcases=h.t>20&&h.state==='playing'&&n%37===0?1:h.pendingBriefcases;h.step(.5,{x:0,y:0});}}}
@@ -116,7 +116,7 @@ assert.ok(css.includes('#banner[hidden]{display:none}')&&css.includes('#mission.
 assert.ok(app.includes("'boss-arrive':['siren']"),'the boss arrival is never a fallback beep');
 
 // 11. Rules changed, so leaderboard times are tagged with the new build number, and the tips keep up.
-assert.match(app,/const BUILD=28;/);
+assert.match(app,/const BUILD=30;/);
 {const tips=tipsFor({endless:true}).map(t=>t.id);for(const id of ['restock','kit-wait','boost'])assert.ok(tips.includes(id),'tip '+id);
  assert.ok(tipsFor({endless:true}).find(t=>t.id==='kit-wait').text.includes(S.kitLife+' seconds'));assert.ok(!tipsFor({endless:false}).some(t=>t.id==='restock'||t.id==='boost'));}
 console.log('PASS: survival eases the 2:00 to 4:30 stretch, keeps rushes off boss arrivals, heals and restocks more, steers briefcases to evolutions, lets a maxed build keep growing, and shows live leaderboard moments.');

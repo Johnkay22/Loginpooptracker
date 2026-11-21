@@ -476,3 +476,17 @@
 #music.sv2-icon[hidden],.pz-sound[hidden]{display:none}
 .pz-sound+.pz-sound{margin-top:0;border-top:0;padding-top:2px}
 
+
+/* Build 30: who is playing, and the not-logged-in check before a Survival run. */
+.sv3-who{flex-basis:100%;font:700 10.5px/1.2 Inter,Arial,sans-serif;letter-spacing:.12em;color:#8fa0bb;text-transform:uppercase}
+.sv3-who[hidden]{display:none}
+.sv3-who b{color:#fac759;font-weight:800}
+.sv3-who a{color:#fac759;text-decoration:underline;text-underline-offset:2px}
+#loginNudge.nudgev{z-index:14;display:flex;align-items:center;justify-content:center;padding:20px;background:#050c18e6}
+#loginNudge[hidden]{display:none}
+.ng{width:100%;max-width:360px;padding:24px 20px 20px;border:1.5px solid #2f4263;border-radius:18px;background:linear-gradient(#0f2140,#091629);text-align:center;box-shadow:0 20px 50px #000a}
+.ng h2{margin:10px 0 0;font:900 34px/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:.5px;color:#fff}
+.ng h2 span{color:#fac759}
+.ng p{margin:12px 0 0;font:500 14px/1.4 Inter,Arial,sans-serif;color:#c9d4e6}
+.ng .pz-go{text-decoration:none}
+.ng-play{display:block;width:100%;margin:12px 0 0;padding:12px;border:0;background:none;color:#b9c6da;font:800 13px/1 Inter,Arial,sans-serif;letter-spacing:.14em;cursor:pointer}

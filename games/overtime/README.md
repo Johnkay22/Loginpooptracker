@@ -237,6 +237,18 @@ A third mode on the menu card (the ∞ entry). The run never ends and time survi
 ## Build 22: Break Room buttons are gold (made with Claude, Nov 15)
 - Johnny picked gold over the mockup's cyan, so the Break Room's buy buttons, selected weapon, difficulty switch and BACK TO MENU now match the menu, promotion and end screens. Colours only; nothing else changed.
 
+## Build 30: gold on the clock, and no more surprise logouts (made with Claude, Nov 20)
+Johnny's playtest: once weapons turn gold the run gets easy, and gold could come as early as 1:18. Separately, his best run did not post: his saved login had expired, the game played him as a guest, and the end screen said "SIGN IN TO POST YOUR TIME", which sent him to the sign-in page and lost the run.
+- **Gold unlocks on a clock in Survival** (`SURVIVAL.goldAt`): the 1st gold weapon no earlier than 3:00, the 2nd no earlier than 4:00, the 3rd and later no earlier than 5:00. Before that, briefcases still give level-ups and perks.
+- **Early briefcases are saved, not wasted:** grab a briefcase while a weapon is ready but gold is locked and it is saved ("GOLD BRIEFCASE SAVED · OPENS AT 3:00"). It opens by itself the moment gold unlocks. If nothing is ready to turn gold any more, a saved briefcase opens as a normal one. If gold unlocks with a weapon ready and nothing saved, a "GOLD UNLOCKED" banner says the next briefcase turns it gold.
+- **Bots:** first gold went from as early as 1:18 (median about 3:30) to never before 3:00; second gold never before 4:00. Damage taken from 2:00 to 3:30 is up about 17% (an immortal circling bot); after 3:30 it is unchanged.
+- **Players are told:** a pause tip ("Gold unlocks at 3:00, a 2nd at 4:00...") and the Survival How to Play card. The two levels are unchanged.
+- **Login check before Survival:** CLOCK IN on Survival now checks the login is really still good (the site library refreshes it, or finds it was revoked). Logged out, a sheet says "YOU'RE NOT LOGGED IN · This run won't count on the leaderboard" with LOG IN and PLAY ANYWAY. Asked once per visit. Slow or offline never blocks a run. If the player opens the Break Room or How to Play, or switches mode, while the check runs, the start is dropped.
+- **Who is playing:** the menu shows "PLAYING AS <name>" or "NOT LOGGED IN · LOG IN TO POST TIMES" under Survival.
+- **Honest end screen:** a logged-out run now says "NOT POSTED · LOG IN BEFORE YOUR NEXT RUN" (was "SIGN IN TO POST YOUR TIME", which sounded like it would post the run just played). If the server will not take a run at the start, a toast says so.
+- **Back to the game after logging in:** game links go to `auth.html?next=overtime`, and the sign-in page returns there (only that page is allowed; email links still go to the app).
+- `BUILD` is 30 (rules changed). New suite `tests/gold-and-login.test.mjs`.
+
 ## Build 29: Herman speaks, separate Sound Effects and Music switches (made with Claude, Nov 16)
 - **Herman's voice lines:** 13 lines Johnny picked, made with his "Herman B" ElevenLabs voice. Audio only, no speech bubble. Clips are in `dist/assets/voice/`; which line goes with which moment is in `dist/voice.mjs`.
   - Clock in: "Time to do my business." / "Let's get this potty started." (always one, never the same twice running)
