@@ -55,6 +55,21 @@ assert.equal(S.managerFrom,240);
   lasted.push(g.state==='lost'?g.t-start:90);}
  assert.ok(lasted.every(t=>t<45),'standing still from 7:00 ends fast ('+lasted.map(t=>t.toFixed(0)).join(', ')+'s)');}
 
+// 6b. Fewer, bigger promotions in Survival (after Johnny's playtest: Plungerang maxed by 2:00, upgrades every 12s).
+assert.equal(S.promoRate,.45);
+{const g=quiet();g.drops.push({x:g.player.x,y:g.player.y,value:10});g.step(.05,{x:0,y:0});assert.ok(Math.abs(g.xp-4.5)<1e-9,'a 10 coin pickup fills 4.5 of the bar');assert.equal(g.tokens,10,'Petty Cash is unaffected');
+ const h=new Game(rng(1),{},0,'plunger',1);h.spawnCd=1e9;h.drops.push({x:h.player.x,y:h.player.y,value:10});h.step(.05,{x:0,y:0});assert.equal(h.xp,10,'the levels are unchanged');}
+// Before gold unlocks, a briefcase is an ordinary free pick, not a guaranteed level for the weapon closest to max.
+{const g=quiet();Object.assign(g.weapons,{plunger:4,tp:2});g.t=120;const a=g.options('briefcase');g.t=S.goldAt[0];const b=g.options('briefcase');
+ assert.ok(b.some(c=>c.key==='plunger'&&c.level===5),'after 3:00 the briefcase steers to an evolution');assert.ok(a.length===3);
+ let steered=0;for(let seed=1;seed<=40;seed++){const h=new Game(rng(seed),{},0,'plunger',SURVIVAL_ID);Object.assign(h.weapons,{plunger:4,tp:2});h.t=120;if(h.options('briefcase').some(c=>c.key==='plunger'))steered++;}
+ assert.ok(steered<30,'before 3:00 the Plungerang is not always on offer ('+steered+'/40)');}
+// Enemies ease off while the player is still building: 35% less health from 2:00 to 4:00, fading in from 0:45 and out by 6:00.
+assert.equal(S.earlyEase,.35);
+{const g=quiet();const at=t=>{g.t=t;return g.easeScale();};assert.equal(at(30),1);assert.ok(Math.abs(at(150)-.65)<1e-9);assert.ok(Math.abs(at(300)-.825)<1e-9);assert.equal(at(400),1);
+ g.t=150;const e=g.spawn('worker',100,100),h=new Game(rng(1),{},0,'plunger',1);h.t=150;assert.ok(h.spawn('worker',100,100).max>0,'levels untouched');}
+assert.equal(S.managerHP,20);
+
 // 7. Players are told.
 assert.ok(tipsFor({endless:true}).some(t=>t.id==='managers'));
 assert.ok(app.includes("else if(event.type==='manager')banner('MIDDLE MANAGER',\"THEY DON'T BUDGE · KEEP MOVING\",'boss');"));
