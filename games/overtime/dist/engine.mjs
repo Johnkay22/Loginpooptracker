@@ -44,7 +44,11 @@ export const SURVIVAL={
  kitLife:45,               // seconds a first aid kit waits on the floor (was 20)
  kitsFromTier:2,           // from this tier (0 = first) a survived rush drops 2 kits instead of 1
  cashBonus:30,             // Petty Cash from the bonus offered once everything is maxed
- boost:.1,                 // Build 28: once everything is maxed, each Extra Hot Sauce adds this much weapon damage, with no limit
+ boost:.1,boostTaper:.88,  // Extra Hot Sauce: the 1st adds 10% weapon damage, each later one 12% less than the one before (Build 32: was +10% each, forever), so it tops out near +83%
+ // Build 32: Middle Managers. Big guards that shrug off knockback (TP rings, flushes, the Air Horn barely move them),
+ // so a fully built Herman can't stand still behind his weapons. Slower than Herman, so a moving player outwalks them.
+ // They come a little faster every tier, with more allowed at once, and no ceiling: every run ends eventually.
+ managerFrom:240,managerGap:14,managerGapTier:2,managerGapMin:4,managerCap:6,managerCapTier:3,managerHP:8,managerSpeed:120,managerDamage:1.5,managerR:26,
  goldAt:[180,240,300],      // Build 30: earliest run time (seconds) for the 1st, 2nd, and 3rd and later gold (evolved) weapon
 };
 // Coins for each later promotion in survival. Steeper than stage mode so a long run paces at about 3 a minute.
@@ -64,7 +68,7 @@ export class Game{
   if(!weapon||weapon==='bomb'||weapon==='bidet'||weapon==='wet'||weapon==='plunger'||e.type==='exec')return;
   this.event('hit-'+weapon,'');
  }
- hit(e,amount,weapon){if(e.hp<=0||this.state==='won'||this.state==='lost')return;amount*=1+(this.perks.damage||0)*.06+this.passives.chili*.15+this.boosts*SURVIVAL.boost;e.hp-=amount;if(e.type==='supply'){e.flash=.12;if(e.hp<=0)this.openBox(e);return;}if(amount>=8&&e.flash===0&&this.numbers.length<45)this.numbers.push({x:e.x,y:e.y-22,text:Math.round(amount),t:0,life:.65,color:'#fff3c8'});e.flash=.12;this.hitSound(e,weapon);if(e.hp<=0){this.kills++;this.combo++;this.comboTime=2.5;this.bestCombo=Math.max(this.bestCombo,this.combo);if(this.combo%25===0)this.event('combo',this.combo+' KOs · KEEP IT GOING');if(this.kills%60===0){this.drops.push({x:e.x,y:e.y,magnet:true,value:0});}let value=e.type==='exec'?14:e.type==='guard'?4:1;if(e.boss&&this.endless)value=SURVIVAL.bossCash;if(!e.boss||this.endless)this.drops.push({x:e.x,y:e.y+(this.endless&&e.type==='exec'?26:0),value,heal:false});if(e.type==='exec'){if(e.boss&&!this.endless)this.bossDefeated=true;else this.drops.push({x:e.x,y:e.y,chest:true,value:0});if(e.boss&&this.endless){this.bossesBeaten++;for(let i=0;i<SURVIVAL.bossKits;i++)this.drops.push({x:clamp(e.x+(i*2-1)*46,80,1720),y:e.y,heal:true,value:0,life:this.kitLife()});}this.stopped++;this.event('exec',this.endless?(e.boss?'BOSS':'EXECUTIVE')+' DEFEATED · GRAB THE BRIEFCASE':'EXECUTIVE DEFEATED');}this.fx.push({x:e.x,y:e.y,t:0,life:.35,r:25,color:e.type==='exec'?'#ffcc67':'#91dcbe'});}}
+ hit(e,amount,weapon){if(e.hp<=0||this.state==='won'||this.state==='lost')return;amount*=1+(this.perks.damage||0)*.06+this.passives.chili*.15+this.boostTotal();e.hp-=amount;if(e.type==='supply'){e.flash=.12;if(e.hp<=0)this.openBox(e);return;}if(amount>=8&&e.flash===0&&this.numbers.length<45)this.numbers.push({x:e.x,y:e.y-22,text:Math.round(amount),t:0,life:.65,color:'#fff3c8'});e.flash=.12;this.hitSound(e,weapon);if(e.hp<=0){this.kills++;this.combo++;this.comboTime=2.5;this.bestCombo=Math.max(this.bestCombo,this.combo);if(this.combo%25===0)this.event('combo',this.combo+' KOs · KEEP IT GOING');if(this.kills%60===0){this.drops.push({x:e.x,y:e.y,magnet:true,value:0});}let value=e.type==='exec'?14:e.type==='guard'?4:1;if(e.boss&&this.endless)value=SURVIVAL.bossCash;if(!e.boss||this.endless)this.drops.push({x:e.x,y:e.y+(this.endless&&e.type==='exec'?26:0),value,heal:false});if(e.type==='exec'){if(e.boss&&!this.endless)this.bossDefeated=true;else this.drops.push({x:e.x,y:e.y,chest:true,value:0});if(e.boss&&this.endless){this.bossesBeaten++;for(let i=0;i<SURVIVAL.bossKits;i++)this.drops.push({x:clamp(e.x+(i*2-1)*46,80,1720),y:e.y,heal:true,value:0,life:this.kitLife()});}this.stopped++;this.event('exec',this.endless?(e.boss?'BOSS':'EXECUTIVE')+' DEFEATED · GRAB THE BRIEFCASE':'EXECUTIVE DEFEATED');}this.fx.push({x:e.x,y:e.y,t:0,life:.35,r:25,color:e.type==='exec'?'#ffcc67':'#91dcbe'});}}
  // Survival: weapons and perks are limited to a few slots, evolutions only come from briefcases, and once
  // everything is maxed a promotion offers a Petty Cash bonus or a heal.
  ownedCount(set){return Object.values(set).filter(l=>l>0).length;}
@@ -116,10 +120,20 @@ export class Game{
  // The app pauses the run while Herman's first-time bubble is up, then counts back in like a promotion.
  intro(){if(this.state!=='playing'&&this.state!=='countdown')return false;this.state='intro';return true;}
  endIntro(){if(this.state!=='intro')return false;this.state='countdown';this.resumeLeft=RECOVERY_SECONDS;this.moving=false;return true;}
+ // Build 32: Extra Hot Sauce with diminishing returns (see SURVIVAL.boost / boostTaper).
+ boostTotal(){const S=SURVIVAL,n=this.boosts||0;return n?S.boost*(1-S.boostTaper**n)/(1-S.boostTaper):0;}
+ // Executives, bosses and Middle Managers are "big": item effects push them less and never one-shot them.
+ isBig(e){return !!(e.boss||e.type==='exec'||e.manager);}
+ stepManagers(){const S=SURVIVAL;if(!this.endless||this.t<S.managerFrom)return;this.nextManagerAt??=S.managerFrom;if(this.t<this.nextManagerAt)return;
+  this.nextManagerAt=this.t+Math.max(S.managerGapMin,S.managerGap-this.tier*S.managerGapTier);
+  if(this.enemies.filter(e=>e.manager&&e.hp>0).length>=S.managerCap+this.tier*S.managerCapTier)return;
+  const p=this.player,a=this.random()*Math.PI*2,x=clamp(p.x+Math.cos(a)*620,60,1740),y=clamp(p.y+Math.sin(a)*620,60,1740);
+  const e=this.spawn('guard',x,y);e.manager=true;e.hp*=S.managerHP;e.max=e.hp;e.speed=S.managerSpeed;e.damage*=S.managerDamage;e.r=S.managerR;
+  if(!this.managerSeen){this.managerSeen=true;this.event('manager','MIDDLE MANAGER · THEY DON\'T BUDGE · KEEP MOVING');}return e;}
  addPuddle(x,y){this.puddles.push({x,y,r:MYSTERY.puddleR,t:0,life:MYSTERY.puddleLife,seen:new Set()});}
- freezeAll(){for(const e of this.enemies)if(e.hp>0){e.frozen=Math.max(e.frozen||0,e.boss||e.type==='exec'?MYSTERY.freezeBoss:MYSTERY.freeze);e.windup=0;e.dash=0;}}
+ freezeAll(){for(const e of this.enemies)if(e.hp>0){e.frozen=Math.max(e.frozen||0,this.isBig(e)?MYSTERY.freezeBoss:MYSTERY.freeze);e.windup=0;e.dash=0;}}
  airHorn(){const p=this.player;this.fx.push({x:p.x,y:p.y,t:0,life:.5,r:MYSTERY.hornR,color:'#ffe08a'});
-  for(const e of this.enemies){if(e.hp<=0)continue;const d=dist(e,p);if(d>MYSTERY.hornR)continue;const big=e.boss||e.type==='exec',push=MYSTERY.hornPush*(big?.5:1),k=Math.max(1,d),v=2*push/MYSTERY.hornTime;
+  for(const e of this.enemies){if(e.hp<=0)continue;const d=dist(e,p);if(d>MYSTERY.hornR)continue;const big=this.isBig(e),push=MYSTERY.hornPush*(big?.5:1),k=Math.max(1,d),v=2*push/MYSTERY.hornTime;
    // A shove that plays out over hornTime (fast, then easing off) instead of a jump.
    e.kb={vx:(e.x-p.x)/k*v,vy:(e.y-p.y)/k*v,t:MYSTERY.hornTime};if(!big){e.frozen=Math.max(e.frozen||0,MYSTERY.hornStun);e.windup=0;e.dash=0;}}}
  // Tap a pocket slot. Returns false when nothing happens (paused, empty slot, or already at full health).
@@ -138,12 +152,12 @@ export class Game{
   else{const was=this.state;this.state='playing';this.useNow(k);if(this.state==='playing')this.state=was;}return true;}
  stepMystery(dt){
   for(const u of this.puddles){u.t+=dt;for(const e of this.enemies){if(e.hp<=0||dist(e,u)>u.r+e.r*.5)continue;e.slowT=MYSTERY.slowFor;if(u.seen.has(e.id))continue;u.seen.add(e.id);
-    if(!e.boss&&e.type!=='exec'&&this.random()<MYSTERY.slipChance){this.numbers.push({x:e.x,y:e.y-24,text:'SLIP!',t:0,life:.8,color:'#ffe066'});this.fx.push({x:e.x,y:e.y,t:0,life:.4,r:30,color:'#ffe066'});e.flash=.12;this.hit(e,e.hp*99+1e6,'wet');}}}
+    if(!this.isBig(e)&&this.random()<MYSTERY.slipChance){this.numbers.push({x:e.x,y:e.y-24,text:'SLIP!',t:0,life:.8,color:'#ffe066'});this.fx.push({x:e.x,y:e.y,t:0,life:.4,r:30,color:'#ffe066'});e.flash=.12;this.hit(e,e.hp*99+1e6,'wet');}}}
   this.puddles=this.puddles.filter(u=>u.t<u.life);
   if(this.bidet>0){this.bidet=Math.max(0,this.bidet-dt);const p=this.player,f=this.face,hs=this.endless?this.healthScale():1;
    for(const e of this.combatTargets()){if(e.hp<=0)continue;const dx=e.x-p.x,dy=e.y-p.y,along=dx*f.x+dy*f.y,across=Math.abs(dx*f.y-dy*f.x);
     if(along<8||along>MYSTERY.bidetLength+e.r||across>MYSTERY.bidetWidth+e.r+along*.12)continue;
-    if(e.type!=='supply'&&!e.boss&&e.type!=='exec'){e.flash=.12;this.hit(e,e.hp*99+1e6,'bidet');}else this.hit(e,MYSTERY.bidetDps*hs*dt,'bidet');}}}
+    if(e.type!=='supply'&&!this.isBig(e)){e.flash=.12;this.hit(e,e.hp*99+1e6,'bidet');}else this.hit(e,MYSTERY.bidetDps*hs*dt,'bidet');}}}
  hurtPlayer(amount,by,slam=false){if(this.player.inv>0||this.state!=='playing')return false;this.player.hp=Math.max(0,this.player.hp-amount);this.player.inv=.65;this.combo=0;this.comboTime=0;this.event('hurt','');if(this.player.hp===0){this.state='lost';this.killedBy=by?{type:by.type,boss:!!by.boss,slam}:null;this.event('end','Herman ran out of health. Spend Petty Cash on perks or try a different weapon build.');}return true;}
  bossSpot(distance=240){
   const p=this.player;let spot=null,best=-Infinity;
@@ -194,7 +208,7 @@ export class Game{
  let l=this.weapons.plunger;if(l&&this.cd.plunger<=0){this.cd.plunger=Math.max(.38,1.0-l*.11)*rate;let target=this.enemies.filter(e=>e.hp>0&&dist(e,p)<260).sort((a,b)=>dist(a,p)-dist(b,p))[0]||this.supplies.filter(e=>e.hp>0&&dist(e,p)<260).sort((a,b)=>dist(a,p)-dist(b,p))[0]||this.enemies.filter(e=>e.hp>0).sort((a,b)=>dist(a,p)-dist(b,p))[0];let angle=target?Math.atan2(target.y-p.y,target.x-p.x):Math.atan2(this.face.y,this.face.x);let count=l===6?6:1+Math.floor(l/2);for(let i=0;i<count;i++){let a=angle+(i-(count-1)/2)*.26;this.shots.push({x:p.x,y:p.y,sx:p.x,sy:p.y,dx:Math.cos(a),dy:Math.sin(a),big:l===6,t:0,returning:false,hit:new Set(),damage:l===6?115:20+l*9});}
   this.event('throw',''); // Plungerang thrown
  }
- l=this.weapons.gas;if(l&&this.cd.gas<=0){this.cd.gas=Math.max(.5,1.5-l*.15)*rate;this.clouds.push({x:p.x,y:p.y,t:0,life:l===6?8:2.8+l*.6,r:l===6?130:36+l*10,dps:l===6?75:9+l*5,slow:l===6});
+ l=this.weapons.gas;if(l&&this.cd.gas<=0){this.cd.gas=Math.max(.5,1.5-l*.15)*rate;{const r=l===6?130:36+l*10,near=this.clouds.find(c=>c.r===r&&dist(c,p)<r*.6);if(near)near.t=0;else this.clouds.push({x:p.x,y:p.y,t:0,life:l===6?8:2.8+l*.6,r,dps:l===6?75:9+l*5,slow:l===6});}
   this.event('puff',''); // gas cloud dropped
  }
  l=this.weapons.flush;if(l&&this.cd.flush<=0){this.cd.flush=(5.5-l*.5)*rate;this.waves.push({x:p.x,y:p.y,t:0,life:.65,max:l===6?370:100+l*25,hit:new Set(),damage:l===6?160:20+l*12,royal:l===6});if(l===6)this.waves.push({x:p.x,y:p.y,t:-.4,life:.65,max:370,hit:new Set(),damage:100,royal:true});this.event('flush','');}
@@ -215,9 +229,9 @@ export class Game{
  if(this.endless)this.bossAttacks=this.enemies.filter(e=>e.boss&&e.hp>0&&e.slam).map(e=>e.slam);
  for(let s of this.shots){s.t+=dt;if(s.t>.5&&!s.returning){s.returning=true;s.hit.clear();}if(!s.returning){s.x+=s.dx*460*dt;s.y+=s.dy*460*dt;}else{let d=dist(s,p);s.x+=(p.x-s.x)/Math.max(1,d)*520*dt;s.y+=(p.y-s.y)/Math.max(1,d)*520*dt;if(d<20)s.dead=true;}for(let e of this.combatTargets())if(e.hp>0&&!s.hit.has(e.id)&&dist(e,s)<e.r+12){s.hit.add(e.id);this.hit(e,s.damage,'plunger');}}
  this.shots=this.shots.filter(s=>!s.dead&&s.t<1.8);
- l=this.weapons.tp;this.orbits=[];if(l){for(let i=0;i<(l===6?12:l+1);i++){let a=this.t*(1.8+l*.16)*(l===6&&i>=6?-1:1)+i*Math.PI*2/(l===6?6:l+1);let radius=l===6?(i<6?75:125):61+l*5;let o={x:p.x+Math.cos(a)*radius,y:p.y+Math.sin(a)*radius};this.orbits.push(o);for(let e of this.combatTargets())if(e.hp>0&&e.hit===0&&dist(e,o)<e.r+14){this.hit(e,12+l*7,'tp');e.hit=.35;let d=Math.max(1,dist(e,p));if(e.type!=='supply'){e.x+=(e.x-p.x)/d*10;e.y+=(e.y-p.y)/d*10;}}}}
- for(let c of this.clouds){c.t+=dt;for(let e of this.combatTargets())if(e.hp>0&&dist(e,c)<c.r+e.r)this.hit(e,c.dps*dt,'gas');}this.clouds=this.clouds.filter(c=>c.t<c.life);this.stepMystery(dt);
- for(let w of this.waves){w.t+=dt;if(w.t<0)continue;let r=w.max*w.t/w.life;for(let e of this.combatTargets())if(e.hp>0&&!w.hit.has(e.id)&&dist(e,w)<r+e.r){w.hit.add(e.id);this.hit(e,w.damage,'flush');let d=Math.max(1,dist(e,w));let force=e.type==='supply'?0:e.type==='exec'?12:55;e.x=clamp(e.x+(e.x-w.x)/d*force,30,1770);e.y=clamp(e.y+(e.y-w.y)/d*force,30,1770);}}this.waves=this.waves.filter(w=>w.t<w.life);
+ l=this.weapons.tp;this.orbits=[];if(l){for(let i=0;i<(l===6?12:l+1);i++){let a=this.t*(1.8+l*.16)*(l===6&&i>=6?-1:1)+i*Math.PI*2/(l===6?6:l+1);let radius=l===6?(i<6?75:125):61+l*5;let o={x:p.x+Math.cos(a)*radius,y:p.y+Math.sin(a)*radius};this.orbits.push(o);for(let e of this.combatTargets())if(e.hp>0&&e.hit===0&&dist(e,o)<e.r+14){this.hit(e,12+l*7,'tp');e.hit=l===6?.55:.35;let d=Math.max(1,dist(e,p));if(e.type!=='supply'&&!e.manager){const kb=l===6?6:10;e.x+=(e.x-p.x)/d*kb;e.y+=(e.y-p.y)/d*kb;}}}}
+ for(let c of this.clouds){c.t+=dt;for(let e of this.combatTargets())if(e.hp>0&&dist(e,c)<c.r+e.r)this.hit(e,c.dps*dt,'gas');}this.clouds=this.clouds.filter(c=>c.t<c.life);this.stepMystery(dt);this.stepManagers();
+ for(let w of this.waves){w.t+=dt;if(w.t<0)continue;let r=w.max*w.t/w.life;for(let e of this.combatTargets())if(e.hp>0&&!w.hit.has(e.id)&&dist(e,w)<r+e.r){w.hit.add(e.id);this.hit(e,w.damage,'flush');let d=Math.max(1,dist(e,w));let force=e.type==='supply'?0:e.type==='exec'||e.manager?12:55;e.x=clamp(e.x+(e.x-w.x)/d*force,30,1770);e.y=clamp(e.y+(e.y-w.y)/d*force,30,1770);}}this.waves=this.waves.filter(w=>w.t<w.life);
  for(let d of this.drops){if(d.heal){if(d.life!=null){d.life-=dt;if(d.life<=0){d.taken=true;continue;}}if(p.hp>p.max-8)continue;}let r=dist(d,p);if(r<100+this.passives.magnet*35+(this.perks.pickup||0)*20||this.magnetTime>0&&!d.chest&&!d.heal&&!d.coffee&&!d.item){d.x+=(p.x-d.x)/Math.max(1,r)*300*dt;d.y+=(p.y-d.y)/Math.max(1,r)*300*dt;}if(r<23){d.taken=true;if(d.item){this.gainItem(d.item);}else if(d.chest){this.pendingBriefcases++;}else if(d.magnet){this.magnetTime=5;this.event('upgrade','CASH SWEEP · COLLECT IT ALL');this.event('got','sweep');}else if(d.coffee){this.caffeine=8;this.event('coffee','CAFFEINE RUSH · 8s OF SPEED + RAPID FIRE');this.event('got','coffee');}else if(d.heal){p.hp=Math.min(p.max,p.hp+this.kitHeal());this.healCount++;this.event('heal',''); /* Herman's relieved ahh */}else{this.tokens+=d.value;this.xp+=d.value*(1+this.passives.magnet*.1);if(!this.events.some(e=>e.type==='pickup'))this.event('pickup','');}}}this.drops=this.drops.filter(d=>!d.taken);if(this.drops.length>500){let loose=this.drops.filter(d=>!d.heal&&!d.chest&&!d.magnet&&!d.coffee&&!d.item);if(loose.length>1){loose[1].value+=loose[0].value;this.drops.splice(this.drops.indexOf(loose[0]),1);}}
  for(let n of this.numbers)n.t+=dt;this.numbers=this.numbers.filter(n=>n.t<n.life);this.enemies=this.enemies.filter(e=>e.hp>0);for(let f of this.fx)f.t+=dt;this.fx=this.fx.filter(f=>f.t<f.life);
  if(this.endless)this.boss=this.enemies.find(e=>e.boss)||null;

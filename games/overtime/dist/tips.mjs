@@ -60,6 +60,7 @@ export function tipsFor({endless=false,weapons={},keyboard=false}={}){
   tip('board','trophy','Signed in? A new best time posts to the leaderboard. The top 10 are public.'),
   sweep,rush,
   tip('execs','briefcase','Gold executives walk in twice before each boss. Each one carries a briefcase.'),
+   tip('managers','move','From 4:00, Middle Managers shrug off your weapons\' push. Keep moving and wear them down.'),
    tip('gold-clock','clock',`Gold unlocks at ${clockOf(S.goldAt[0])}, a 2nd at ${clockOf(S.goldAt[1])}, more at ${clockOf(S.goldAt[2])}. Early briefcases wait.`),
   bar,
   tip('kit-growth','kit','First aid kits heal more the longer the run goes.'),

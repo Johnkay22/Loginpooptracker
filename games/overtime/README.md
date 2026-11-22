@@ -237,6 +237,15 @@ A third mode on the menu card (the ∞ entry). The run never ends and time survi
 ## Build 22: Break Room buttons are gold (made with Claude, Nov 15)
 - Johnny picked gold over the mockup's cyan, so the Break Room's buy buttons, selected weapon, difficulty switch and BACK TO MENU now match the menu, promotion and end screens. Colours only; nothing else changed.
 
+## Build 32: no more standing still (made with Claude, Nov 22)
+Johnny's playtest: once his weapons were gold he could stand still next to a health pack forever. Two causes: evolved gas (Chemical Warfare) dropped a new cloud every half second on the same spot, so a still Herman sat in about 15 stacked clouds; and nothing could get through the evolved weapons' push, so nothing ever reached him. Johnny chose fixing the cause over gimmicks (no warning circles, no unkillable timer enemy, which would flatten the leaderboard).
+- **Gas clouds refresh instead of stacking:** a new cloud dropped where one of the same size already is just restarts that cloud. A moving Herman still leaves a trail; a still one sits in one cloud, not 15.
+- **Middle Managers (Survival, from 4:00):** big guards with 8x a guard's health, 1.5x damage and speed 120 (Herman walks 180). TP rings and flushes barely move them and item effects treat them like executives (Air Horn half push, no stun; Out of Order 1.5s; no Wet Floor slip; the Bidet does not one-shot them). One every 14s at first, 2s sooner each tier (never under 4s), with 6 + 3 per tier allowed at once, no ceiling, so every run ends eventually. The first one gets a banner. Drawn as a bigger guard with an orange ring, "MIDDLE MGR" tag and health bar. All numbers are `manager*` in `SURVIVAL`.
+- **Wrap Sheet:** the evolved rings hit each enemy every 0.55s (was 0.35s) and push 6 (was 10).
+- **Extra Hot Sauce tapers:** each adds 12% less than the one before (`boostTaper`), topping out near +83% instead of growing forever.
+- **Bots (fully built, standing still, no healing):** from 4:00, median 17s alive (was: until the boss); from 7:00, median 6s.
+- Pause tip about Middle Managers. `BUILD` is 32 (rules changed). New suite `tests/no-camping.test.mjs`.
+
 ## Build 31: mystery boxes, Herman's pocket, a calmer squeak and groan (made with Claude, Nov 21)
 Johnny's call: the cash boxes were dead weight (6 promotion coins), so every supply box is now a mystery box. The stronger the item, the rarer. Numbers live in `dist/mystery.mjs`.
 - **Odds (out of 100):** Cash Sweep 20, Coffee 18, Wet Floor 18, Out of Order 12, Free Stink Bomb 11, Air Horn 10, Executive Bidet 6, Company Health Plan 4, Company Credit Card 1.
