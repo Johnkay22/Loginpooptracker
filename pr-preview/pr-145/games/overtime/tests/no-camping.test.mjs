@@ -59,4 +59,7 @@ assert.equal(S.managerFrom,240);
 assert.ok(tipsFor({endless:true}).some(t=>t.id==='managers'));
 assert.ok(app.includes("else if(event.type==='manager')banner('MIDDLE MANAGER',\"THEY DON'T BUDGE · KEEP MOVING\",'boss');"));
 assert.ok(app.includes("sz=e.type==='exec'?(e.boss?125:88):e.manager?112:e.type==='guard'?82:65;"));
+assert.ok(fs.existsSync(path.join(root,'dist/assets/enemies/middle-manager.webp'))&&fs.existsSync(path.join(root,'art-sources/enemies/middle-manager.png')),'Johnny\'s Middle Manager art');
+assert.ok(app.includes("managerArt.src='assets/enemies/middle-manager.webp'")&&app.includes('if(e.manager&&managerArt.complete&&managerArt.naturalWidth)ctx.drawImage(managerArt,'));
+assert.ok(fs.readFileSync(path.join(root,'tools/build-single-file.mjs'),'utf8').includes("enemies: { '.webp': 'image/webp' }"),'inlined in the built page');
 console.log('PASS: gas clouds no longer stack, Middle Managers break up camping, Wrap Sheet and Extra Hot Sauce are reined in.');
