@@ -1,6 +1,10 @@
 export const DESKS=[{x:600,y:620,w:160,h:80},{x:1040,y:620,w:160,h:80},{x:600,y:1100,w:160,h:80},{x:1040,y:1100,w:160,h:80}];
 export const LOBBY_FURNITURE=[{x:470,y:580,w:260,h:110},{x:470,y:1110,w:260,h:110},{x:1080,y:570,w:85,h:180},{x:1255,y:570,w:85,h:180},{x:1080,y:1050,w:85,h:180},{x:1255,y:1050,w:85,h:180}];
-export const furnitureFor=id=>id===2?LOBBY_FURNITURE:DESKS;
+// Build 31: the eight desks along the top and bottom walls were painted but had no collision, so Herman and
+// enemies walked straight over them. They now block like the four in the middle.
+const OUTER_DESKS=[165,400,1240,1480].flatMap(x=>[120,1560].map(y=>({x,y,w:160,h:80})));
+export const OFFICE_FURNITURE=[...DESKS,...OUTER_DESKS];
+export const furnitureFor=id=>id===2?LOBBY_FURNITURE:OFFICE_FURNITURE;
 export function resolveFurniture(p,r=17,obstacles=DESKS){for(let o of obstacles){let nx=Math.max(o.x,Math.min(o.x+o.w,p.x)),ny=Math.max(o.y,Math.min(o.y+o.h,p.y));let dx=p.x-nx,dy=p.y-ny,d=Math.hypot(dx,dy);if(d>0&&d<r){p.x=nx+dx/d*r;p.y=ny+dy/d*r;}else if(d===0){let edges=[{d:p.x-o.x,x:o.x-r,y:p.y},{d:o.x+o.w-p.x,x:o.x+o.w+r,y:p.y},{d:p.y-o.y,x:p.x,y:o.y-r},{d:o.y+o.h-p.y,x:p.x,y:o.y+o.h+r}].sort((a,b)=>a.d-b.d);p.x=edges[0].x;p.y=edges[0].y;}}}
 // The stage art is cached once. Image branding is drawn from the supplied logo
 // and official Herman sprite, while all navigable furniture matches collisions.
@@ -40,8 +44,7 @@ export function paintOffice(c,assets={}){
   ellipse(x+w-24,y+43,10,9,'#284c61');ellipse(x+w-24,y+40,8,7,'#ebd4a5');ellipse(x+w-24,y+40,5,4,'#5e3b24');
   box(x+56,y+h+12,46,14,'#0004',8);box(x+56,y+h+7,46,16,'#58717d',7);
  }
- for(const o of DESKS)workstation(o);
- for(let x of [165,400,1240,1480])for(let y of [120,1560])workstation({x,y,w:160,h:80});
+ for(const o of OFFICE_FURNITURE)workstation(o);
  // Boardroom wood flooring and an oval walnut table.
  box(650,45,510,230,'#74604a',7);for(let y=50;y<270;y+=17){line(655,y,1155,y,'#b5a08033');line(850,y,850,y+17,'#483c2a22');}
  box(702,93,410,120,'#0004',50);box(692,83,410,120,grad(692,83,1102,203,['#a88457','#684f36']),48);line(735,145,1060,145,'#d0ac7066',2);
