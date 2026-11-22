@@ -77,7 +77,8 @@ assert.ok(fs.readFileSync(path.join(root,'dist/engine.mjs'),'utf8').includes("ev
  assert.ok(!/XP/.test(JSON.stringify(PASSIVES))&&!/XP/.test(app.slice(app.indexOf('const PASSIVE_CARD'),app.indexOf('const UPGRADE_TAP_GUARD_MS'))),'no "XP" wording');}
 
 // 7. Briefcase with nothing ready: the missing partner perk first, then the weapon closest to level 5.
-{const g=quiet();Object.assign(g.weapons,{plunger:4,tp:2,gas:0,flush:0,bomb:1});Object.assign(g.passives,{coffee:0,magnet:1,chili:0,speed:0});
+// (Build 32: only once gold has unlocked; before that a briefcase is an ordinary free pick.)
+{const g=quiet();g.t=SURVIVAL.goldAt[0];Object.assign(g.weapons,{plunger:4,tp:2,gas:0,flush:0,bomb:1});Object.assign(g.passives,{coffee:0,magnet:1,chili:0,speed:0});
  assert.deepEqual(g.options('briefcase').map(c=>[c.key,c.level]),[['coffee',1],['plunger',5],['tp',3]]);
  assert.deepEqual(g.options('briefcase'),g.options('briefcase'),'no luck involved');
  // Perk slots full: a weapon whose partner cannot be taken is not a route, but the briefcase is never empty.

@@ -323,7 +323,7 @@ function upgrades(){
  const brief=g.upgradeKind==='briefcase';
  $('upgradeTitle').innerHTML=brief?'SEVERANCE <span>PACKAGE</span>':'PROMOTION <span>EARNED</span>';
  const evolving=brief&&g.choices.some(c=>c.level===6);
- $('upgradeIntro').textContent=evolving?'Executive briefcase: evolve a weapon.':brief?(g.endless?'Executive briefcase: your fastest route to an evolution.':'Executive briefcase: take a free upgrade.'):'More responsibility. Same pay.';
+ $('upgradeIntro').textContent=evolving?'Executive briefcase: evolve a weapon.':brief?(g.endless&&!g.goldLocked()?'Executive briefcase: your fastest route to an evolution.':'Executive briefcase: take a free upgrade.'):'More responsibility. Same pay.';
  $('upgradeLabel').textContent=(evolving?'EVOLUTION':brief?'FREE UPGRADE':'LEVEL '+g.level)+(g.choices.length>1?' · CHOOSE ONE':' · TAKE IT');
  // Survival: evolutions come from briefcases, and a run holds a limited number of weapons and perks.
  $('upgradeFoot').textContent=g.endless?(evolving?'':g.level<=4&&!brief?'Max a weapon + its partner perk. An executive briefcase evolves it.':'Weapons '+g.ownedCount(g.weapons)+'/'+SURVIVAL.weaponSlots+' · Perks '+g.ownedCount(g.passives)+'/'+SURVIVAL.perkSlots):!brief&&g.level<=4?'Max a weapon + its partner perk to evolve it after 45 seconds.':'';
