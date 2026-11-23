@@ -24,7 +24,7 @@ export function slidesFor(stage){
   {id:'move',title:'MOVE',text:'Drag anywhere to move. Herman attacks on his own.',scene:SCENES.move},
   {id:'promo',title:'GET PROMOTED',text:'Grab Petty Cash to fill the bar. A full bar is a promotion: pick a new weapon or perk.',scene:SCENES.promo},
   {id:'evolve',title:'EVOLVE',cls:endless?'':'two',text:endless
-   ?'Max a weapon, carry its partner perk, then open a briefcase. Gold unlocks at 3:00, and early briefcases wait for it.'
+   ?'Max a weapon, carry its partner perk, then beat a boss for its briefcase. Bosses come every 3 minutes.'
    :'Max a weapon and carry its partner perk. Its evolution shows up as a promotion choice.',scene:SCENES.evolve(endless)},
   {id:'bomb',title:'STINK BOMB',text:'Tap the button to drop it. It lures the crowd, then blows after 3 seconds.',scene:SCENES.bomb},
   {id:'boxes',title:'MYSTERY BOXES',text:'Smash the ? boxes for a random item. The stronger it is, the rarer. Keepers wait in your pocket above the Stink Bomb.',scene:SCENES.boxes},

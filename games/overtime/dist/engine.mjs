@@ -33,14 +33,14 @@ export const SURVIVAL={
  firstRush:28,rushGap:22,rushMax:48, // first Corporate Rush, gap between rushes, biggest rush
  rushLateFrom:120,rushGapLate:30, // Build 28: from rushLateFrom on, rushes come this far apart
  rushBossGap:10,           // no rush starts within this many seconds of a boss arriving
- execTimes:[60,120],       // seconds into each tier when a briefcase executive walks in (the boss brings a third briefcase)
+ execTimes:[60,120],       // seconds into each tier when an executive walks in (Build 32: executives drop a mystery item and a first-aid kit; only the boss drops a briefcase)
  execHP:600,execHPPerSecond:8, // executive health: base plus this much per second of run time, times the tier health multiple
  execSpeed:78,
  bossHP:7000,bossGrowth:1,  // boss health: this, plus this share again for each boss before it, times the health climb above
  bossCash:40,bossKits:2,   // what a beaten boss drops besides the briefcase
  weaponSlots:4,perkSlots:3, // most weapons (Stink Bomb counts) and perks one run can hold
  earlyEase:.35,easeIn:[45,120],easeOut:[240,360], // Build 32: regular enemies have this much less health while the player is still building (full from easeIn[1] to easeOut[0], fading at both ends)
- promoRate:.45,            // Build 32: share of each coin that fills the promotion bar in Survival (Petty Cash is unaffected)
+ promoRate:.55,            // Build 32: share of each coin that fills the promotion bar in Survival (Petty Cash is unaffected)
  firstCost:12,             // coins for the first promotion
  kitHeal:25,kitHealPerTier:3,kitHealMax:40, // health per first aid kit (Build 28: was 16, about one hit)
  kitLife:45,               // seconds a first aid kit waits on the floor (was 20)
@@ -51,7 +51,7 @@ export const SURVIVAL={
  // so a fully built Herman can't stand still behind his weapons. Slower than Herman, so a moving player outwalks them.
  // They come a little faster every tier, with more allowed at once, and no ceiling: every run ends eventually.
  managerFrom:240,managerGap:14,managerGapTier:2,managerGapMin:4,managerCap:6,managerCapTier:3,managerHP:20,managerSpeed:120,managerDamage:1.5,managerR:26,
- goldAt:[180,240,300],      // Build 30: earliest run time (seconds) for the 1st, 2nd, and 3rd and later gold (evolved) weapon
+ goldAt:[0,0,0],           // Build 30 put gold on a clock (3:00, 4:00, 5:00). Build 32: only bosses drop briefcases, so gold can't come before the 3:00 boss anyway; the clock is off
 };
 // Coins for each later promotion in survival. Steeper than stage mode so a long run paces at about 3 a minute.
 export const survivalPromotionCost=level=>Math.floor(8+level*6+level*level*.6);
@@ -70,7 +70,7 @@ export class Game{
   if(!weapon||weapon==='bomb'||weapon==='bidet'||weapon==='wet'||weapon==='plunger'||e.type==='exec')return;
   this.event('hit-'+weapon,'');
  }
- hit(e,amount,weapon){if(e.hp<=0||this.state==='won'||this.state==='lost')return;amount*=1+(this.perks.damage||0)*.06+this.passives.chili*.15+this.boostTotal();e.hp-=amount;if(e.type==='supply'){e.flash=.12;if(e.hp<=0)this.openBox(e);return;}if(amount>=8&&e.flash===0&&this.numbers.length<45)this.numbers.push({x:e.x,y:e.y-22,text:Math.round(amount),t:0,life:.65,color:'#fff3c8'});e.flash=.12;this.hitSound(e,weapon);if(e.hp<=0){this.kills++;this.combo++;this.comboTime=2.5;this.bestCombo=Math.max(this.bestCombo,this.combo);if(this.combo%25===0)this.event('combo',this.combo+' KOs · KEEP IT GOING');if(this.kills%60===0){this.drops.push({x:e.x,y:e.y,magnet:true,value:0});}let value=e.type==='exec'?14:e.type==='guard'?4:1;if(e.boss&&this.endless)value=SURVIVAL.bossCash;if(!e.boss||this.endless)this.drops.push({x:e.x,y:e.y+(this.endless&&e.type==='exec'?26:0),value,heal:false});if(e.type==='exec'){if(e.boss&&!this.endless)this.bossDefeated=true;else this.drops.push({x:e.x,y:e.y,chest:true,value:0});if(e.boss&&this.endless){this.bossesBeaten++;for(let i=0;i<SURVIVAL.bossKits;i++)this.drops.push({x:clamp(e.x+(i*2-1)*46,80,1720),y:e.y,heal:true,value:0,life:this.kitLife()});}this.stopped++;this.event('exec',this.endless?(e.boss?'BOSS':'EXECUTIVE')+' DEFEATED · GRAB THE BRIEFCASE':'EXECUTIVE DEFEATED');}this.fx.push({x:e.x,y:e.y,t:0,life:.35,r:25,color:e.type==='exec'?'#ffcc67':'#91dcbe'});}}
+ hit(e,amount,weapon){if(e.hp<=0||this.state==='won'||this.state==='lost')return;amount*=1+(this.perks.damage||0)*.06+this.passives.chili*.15+this.boostTotal();e.hp-=amount;if(e.type==='supply'){e.flash=.12;if(e.hp<=0)this.openBox(e);return;}if(amount>=8&&e.flash===0&&this.numbers.length<45)this.numbers.push({x:e.x,y:e.y-22,text:Math.round(amount),t:0,life:.65,color:'#fff3c8'});e.flash=.12;this.hitSound(e,weapon);if(e.hp<=0){this.kills++;this.combo++;this.comboTime=2.5;this.bestCombo=Math.max(this.bestCombo,this.combo);if(this.combo%25===0)this.event('combo',this.combo+' KOs · KEEP IT GOING');if(this.kills%60===0){this.drops.push({x:e.x,y:e.y,magnet:true,value:0});}let value=e.type==='exec'?14:e.type==='guard'?4:1;if(e.boss&&this.endless)value=SURVIVAL.bossCash;if(!e.boss||this.endless)this.drops.push({x:e.x,y:e.y+(this.endless&&e.type==='exec'?26:0),value,heal:false});if(e.type==='exec'){if(e.boss&&!this.endless)this.bossDefeated=true;else if(e.boss||!this.endless)this.drops.push({x:e.x,y:e.y,chest:true,value:0});else{this.dropMystery(e.x-28,e.y,'EXECUTIVE DROPPED');this.drops.push({x:clamp(e.x+28,80,1720),y:e.y,heal:true,value:0,life:this.kitLife()});}if(e.boss&&this.endless){this.bossesBeaten++;for(let i=0;i<SURVIVAL.bossKits;i++)this.drops.push({x:clamp(e.x+(i*2-1)*46,80,1720),y:e.y,heal:true,value:0,life:this.kitLife()});}this.stopped++;this.event('exec',this.endless?(e.boss?'BOSS DEFEATED · GRAB THE BRIEFCASE':'EXECUTIVE DEFEATED · MYSTERY ITEM + FIRST AID'):'EXECUTIVE DEFEATED');}this.fx.push({x:e.x,y:e.y,t:0,life:.35,r:25,color:e.type==='exec'?'#ffcc67':'#91dcbe'});}}
  // Survival: weapons and perks are limited to a few slots, evolutions only come from briefcases, and once
  // everything is maxed a promotion offers a Petty Cash bonus or a heal.
  ownedCount(set){return Object.values(set).filter(l=>l>0).length;}
@@ -96,18 +96,20 @@ export class Game{
   return picks.length?picks:[{key:'boost',level:this.boosts+1},{key:'cash',level:1},{key:'heal',level:1}];}
  options(kind){if(this.endless)return this.survivalOptions(kind);let keys=Object.keys(WEAPONS).filter(k=>this.weapons[k]<5||(this.weapons[k]===5&&this.passives[EVOLUTIONS[k].requires]>0&&this.t>=45));keys.push(...Object.keys(PASSIVES).filter(k=>this.passives[k]<3));for(let i=keys.length-1;i>0;i--){let j=Math.floor(this.random()*(i+1));[keys[i],keys[j]]=[keys[j],keys[i]];}let evo=keys.find(k=>this.weapons[k]===5);if(evo)keys=[evo,...keys.filter(k=>k!==evo)];if(this.level===2&&this.passives.speed===0)keys=['speed',...keys.filter(k=>k!=='speed')];return keys.slice(0,3).map(k=>({key:k,level:(this.weapons[k]??this.passives[k])+1}));}
  choose(k){if(this.state!=='upgrade'||!this.choices.some(c=>c.key===k))return false;if(k==='heal')this.player.hp=Math.min(this.player.max,this.player.hp+35);else if(k==='cash')this.tokens+=SURVIVAL.cashBonus;else if(k==='boost')this.boosts++;else if(k in this.passives)this.passives[k]++;else this.weapons[k]++;this.state='countdown';this.resumeLeft=RECOVERY_SECONDS;this.moving=false;this.nextUpgradeAt=this.t+7;this.choices=[];this.event(this.weapons[k]===6?'evolve':'upgrade',this.weapons[k]===6?EVOLUTIONS[k].name.toUpperCase()+' · EVOLVED':'');return true;}
- openUpgrade(kind='promotion',note=''){this.upgradeKind=kind;this.choices=this.options(kind);if(!this.choices.length)this.choices=[{key:'heal',level:1}];this.state='upgrade';this.event('level',note||(kind==='briefcase'?'EXECUTIVE BRIEFCASE · CHOOSE YOUR BONUS':'LEVEL '+this.level));}
+ openUpgrade(kind='promotion',note=''){this.upgradeKind=kind;this.choices=this.options(kind);if(!this.choices.length)this.choices=[{key:'heal',level:1}];this.state='upgrade';this.event('level',note||(kind==='briefcase'?(this.endless?'BOSS BRIEFCASE · CHOOSE YOUR BONUS':'EXECUTIVE BRIEFCASE · CHOOSE YOUR BONUS'):'LEVEL '+this.level));}
  levelCheck(){if(this.state!=='playing'||this.t<this.nextUpgradeAt)return;const ready=this.endless&&this.readyToEvolve().length>0;if(this.savedBriefcases>0&&(!ready||!this.goldLocked())){this.savedBriefcases--;this.openUpgrade('briefcase',ready?'GOLD UNLOCKED · CHOOSE YOUR EVOLUTION':'');return;}if(this.pendingBriefcases>0){this.pendingBriefcases--;if(ready&&this.goldLocked()){this.savedBriefcases++;this.event('gold-saved','GOLD BRIEFCASE SAVED · OPENS AT '+clock(this.goldOpensAt()));}else{this.openUpgrade('briefcase');return;}}if(ready&&!this.savedBriefcases&&!this.goldLocked()&&this.goldNoticeAt!==this.goldOpensAt()&&this.t-this.goldOpensAt()<1){this.goldNoticeAt=this.goldOpensAt();this.event('gold-open','GOLD UNLOCKED · YOUR NEXT BRIEFCASE TURNS IT GOLD');}if(this.xp>=this.need){this.xp-=this.need;this.level++;this.need=this.endless?survivalPromotionCost(this.level):promotionCost(this.level);this.openUpgrade();}}
  bombCooldown(){return Math.max(5,12-(this.weapons.bomb-1)*.8)*(1-this.passives.coffee*.08);}
  useBomb(){if(this.state!=='playing'||!this.weapons.bomb||this.cd.bomb>0)return false;this.dropBomb();this.cd.bomb=this.bombCooldown();this.event('deploy','');return true;}
  dropBomb(){const l=Math.max(1,this.weapons.bomb||0),evolved=l===6;this.bombs.push({x:this.player.x-this.face.x*27,y:this.player.y-this.face.y*27,t:0,fuse:3,lure:evolved?340:160+l*23,blast:evolved?245:100+l*15,damage:evolved?450:105+l*30,level:l});}
  // ---- Build 31: mystery boxes (rules and numbers in mystery.mjs) ----
- openBox(box){this.fx.push({x:box.x,y:box.y,t:0,life:.45,r:45,color:'#f2cd87'});box.refillAt=this.t+MYSTERY.refill;const k=rollItem(this.random);
+ openBox(box){this.fx.push({x:box.x,y:box.y,t:0,life:.45,r:45,color:'#f2cd87'});box.refillAt=this.t+MYSTERY.refill;return this.dropMystery(box.x,box.y,'MYSTERY BOX');}
+ // One random mystery item at x,y (a box, or a Survival executive). Wet Floor goes straight down as a puddle.
+ dropMystery(x,y,label){const box={x,y},k=rollItem(this.random);
   if(k==='wet'){this.addPuddle(box.x,box.y);this.event('got','wet');}
   else if(k==='sweep')this.drops.push({x:box.x,y:box.y,magnet:true,value:0});
   else if(k==='coffee')this.drops.push({x:box.x,y:box.y,coffee:true,value:0});
   else this.drops.push({x:box.x,y:box.y,item:k,value:0});
-  this.event('supply','MYSTERY BOX · '+ITEMS[k].name.toUpperCase());return k;}
+  this.event('supply',label+' · '+ITEMS[k].name.toUpperCase());return k;}
  // A picked-up item: pocket items go in the pocket; with the pocket full, a random "now" item happens instead.
  gainItem(k){if(ITEMS[k].use==='pocket'){if(this.pocket.length<MYSTERY.pocket){this.pocket.push(k);this.event('pocket',ITEMS[k].name.toUpperCase()+' · IN YOUR POCKET');this.event('got',k);return k;}
    const swap=rollItem(this.random,NOW_ITEMS);this.useNow(swap,'POCKET FULL · '+ITEMS[swap].name.toUpperCase()+' INSTEAD');return swap;}
@@ -176,7 +178,7 @@ export class Game{
  stepSurvival(){const S=SURVIVAL;this.tier=Math.floor(this.t/S.tierSeconds);
   if(!this.bossWarning&&this.t>=this.nextBossAt-6){this.bossWarning=true;this.event('boss-warn','BOSS ARRIVES IN 6s · GET READY');}
   if(this.t>=this.nextBossAt){const n=Math.round(this.nextBossAt/S.tierSeconds);this.nextBossAt+=S.tierSeconds;this.bossWarning=false;this.addBoss(S.bossHP*(1+(n-1)*S.bossGrowth)*this.healthScale());for(const s of this.supplies)if(s.hp<=0){s.hp=s.max;s.flash=0;this.fx.push({x:s.x,y:s.y,t:0,life:.45,r:45,color:'#f2cd87'});}this.event('boss-arrive','TIER '+(this.tier+1)+' · SUPPLY BOXES RESTOCKED');}
-  if(this.t>=this.nextExecAt){const spot=this.bossSpot(300);this.spawn('exec',spot.x,spot.y,{hp:(S.execHP+this.t*S.execHPPerSecond)*this.healthScale(),speed:S.execSpeed});this.execIndex++;this.nextExecAt=Math.floor(this.execIndex/S.execTimes.length)*S.tierSeconds+S.execTimes[this.execIndex%S.execTimes.length];this.event('exec-in','EXECUTIVE INCOMING · KO FOR A BRIEFCASE');}
+  if(this.t>=this.nextExecAt){const spot=this.bossSpot(300);this.spawn('exec',spot.x,spot.y,{hp:(S.execHP+this.t*S.execHPPerSecond)*this.healthScale(),speed:S.execSpeed});this.execIndex++;this.nextExecAt=Math.floor(this.execIndex/S.execTimes.length)*S.tierSeconds+S.execTimes[this.execIndex%S.execTimes.length];this.event('exec-in','EXECUTIVE INCOMING · KO FOR A MYSTERY ITEM');}
  }
  spawnGap(){const S=SURVIVAL,t=this.t,held=S.spawnStart-S.rampHold*.0022,ramp=t<=S.rampHold?S.spawnStart-t*.0022:t>=S.rampDone?0:held+(S.spawnFloor-held)*(t-S.rampHold)/(S.rampDone-S.rampHold);return Math.max(S.spawnMin,S.spawnFloor-this.tier*S.tierSpawn,ramp)*(t<S.openingGrace?2:1);}
  // Survival: a rush never starts within rushBossGap seconds of a boss arriving. A held rush moves to just after.
