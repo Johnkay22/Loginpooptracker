@@ -237,6 +237,12 @@ A third mode on the menu card (the ∞ entry). The run never ends and time survi
 ## Build 22: Break Room buttons are gold (made with Claude, Nov 15)
 - Johnny picked gold over the mockup's cyan, so the Break Room's buy buttons, selected weapon, difficulty switch and BACK TO MENU now match the menu, promotion and end screens. Colours only; nothing else changed.
 
+## Build 33: buttons on either side (made with Claude, Nov 24)
+Johnny wanted the option to put the Stink Bomb and pocket buttons on the other side of the screen.
+- **Pause screen:** a "Buttons LEFT | RIGHT" choice under the Sound effects and Music switches. Right is the default. Remembered on the device (`pp-overtime-buttons`) and applied the moment it's tapped, so the change shows behind the pause screen.
+- **What moves:** the Stink Bomb button, both pocket slots and the first-time bubble's "SAVED IN YOUR POCKET" pointer (its arrow flips). The weapon strip and the Caffeine Rush timer swap to the right so nothing overlaps. Done with a `btn-left` class on the page.
+- No rule changes, so `BUILD` stays 32. New suite `tests/button-side.test.mjs`.
+
 ## Build 32: no more standing still (made with Claude, Nov 22)
 Johnny's playtest: once his weapons were gold he could stand still next to a health pack forever. Two causes: evolved gas (Chemical Warfare) dropped a new cloud every half second on the same spot, so a still Herman sat in about 15 stacked clouds; and nothing could get through the evolved weapons' push, so nothing ever reached him. Johnny chose fixing the cause over gimmicks (no warning circles, no unkillable timer enemy, which would flatten the leaderboard).
 - **Gas clouds refresh instead of stacking:** a new cloud dropped where one of the same size already is just restarts that cloud. A moving Herman still leaves a trail; a still one sits in one cloud, not 15.
