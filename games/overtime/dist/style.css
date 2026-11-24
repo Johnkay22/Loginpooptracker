@@ -556,3 +556,17 @@
 .ii-pocket[hidden]{display:none}
 .ii-pocket b{font-size:15px}
 @keyframes iiNudge{50%{transform:translateX(6px)}}
+
+/* Build 33: buttons on the left. The weapon strip and coffee timer move to the right to make room. */
+.pz-side{display:flex;align-items:center;gap:14px;width:100%;padding:8px 4px 2px;color:#fff;font:600 16px/1 Inter,Arial,sans-serif}
+.pz-seg{display:inline-flex;padding:3px;border-radius:999px;background:#0b1626;border:1px solid #2f4263}
+.pz-seg button{padding:8px 13px;border:0;border-radius:999px;background:none;color:#8fa0bb;font:900 11px/1 Inter,Arial,sans-serif;letter-spacing:.12em;cursor:pointer}
+.pz-seg button[aria-pressed=true]{background:#e9b84f;color:#2a1a05}
+.pz-seg button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+body.btn-left #bombBtn{right:auto;left:12px}
+body.btn-left #pocket{right:auto;left:23px}
+body.btn-left .ii-pocket{right:auto;left:96px}
+body.btn-left #loadout{left:auto;right:12px}
+body.btn-left #boost{left:auto;right:16px}
+body.btn-left .ii-pocket{animation-name:iiNudgeL}
+@keyframes iiNudgeL{50%{transform:translateX(-6px)}}
