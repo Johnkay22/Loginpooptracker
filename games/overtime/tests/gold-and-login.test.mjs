@@ -19,54 +19,31 @@ const ready=()=>{const g=new Game(()=>.5,{},0,'plunger',SURVIVAL_ID);g.spawnCd=1
  Object.assign(g.weapons,{plunger:5,tp:5});Object.assign(g.passives,{coffee:1,magnet:1});return g;};
 const tick=(g,to)=>{let n=0;while(g.t<to&&n++<1e5){if(g.state==='upgrade')break;g.step(.05,{x:0,y:0});}};
 
-// 1. The schedule: 3:00, 4:00, then 5:00 for every gold after that.
-assert.deepEqual(S.goldAt,[180,240,300]);
-{const g=ready();
- assert.equal(g.goldOpensAt(),180);assert.equal(g.goldLocked(),true);
- assert.ok(g.options('briefcase').every(c=>c.level<6),'no gold on offer before 3:00');
- g.t=180;assert.equal(g.goldLocked(),false);assert.deepEqual(g.options('briefcase').map(c=>c.level),[6,6]);
- g.weapons.plunger=6;assert.equal(g.goldOpensAt(),240);assert.equal(g.goldLocked(),true,'2nd gold waits for 4:00');
- g.t=240;assert.equal(g.goldLocked(),false);g.weapons.tp=6;assert.equal(g.goldOpensAt(),300);
- g.weapons.gas=6;assert.equal(g.goldOpensAt(),300,'3rd and later: 5:00');}
-
-// 2. A briefcase grabbed early, with a weapon ready, is saved and opens itself at 3:00 as a gold choice.
-{const g=ready();g.t=100;g.pendingBriefcases=1;g.step(.05,{x:0,y:0});
- assert.equal(g.state,'playing','the run keeps going');assert.equal(g.savedBriefcases,1);
- assert.ok(g.events.some(e=>e.type==='gold-saved'&&e.text==='GOLD BRIEFCASE SAVED · OPENS AT 3:00'));
- g.events.length=0;tick(g,181);
- assert.equal(g.state,'upgrade');assert.equal(g.upgradeKind,'briefcase');assert.ok(g.t>=180&&g.t<181,'opens right at 3:00');
- assert.ok(g.choices.every(c=>c.level===6));assert.ok(g.events.some(e=>e.text==='GOLD UNLOCKED · CHOOSE YOUR EVOLUTION'));
- g.choose('plunger');assert.equal(g.weapons.plunger,6);assert.equal(g.savedBriefcases,0);}
-
-// 3. Two saved: the 2nd waits for 4:00. A saved briefcase with nothing left to turn gold opens as a normal one.
-{const g=ready();g.t=100;g.pendingBriefcases=2;g.step(.05,{x:0,y:0});g.step(.05,{x:0,y:0});assert.equal(g.savedBriefcases,2);
- tick(g,181);g.choose('plunger');tick(g,230);assert.equal(g.state,'playing','nothing at 3:50');assert.equal(g.savedBriefcases,1);
- tick(g,241);assert.equal(g.state,'upgrade');assert.deepEqual(g.choices.map(c=>[c.key,c.level]),[['tp',6]]);}
-{const g=ready();g.t=100;g.pendingBriefcases=1;g.step(.05,{x:0,y:0});g.passives.coffee=0;g.passives.magnet=0;g.events.length=0;
- g.step(.05,{x:0,y:0});assert.equal(g.state,'upgrade','not ready any more: open it now');assert.ok(g.choices.every(c=>c.level<6));}
-
-// 4. No weapon ready: briefcases open straight away, as before. Unlock with a weapon ready and no saved
-// briefcase: one "gold unlocked" notice.
-{const g=ready();g.weapons.tp=3;g.passives.magnet=0;g.weapons.plunger=4;g.t=60;g.pendingBriefcases=1;g.step(.05,{x:0,y:0});
- assert.equal(g.state,'upgrade');assert.equal(g.savedBriefcases,0);}
-{const g=ready();g.t=179;tick(g,182);assert.equal(g.events.filter(e=>e.type==='gold-open').length,1);}
-
-// 5. The two levels are unchanged.
-{const g=new Game(()=>.5,{},0,'plunger',1);assert.equal(g.goldLocked(),false);assert.equal(g.goldOpensAt(),0);}
-
-// 6. In real runs (bot always chasing Plungerang, TP Tornado and their perks), gold never comes early.
+// Build 32 replaced the gold clock: only bosses drop briefcases, and executives drop a mystery item and a
+// first-aid kit instead. Bosses come at 3:00, 6:00 and so on, so gold can't come before 3:00 (2nd before 6:00).
+assert.deepEqual(S.goldAt,[0,0,0],'the clock is off');
+{const g=ready();g.t=100;assert.equal(g.goldLocked(),false);assert.deepEqual(g.options('briefcase').map(c=>c.level),[6,6],'a briefcase can always evolve a ready weapon');}
+// An executive drops a mystery item and a first-aid kit, not a briefcase; a boss drops the briefcase.
+{const g=ready();const x=g.spawn('exec',1000,900,{hp:10,speed:0});g.hit(x,1e9);assert.equal(g.drops.filter(d=>d.chest).length,0,'no briefcase');
+ assert.equal(g.drops.filter(d=>d.heal).length,1,'one first-aid kit');assert.equal(g.drops.filter(d=>d.item||d.magnet||d.coffee).length+g.puddles.length,1,'one mystery item');
+ assert.ok(g.events.some(e=>e.text==='EXECUTIVE DEFEATED · MYSTERY ITEM + FIRST AID'));assert.ok(g.events.some(e=>e.type==='supply'&&e.text.startsWith('EXECUTIVE DROPPED · ')));}
+{const g=ready();g.addBoss(10);const b=g.enemies.find(e=>e.boss);g.hit(b,1e9);assert.equal(g.drops.filter(d=>d.chest).length,1,'the boss drops the briefcase');}
+{const g=new Game(()=>.5,{},0,'plunger',1);const x=g.spawn('exec',1000,900,{hp:10,speed:0});g.hit(x,1e9);assert.equal(g.drops.filter(d=>d.chest).length,1,'the levels keep executive briefcases');}
+// In real runs (bot always chasing Plungerang, TP Tornado and their perks), gold never comes before a boss.
 {const firsts=[],seconds=[];
- for(let seed=1;seed<=24;seed++){const g=new Game(rng(seed),{},0,'plunger',SURVIVAL_ID);g.player.max=g.player.hp=1e9;const golds=[];
-  for(let i=0;i<14000&&g.t<420;i++){if(g.state==='upgrade'){const order=['plunger','tp','coffee','magnet'],rank=k=>{const i=order.indexOf(k);return i<0?9:i;};
-    const c=g.choices.find(c=>c.level===6)||g.choices.slice().sort((x,y)=>rank(x.key)-rank(y.key))[0];const before=g.goldCount();g.choose(c.key);if(g.goldCount()>before)golds.push(g.t);}
+ for(let seed=1;seed<=16;seed++){const g=new Game(rng(seed),{},0,'plunger',SURVIVAL_ID);g.player.max=g.player.hp=1e9;const golds=[];
+  for(let i=0;i<16000&&g.t<480;i++){if(g.state==='upgrade'){const order=['plunger','tp','coffee','magnet'],rank=k=>{const i=order.indexOf(k);return i<0?9:i;};
+    const c=g.choices.find(c=>c.level===6)||g.choices.slice().sort((x,y)=>rank(x.key)-rank(y.key))[0];const before=g.goldCount();g.choose(c.key);if(g.goldCount()>before)golds.push(g.t);continue;}
+   if(g.state==='card'){g.buyItem(g.cardChoices[0]);continue;}if(g.state==='intro'){g.endIntro();continue;}
    const a=g.t*.7;g.step(.05,{x:Math.cos(a),y:Math.sin(a)});g.events.length=0;}
   if(golds[0])firsts.push(golds[0]);if(golds[1])seconds.push(golds[1]);}
- assert.ok(firsts.length>=20&&firsts.every(t=>t>=180),'1st gold never before 3:00 ('+Math.min(...firsts).toFixed(0)+'s)');
- assert.ok(seconds.length>=15&&seconds.every(t=>t>=240),'2nd gold never before 4:00 ('+Math.min(...seconds).toFixed(0)+'s)');}
+ assert.ok(firsts.length>=10&&firsts.every(t=>t>=180),'1st gold never before the 3:00 boss ('+Math.min(...firsts).toFixed(0)+'s)');
+ assert.ok(seconds.every(t=>t>=360),'2nd gold never before the 6:00 boss ('+(seconds.length?Math.min(...seconds).toFixed(0):'-')+'s)');}
 
-// 7. Players are told: a pause tip and the How to Play card.
-assert.ok(tipsFor({endless:true}).some(t=>t.text==='Gold unlocks at 3:00, a 2nd at 4:00, more at 5:00. Early briefcases wait.'));
-assert.ok(slidesFor(stageFor(SURVIVAL_ID)).find(s=>s.id==='evolve').text.includes('Gold unlocks at 3:00'));
+// 7. Players are told.
+assert.ok(tipsFor({endless:true}).some(t=>t.text==='Only bosses drop briefcases. Max weapon + partner perk + boss briefcase = evolution.'));
+assert.ok(tipsFor({endless:true}).some(t=>t.text==='Executives walk in twice before each boss. Each drops a mystery item and first aid.'));
+assert.ok(slidesFor(stageFor(SURVIVAL_ID)).find(s=>s.id==='evolve').text.includes('beat a boss for its briefcase'));
 
 // 8. Login: who() checks the login for real and reads the name; logged out is told before the run.
 {const store=new Map(),storage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,v)};
@@ -92,4 +69,4 @@ assert.ok(auth.includes('return next === "overtime" ? new URL("overtime", window
 assert.ok(auth.includes('window.location.replace(afterSignInUrl());'));
 assert.ok(auth.includes('emailRedirectTo: appRedirectUrl()'),'email links still go to the app');
 
-console.log('PASS: gold unlocks at 3:00, 4:00 and 5:00 in Survival, early briefcases wait for it, and logged-out players hear it before the run.');
+console.log('PASS: in Survival only bosses drop briefcases (executives drop a mystery item and first aid), and logged-out players hear it before the run.');

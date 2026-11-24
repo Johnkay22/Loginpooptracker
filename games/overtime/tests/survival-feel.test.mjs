@@ -77,7 +77,8 @@ assert.ok(fs.readFileSync(path.join(root,'dist/engine.mjs'),'utf8').includes("ev
  assert.ok(!/XP/.test(JSON.stringify(PASSIVES))&&!/XP/.test(app.slice(app.indexOf('const PASSIVE_CARD'),app.indexOf('const UPGRADE_TAP_GUARD_MS'))),'no "XP" wording');}
 
 // 7. Briefcase with nothing ready: the missing partner perk first, then the weapon closest to level 5.
-{const g=quiet();Object.assign(g.weapons,{plunger:4,tp:2,gas:0,flush:0,bomb:1});Object.assign(g.passives,{coffee:0,magnet:1,chili:0,speed:0});
+// (Build 32: only once gold has unlocked; before that a briefcase is an ordinary free pick.)
+{const g=quiet();g.t=SURVIVAL.goldAt[0];Object.assign(g.weapons,{plunger:4,tp:2,gas:0,flush:0,bomb:1});Object.assign(g.passives,{coffee:0,magnet:1,chili:0,speed:0});
  assert.deepEqual(g.options('briefcase').map(c=>[c.key,c.level]),[['coffee',1],['plunger',5],['tp',3]]);
  assert.deepEqual(g.options('briefcase'),g.options('briefcase'),'no luck involved');
  // Perk slots full: a weapon whose partner cannot be taken is not a route, but the briefcase is never empty.
@@ -93,7 +94,7 @@ assert.ok(fs.readFileSync(path.join(root,'dist/engine.mjs'),'utf8').includes("ev
 {const g=quiet();Object.assign(g.weapons,{plunger:6,tp:6,gas:6,flush:0,bomb:6});Object.assign(g.passives,{coffee:3,magnet:3,chili:3,speed:0});
  const dmg=()=>{const e=g.spawn('guard',0,0);e.max=e.hp=1e6;g.hit(e,100);return 1e6-e.hp;};const base=dmg();
  for(let i=1;i<=3;i++){g.state='playing';g.nextUpgradeAt=0;g.xp=g.need;g.levelCheck();assert.deepEqual(g.choices.map(c=>[c.key,c.level]),[['boost',i],['cash',1],['heal',1]]);assert.ok(g.choose('boost'));assert.equal(g.boosts,i);}
- assert.ok(Math.abs(dmg()-base-100*3*S.boost)<1e-6,'three stacks add 3 x boost');
+ assert.ok(Math.abs(dmg()-base-100*S.boost*(1+S.boostTaper+S.boostTaper**2))<1e-6,'three stacks add 10% + 8.8% + 7.7% (Build 32 taper)');
  assert.ok(app.includes("name:'Extra Hot Sauce'")&&app.includes("c.key==='boost'?'chili':c.key"),'the cabinet shows it');}
 
 // 9. Live leaderboard moments.
@@ -116,7 +117,7 @@ assert.ok(css.includes('#banner[hidden]{display:none}')&&css.includes('#mission.
 assert.ok(app.includes("'boss-arrive':['siren']"),'the boss arrival is never a fallback beep');
 
 // 11. Rules changed, so leaderboard times are tagged with the new build number, and the tips keep up.
-assert.match(app,/const BUILD=31;/);
+assert.match(app,/const BUILD=32;/);
 {const tips=tipsFor({endless:true}).map(t=>t.id);for(const id of ['restock','kit-wait','boost'])assert.ok(tips.includes(id),'tip '+id);
  assert.ok(tipsFor({endless:true}).find(t=>t.id==='kit-wait').text.includes(S.kitLife+' seconds'));assert.ok(!tipsFor({endless:false}).some(t=>t.id==='restock'||t.id==='boost'));}
 console.log('PASS: survival eases the 2:00 to 4:30 stretch, keeps rushes off boss arrivals, heals and restocks more, steers briefcases to evolutions, lets a maxed build keep growing, and shows live leaderboard moments.');

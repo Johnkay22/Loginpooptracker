@@ -26,12 +26,11 @@ const DANGER=tip('circles','alert','Get out of red circles before they burst.','
 
 // Every tip that fits the run in progress. The first three are the must-knows for that mode; a paused player sees
 // those first, then the rest in this order. `weapons` is the run's weapon levels (0 = not carried, 6 = evolved).
-const clockOf=t=>Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
 export function tipsFor({endless=false,weapons={},keyboard=false}={}){
  const S=SURVIVAL,minutes=Math.round(S.tierSeconds/60);
  const first=endless?[
   tip('survival-goal','clock',`No finish line. Tougher enemies and a boss every ${minutes} minutes.`),
-  tip('survival-evolve','briefcase','Gold executives and bosses drop briefcases. Max weapon + partner perk + briefcase = evolution.'),
+  tip('survival-evolve','briefcase','Only bosses drop briefcases. Max weapon + partner perk + boss briefcase = evolution.'),
   DANGER,
  ]:[
   tip('stage-goal','clock','Outlast the timer, then beat the gold executive boss to clear the stage.'),
@@ -59,8 +58,8 @@ export function tipsFor({endless=false,weapons={},keyboard=false}={}){
   tip('restock','coffee','Mystery boxes also restock every time a boss clocks in.'),pocketTip,
   tip('board','trophy','Signed in? A new best time posts to the leaderboard. The top 10 are public.'),
   sweep,rush,
-  tip('execs','briefcase','Gold executives walk in twice before each boss. Each one carries a briefcase.'),
-   tip('gold-clock','clock',`Gold unlocks at ${clockOf(S.goldAt[0])}, a 2nd at ${clockOf(S.goldAt[1])}, more at ${clockOf(S.goldAt[2])}. Early briefcases wait.`),
+  tip('execs','briefcase','Executives walk in twice before each boss. Each drops a mystery item and first aid.'),
+   tip('managers','move','From 4:00, Middle Managers shrug off your weapons\' push. Keep moving and wear them down.'),
   bar,
   tip('kit-growth','kit','First aid kits heal more the longer the run goes.'),
   kitWait,

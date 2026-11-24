@@ -53,7 +53,7 @@ for(const endless of [false,true]){
 const surv=all({endless:true}),stage=all({endless:false});
 assert.deepEqual(surv.slice(0,3).map(t=>t.icon),['clock','briefcase','alert'],'survival opens with the three from the mockup');
 assert.equal(surv[0].text,`No finish line. Tougher enemies and a boss every ${SURVIVAL.tierSeconds/60} minutes.`);
-assert.equal(surv[1].text,'Gold executives and bosses drop briefcases. Max weapon + partner perk + briefcase = evolution.');
+assert.equal(surv[1].text,'Only bosses drop briefcases. Max weapon + partner perk + boss briefcase = evolution.');
 assert.equal(surv[2].text,'Get out of red circles before they burst.');
 assert.ok(surv.find(t=>t.id==='slots').text.includes(`${SURVIVAL.weaponSlots} weapons and ${SURVIVAL.perkSlots} perks`));
 assert.ok(surv.find(t=>t.id==='boss-drop').text.includes(`${SURVIVAL.bossKits} first aid kits`));

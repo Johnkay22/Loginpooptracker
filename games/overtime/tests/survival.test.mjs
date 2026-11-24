@@ -46,7 +46,7 @@ assert.equal(new Game(()=>.5,{},0,'plunger',1).endless,false);assert.equal(new G
 {const g=quiet();g.nextExecAt=S.execTimes[0];const seen=[];
  for(g.t=0;g.t<T+S.execTimes[0]+1;){g.step(.05);for(const e of g.enemies.filter(e=>e.type==='exec'&&!e.boss&&!e.seen)){e.seen=true;seen.push(Math.round(g.t));}g.events.length=0;}
  assert.deepEqual(seen,[...S.execTimes,T+S.execTimes[0]]);
- const exec=g.enemies.find(e=>e.type==='exec'&&!e.boss);assert.ok(exec.speed<180,'slower than Herman');g.hit(exec,1e12);assert.equal(g.drops.filter(d=>d.chest).length,1);}
+ const exec=g.enemies.find(e=>e.type==='exec'&&!e.boss);assert.ok(exec.speed<180,'slower than Herman');g.hit(exec,1e12);assert.equal(g.drops.filter(d=>d.chest).length,0,'Build 32: executives drop a mystery item and first aid, not a briefcase');assert.equal(g.drops.filter(d=>d.heal).length,1);}
 
 // 5. Slots: a run holds at most 4 weapons (Stink Bomb counts) and 3 perks.
 {const g=quiet();g.random=rng(5);Object.assign(g.weapons,{plunger:2,tp:1,gas:1,flush:0,bomb:1});Object.assign(g.passives,{coffee:1,magnet:1,chili:1,speed:0});
